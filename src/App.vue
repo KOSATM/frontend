@@ -1,32 +1,56 @@
-<!-- 컴포넌트의 UI -->
 <template>
-  <div class="d-flex flex-column vh-100">
+  <div id="app">
+    <!-- 🔸 Navbar -->
+    <nav ref="navbar" class="navbar navbar-expand-lg navbar-fms fixed-top">
+      <div class="container-fluid px-3">
+        <a class="navbar-brand mx-auto fw-semibold" href="#">Find My Seoul</a>
 
-    <AppHeader/>
+        <!-- 햄버거 메뉴 -->
+        <button
+          class="navbar-toggler border-0"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <i class="bi bi-list fs-2 text-primary"></i>
+        </button>
 
-    <div class="flex-grow-1 container-fluid">
-      <div class="row">
-        <div class="col-md-5 py-2">
-          <AppMenu/>
-        </div>
-        <div class="col-md-7 py-2">
-          <RouterView/>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+          <ul class="navbar-nav text-center">
+            <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Planner</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+          </ul>
         </div>
       </div>
-    </div>
-    </div>
-  </template>
+    </nav>
 
-<!-- 컴포넌트의 초기화 또는 이벤트 처리 -->
+    <!-- 🔸 메인 콘텐츠 -->
+    <main class="container-fms">
+      <LandingPage />
+    </main>
+
+    <!-- 🔸 Footer -->
+    <footer class="footer-fms">
+      <p class="mb-1">© 2025 Find My Seoul. All Rights Reserved.</p>
+      <p class="mb-0">
+        Built with ❤️ using <a href="https://getbootstrap.com/">Bootstrap 5</a>
+      </p>
+    </footer>
+  </div>
+</template>
+
 <script setup>
-import { RouterView } from 'vue-router';
-import AppHeader from './components/AppHeader.vue';
-import AppMenu from './components/AppMenu.vue';
+import LandingPage from './components/LandingPage.vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
+const navbar = ref(null)
 
+const handleScroll = () => {
+  if (window.scrollY > 20) navbar.value?.classList.add('scrolled')
+  else navbar.value?.classList.remove('scrolled')
+}
+
+onMounted(() => window.addEventListener('scroll', handleScroll))
+onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
 </script>
-
-<!-- 컴포넌트의 스타일 정의 -->
-<style scoped>
-
-</style>

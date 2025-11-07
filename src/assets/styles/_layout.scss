@@ -1,0 +1,97 @@
+// ===============================
+// 📱 Responsive Layout (Mobile UI First)
+// ===============================
+
+.navbar-fms {
+  background-color: transparent;
+  transition: background 0.4s ease, box-shadow 0.4s ease;
+  backdrop-filter: blur(8px);
+  padding: 0.5rem 1rem;
+
+  .navbar-brand {
+    color: #1B3B6F;
+    font-size: 1.25rem;
+    transition: color 0.3s ease;
+  }
+
+  .nav-link {
+    color: #1B3B6F !important;
+    font-weight: 500;
+    &:hover {
+      color: #ff8c00 !important;
+    }
+  }
+
+  // 스크롤 후
+  &.scrolled {
+    background: linear-gradient(90deg, #ffb347, #ff8c00);
+    box-shadow: 0 2px 10px rgba(255, 140, 0, 0.2);
+
+    .navbar-brand,
+    .nav-link {
+      color: white !important;
+    }
+  }
+}
+
+// 컨테이너
+.container-fms {
+  max-width: 600px;
+  width: 100%;
+  margin: 6rem auto 4rem;
+  background-color: #fff;
+  border-radius: 1.25rem;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+// 푸터
+.footer-fms {
+  background-color: #1B3B6F;
+  color: white;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+
+  a {
+    color: #ffb347;
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// ===============================
+// 💡 Responsive Breakpoints
+// ===============================
+
+// 모바일 (기본)
+@media (max-width: 576px) {
+  .navbar-fms .navbar-brand {
+    font-size: 1.1rem;
+  }
+
+  .container-fms {
+    margin-top: 5rem;
+    padding: 1.25rem;
+  }
+}
+
+// 태블릿 이상
+@media (min-width: 768px) {
+  .container-fms {
+    max-width: 700px;
+    padding: 2rem 2.5rem;
+  }
+}
+
+// 데스크톱 이상
+@media (min-width: 992px) {
+  .container-fms {
+    max-width: 800px;
+  }
+}
