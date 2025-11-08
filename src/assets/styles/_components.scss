@@ -10,19 +10,71 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-// 버튼 (오렌지 그라데이션)
+// -------------------------
+// 🟧 버튼, 오렌지 그라데이션
+// -------------------------
 .btn-primary {
   background: linear-gradient(90deg, #ff8c00 0%, #ffa733 100%);
   border: none;
-  color: white;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 50rem;
+  padding: 0.75rem 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4);
   }
+
+  &:focus {
+    box-shadow: 0 0 0 0.25rem rgba(255, 140, 0, 0.25);
+  }
 }
 
+// 🟠 아웃라인 버튼
+.btn-outline-primary {
+  color: $primary;
+  border: 2px solid $primary;
+  background-color: transparent;
+  border-radius: 50rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    background-color: $primary;
+    color: #fff;
+  }
+}
+
+// -------------------------
+// 🧭 네비게이션 바
+// -------------------------
+.navbar {
+  background-color: $light;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
+  .navbar-brand {
+    color: $primary;
+    font-weight: 600;
+    font-size: 1.25rem;
+  }
+
+  .nav-link {
+    color: $secondary;
+    font-weight: 500;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $primary;
+    }
+
+    &.active {
+      color: $primary;
+      border-bottom: 2px solid $primary;
+    }
+  }
+}
 // Google 버튼 아이콘 정렬용
 .btn i {
   vertical-align: middle;
