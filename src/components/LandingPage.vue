@@ -28,7 +28,7 @@
     </div>
 
     <!-- Google Sign-In -->
-    <button class="btn btn-warning btn-lg rounded-pill w-75 fw-semibold d-flex align-items-center justify-content-center gap-2">
+    <button class="btn btn-primary btn-lg rounded-pill w-75 fw-semibold d-flex align-items-center justify-content-center gap-2">
       <i class="bi bi-google"></i> Sign in with Google
     </button>
   </div>
