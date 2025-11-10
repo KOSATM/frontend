@@ -7,7 +7,7 @@
       </router-link>
     </div>
 
-    <div class="form-content bg-white rounded-4 p-4">
+    <div v-if="currentStep === 1" class="form-content bg-white rounded-4 p-4">
       <h2 class="text-primary fw-bold mb-3">Let's Plan Your Korean Adventure</h2>
       <p class="text-secondary mb-4">Tell us about your trip and we'll create a personalized itinerary for you.</p>
 
@@ -88,15 +88,28 @@
         ></textarea>
       </section>
 
-      <button class="btn btn-primary w-100 py-2" @click="generateItinerary">
-        Generate My Itinerary
+      <button class="btn btn-primary w-100 py-2" @click="nextStep">
+        Next: Choose Your Hotel
       </button>
+    </div>
+
+    <!-- Hotel Recommendation Step -->
+    <div v-else-if="currentStep === 2" class="form-content bg-white rounded-4 p-4">
+      <HotelRecommendation
+        :budget="tripData.budget"
+        :travel-days="tripData.duration"
+        @hotel-selected="onHotelSelected"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import HotelRecommendation from './HotelRecommendation.vue'
+
+const currentStep = ref(1)
+const selectedHotel = ref(null)
 
 const tripData = ref({
   startDate: new Date().toISOString().split('T')[0],
@@ -138,9 +151,21 @@ const formatBudgetPerDay = () => {
     : `₩${Math.round(amountPerDay).toLocaleString()}`
 }
 
-const generateItinerary = () => {
-  // TODO: Implement itinerary generation logic
-  console.log('Generating itinerary with:', tripData.value)
+const nextStep = () => {
+  if (currentStep.value === 1) {
+    // Validate form data if needed
+    currentStep.value = 2
+  }
+}
+
+const onHotelSelected = (hotel) => {
+  selectedHotel.value = hotel
+  // TODO: Proceed to next step or save the itinerary
+  console.log('Selected hotel:', hotel)
+  console.log('Complete trip data:', {
+    ...tripData.value,
+    hotel: selectedHotel.value
+  })
 }
 </script>
 
