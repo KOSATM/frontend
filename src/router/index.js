@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingPage from '@/components/LandingPage.vue'
-import PlannerPage from '@/components/PlannerPage.vue'
+import PlannerCreate from '@/views/Planner/PlannerCreate.vue'
 
 const routes = [
   { path: '/', component: LandingPage },
-  { path: '/planner', component: PlannerPage },
+  { path: '/planner', component: PlannerCreate }
 ]
 
 export default createRouter({

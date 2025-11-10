@@ -3,7 +3,7 @@
     <!-- 🔸 Navbar -->
     <nav ref="navbar" class="navbar navbar-expand-lg navbar-fms fixed-top">
       <div class="container-fluid px-3">
-        <a class="navbar-brand mx-auto fw-semibold" href="#">Find My Seoul</a>
+        <router-link class="navbar-brand mx-auto fw-semibold" to="/">Find My Seoul</router-link>
 
         <!-- 햄버거 메뉴 -->
         <button
@@ -17,8 +17,8 @@
 
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul class="navbar-nav text-center">
-            <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Planner</a></li>
+            <li class="nav-item"><router-link class="nav-link" to="/">Home</router-link></li>
+            <li class="nav-item"><router-link class="nav-link" to="/planner">Planner</router-link></li>
             <li class="nav-item"><a class="nav-link" href="#">About</a></li>
           </ul>
         </div>
@@ -27,7 +27,8 @@
 
     <!-- 🔸 메인 콘텐츠 -->
     <main class="container-fms">
-      <LandingPage />
+      
+        <router-view />
     </main>
 
     <!-- 🔸 Footer -->
@@ -41,7 +42,7 @@
 </template>
 
 <script setup>
-import LandingPage from './components/LandingPage.vue'
+import { RouterView, RouterLink } from 'vue-router'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 const navbar = ref(null)
