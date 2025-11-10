@@ -1,13 +1,19 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import LandingPage from '@/views/LandingPage.vue'
-import PlannerPage from '@/components/PlannerPage.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import HistoryMain from '@/views/history/HistoryMain.vue';
+import SupporterMain from '@/views/supporter/SupportderMain.vue';
+import PlannerMain from '@/views/planner/PlannerMain.vue';
+import LandingPage from '@/views/LandingPage.vue';
 
 const routes = [
   { path: '/', component: LandingPage },
-  { path: '/planner', component: PlannerPage },
-]
+  { path: '/planner', component: PlannerMain },
+  { path: '/supporter', component: SupporterMain },
+  { path: '/history', component: HistoryMain }, // ✅ 여기서 연결
+];
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
-  routes
-})
+  routes,
+});
+
+export default router;

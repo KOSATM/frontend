@@ -17,11 +17,15 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { createApp, ref, watch } from 'vue'
+import App from './App.vue'
+import router from './router'          // ✅ 이 줄 필수
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
 import Sidebar from './components/Sidebar.vue'
 import LandingPage from './views/LandingPage.vue'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
 const isSidebarOpen = ref(false)
 
@@ -36,5 +40,9 @@ document.querySelectorAll(".nav-item").forEach((item) => {
     item.classList.add("active");
   });
 });
+
+createApp(App)
+  .use(router)                         // ✅ router 등록 필수
+  .mount('#app')
 
 </script>
