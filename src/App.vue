@@ -17,9 +17,9 @@
 
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul class="navbar-nav text-center">
-            <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="#">Planner</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">Supporter</a></li>
+            <li class="nav-item"><a class="nav-link" href="#">History</a></li>
           </ul>
         </div>
       </div>
