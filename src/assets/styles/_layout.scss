@@ -103,60 +103,9 @@
   }
 } /* ✅ ← 이 중괄호가 누락되어 있었음 */
 
-// ===============================
-// 🧳 Trip Card (History, Planner 등 공통)
-// ===============================
-.trip-card {
-  border: 1px solid #eee;
-  background-color: #fff;
-  border-radius: 1rem;
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 
-  &:hover {
-    border-color: $primary; // 오렌지
-    box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.15);
-  }
 
-  img {
-    width: 70px;
-    height: 70px;
-    object-fit: cover;
-    border-radius: 0.75rem;
-    margin-right: 1rem;
-  }
 
-  .trip-info {
-    flex: 1;
-
-    .trip-title {
-      font-weight: 600;
-      color: $secondary; // 네이비
-    }
-
-    .trip-meta {
-      font-size: 0.85rem;
-      color: #666;
-    }
-  }
-
-  .badge {
-    background-color: #3ac569;
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.5rem;
-    color: #fff;
-    font-weight: 500;
-  }
-
-  .icon-chevron {
-    font-size: 1.25rem;
-    color: #bbb;
-  }
-}
 // ===============================
 // 🧱 Container
 // ===============================
@@ -168,7 +117,6 @@
   border-radius: 1.25rem;
   padding: 2rem 1.5rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  text-align: center;
 }
 // ===============================
 // 🦶 Footer
@@ -178,7 +126,6 @@
   color: #fff;
   padding: 2.5rem 1rem;
   text-align: center;
-  font-family: 'Poppins', 'Noto Sans KR', sans-serif;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
 }
 
