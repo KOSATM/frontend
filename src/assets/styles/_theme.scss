@@ -19,11 +19,23 @@ $danger: #e74c3c; // 오류/위험 톤
 $light: #fffaf3;        // 배경에 가까운 연한 베이지
 $dark: #212529; // 진한 남색 (푸터, 딥섹션)
 
+
 // -------------------------
 // 🌈 배경 & 텍스트 색상
 // -------------------------
-$body-bg: #fff7ec;
-$body-color: #1B3B6F;
+$body-bg: #fffaf3; // 베이지 톤으로 통일
+$body-color: $secondary;
+
+// 네비게이션 & 푸터 통일
+$navbar-light-color: $secondary;
+$navbar-light-hover-color: $primary;
+$navbar-light-active-color: $primary;
+$navbar-light-bg: $light;
+
+$btn-primary-bg: $primary;
+$btn-primary-border-color: $primary;
+$btn-hover-bg: lighten($primary, 8%);
+$btn-hover-border-color: lighten($primary, 8%);
 
 // -------------------------
 // 🔳 카드 & 컴포넌트 공통
