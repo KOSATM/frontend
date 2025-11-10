@@ -6,8 +6,8 @@
     </div>
 
     <!-- Tagline -->
-    <div class="tagline mb-5 shadow-sm p-3 rounded-pill">
-      <h5 class="m-0 text-primary fw-semibold">Your AI-Powered Seoul Travel Companion</h5>
+    <div class="tagline bg-secondary mb-5 shadow-sm p-3 rounded-pill">
+      <h5 class="m-0 fw-semibold text-white">Your AI-Powered Seoul Travel Companion</h5>
     </div>
 
     <!-- Features -->
@@ -21,7 +21,7 @@
           <i :class="feature.icon"></i>
         </div>
         <div class="text-start">
-          <div class="fw-semibold text-primary">{{ feature.title }}</div>
+          <div class="fw-semibold">{{ feature.title }}</div>
           <div class="small text-muted">{{ feature.desc }}</div>
         </div>
       </div>
@@ -43,17 +43,17 @@ export default {
         {
           title: "Budget-Based Itinerary",
           desc: "AI creates the perfect Seoul itinerary based on your budget",
-          icon: "bi bi-geo-alt-fill text-warning fs-4",
+          icon: "bi bi-geo-alt-fill fs-4",
         },
         {
           title: "Real-Time Travel Support",
           desc: "GPS-based recommendations and weather-adaptive suggestions",
-          icon: "bi bi-map-fill text-warning fs-4",
+          icon: "bi bi-map-fill  fs-4",
         },
         {
           title: "Travel History",
           desc: "Keep track of all your Seoul adventures",
-          icon: "bi bi-journal-text text-warning fs-4",
+          icon: "bi bi-journal-text fs-4",
         },
       ],
     };
