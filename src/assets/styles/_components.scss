@@ -51,3 +51,113 @@
 .btn i {
   vertical-align: middle;
 }
+
+/* ===============================
+   ⚙️ 기본 스타일
+   =============================== */
+.user-settings {
+  background-color: var(--light);
+  padding: 2rem 1.5rem 3rem;
+  border-top: 1px solid rgba(27, 59, 111, 0.08);
+  border-radius: 0 0 1rem 1rem;
+  font-family: 'Poppins', 'Noto Sans KR', sans-serif;
+}
+
+.settings-title {
+  color: var(--secondary);
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+/* ===============================
+   🧩 각 설정 아이템
+   =============================== */
+.settings-item {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.settings-item:hover {
+  background-color: #fff7ec;
+  transform: translateY(-2px);
+}
+
+/* 아이콘 컨테이너 */
+.settings-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+/* 연한 배경 아이콘 */
+.bg-light-primary {
+  background-color: rgba(255, 140, 0, 0.1);
+}
+
+.bg-light-secondary {
+  background-color: rgba(27, 59, 111, 0.1);
+}
+
+/* 컬러 유틸리티 */
+.text-primary {
+  color: var(--primary);
+}
+
+.text-secondary {
+  color: var(--secondary);
+}
+
+/* 텍스트 블록 */
+.settings-info h6 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--secondary);
+}
+
+.settings-info p {
+  font-size: 0.8rem;
+  margin: 0;
+  color: #6c757d;
+}
+
+/* ===============================
+   🚪 로그아웃 영역
+   =============================== */
+.logout-section {
+  margin-top: 2rem;
+}
+
+.btn-logout {
+  background: transparent;
+  border: none;
+  color: #e74c3c;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-logout:hover {
+  color: #c0392b;
+  transform: translateY(-1px);
+}
+
+.app-version {
+  color: rgba(27, 59, 111, 0.5);
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
