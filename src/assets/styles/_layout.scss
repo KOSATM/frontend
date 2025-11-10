@@ -17,12 +17,12 @@
   .nav-link {
     color: #1B3B6F !important;
     font-weight: 500;
+
     &:hover {
       color: #ff8c00 !important;
     }
   }
 
-  // 스크롤 후
   &.scrolled {
     background: linear-gradient(90deg, #ffb347, #ff8c00);
     box-shadow: 0 2px 10px rgba(255, 140, 0, 0.2);
