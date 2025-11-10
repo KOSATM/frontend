@@ -1,9 +1,28 @@
 // ===============================
+// 🅰️ Custom Font Import
+// ===============================
+@font-face {
+  font-family: 'Kyobo2024'; // 본문용
+  src: url('@/assets/fonts/KyoboHandwriting2024psw.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Siganpyo'; // 제목용
+  src: url('@/assets/fonts/Hakgyoansim_SiganpyoR.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+// ===============================
 // ✍️ Typography Settings
 // ===============================
 
 body {
-  font-family: 'Poppins', 'Noto Sans KR', sans-serif;
+  font-family: 'Siganpyo', 'Siganpyo', sans-serif;
   font-weight: 400;
   line-height: 1.6;
   background-color: $body-bg;
@@ -11,7 +30,8 @@ body {
 }
 
 h1, h2, h3, h4, h5 {
-  font-weight: 600;
+  font-family: 'Kyobo2024', 'Kyobo2024', sans-serif;
+  font-weight: 700;
   color: $secondary;
 }
 
@@ -20,6 +40,7 @@ h3 {
 }
 
 p {
+  font-family: 'Siganpyo', 'Kyobo2024', sans-serif;
   font-size: 1rem;
   color: #555;
 }
@@ -31,6 +52,7 @@ p {
 a {
   color: $primary;
   text-decoration: none;
+
   &:hover {
     color: darken($primary, 10%);
   }

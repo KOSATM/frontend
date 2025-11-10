@@ -2,7 +2,7 @@
   <div class="container text-center py-5">
     <!-- Logo -->
     <div class="mb-4">
-      <img src="@/assets/logo.png" alt="Find My Seoul" class="logo-fms" />
+      <img src="@/assets/img/logo.png" alt="Find My Seoul" class="logo-fms" />
     </div>
 
     <!-- Tagline -->
@@ -28,7 +28,7 @@
     </div>
 
     <!-- Google Sign-In -->
-    <button class="btn btn-primary btn-lg rounded-pill w-75 fw-semibold d-flex align-items-center justify-content-center gap-2">
+    <button class="btn btn-primary btn-lg rounded-pill w-75 fw-semibold d-flex align-items-center justify-content-center gap-2 text-light">
       <i class="bi bi-google"></i> Sign in with Google
     </button>
   </div>
