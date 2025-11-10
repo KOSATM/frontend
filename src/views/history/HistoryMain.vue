@@ -1,109 +1,103 @@
 <template>
-  <div class="container-fms py-4">
-    <div class="mb-4 border-bottom pb-2">
-      <h6 class="text-primary fw-semibold mb-0">
-        <i class="bi bi-clock-history me-1"></i> History
-      </h6>
-    </div>
-
-    <!-- 프로필 -->
-    <div class="text-center mb-4">
-      <div class="circle-avatar mb-2">{{ user.initials }}</div>
-      <h6 class="fw-bold mb-0">{{ user.name }}</h6>
-      <p class="text-muted small">{{ user.role }}</p>
-    </div>
-
-    <!-- 통계 -->
-    <div class="d-flex justify-content-around text-center mb-4">
-      <div>
-        <h5 class="text-primary fw-bold mb-0">{{ user.stats.totalTrips }}</h5>
-        <p class="small text-muted mb-0">Total Trips</p>
-      </div>
-      <div>
-        <h5 class="text-primary fw-bold mb-0">{{ user.stats.travelDays }}</h5>
-        <p class="small text-muted mb-0">Travel Days</p>
-      </div>
-      <div>
-        <h5 class="text-primary fw-bold mb-0">{{ user.stats.completed }}</h5>
-        <p class="small text-muted mb-0">Completed</p>
-      </div>
-    </div>
-
-    <!-- 공통 TripCard 재사용 -->
-    <section class="completed-section mb-5">
-      <h6 class="fw-bold text-secondary mb-3">Completed Travel Plans</h6>
+  <div class="history-page">
+    <PageHeader
+      title="History"
+      subtitle="Your past travel adventures"
+      icon="bi-clock-history"
+    />
+      <ProfileSummary
+      name="Jessica Han"
+      bio="Travel Enthusiast"
+      initials="JH"
+      :totalTrips="12"
+      :travelDays="28"
+      :completed="3"
+    />
+      <h4><i class="bi bi-clock-history me-2 text-primary"></i> Completed Travel Plans</h4>
+    
+    
+    <!-- TripCard 목록 -->
+    <div class="trip-list">
       <TripCard
-        v-for="(trip, index) in completedTrips"
-        :key="index"
+      v-for="trip in trips"
+      :key="trip.id"
         :title="trip.title"
         :location="trip.location"
         :date="trip.date"
-        :price="trip.price"
+        :cost="trip.cost"
         :image="trip.image"
-        status="Done"
-      />
-    </section>
+        :isActive="trip.id === activeId"
+        @click="activeId = trip.id"
+        />
+      </div>
 
-    <!-- 로그아웃 -->
-    <div class="text-center mt-5">
-      <button class="btn btn-outline-primary rounded-pill px-4 fw-semibold">
-        <i class="bi bi-box-arrow-right me-2"></i> Log Out
-      </button>
+      <div>
+        <!-- 하단 설정 -->
+        <UserSettings />
+        <LogoutButton />
+        
     </div>
   </div>
 </template>
 
 <script setup>
-import TripCard from "@/components/common/TripCard.vue";
+import { ref } from 'vue'
+import TripCard from '@/components/common/TripCard.vue';
+import UserSettings from '@/components/history/UserSettings.vue';
+import LogoutButton from '@/components/common/LogoutButton.vue';
+import ProfileSummary from "@/components/history/ProfileSummary.vue";
+import HistoryHeader from "@/components/common/PageHeader.vue";
+import PageHeader from '@/components/common/PageHeader.vue';
 
-const user = {
-  initials: "JH",
-  name: "Jessica Han",
-  role: "Travel Enthusiast",
-  stats: {
-    totalTrips: 12,
-    travelDays: 28,
-    completed: 3,
+// ✅ 하드코딩된 여행 데이터
+const trips = ref([
+  {
+    id: 1,
+    title: 'Jeju Island Healing Trip',
+    location: 'Jeju Island',
+    date: 'Oct 15 - Oct 18, 2024',
+    cost: '500',
+    image: 'https://images.unsplash.com/photo-1585508889309-6c7f49f4f2b2?w=800'
   },
-};
+  {
+    id: 2,
+    title: 'Tokyo Food Tour',
+    location: 'Tokyo, Japan',
+    date: 'Sep 20 - Sep 25, 2024',
+    cost: '1200',
+    image: 'https://images.unsplash.com/photo-1576416981707-5c16f8e3ff04?w=800'
+  },
+  {
+    id: 3,
+    title: 'Busan City Escape',
+    location: 'Busan',
+    date: 'Aug 10 - Aug 12, 2024',
+    cost: '300',
+    image: 'https://images.unsplash.com/photo-1613810739984-31af6a4bb3b8?w=800'
+  }
+])
 
-const completedTrips = [
-  {
-    title: "Jeju Island Healing Trip",
-    location: "Jeju Island",
-    date: "Oct 15 – Oct 18, 2024",
-    price: "$500",
-    image: "/assets/trips/jeju.jpg",
-  },
-  {
-    title: "Tokyo Food Tour",
-    location: "Tokyo, Japan",
-    date: "Sep 20 – Sep 25, 2024",
-    price: "$1,200",
-    image: "/assets/trips/tokyo.jpg",
-  },
-  {
-    title: "Busan City Escape",
-    location: "Busan",
-    date: "Aug 10 – Aug 12, 2024",
-    price: "$300",
-    image: "/assets/trips/busan.jpg",
-  },
-];
+const activeId = ref(1)
 </script>
 
-<style scoped lang="scss">
-.circle-avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background-color: $primary;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+<style scoped>
+.history-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding: 2rem 1.25rem;
+}
+
+.history-header {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.history-header h4 {
+  color: #1B3B6F;
   font-weight: 600;
-  font-size: 1.25rem;
-  margin: 0 auto;
+}
+
+.trip-list {
+  margin-bottom: 2rem;
 }
 </style>

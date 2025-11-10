@@ -1,6 +1,7 @@
 // ===============================
 // 🅰️ Custom Font Import
 // ===============================
+
 @font-face {
   font-family: 'Kyobo2024'; // 본문용
   src: url('@/assets/fonts/KyoboHandwriting2024psw.ttf') format('truetype');
@@ -30,7 +31,7 @@ body {
 }
 
 h1, h2, h3, h4, h5 {
-  font-family: 'Kyobo2024', 'Kyobo2024', sans-serif;
+  font-family: 'Siganpyo', 'Siganpyo', sans-serif;
   font-weight: 700;
   color: $secondary;
 }
@@ -40,7 +41,7 @@ h3 {
 }
 
 p {
-  font-family: 'Siganpyo', 'Kyobo2024', sans-serif;
+  font-family: 'Kyobo2024', 'Kyobo2024', sans-serif;
   font-size: 1rem;
   color: #555;
 }

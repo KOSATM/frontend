@@ -4,7 +4,7 @@
     <AppHeader @toggle-sidebar="isSidebarOpen = true" />
 
     <!-- 🔹 사이드바 -->
-    <Sidebar :isOpen="isSidebarOpen" @close="isSidebarOpen = false" />
+    <SideBar :isOpen="isSidebarOpen" @close="isSidebarOpen = false" />
 
     <!-- 🔹 메인 컨텐츠 -->
     <main class="container-fms">
@@ -20,7 +20,7 @@
 import { ref, watch } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
-import Sidebar from './components/SideBar.vue'
+import SideBar from './components/SideBar.vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 
