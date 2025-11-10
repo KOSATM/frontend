@@ -17,8 +17,8 @@
         class="btn text-white fs-3 border-0 me-2"
         type="button"
         data-bs-toggle="offcanvas"
-        data-bs-target="#sidebarMenu"
-        aria-controls="sidebarMenu"
+        data-bs-target="#sidebar"
+        aria-controls="sidebar"
       >
         <i class="bi bi-list"></i>
       </button>
