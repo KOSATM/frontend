@@ -1,5 +1,10 @@
 <template>
   <div class="hotel-recommendation container py-4">
+    <PageHeader
+    title="Planner"
+    subtitle="Create and manage your Seoul travel itinerary"
+    icon="bi-map"
+  />
     <!-- Budget Display -->
     <div class="budget-section mb-4">
       <h2 class="text-secondary mb-3">Recommended Hotels for Your Stay</h2>
@@ -133,8 +138,13 @@
 </template>
 
 <script>
+import PageHeader from '@/components/common/PageHeader.vue';
+
 export default {
   name: 'HotelRecommendation',
+  components: {
+    PageHeader
+  },
   data() {
     return {
       budget: 300000, // This should come from TravelPlanForm
@@ -172,7 +182,8 @@ export default {
           breakfast: true,
           pool: true,
           spa: true
-        }
+        },
+        
         // Add more hotels as needed
       ]
     }
