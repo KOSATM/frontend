@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HistoryMain from '@/views/history/HistoryMain.vue';
+import CreateTravelReview from "@/views/history/CreateTravelReview.vue";
 import SupporterMain from '@/views/supporter/SupporterMain.vue';
 import PlannerMain from '@/views/planner/PlannerMain.vue';
 import LandingPage from '@/views/LandingPage.vue';
@@ -11,7 +12,12 @@ const routes = [
   // { path: '/planner', component: PlannerMain },
   { path: '/supporter', component: SupporterMain },
   { path: '/history', component: HistoryMain }, // ✅ 여기서 연결
-
+  {
+    path: "/review/:tripTitle",
+    name: "CreateTravelReview",
+    component: CreateTravelReview,
+    props: true, // ✅ props로 파라미터 전달
+  },
   // { path: '/planner', component: TravelPlanForm },
   { path: '/planner', component: HotelRecommendation },
 ];
