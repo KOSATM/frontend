@@ -16,7 +16,7 @@ const routes = [
 
   // { path: '/planner', component: TravelPlanForm },
   { path: '/planner', component: HotelRecommendation },
-  ...support
+  ...support,
   ...planner
 ];
 
