@@ -126,13 +126,14 @@
 
     <!-- Confirm Button -->
     <div class="text-center">
-      <button
+      <RouterLink
         class="btn btn-primary btn-lg px-5"
         :disabled="!selectedHotel"
         @click="confirmSelection"
+        to="/planner/summary"
       >
         Confirm Hotel Selection
-      </button>
+      </RouterLink>
     </div>
   </div>
 </template>

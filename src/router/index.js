@@ -5,6 +5,8 @@ import PlannerMain from '@/views/planner/PlannerMain.vue';
 import LandingPage from '@/views/LandingPage.vue';
 import TravelPlanForm from '@/views/planner/TravelPlanForm.vue';
 import HotelRecommendation from '@/views/planner/HotelRecommendation.vue';
+import TripSummary from '@/views/planner/TripSummary.vue';
+import ItineraryFull from '@/views/planner/ItineraryFull.vue';
 // import PlannerEdit from '@/views/planner/PlannerEdit.vue';
 
 const routes = [
@@ -15,6 +17,8 @@ const routes = [
 
   { path: '/planner', component: TravelPlanForm },
   { path: '/planner/hotel', component: HotelRecommendation },
+  { path: '/planner/summary', component: TripSummary },
+  { path: '/planner/itinerary', component: ItineraryFull },
   // { path: '/planner/edit', component: PlannerEdit },
 ];
 
