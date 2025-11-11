@@ -73,9 +73,9 @@ const history = [
 </script>
 
 <style scoped>
-.history-card { background: linear-gradient(180deg,#fff9ff,#f7eefc); border-radius:12px; }
+.history-card { background: #FFD9A6; border-radius:12px; }
 .history-item { border-radius:12px; background:#fff; border:1px solid #f3e8ff; }
 .thumb { width:72px; height:72px; border-radius:10px; object-fit:cover; }
 .rec-thumb { width:64px; height:64px; border-radius:8px; object-fit:cover; border:2px solid rgba(167,139,255,0.15); }
-.status-badge { background: linear-gradient(135deg,#a78bff,#ff9ad1); color:#fff; padding:6px 10px; border-radius:999px; font-size:12px; }
+.status-badge { background: #1b3b6f; color:#fff; padding:6px 10px; border-radius:999px; font-size:12px; }
 </style>
