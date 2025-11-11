@@ -103,12 +103,11 @@
   }
 } /* ✅ ← 이 중괄호가 누락되어 있었음 */
 
-
-
-
 // ===============================
 // 🧱 Container
 // ===============================
+
+/* 1) 기본 컨테이너: 일반 페이지용 */
 .container-fms {
   max-width: 600px;
   width: 100%;
@@ -118,11 +117,43 @@
   padding: 2rem 1.5rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
+
+/* 2) planner 전용: 폭을 넓게 */
+.container-wide {
+  max-width: 1300px;
+  width: 100%;
+  margin: 6rem auto 1.5rem; /* 위아래 살짝만 */
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+/* 3) planner 전용: 좌/우 2단 분할 */
+.container-split {
+  display: grid;
+  grid-template-columns: 360px 1fr; /* 왼쪽 폭 여기서 조절 */
+  gap: 1.5rem;
+  /* ⭐ 헤더, 푸터 사이를 꽉 채우도록 */
+  min-height: calc(100vh - 6rem - 2rem); /* 헤더 6rem, 아래 여백 2rem 정도 가정 */
+  align-items: stretch; /* 세로 늘어나게 */
+}
+
+/* 반응형: 좁아지면 한 줄로 */
+@media (max-width: 992px) {
+  .container-wide {
+    margin-top: 5rem;
+  }
+  .container-split {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+}
+
 // ===============================
 // 🦶 Footer
 // ===============================
 .footer-fms {
-  background-color: #1B3B6F; /* 진한 남색 */
+  background-color: #1b3b6f; /* 진한 남색 */
   color: #fff;
   padding: 2.5rem 1rem;
   text-align: center;
