@@ -5,6 +5,7 @@ import PlannerMain from '@/views/planner/PlannerMain.vue';
 import LandingPage from '@/views/LandingPage.vue';
 import TravelPlanForm from '@/views/planner/TravelPlanForm.vue';
 import HotelRecommendation from '@/views/planner/HotelRecommendation.vue';
+import support from './supporter'
 
 const routes = [
   { path: '/', component: LandingPage },
@@ -14,6 +15,7 @@ const routes = [
 
   // { path: '/planner', component: TravelPlanForm },
   { path: '/planner', component: HotelRecommendation },
+  ...support
 ];
 
 const router = createRouter({
