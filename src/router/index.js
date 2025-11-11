@@ -15,7 +15,7 @@ const routes = [
   { path: '/history', component: HistoryMain }, // ✅ 여기서 연결
 
   // { path: '/planner', component: TravelPlanForm },
-  { path: '/planner', component: HotelRecommendation },
+  // { path: '/planner', component: HotelRecommendation },
   ...support,
   ...planner
 ];
