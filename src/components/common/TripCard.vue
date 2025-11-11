@@ -37,13 +37,12 @@ const props = defineProps({
 })
 
 const goToReview = () => {
-  const tripTitle = props.title || 'UntitledTrip'  // ✅ 기본값 설정
   router.push({
     name: 'CreateTravelReview',
-    params: { tripTitle }
+    params: { tripId: props.tripId },
+    query: { title: props.title },
   })
 }
-
 </script>
 
 <style scoped>
