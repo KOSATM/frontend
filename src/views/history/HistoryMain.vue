@@ -20,7 +20,8 @@
     <div class="trip-list">
       <TripCard
       v-for="trip in trips"
-      :key="trip.id"
+        :key="trip.id"
+        :tripId="trip.id" 
         :title="trip.title"
         :location="trip.location"
         :date="trip.date"

@@ -1,5 +1,10 @@
 <template>
   <div class="hotel-recommendation container py-4">
+    <PageHeader
+    title="Planner"
+    subtitle="Create and manage your Seoul travel itinerary"
+    icon="bi-map"
+  />
     <!-- Budget Display -->
     <div class="budget-section mb-4">
       <h2 class="text-secondary mb-3">Recommended Hotels for Your Stay</h2>
@@ -10,6 +15,20 @@
         <span>Budget per night</span>
         <span class="fs-5 fw-bold text-primary">₩{{ (budget / travelDays).toLocaleString() }}</span>
       </div>
+    </div>
+
+    <!-- Accommodation Budget Propertion -->
+    <div class="mb-3">
+      <label for="range4" class="form-label">Accommodation Budget Propertion</label>
+      <input
+        type="range"
+        id="range4"
+        class="form-range"
+        min="0"
+        max="100"
+        v-model="rangeValue"
+      />
+      <output :for="'range4'" aria-hidden="true">{{ rangeValue }}%</output>
     </div>
 
     <!-- Filter Section -->
@@ -121,22 +140,31 @@
 
     <!-- Confirm Button -->
     <div class="text-center">
-      <button
+      <RouterLink
         class="btn btn-primary btn-lg px-5"
         :disabled="!selectedHotel"
         @click="confirmSelection"
+        to="/planner/summary"
       >
         Confirm Hotel Selection
-      </button>
+      </RouterLink>
     </div>
   </div>
 </template>
 
 <script>
+import PageHeader from '@/components/common/PageHeader.vue';
+import hotelIllust from '@/assets/img/hotel-illust.png'
+import { ref } from 'vue'
+
 export default {
   name: 'HotelRecommendation',
+  components: {
+    PageHeader
+  },
   data() {
     return {
+      rangeValue: 50,
       budget: 300000, // This should come from TravelPlanForm
       travelDays: 3,  // This should come from TravelPlanForm
       filters: {
@@ -152,7 +180,7 @@ export default {
           price: 315000,
           rating: 4.8,
           reviews: 234,
-          image: '/images/hotels/four-seasons.jpg',
+          image: hotelIllust,
           type: 'hotel',
           freeWifi: true,
           breakfast: true,
@@ -166,22 +194,133 @@ export default {
           price: 285000,
           rating: 4.7,
           reviews: 189,
-          image: '/images/hotels/shilla.jpg',
+          image: hotelIllust,
           type: 'hotel',
           freeWifi: true,
           breakfast: true,
           pool: true,
           spa: true
+        },
+        {
+          id: 3,
+          name: 'Lotte World Hotel',
+          location: 'Songpa-gu, Jamsil',
+          price: 320000,
+          rating: 4.6,
+          reviews: 156,
+          image: hotelIllust,
+          type: 'hotel',
+          freeWifi: true,
+          breakfast: true,
+          pool: true,
+          spa: false
+        },
+        {
+          id: 4,
+          name: 'Seoul Plaza Hotel',
+          location: 'Jung-gu, City Hall',
+          price: 195000,
+          rating: 4.3,
+          reviews: 98,
+          image: hotelIllust,
+          type: 'hotel',
+          freeWifi: true,
+          breakfast: false,
+          pool: false,
+          spa: false
+        },
+        {
+          id: 5,
+          name: 'Korea House Guesthouse',
+          location: 'Jongno-gu, Bukchon',
+          price: 95000,
+          rating: 4.5,
+          reviews: 287,
+          image: hotelIllust,
+          type: 'guesthouse',
+          freeWifi: true,
+          breakfast: true,
+          pool: false,
+          spa: false
+        },
+        {
+          id: 6,
+          name: 'Myeongdong Tourist Hotel',
+          location: 'Jung-gu, Myeongdong',
+          price: 165000,
+          rating: 4.2,
+          reviews: 142,
+          image: hotelIllust,
+          type: 'hotel',
+          freeWifi: true,
+          breakfast: false,
+          pool: false,
+          spa: true
+        },
+        {
+          id: 7,
+          name: 'Gangnam Station Residence',
+          location: 'Gangnam-gu, Apgujeong',
+          price: 250000,
+          rating: 4.4,
+          reviews: 178,
+          image: hotelIllust,
+          type: 'guesthouse',
+          freeWifi: true,
+          breakfast: true,
+          pool: true,
+          spa: false
+        },
+        {
+          id: 8,
+          name: 'Insadong Hanok Stay',
+          location: 'Jongno-gu, Insadong',
+          price: 135000,
+          rating: 4.7,
+          reviews: 223,
+          image: hotelIllust,
+          type: 'hanok',
+          freeWifi: true,
+          breakfast: true,
+          pool: false,
+          spa: true
+        },
+        {
+          id: 9,
+          name: 'Gangbuk Boutique Hotel',
+          location: 'Seongbuk-gu, Gireum',
+          price: 175000,
+          rating: 4.3,
+          reviews: 89,
+          image: hotelIllust,
+          type: 'hotel',
+          freeWifi: true,
+          breakfast: true,
+          pool: false,
+          spa: true
+        },
+        {
+          id: 10,
+          name: 'Itaewon Global House',
+          location: 'Yongsan-gu, Itaewon',
+          price: 120000,
+          rating: 4.6,
+          reviews: 211,
+          image: hotelIllust,
+          type: 'other',
+          freeWifi: true,
+          breakfast: false,
+          pool: false,
+          spa: false
         }
-        // Add more hotels as needed
       ]
     }
   },
   computed: {
     filteredHotels() {
       return this.hotels.filter(hotel => {
-        if (this.filters.accommodationType !== 'all' &&
-            hotel.type !== this.filters.accommodationType) {
+        if ((this.filters.accommodationType !== 'all' &&
+            hotel.type !== this.filters.accommodationType) || hotel.price > this.budget*this.rangeValue/100) {
           return false
         }
         // Add more filters as needed
@@ -233,5 +372,16 @@ export default {
 :root {
   --bs-primary: #ff8c00;
   --bs-secondary: #1B3B6F;
+}
+
+// slider
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.form-range {
+  width: 100%;
+  margin-bottom: 8px;
 }
 </style>
