@@ -1,41 +1,26 @@
 <template>
   <div class="planner-create">
     <!-- 플래너 탭 -->
-    <div class="planner-tab px-4 py-3 bg-light">
-      <div class="d-flex align-items-center gap-2">
-        <i class="bi bi-map text-primary"></i>
-        <span class="fw-semibold text-primary">Planner</span>
-      </div>
-    </div>
+    <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
 
     <!-- 메인 컨텐츠 -->
     <div class="content-wrapper px-4 py-4">
 
 
       <!-- Create Budget-Based Itinerary 버튼 -->
-      <button @click="createPlan" class="btn btn-primary w-100 mb-4 py-3 d-flex align-items-center justify-content-center gap-2">
-        <i class="bi bi-plus-lg"></i>
+      <BaseButton to="/planner/travelplan" variant="primary" class="w-100 mb-4 py-3 d-flex align-items-center justify-content-center gap-2"><i class="bi bi-plus-lg"></i>
         <span class="fw-semibold">Create Budget-Based Itinerary</span>
-      </button>
+      </BaseButton>
 
       <!-- AI-Recommended Places -->
       <div class="recommended-section mb-4">
         <h5 class="fw-bold mb-3">AI-Recommended Places</h5>
-        
+
         <!-- 카드 그리드 -->
         <div class="row g-3 mb-3">
           <!-- Accommodation -->
-          <div class="col-6">
-            <div class="recommendation-card" @click="navigateTo('accommodation')">
-              <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500" alt="Accommodation" />
-              <div class="card-overlay">
-                <div class="card-icon bg-white rounded-circle p-2">
-                  <i class="bi bi-building text-primary"></i>
-                </div>
-                <span class="card-label text-white fw-semibold">Accommodation</span>
-              </div>
-            </div>
-          </div>
+          <RecommendationCard imageSrc="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500"
+            alt="Accommodation" cardLabel="Accommodation" />
 
           <!-- Restaurants -->
           <div class="col-6">
@@ -105,31 +90,19 @@
       </div>
 
       <!-- Travel Tip -->
-      <div class="travel-tip bg-white p-3 rounded-3 shadow-sm">
-        <div class="d-flex gap-2 mb-2">
-          <i class="bi bi-lightbulb text-warning fs-5"></i>
-          <h6 class="fw-bold mb-0">Travel Tip</h6>
-        </div>
-        <p class="text-muted small mb-0">
-          Enter your budget and AI will create a customized itinerary considering accommodation, transportation, and meals.
-        </p>
-      </div>
+      <TipBox name="Travel Tip" description="Enter your budget and AI will create a customized itinerary considering accommodation, transportation, and
+            meals." />
     </div>
   </div>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import BaseButton from "@/components/common/BaseButton.vue";
+import PageHeader from "@/components/common/PageHeader.vue";
+import TipBox from "@/components/common/TipBox.vue";
+import RecommendationCard from "@/components/planner/RecommendationCard.vue";
+import { RouterLink } from "vue-router";
 
-const router = useRouter()
-
-const navigateTo = (category) => {
-  console.log('Navigate to:', category)
-}
-
-const createPlan = () => {
-  router.push(`/planner/travelplan`)
-}
 </script>
 
 <style scoped lang="scss">
@@ -199,10 +172,5 @@ const createPlan = () => {
   .card-label {
     font-size: 14px;
   }
-}
-
-/* Travel Tip */
-.travel-tip {
-  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 </style>

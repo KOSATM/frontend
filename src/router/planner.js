@@ -5,6 +5,7 @@ import TripSummary from "@/views/planner/TripSummary.vue";
 import PlannerEdit from '@/views/planner/PlannerEdit.vue'
 import PlannerChat from '@/views/planner/PlannerChat.vue'
 import PlannerList from '@/views/planner/PlannerList.vue'
+import PlannerMain from "@/views/planner/PlannerMain.vue";
 
 const planner = [
   {
@@ -39,6 +40,11 @@ const planner = [
     path: '/planner/summary',
     name: 'summary',
     component: TripSummary,
+  },
+  {
+    path: '/plannermain',
+    name: 'plannermain',
+    component: PlannerMain,
   }
 
 ];
