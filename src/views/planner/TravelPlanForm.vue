@@ -88,9 +88,9 @@
         ></textarea>
       </section>
 
-      <button class="btn btn-primary w-100 py-2" @click="nextStep">
+      <RouterLink class="btn btn-primary w-100 py-2" @click="nextStep" to="/planner/hotel">
         Next: Choose Your Hotel
-      </button>
+      </RouterLink>
     </div>
 
     <!-- Hotel Recommendation Step -->
