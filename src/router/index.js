@@ -5,15 +5,14 @@ import PlannerMain from '@/views/planner/PlannerMain.vue';
 import LandingPage from '@/views/LandingPage.vue';
 import TravelPlanForm from '@/views/planner/TravelPlanForm.vue';
 import HotelRecommendation from '@/views/planner/HotelRecommendation.vue';
+import planner from './planner';
 
 const routes = [
   { path: '/', component: LandingPage },
   // { path: '/planner', component: PlannerMain },
   { path: '/supporter', component: SupporterMain },
   { path: '/history', component: HistoryMain }, // ✅ 여기서 연결
-
-  // { path: '/planner', component: TravelPlanForm },
-  { path: '/planner', component: HotelRecommendation },
+  ...planner
 ];
 
 const router = createRouter({
