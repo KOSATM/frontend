@@ -88,9 +88,10 @@
         ></textarea>
       </section>
 
-      <RouterLink class="btn btn-primary w-100 py-2" @click="nextStep" to="/planner/edit">
+      <!-- <RouterLink class="btn btn-primary w-100 py-2" @click="nextStep" to="/planner/edit">
         Next: Choose Your Hotel
-      </RouterLink>
+      </RouterLink> -->
+      <BaseButton to="/planner/edit" variant="primary" class="w-100 py-2">Next: Choose Your Hotel</BaseButton>
     </div>
 
     <!-- Hotel Recommendation Step -->
@@ -108,6 +109,7 @@
 import { ref } from 'vue'
 import HotelRecommendation from './HotelRecommendation.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
+import BaseButton from '@/components/common/BaseButton.vue'
 
 const currentStep = ref(1)
 const selectedHotel = ref(null)

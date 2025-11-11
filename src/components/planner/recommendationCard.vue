@@ -15,12 +15,10 @@
 
 <!-- 컴포넌트의 초기화 또는 이벤트 처리 -->
 <script setup>
-// https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500" alt="Accommodation
 const props = defineProps({
   imageSrc: String,
   alt: String,
   cardLabel: String
-  // description: String
 })
 </script>
 

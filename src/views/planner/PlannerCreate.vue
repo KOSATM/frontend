@@ -1,17 +1,16 @@
 <template>
   <div class="planner-create">
     <!-- 플래너 탭 -->
-      <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
+    <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
 
     <!-- 메인 컨텐츠 -->
     <div class="content-wrapper px-4 py-4">
 
 
       <!-- Create Budget-Based Itinerary 버튼 -->
-      <RouterLink class="btn btn-primary w-100 mb-4 py-3 d-flex align-items-center justify-content-center gap-2" to="/planner/travelplan">
-        <i class="bi bi-plus-lg"></i>
+      <BaseButton to="/planner/travelplan" variant="primary" class="w-100 mb-4 py-3 d-flex align-items-center justify-content-center gap-2"><i class="bi bi-plus-lg"></i>
         <span class="fw-semibold">Create Budget-Based Itinerary</span>
-      </RouterLink>
+      </BaseButton>
 
       <!-- AI-Recommended Places -->
       <div class="recommended-section mb-4">
@@ -20,7 +19,8 @@
         <!-- 카드 그리드 -->
         <div class="row g-3 mb-3">
           <!-- Accommodation -->
-          <RecommendationCard imageSrc="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500" alt="Accommodation" cardLabel="Accommodation"/>
+          <RecommendationCard imageSrc="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500"
+            alt="Accommodation" cardLabel="Accommodation" />
 
           <!-- Restaurants -->
           <div class="col-6">
@@ -91,12 +91,13 @@
 
       <!-- Travel Tip -->
       <TipBox name="Travel Tip" description="Enter your budget and AI will create a customized itinerary considering accommodation, transportation, and
-            meals."/>
+            meals." />
     </div>
   </div>
 </template>
 
 <script setup>
+import BaseButton from "@/components/common/BaseButton.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
 import TipBox from "@/components/common/TipBox.vue";
 import RecommendationCard from "@/components/planner/RecommendationCard.vue";
@@ -172,6 +173,4 @@ import { RouterLink } from "vue-router";
     font-size: 14px;
   }
 }
-
-
 </style>
