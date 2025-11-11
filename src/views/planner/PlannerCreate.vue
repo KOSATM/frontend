@@ -1,27 +1,22 @@
 <template>
   <div class="planner-create">
     <!-- 플래너 탭 -->
-    <div class="planner-tab px-4 py-3 bg-light">
-      <div class="d-flex align-items-center gap-2">
-        <i class="bi bi-map text-primary"></i>
-        <span class="fw-semibold text-primary">Planner</span>
-      </div>
-    </div>
+      <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
 
     <!-- 메인 컨텐츠 -->
     <div class="content-wrapper px-4 py-4">
 
 
       <!-- Create Budget-Based Itinerary 버튼 -->
-      <button @click="createPlan" class="btn btn-primary w-100 mb-4 py-3 d-flex align-items-center justify-content-center gap-2">
+      <RouterLink class="btn btn-primary w-100 mb-4 py-3 d-flex align-items-center justify-content-center gap-2" to="/planner/travelplan">
         <i class="bi bi-plus-lg"></i>
         <span class="fw-semibold">Create Budget-Based Itinerary</span>
-      </button>
+      </RouterLink>
 
       <!-- AI-Recommended Places -->
       <div class="recommended-section mb-4">
         <h5 class="fw-bold mb-3">AI-Recommended Places</h5>
-        
+
         <!-- 카드 그리드 -->
         <div class="row g-3 mb-3">
           <!-- Accommodation -->
@@ -111,7 +106,8 @@
           <h6 class="fw-bold mb-0">Travel Tip</h6>
         </div>
         <p class="text-muted small mb-0">
-          Enter your budget and AI will create a customized itinerary considering accommodation, transportation, and meals.
+          Enter your budget and AI will create a customized itinerary considering accommodation, transportation, and
+          meals.
         </p>
       </div>
     </div>
@@ -119,17 +115,9 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import PageHeader from "@/components/common/PageHeader.vue";
+import { RouterLink } from "vue-router";
 
-const router = useRouter()
-
-const navigateTo = (category) => {
-  console.log('Navigate to:', category)
-}
-
-const createPlan = () => {
-  router.push(`/planner/travelplan`)
-}
 </script>
 
 <style scoped lang="scss">
