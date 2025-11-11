@@ -20,7 +20,7 @@
         <!-- 카드 그리드 -->
         <div class="row g-3 mb-3">
           <!-- Accommodation -->
-          <RecommendationCard/>
+          <RecommendationCard imageSrc="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500" alt="Accommodation" cardLabel="Accommodation"/>
 
           <!-- Restaurants -->
           <div class="col-6">
@@ -90,23 +90,16 @@
       </div>
 
       <!-- Travel Tip -->
-      <div class="travel-tip bg-white p-3 rounded-3 shadow-sm">
-        <div class="d-flex gap-2 mb-2">
-          <i class="bi bi-lightbulb text-warning fs-5"></i>
-          <h6 class="fw-bold mb-0">Travel Tip</h6>
-        </div>
-        <p class="text-muted small mb-0">
-          Enter your budget and AI will create a customized itinerary considering accommodation, transportation, and
-          meals.
-        </p>
-      </div>
+      <TipBox name="Travel Tip" description="Enter your budget and AI will create a customized itinerary considering accommodation, transportation, and
+            meals."/>
     </div>
   </div>
 </template>
 
 <script setup>
 import PageHeader from "@/components/common/PageHeader.vue";
-import RecommendationCard from "@/components/planner/recommendationCard.vue";
+import TipBox from "@/components/common/TipBox.vue";
+import RecommendationCard from "@/components/planner/RecommendationCard.vue";
 import { RouterLink } from "vue-router";
 
 </script>
@@ -180,8 +173,5 @@ import { RouterLink } from "vue-router";
   }
 }
 
-/* Travel Tip */
-.travel-tip {
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
+
 </style>

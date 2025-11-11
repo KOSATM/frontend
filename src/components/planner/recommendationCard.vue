@@ -2,12 +2,12 @@
 <template>
     <div class="col-6">
         <div class="recommendation-card" @click="navigateTo('accommodation')">
-            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500" alt="Accommodation" />
+            <img :src=imageSrc :alt=alt />
             <div class="card-overlay">
                 <div class="card-icon bg-white rounded-circle p-2">
                     <i class="bi bi-building text-primary"></i>
                 </div>
-                <span class="card-label text-white fw-semibold">Accommodation</span>
+                <span class="card-label text-white fw-semibold">{{ cardLabel }}</span>
             </div>
         </div>
     </div>
@@ -15,7 +15,13 @@
 
 <!-- 컴포넌트의 초기화 또는 이벤트 처리 -->
 <script setup>
-
+// https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500" alt="Accommodation
+const props = defineProps({
+  imageSrc: String,
+  alt: String,
+  cardLabel: String
+  // description: String
+})
 </script>
 
 <!-- 컴포넌트 스타일 정의 -->
