@@ -1,5 +1,5 @@
 <template>
-  <div class="trip-card">
+  <div class="trip-card" @click="goToReview">
     <!-- 썸네일 -->
     <img :src="image" alt="trip image" />
 
@@ -22,15 +22,30 @@
 </template>
 
 <script setup>
-defineProps({
-  title: String,
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const props = defineProps({
+  tripId: [String, Number],           // ← 가능하면 id를 같이 넘기자
+  title: { type: String, required: true },
   location: String,
   date: String,
   price: String,
   image: String,
-  status: {
-    type: String,
-    default: "Done",
-  },
-});
+  status: { type: String, default: 'Done' }
+})
+
+const goToReview = () => {
+  const tripTitle = props.title || 'UntitledTrip'  // ✅ 기본값 설정
+  router.push({
+    name: 'CreateTravelReview',
+    params: { tripTitle }
+  })
+}
+
 </script>
+
+<style scoped>
+
+</style>
