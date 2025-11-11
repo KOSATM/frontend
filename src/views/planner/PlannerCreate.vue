@@ -13,7 +13,7 @@
 
 
       <!-- Create Budget-Based Itinerary 버튼 -->
-      <button class="btn btn-primary w-100 mb-4 py-3 d-flex align-items-center justify-content-center gap-2">
+      <button @click="createPlan" class="btn btn-primary w-100 mb-4 py-3 d-flex align-items-center justify-content-center gap-2">
         <i class="bi bi-plus-lg"></i>
         <span class="fw-semibold">Create Budget-Based Itinerary</span>
       </button>
@@ -118,16 +118,17 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'PlannerCreate',
-  methods: {
-    navigateTo(category) {
-      console.log('Navigate to:', category)
-      // 추후 라우팅 로직 추가 가능
-      // this.$router.push(`/planner/${category}`)
-    }
-  }
+<script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const navigateTo = (category) => {
+  console.log('Navigate to:', category)
+}
+
+const createPlan = () => {
+  router.push(`/planner/travelplan`)
 }
 </script>
 
