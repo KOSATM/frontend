@@ -11,18 +11,20 @@
     </div>
 
     <!-- Features -->
-    <div class="d-flex flex-column align-items-center gap-3 mb-5">
+    <div class="features-container mb-5">
       <div
         v-for="(feature, index) in features"
         :key="index"
-        class="feature-box d-flex align-items-center p-3 rounded shadow-sm"
+        class="feature-card bg-white p-4 rounded-3 shadow-sm border"
       >
-        <div class="icon-box me-3">
-          <i :class="feature.icon"></i>
-        </div>
-        <div class="text-start">
-          <div class="fw-semibold">{{ feature.title }}</div>
-          <div class="small text-muted">{{ feature.desc }}</div>
+        <div class="d-flex align-items-center gap-3">
+          <div class="icon-container bg-secondary bg-opacity-10 rounded-circle p-3">
+            <i :class="feature.icon" class="text-secondary"></i>
+          </div>
+          <div class="text-start flex-grow-1">
+            <h6 class="fw-bold mb-1 text-secondary">{{ feature.title }}</h6>
+            <p class="small text-muted mb-0">{{ feature.desc }}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -62,7 +64,35 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.features-container {
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.feature-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+.icon-container {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .btn {
-  margin-right: 10px;
+  margin: 0 auto;
+  max-width: 400px;
 }
 </style>

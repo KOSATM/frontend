@@ -1,20 +1,18 @@
 <template>
-  <nav ref="navbar" class="navbar navbar-fms fixed-top py-2" >
-    <div class="container-fluid d-flex justify-content-between align-items-center px-2">
-      <!-- 로고 -->
-       <div class="navbar-brand d-flex align-items-center">
-        <router-link to="/" class="logo-area">
+  <nav ref="navbar" class="navbar navbar-fms fixed-top" >
+    <div class="container-fluid d-flex justify-content-between align-items-center px-3">
+      <!-- 로고 (좌측) -->
+      <router-link to="/" class="navbar-brand d-flex align-items-center text-decoration-none">
         <img
           src="@/assets/img/logo-bg-rm.png"
           alt="Find My Seoul"
           class="logo-img"
         />
       </router-link>
-      </div>
 
-      <!-- 햄버거 버튼 -->
+      <!-- 햄버거 버튼 (우측) -->
       <button
-        class="btn text-white fs-3 border-0 me-2"
+        class="btn text-white fs-4 border-0 p-2"
         type="button"
         data-bs-toggle="offcanvas"
         data-bs-target="#sidebar"
@@ -41,6 +39,37 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
 </script>
 
 <style scoped>
+.navbar-fms {
+  height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.logo-img {
+  height: 40px;
+  object-fit: contain;
+}
+
+.btn {
+  background: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  width: 44px;
+}
+
+.btn:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
 .nav-item {
   background-color: #ff8c00; /* 기본: 진한 오렌지 */
   color: #fff !important;    /* 글씨 흰색 */
