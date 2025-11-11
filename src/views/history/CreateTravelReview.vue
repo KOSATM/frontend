@@ -51,42 +51,53 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import PageHeader from '@/components/common/PageHeader.vue';
+import { ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useReviewStore } from '@/stores/reviewStore'
+import PageHeader from '@/components/common/PageHeader.vue'
 
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
+const reviewStore = useReviewStore()
 
-// props로 trip 정보 받기
-// const tripTitle = route.params.tripTitle || "My Trip";
 const tripId = route.params.tripId
-const tripTitle = route.query.title || 'Untitled Trip'
-const step = ref(1);
+const tripTitle = route.query.title || 'My Trip'
 
-const fileInput = ref(null);
-const uploadedImages = ref([]);
+// store에 여행 정보 저장
+reviewStore.setTripInfo(tripId, tripTitle)
 
-// 파일 업로드 트리거
-const triggerFileInput = () => fileInput.value?.click();
+const fileInput = ref(null)
+const uploadedImages = ref([])
 
-// 파일 업로드 핸들러
-const handleUpload = (event) => {
-  const files = event.target.files;
+const triggerFileInput = () => fileInput.value?.click()
+
+const handleUpload = (e) => {
+  const files = e.target.files
+  let id = 1
   for (const file of files) {
-    const reader = new FileReader();
-    reader.onload = (e) => uploadedImages.value.push(e.target.result);
-    reader.readAsDataURL(file);
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      uploadedImages.value.push({
+        id: id++,
+        src: ev.target.result
+      })
+    }
+    reader.readAsDataURL(file)
   }
-};
+}
 
-// 다음 스텝 이동
+// Step 2로 이동
 const nextStep = () => {
-  router.push({ name: "NextReviewStep", params: { tripTitle } });
-};
+  reviewStore.setPhotos(uploadedImages.value)
+  reviewStore.nextStep()
+  router.push({
+    name: 'ReviewPhotoOrder',
+    params: { tripId },
+    query: { title: tripTitle }
+  })
+}
 
-// 뒤로가기
-const goBack = () => router.back();
+const goBack = () => router.back()
 </script>
 
 <style scoped>
