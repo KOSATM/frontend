@@ -174,7 +174,7 @@
 
     <!-- CTA -->
     <div class="p-4 pt-0 border-top bg-white">
-      <button class="btn btn-success w-100 rounded-3">Next: Select Hotel</button>
+      <RouterLink class="btn btn-success w-100 rounded-3" to="/planner/hotel">Next: Select Hotel</RouterLink>
     </div>
   </section>
 </template>
