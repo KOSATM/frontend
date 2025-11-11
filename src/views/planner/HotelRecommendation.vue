@@ -319,8 +319,8 @@ export default {
   computed: {
     filteredHotels() {
       return this.hotels.filter(hotel => {
-        if (this.filters.accommodationType !== 'all' &&
-            hotel.type !== this.filters.accommodationType) {
+        if ((this.filters.accommodationType !== 'all' &&
+            hotel.type !== this.filters.accommodationType) || hotel.price > this.budget*this.rangeValue/100) {
           return false
         }
         // Add more filters as needed
