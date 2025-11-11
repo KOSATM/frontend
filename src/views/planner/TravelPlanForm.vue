@@ -107,6 +107,7 @@
 <script setup>
 import { ref } from 'vue'
 import HotelRecommendation from './HotelRecommendation.vue'
+import PageHeader from '@/components/common/PageHeader.vue'
 
 const currentStep = ref(1)
 const selectedHotel = ref(null)
