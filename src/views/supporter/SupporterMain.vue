@@ -106,7 +106,7 @@
         <div class="d-grid">
           <input id="imageInput" type="file" accept="image/*" class="d-none" @change="onFileChange" />
           <button class="btn btn-primary" @click.prevent="goToImageAI">
-            <i class="bi bi-camera me-2"></i> Tap to Upload & Discover
+            <i class="bi bi-camera me-2"></i> Add Photo
           </button>
         </div>
 
