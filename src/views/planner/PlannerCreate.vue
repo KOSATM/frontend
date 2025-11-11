@@ -20,17 +20,7 @@
         <!-- 카드 그리드 -->
         <div class="row g-3 mb-3">
           <!-- Accommodation -->
-          <div class="col-6">
-            <div class="recommendation-card" @click="navigateTo('accommodation')">
-              <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500" alt="Accommodation" />
-              <div class="card-overlay">
-                <div class="card-icon bg-white rounded-circle p-2">
-                  <i class="bi bi-building text-primary"></i>
-                </div>
-                <span class="card-label text-white fw-semibold">Accommodation</span>
-              </div>
-            </div>
-          </div>
+          <RecommendationCard/>
 
           <!-- Restaurants -->
           <div class="col-6">
@@ -116,6 +106,7 @@
 
 <script setup>
 import PageHeader from "@/components/common/PageHeader.vue";
+import RecommendationCard from "@/components/planner/recommendationCard.vue";
 import { RouterLink } from "vue-router";
 
 </script>
