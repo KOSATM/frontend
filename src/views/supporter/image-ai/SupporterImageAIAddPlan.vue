@@ -84,7 +84,7 @@ const confirm = () => {
 </script>
 
 <style scoped>
-.history-card { background: linear-gradient(180deg,#fff9ff,#f7eefc); border-radius:12px; }
+.history-card { background: #FFD9A6; border-radius:12px; }
 .selected-place { border-radius:10px; background:#fff; border:1px solid #f3e8ff; }
 .thumb { width:72px; height:72px; object-fit:cover; border-radius:8px; }
 .option { background:#fff; border:1px solid #f3e8ff; cursor:pointer; }

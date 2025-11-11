@@ -107,7 +107,7 @@ const goBack = () => {
 
 .image-ai-card { background: #fff; }
 .upload-area { display:block; cursor: pointer; }
-.upload-gradient { height:160px; border-radius:12px; background: linear-gradient(90deg,#f7d6ff,#ffd6e8); box-shadow: inset 0 1px 0 rgba(255,255,255,0.4); overflow:hidden; display:flex; align-items:center; justify-content:center; }
+.upload-gradient { height:160px; border-radius:12px; background: #3A5797; box-shadow: inset 0 1px 0 rgba(255,255,255,0.4); overflow:hidden; display:flex; align-items:center; justify-content:center; }
 .upload-gradient .bi-camera { opacity: 0.85; font-size: 34px; color: rgba(0,0,0,0.45); }
 .preview-img { width:100%; height:100%; object-fit:cover; border-radius:10px; display:block; }
 

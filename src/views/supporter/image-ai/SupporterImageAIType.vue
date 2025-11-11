@@ -65,7 +65,7 @@ const select = (type) => {
 
 <style scoped>
 .preview-wrap {
-  background: linear-gradient(180deg,#fff7ff,#f7eefc);
+  background: #F5F7FA;
   padding: 14px;
   border-radius: 14px;
 }

@@ -7,16 +7,7 @@
     />
 
     <!-- ✅ CHECKLIST SECTION -->
-    <section class="mb-4">
-      <div class="d-flex justify-content-between align-items-start mb-3">
-        <div>
-          <h4 class="mb-1">Today's Travel Assistant</h4>
-          <small class="text-muted">{{ todayString }}</small>
-        </div>
-        <div class="text-end">
-          <small class="text-muted">{{ completedCount }}/{{ checklist.length }}</small>
-        </div>
-      </div>
+    <section class="mb-4 mt-5">
 
       <div class="card shadow-sm border-0 p-3 checklist-card">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -115,7 +106,7 @@
         <div class="d-grid">
           <input id="imageInput" type="file" accept="image/*" class="d-none" @change="onFileChange" />
           <button class="btn btn-primary" @click.prevent="goToImageAI">
-            <i class="bi bi-camera me-2"></i> Tap to Upload & Discover
+            <i class="bi bi-camera me-2"></i> Add Photo
           </button>
         </div>
 
@@ -253,16 +244,16 @@ const todayString = new Date().toLocaleDateString(undefined, {
   margin: 0 auto;
 }
 
-/* 카드 배경: 연노란(포스트잇) 느낌 유지 */
+/* 카드 배경: 그라데이션 제거 — 연한 색(#fff9d6)으로 통일 */
 .checklist-card {
-  background: linear-gradient(90deg, #fff9d6, #fff2a8);
+  background: #fff9d6;
   border-radius: 12px;
   padding: 1rem;
   position: relative;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
-/* subtle ruled lines on card (optional) */
+/* ruled lines 제거 (투명으로 처리) */
 .checklist-card::before{
   content: "";
   position: absolute;
@@ -270,19 +261,14 @@ const todayString = new Date().toLocaleDateString(undefined, {
   top: 56px;
   width: 100%;
   height: calc(100% - 56px);
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent,
-    transparent 28px,
-    rgba(0,0,0,0.03) 29px
-  );
+  background: none;
   pointer-events: none;
   border-radius: 12px;
 }
 
 /* === Checklist items: EACH ITEM BACKGROUND IS WHITE === */
 .checklist-item {
-  background: #ffffff;               /* <--- 핵심: 항목 배경 흰색 */
+  background: #ffffff;
   border: 1px solid #ececec;
   cursor: pointer;
   transition: opacity 0.28s ease, transform 0.12s ease;
@@ -292,12 +278,12 @@ const todayString = new Date().toLocaleDateString(undefined, {
   padding: 12px;
 }
 
-/* checked state: fade-out via opacity, but keep white background */
+/* checked state: fade-out 유지, 배경은 단색 유지 */
 .checklist-item.checked-item {
-  opacity: 0.55;              /* 페이드 아웃 효과 */
+  opacity: 0.55;
   transform: scale(0.995);
-  border-color: #d1fae5;      /* very subtle green border */
-  background: rgba(255,255,255,0.95); /* still appears white */
+  border-color: #d1fae5;
+  background: rgba(255,255,255,0.95);
 }
 
 /* item title / strike-through center (visual) */
@@ -318,11 +304,11 @@ const todayString = new Date().toLocaleDateString(undefined, {
   top: 50%;
   width: 100%;
   height: 1.6px;
-  background: rgba(0, 0, 0, 0.6); /* green line to match check */
+  background: rgba(0, 0, 0, 0.6);
   transform: translateY(-50%);
 }
 
-/* circle check (green when checked) */
+/* circle check (단색: 연한 색(#34d399) 사용) */
 .circle-check {
   width: 24px;
   height: 24px;
@@ -335,8 +321,8 @@ const todayString = new Date().toLocaleDateString(undefined, {
   transition: all 0.18s ease;
 }
 .circle-check.checked {
-  background: linear-gradient(90deg, #34d399, #059669);
-  border-color: #059669;
+  background: #34d399; /* lighter of (#34d399,#059669) */
+  border-color: #34d399;
 }
 .circle-check.checked::after {
   content: "✓";
@@ -346,24 +332,24 @@ const todayString = new Date().toLocaleDateString(undefined, {
   line-height: 1;
 }
 
-/* keep the rest of layout styling intact (image-ai, map, etc.) */
+/* image-ai, map, etc. — 그라데이션 제거하고 연한 색으로 통일 */
 .image-ai-card { background: #fff; }
 .ai-badge{
-  width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#ff9ad1,#a78bff);display:flex;align-items:center;justify-content:center;color:#fff;
+  width:44px;height:44px;border-radius:10px;background:#3A5797;display:flex;align-items:center;justify-content:center;color:#fff;
 }
 .upload-area { display:block; cursor: pointer; }
 .upload-gradient {
   height:120px;
   border-radius:12px;
-  background: linear-gradient(90deg,#f7d6ff,#ffd6e8);
+  background: #3A5797; /* lighter of (#f7d6ff,#ffd6e8) */
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
 }
-.upload-gradient .bi-camera { opacity: 0.85; font-size: 34px; }
+.upload-gradient .bi-camera { opacity: 0.85; font-size: 34px; color: inherit; }
 
 .map-card { background: transparent; }
 .map-gradient {
   height:200px;
-  background: linear-gradient(90deg,#f3fffb,#eef6ff);
+  background: #f3fffb; /* lighter of (#f3fffb,#eef6ff) */
   border-radius:12px;
   position:relative;
   overflow:hidden;
@@ -388,8 +374,9 @@ const todayString = new Date().toLocaleDateString(undefined, {
   width:56px;height:56px;border-radius:10px;background:#fff;border:1px solid #f0f0f0;
 }
 
+/* progress success 단색(연한 색 사용) */
 .progress-bar.bg-success {
-  background: linear-gradient(90deg,#7dd3a6,#10b981) !important;
+  background: #7dd3a6 !important; /* lighter of (#7dd3a6,#10b981) */
 }
 .progress-sm { height: 8px; border-radius: 4px; overflow: hidden; }
 </style>

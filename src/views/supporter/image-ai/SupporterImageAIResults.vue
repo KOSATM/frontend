@@ -119,18 +119,18 @@ const addPlan = () => {
 </script>
 
 <style scoped>
-.results-card { background: linear-gradient(180deg,#fffafc,#fbf1fc); border-radius:12px; }
+.results-card { background: #FFD9A6; border-radius:12px; }
 .status-icon {
-  width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#ff9ad1,#a78bff);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;
+  width:48px;height:48px;border-radius:10px;background:#1b3b6f;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;
 }
 .result-card { border-radius:12px; background:#fff; border:1px solid #f3e8ff; box-shadow: none; cursor: pointer; transition: box-shadow .15s, transform .06s; }
 .result-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.05); }
-.result-card.selected { border-color: #a78bff; box-shadow: 0 8px 20px rgba(167,139,255,0.08); }
+.result-card.selected { border-color: #A78BFA; box-shadow: 0 8px 20px rgba(167,139,255,0.08); }
 .thumb-wrap { width:84px; flex:0 0 84px; }
 .thumb-bg { width:84px; height:84px; background:#f7f7f9; display:flex; align-items:center; justify-content:center; border-radius:10px; overflow:hidden; border:1px solid #f0ecf8; }
 .thumb { width:100%; height:100%; object-fit:cover; display:block; }
 .match-badge {
-  position:absolute; left:6px; top:6px; background:linear-gradient(135deg,#a78bff,#ff9ad1); color:#fff; padding:6px 8px; font-size:12px; border-radius:999px;
+  position:absolute; left:6px; top:6px; background:linear-gradient(135deg,#1b3b6f,#A78BFA); color:#fff; padding:6px 8px; font-size:12px; border-radius:999px;
   box-shadow: 0 4px 10px rgba(167,139,255,0.16);
 }
 .text-purple { color:#a56bff; font-weight:600; }
