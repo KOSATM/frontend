@@ -17,6 +17,20 @@
       </div>
     </div>
 
+    <!-- Accommodation Budget Propertion -->
+    <div class="mb-3">
+      <label for="range4" class="form-label">Accommodation Budget Propertion</label>
+      <input
+        type="range"
+        id="range4"
+        class="form-range"
+        min="0"
+        max="100"
+        v-model="rangeValue"
+      />
+      <output :for="'range4'" aria-hidden="true">{{ rangeValue }}%</output>
+    </div>
+
     <!-- Filter Section -->
     <div class="filter-section mb-4">
       <!-- Accommodation Type -->
@@ -141,6 +155,7 @@
 <script>
 import PageHeader from '@/components/common/PageHeader.vue';
 import hotelIllust from '@/assets/img/hotel-illust.png'
+import { ref } from 'vue'
 
 export default {
   name: 'HotelRecommendation',
@@ -149,6 +164,7 @@ export default {
   },
   data() {
     return {
+      rangeValue: 50,
       budget: 300000, // This should come from TravelPlanForm
       travelDays: 3,  // This should come from TravelPlanForm
       filters: {
@@ -356,5 +372,16 @@ export default {
 :root {
   --bs-primary: #ff8c00;
   --bs-secondary: #1B3B6F;
+}
+
+// slider
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.form-range {
+  width: 100%;
+  margin-bottom: 8px;
 }
 </style>
