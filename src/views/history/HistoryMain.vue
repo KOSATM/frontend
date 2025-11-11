@@ -20,7 +20,8 @@
     <div class="trip-list">
       <TripCard
       v-for="trip in trips"
-      :key="trip.id"
+        :key="trip.id"
+        :tripId="trip.id" 
         :title="trip.title"
         :location="trip.location"
         :date="trip.date"
@@ -46,6 +47,7 @@ import TripCard from '@/components/common/TripCard.vue';
 import UserSettings from '@/components/history/UserSettings.vue';
 import LogoutButton from '@/components/common/LogoutButton.vue';
 import ProfileSummary from "@/components/history/ProfileSummary.vue";
+import HistoryHeader from "@/components/common/PageHeader.vue";
 import PageHeader from '@/components/common/PageHeader.vue';
 
 // ✅ 하드코딩된 여행 데이터
