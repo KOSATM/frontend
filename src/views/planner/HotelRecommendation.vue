@@ -126,19 +126,21 @@
 
     <!-- Confirm Button -->
     <div class="text-center">
-      <button
+      <RouterLink
         class="btn btn-primary btn-lg px-5"
         :disabled="!selectedHotel"
         @click="confirmSelection"
+        to="/planner/summary"
       >
         Confirm Hotel Selection
-      </button>
+      </RouterLink>
     </div>
   </div>
 </template>
 
 <script>
 import PageHeader from '@/components/common/PageHeader.vue';
+import hotelIllust from '@/assets/img/hotel-illust.png'
 
 export default {
   name: 'HotelRecommendation',
@@ -162,7 +164,7 @@ export default {
           price: 315000,
           rating: 4.8,
           reviews: 234,
-          image: '/images/hotels/four-seasons.jpg',
+          image: hotelIllust,
           type: 'hotel',
           freeWifi: true,
           breakfast: true,
@@ -176,15 +178,125 @@ export default {
           price: 285000,
           rating: 4.7,
           reviews: 189,
-          image: '/images/hotels/shilla.jpg',
+          image: hotelIllust,
           type: 'hotel',
           freeWifi: true,
           breakfast: true,
           pool: true,
           spa: true
         },
-        
-        // Add more hotels as needed
+        {
+          id: 3,
+          name: 'Lotte World Hotel',
+          location: 'Songpa-gu, Jamsil',
+          price: 320000,
+          rating: 4.6,
+          reviews: 156,
+          image: hotelIllust,
+          type: 'hotel',
+          freeWifi: true,
+          breakfast: true,
+          pool: true,
+          spa: false
+        },
+        {
+          id: 4,
+          name: 'Seoul Plaza Hotel',
+          location: 'Jung-gu, City Hall',
+          price: 195000,
+          rating: 4.3,
+          reviews: 98,
+          image: hotelIllust,
+          type: 'hotel',
+          freeWifi: true,
+          breakfast: false,
+          pool: false,
+          spa: false
+        },
+        {
+          id: 5,
+          name: 'Korea House Guesthouse',
+          location: 'Jongno-gu, Bukchon',
+          price: 95000,
+          rating: 4.5,
+          reviews: 287,
+          image: hotelIllust,
+          type: 'guesthouse',
+          freeWifi: true,
+          breakfast: true,
+          pool: false,
+          spa: false
+        },
+        {
+          id: 6,
+          name: 'Myeongdong Tourist Hotel',
+          location: 'Jung-gu, Myeongdong',
+          price: 165000,
+          rating: 4.2,
+          reviews: 142,
+          image: hotelIllust,
+          type: 'hotel',
+          freeWifi: true,
+          breakfast: false,
+          pool: false,
+          spa: true
+        },
+        {
+          id: 7,
+          name: 'Gangnam Station Residence',
+          location: 'Gangnam-gu, Apgujeong',
+          price: 250000,
+          rating: 4.4,
+          reviews: 178,
+          image: hotelIllust,
+          type: 'guesthouse',
+          freeWifi: true,
+          breakfast: true,
+          pool: true,
+          spa: false
+        },
+        {
+          id: 8,
+          name: 'Insadong Hanok Stay',
+          location: 'Jongno-gu, Insadong',
+          price: 135000,
+          rating: 4.7,
+          reviews: 223,
+          image: hotelIllust,
+          type: 'hanok',
+          freeWifi: true,
+          breakfast: true,
+          pool: false,
+          spa: true
+        },
+        {
+          id: 9,
+          name: 'Gangbuk Boutique Hotel',
+          location: 'Seongbuk-gu, Gireum',
+          price: 175000,
+          rating: 4.3,
+          reviews: 89,
+          image: hotelIllust,
+          type: 'hotel',
+          freeWifi: true,
+          breakfast: true,
+          pool: false,
+          spa: true
+        },
+        {
+          id: 10,
+          name: 'Itaewon Global House',
+          location: 'Yongsan-gu, Itaewon',
+          price: 120000,
+          rating: 4.6,
+          reviews: 211,
+          image: hotelIllust,
+          type: 'other',
+          freeWifi: true,
+          breakfast: false,
+          pool: false,
+          spa: false
+        }
       ]
     }
   },

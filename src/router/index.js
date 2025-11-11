@@ -6,6 +6,7 @@ import LandingPage from '@/views/LandingPage.vue';
 import TravelPlanForm from '@/views/planner/TravelPlanForm.vue';
 import HotelRecommendation from '@/views/planner/HotelRecommendation.vue';
 import support from './supporter'
+import planner from './planner';
 
 const routes = [
   { path: '/', component: LandingPage },
@@ -16,6 +17,7 @@ const routes = [
   // { path: '/planner', component: TravelPlanForm },
   { path: '/planner', component: HotelRecommendation },
   ...support
+  ...planner
 ];
 
 const router = createRouter({
