@@ -1,23 +1,12 @@
 <template>
-    <div class="history-page">
-
-        <PageHeader
-          title="History"
-          subtitle="Your past travel adventures"
-          icon="bi-clock-history"
-        />
-      <div class="review-container container-fms">
+        <div class="review-container container-fms">
         <!-- 🔙 상단 헤더 -->
-        <div class="review-header d-flex justify-content-between align-items-center mb-3">
-          <div class="d-flex align-items-center">
-            <i class="bi bi-arrow-left-short back-icon" @click="goBack"></i>
-            <div>
-              <h6 class="review-title mb-0">Create Travel Review</h6>
-              <small class="review-subtitle text-muted">{{ tripTitle }}</small>
-            </div>
-          </div>
-          <span class="review-step text-muted">Step {{ step }}/6</span>
-        </div>
+        <ReviewHeader
+          title="Create Travel Review"
+          :subtitle="tripTitle"
+          step="1/6"
+          @back="goBack"
+        />
     
         <!-- 🖼️ 업로드 박스 -->
         <div class="upload-section">
@@ -30,12 +19,12 @@
             <i class="bi bi-cloud-arrow-up fs-2 text-secondary mb-2"></i>
             <p class="text-secondary mb-0">Click to upload photos</p>
             <small class="text-muted">JPG, PNG up to 10MB each</small>
-            <input type="file" multiple accept="image/*" ref="fileInput" @change="handleUpload" hidden />
+            <input type="file" multiple accept="image/*" ref="fileInput" @change="handleFileUpload" hidden />
           </div>
     
           <div v-if="uploadedImages.length" class="preview-grid mt-3">
             <div v-for="(img, idx) in uploadedImages" :key="idx" class="preview-item">
-              <img :src="img" alt="preview" />
+              <img :src="img.url" :alt="img.name" />
             </div>
           </div>
         </div>
@@ -47,14 +36,15 @@
           </button>
         </div>
       </div>
-    </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useReviewStore } from '@/stores/reviewStore'
-import PageHeader from '@/components/common/PageHeader.vue'
+import { v4 as uuidv4 } from 'uuid' // npm install uuid 필요
+import ReviewHeader from '@/components/history/ReviewHeader.vue'
+
 
 const router = useRouter()
 const route = useRoute()
@@ -69,21 +59,26 @@ reviewStore.setTripInfo(tripId, tripTitle)
 const fileInput = ref(null)
 const uploadedImages = ref([])
 
+
 const triggerFileInput = () => fileInput.value?.click()
 
-const handleUpload = (e) => {
-  const files = e.target.files
-  let id = 1
-  for (const file of files) {
-    const reader = new FileReader()
-    reader.onload = (ev) => {
-      uploadedImages.value.push({
-        id: id++,
-        src: ev.target.result
-      })
-    }
-    reader.readAsDataURL(file)
+const handleFileUpload = (event) => {
+  const files = Array.from(event.target.files)
+
+  if (uploadedImages.value.length + files.length > 10) {
+    alert('최대 10장까지만 업로드할 수 있습니다.')
+    return
   }
+
+  files.forEach((file) => {
+    const preview = {
+      id: uuidv4(),       // ✅ 고유 id 추가
+      name: file.name,
+      url: URL.createObjectURL(file),
+      file
+    }
+    uploadedImages.value.push(preview)
+  })
 }
 
 // Step 2로 이동

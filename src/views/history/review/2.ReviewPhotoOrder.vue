@@ -1,21 +1,11 @@
 <template>
   <div class="review-container container-fms">
-    <!-- 🔙 헤더 -->
-    <div class="review-header d-flex justify-content-between align-items-center mb-3">
-      <div class="d-flex align-items-center">
-        <i class="bi bi-arrow-left-short back-icon" @click="goBack"></i>
-        <div>
-          <h6 class="review-title mb-0">Create Travel Review</h6>
-          <small class="review-subtitle text-muted">{{ tripTitle }}</small>
-        </div>
-      </div>
-      <span class="review-step text-muted">Step 2/6</span>
-    </div>
-
-    <!-- 🧭 진행 바 -->
-    <div class="progress mb-3">
-      <div class="progress-bar bg-primary" role="progressbar" style="width: 33%"></div>
-    </div>
+    <ReviewHeader
+      :title="'Create Travel Review'"
+      :subtitle="tripTitle"
+      step="2/6"
+      @back="goBack"
+    />
 
     <!-- 🖼️ 사진 순서 & 대표사진 지정 -->
     <section class="photo-order-section">
@@ -35,7 +25,7 @@
         :class="{ active: photo.id === mainPhotoId }"
       >
         <div class="photo-thumb">
-          <img :src="photo.src" :alt="'Photo ' + (index + 1)" />
+          <img :src="photo.url" :alt="photo.name || 'Photo ' + (index + 1)" />
         </div>
 
         <div class="photo-info flex-grow-1">
@@ -63,19 +53,21 @@
         </div>
       </div>
     </section>
+  </div>
 
     <!-- 🟦 하단 버튼 -->
     <div class="next-step-area mt-4 d-flex justify-content-between">
       <button class="btn-back" @click="goBack">Back</button>
       <button class="btn-next" @click="nextStep" :disabled="!mainPhotoId">Next Step</button>
     </div>
-  </div>
+
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useReviewStore } from '@/stores/reviewStore'
+import ReviewHeader from '@/components/history/ReviewHeader.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -120,7 +112,7 @@ const nextStep = () => {
   reviewStore.nextStep()
 
   router.push({
-    name: 'ReviewWriteStep3',
+    name: 'ReviewCaptionSelect',
     params: { tripId: route.params.tripId },
     query: { title: tripTitle }
   })

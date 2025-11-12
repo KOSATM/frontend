@@ -1,11 +1,12 @@
 <template>
-  <div class="review-caption-select">
-    <PageHeader
-      title="Create Travel Review"
-      subtitle="Jeju Island Healing Trip"
+      <div class="review-caption-select">
+    <ReviewHeader
+      :title="'Select Caption Style'"
+      :subtitle="tripTitle"
       step="3/6"
+      @back="goBack"
     />
-
+    
     <section class="caption-section">
       <h6 class="section-title">
         <i class="bi bi-stars text-primary me-2"></i>
@@ -46,7 +47,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import PageHeader from '@/components/common/PageHeader.vue'
+import ReviewHeader from '@/components/history/ReviewHeader.vue';
 
 const router = useRouter()
 const selectedStyle = ref(null)

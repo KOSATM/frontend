@@ -47,7 +47,6 @@ import TripCard from '@/components/common/TripCard.vue';
 import UserSettings from '@/components/history/UserSettings.vue';
 import LogoutButton from '@/components/common/LogoutButton.vue';
 import ProfileSummary from "@/components/history/ProfileSummary.vue";
-import HistoryHeader from "@/components/common/PageHeader.vue";
 import PageHeader from '@/components/common/PageHeader.vue';
 
 // ✅ 하드코딩된 여행 데이터

@@ -1,10 +1,11 @@
 <template>
   <div class="hashtag-page">
     <!-- 상단 헤더 -->
-    <PageHeader
-      title="Create Travel Review"
-      subtitle="Jeju Island Healing Trip"
+    <ReviewHeader
+      :title="'Select Hastags'"
+      :subtitle="tripTitle"
       step="4/6"
+      @back="goBack"
     />
 
     <!-- 본문 -->
@@ -67,7 +68,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import PageHeader from '@/components/common/PageHeader.vue'
+import ReviewHeader from '@/components/history/ReviewHeader.vue';
 
 const router = useRouter()
 const route = useRoute()
@@ -121,9 +122,9 @@ const addTag = () => {
 // ✅ 이동
 const goBack = () => router.back()
 const goNext = () => {
-  // 다음 페이지 (예: Step 5)
   router.push({
-    name: 'ReviewSummary',
+    name: 'ReviewEditPage', // ✅ ReviewSummary → ReviewEditPage
+    params: { tripId: route.params.tripId },
     query: { tags: selectedTags.value.join(',') }
   })
 }

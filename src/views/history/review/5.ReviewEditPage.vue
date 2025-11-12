@@ -1,9 +1,10 @@
 <template>
   <div class="review-edit-page">
-    <PageHeader
-      title="Create Travel Review"
-      subtitle="Jeju Island Healing Trip"
-      step="5/6"
+    <ReviewHeader
+      :title="'Edit Review'"
+      :subtitle="tripTitle"
+      step="4/6"
+      @back="goBack"
     />
 
     <!-- Review Section -->
@@ -74,7 +75,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import PageHeader from "@/components/common/PageHeader.vue";
+import ReviewHeader from '@/components/history/ReviewHeader.vue';
 
 const router = useRouter();
 
