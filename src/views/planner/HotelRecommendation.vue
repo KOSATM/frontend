@@ -119,12 +119,16 @@
         </div>
       </div>
 
-      <!-- Confirm Button -->
-      <div class="text-center">
-        <RouterLink class="btn btn-primary btn-lg px-5" :disabled="!selectedHotel" @click="confirmSelection" to="/planner/summary">
-          Confirm Hotel Selection
-        </RouterLink>
-      </div>
+    <!-- Confirm Button -->
+    <div class="text-center">
+      <RouterLink
+        class="btn btn-primary btn-lg px-5"
+        :disabled="!selectedHotel"
+        @click="confirmSelection"
+        to="/planner/payment"
+      >
+        Make a Payment
+      </RouterLink>
     </div>
   </div>
 </template>
@@ -313,7 +317,8 @@ export default {
       if (this.selectedHotel) {
         // Emit event with selected hotel data
         this.$emit('hotel-selected', this.selectedHotel)
-        // Navigate to next step or close dialog
+        // Navigate to payment page
+        this.$router.push({ name: 'payment' })
       }
     }
   }
