@@ -119,16 +119,12 @@
         </div>
       </div>
 
-    <!-- Confirm Button -->
-    <div class="text-center">
-      <RouterLink
-        class="btn btn-primary btn-lg px-5"
-        :disabled="!selectedHotel"
-        @click="confirmSelection"
-        to="/planner/payment"
-      >
-        Make a Payment
-      </RouterLink>
+      <!-- Confirm Button -->
+      <div class="text-center">
+        <RouterLink class="btn btn-primary btn-lg px-5" :disabled="!selectedHotel" @click="confirmSelection" to="/planner/payment">
+          Make a Payment
+        </RouterLink>
+      </div>
     </div>
   </div>
 </template>
