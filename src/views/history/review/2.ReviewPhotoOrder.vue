@@ -3,7 +3,7 @@
     <!-- 🔸 상단 헤더 -->
     <ReviewHeader
       title="Create Travel Review"
-      :subtitle="tripTitle"
+      :subtitle="reviewStore.tripTitle"
       step="2/6"
       @back="goBack"
     />
@@ -66,7 +66,7 @@
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
-import ReviewHeader from '@/components/history/ReviewHeader.vue'
+import ReviewHeader from '@/components/common/DetailHeader.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -106,6 +106,10 @@ const selectMain = (id) => {
 /* 네비게이션 */
 const goBack = () => router.back()
 const nextStep = () => {
+  if (!mainPhotoId.value) {
+    alert('대표사진을 선택해주세요!')
+    return
+  }
   reviewStore.setPhotos(photos.value)
   reviewStore.setMainPhoto(mainPhotoId.value)
   reviewStore.nextStep()

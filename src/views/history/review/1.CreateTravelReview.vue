@@ -3,7 +3,7 @@
     <!-- 🔸 상단 헤더 -->
     <ReviewHeader
       title="Create Travel Review"
-      :subtitle="tripTitle"
+      :subtitle="reviewStore.tripTitle"
       step="1/6"
       @back="goBack"
     />
@@ -52,7 +52,7 @@ import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
 import { v4 as uuidv4 } from 'uuid'
-import ReviewHeader from '@/components/history/ReviewHeader.vue'
+import ReviewHeader from '@/components/common/DetailHeader.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -78,13 +78,18 @@ const handleFileUpload = (event) => {
   }
 
   files.forEach((file) => {
-    const preview = {
-      id: uuidv4(),
-      name: file.name,
-      url: URL.createObjectURL(file),
-      file,
+    // FileReader를 사용하여 Base64로 변환
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const preview = {
+        id: uuidv4(),
+        name: file.name,
+        url: e.target.result, // ✅ Base64 문자열
+        file,
+      }
+      uploadedImages.value.push(preview)
     }
-    uploadedImages.value.push(preview)
+    reader.readAsDataURL(file)
   })
 }
 
@@ -108,7 +113,7 @@ const goBack = () => router.back()
   background-color: #fffaf3;
   min-height: 100vh;
   padding-bottom: 6rem;
-  padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */
+  padding: 2rem 1.25rem 6rem;
 }
 
 /* ✅ 중앙 카드형 컨테이너 */
@@ -132,6 +137,7 @@ const goBack = () => router.back()
   font-weight: 600;
   color: #1b3b6f;
 }
+
 .upload-subtitle {
   font-size: 0.9rem;
   color: #6c757d;
@@ -146,6 +152,7 @@ const goBack = () => router.back()
   background-color: #fff;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  font-size: 1rem; /* ✅ 글씨 키움 */
 }
 .upload-box:hover {
   background-color: #fef8f2;
