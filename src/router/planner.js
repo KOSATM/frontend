@@ -7,7 +7,7 @@ import PlannerItinerary from '@/views/planner/PlannerItinerary.vue'
 import PlannerChat from '@/views/planner/PlannerChat.vue'
 import PlannerList from '@/views/planner/PlannerList.vue'
 import PlannerListItinerary from '@/views/planner/PlannerListItinerary.vue'
-import PlannerMain from "@/views/planner/PlannerMain.vue";
+import PlannerPage from "@/views/planner/PlannerPage.vue";
 import HotelPayment from "@/views/planner/HotelPayment.vue";
 import PaymentComplete from "@/views/planner/PaymentComplete.vue";
 import BookingComplete from "@/views/planner/BookingComplete.vue";
@@ -16,70 +16,79 @@ const planner = [
   {
     path: '/planner',
     name: 'planner',
+    component: PlannerPage,
+    meta: { title: '플래너 메인' }
+  },
+  {
+    path: '/planner/create',
+    name: 'plannercreate',
     component: PlannerCreate,
+    meta: { title: '새 플랜 생성' }
   },
   {
     path: '/planner/travelplan',
     name: 'travelplan',
     component: TravelPlanForm,
+    meta: { title: '여행 계획 작성' }
   },
-   {
-      path: '/planner/edit',
-      name: 'planedit',
-      components: {
-        default: PlannerEdit, // 프레임
-        left: PlannerChat,    // LLM 영역
-        right: PlannerList,   // 일정 리스트
-      },
-      meta: {
-        layout: 'wide',
-        split: true,
-      },
-    },
   {
-    path: '/planner/itinerary',
-    name: 'itinerary',
+    path: '/planner/edit',
+    name: 'planedit',
     components: {
-      default: PlannerItinerary, // 프레임
-      left: PlannerChat,    // LLM 영역
-      right: PlannerListItinerary,   // 일정 리스트 (호텔 선택 버튼 없음)
+      default: PlannerEdit,
+      left: PlannerChat,
+      right: PlannerList,
     },
     meta: {
       layout: 'wide',
       split: true,
+      title: '플랜 편집'
+    },
+  },
+  {
+    path: '/planner/itinerary',
+    name: 'itinerary',
+    components: {
+      default: PlannerItinerary,
+      left: PlannerChat,
+      right: PlannerListItinerary,
+    },
+    meta: {
+      layout: 'wide',
+      split: true,
+      title: '일정 확인'
     },
   },
   {
     path: '/planner/hotel',
     name: 'hotel',
     component: HotelRecommendation,
+    meta: { title: '호텔 추천' }
   },
   {
     path: '/planner/summary',
     name: 'summary',
     component: TripSummary,
-  },
-  {
-    path: '/plannermain',
-    name: 'plannermain',
-    component: PlannerMain,
+    meta: { title: '여행 요약' }
   },
   {
     path: '/planner/payment',
     name: 'payment',
     component: HotelPayment,
+    meta: { title: '결제' }
   },
   {
     path: '/planner/payment-complete',
     name: 'paymentComplete',
     component: PaymentComplete,
+    meta: { title: '결제 완료' }
   },
   {
     path: '/planner/booking-complete',
     name: 'bookingComplete',
     component: BookingComplete,
+    meta: { title: '예약 완료' }
   }
-
 ];
 
 export default planner;

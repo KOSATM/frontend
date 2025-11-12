@@ -3,9 +3,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 // 기본/공통 페이지
 import LandingPage from '@/views/LandingPage.vue'
 import SupporterMain from '@/views/supporter/SupporterMain.vue'
-import PlannerMain from '@/views/planner/PlannerMain.vue'
 import TravelPlanForm from '@/views/planner/TravelPlanForm.vue'
 import HotelRecommendation from '@/views/planner/HotelRecommendation.vue'
+import PlannerCreate from '@/views/planner/PlannerCreate.vue'
 
 // 하위 라우트 모듈
 import history from './history'
@@ -15,7 +15,7 @@ import supporter from './supporter'
 const routes = [
   { path: '/', component: LandingPage },
   { path: '/supporter', component: SupporterMain },
-  { path: '/planner', component: PlannerMain },
+  { path: '/planner', component: PlannerCreate },
   { path: '/planner/form', component: TravelPlanForm },
   { path: '/planner/hotel', component: HotelRecommendation },
 

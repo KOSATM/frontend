@@ -131,6 +131,7 @@
       </RouterLink>
     </div>
   </div>
+</div>
 </template>
 
 <script>
