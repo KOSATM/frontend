@@ -6,6 +6,8 @@ export const useReviewStore = defineStore('review', {
     tripTitle: '',
     photos: [],        // [{ id, url, file }]
     mainPhotoId: null,
+    caption: '',
+    hashtags: [],
     step: 1,
   }),
 
@@ -26,6 +28,12 @@ export const useReviewStore = defineStore('review', {
     setMainPhoto(id) {
       this.mainPhotoId = id
     },
+    setCaption(text) {
+      this.caption = text
+    },
+    setHashtags(tags) {
+      this.hashtags = tags
+    },
     nextStep() {
       this.step++
     },
@@ -34,6 +42,8 @@ export const useReviewStore = defineStore('review', {
       this.tripTitle = ''
       this.photos = []
       this.mainPhotoId = null
+      this.caption = ''
+      this.hashtags = []
       this.step = 1
     },
   },
