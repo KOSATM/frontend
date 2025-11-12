@@ -3,7 +3,7 @@
     <!-- 상단 헤더 -->
     <ReviewHeader
       title="Create Travel Review"
-      :subtitle="tripTitle"
+      :subtitle="reviewStore.tripTitle"
       step="4/6"
       @back="goBack"
     />
@@ -70,11 +70,12 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import ReviewHeader from '@/components/history/ReviewHeader.vue';
+import { useRouter } from 'vue-router'
+import { useReviewStore } from '@/store/reviewStore'
+import ReviewHeader from '@/components/common/DetailHeader.vue'
 
 const router = useRouter()
-const route = useRoute()
+const reviewStore = useReviewStore()
 
 // ✅ 추천 해시태그 목록
 const allHashtags = ref([
@@ -125,11 +126,10 @@ const addTag = () => {
 // ✅ 이동
 const goBack = () => router.back()
 const goNext = () => {
-  router.push({
-    name: 'ReviewEditPage', // ✅ ReviewSummary → ReviewEditPage
-    params: { tripId: route.params.tripId },
-    query: { tags: selectedTags.value.join(',') }
-  })
+  // ✅ 선택된 해시태그를 store에 저장
+  reviewStore.setHashtags(selectedTags.value)
+  reviewStore.nextStep()
+  router.push({ name: 'ReviewEditPage' })
 }
 </script>
 
@@ -146,10 +146,21 @@ const goNext = () => {
   font-weight: 600;
   margin-bottom: 0.25rem;
 }
+
 .section-subtitle {
   font-size: 0.9rem;
   color: #6c757d;
   margin-bottom: 1rem;
+}
+
+.guide-title {
+  color: #1b3b6f;
+  font-weight: 600;
+}
+
+.guide-subtitle {
+  font-size: 0.9rem;
+  color: #6c757d;
 }
 
 /* 해시태그 스타일 */

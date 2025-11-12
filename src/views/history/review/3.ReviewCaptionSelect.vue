@@ -2,7 +2,7 @@
       <div class="review-caption-select">
     <ReviewHeader
       title="Create Travel Review"
-      :subtitle="tripTitle"
+      :subtitle="reviewStore.tripTitle"
       step="3/6"
       @back="goBack"
     />
@@ -47,9 +47,12 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import ReviewHeader from '@/components/history/ReviewHeader.vue';
+import { useReviewStore } from '@/store/reviewStore'
+import ReviewHeader from '@/components/common/DetailHeader.vue'
 
 const router = useRouter()
+const reviewStore = useReviewStore()
+
 const selectedStyle = ref(null)
 
 const captionStyles = [
@@ -68,13 +71,13 @@ const captionStyles = [
   {
     id: 'inspirational',
     label: 'Inspirational',
-    text: 'Sometimes you need to escape to an island to find yourself again. 🌅 Jeju taught me that peace isn’t a place—it’s a feeling. Grateful for every sunrise, every wave, every moment. 🙏💙',
+    text: 'Sometimes you need to escape to an island to find yourself again. 🌅 Jeju taught me that peace isn\'t a place—it\'s a feeling. Grateful for every sunrise, every wave, every moment. 🙏💙',
     labelClass: 'inspirational'
   },
   {
     id: 'fun',
     label: 'Fun & Playful',
-    text: 'Jeju mode: ON 🏖️💃 Beach hair don’t care, sandy toes, and endless island vibes! This place is UNREAL!! 😍🌺 Swipe to see why I never want to leave →',
+    text: 'Jeju mode: ON 🏖️💃 Beach hair don\'t care, sandy toes, and endless island vibes! This place is UNREAL!! 😍🌺 Swipe to see why I never want to leave →',
     labelClass: 'fun'
   }
 ]
@@ -85,8 +88,11 @@ const selectStyle = (id) => {
 
 const goBack = () => router.back()
 const goNext = () => {
-  // ✅ 선택된 스타일을 store 또는 router query로 전달
-  router.push({ name: 'ReviewHashtagSelect', query: { style: selectedStyle.value } })
+  // ✅ 선택된 스타일의 caption을 store에 저장
+  const selectedCaption = captionStyles.find(s => s.id === selectedStyle.value)
+  reviewStore.setCaption(selectedCaption.text)
+  reviewStore.nextStep()
+  router.push({ name: 'ReviewHashtagSelect' })
 }
 </script>
 
