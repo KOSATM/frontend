@@ -7,9 +7,9 @@
       <div v-for="(photo, index) in photos" :key="photo.id" class="photo-item">
         <img :src="photo.url" alt="photo" />
         <div class="controls">
-          <button @click="moveUp(index)" :disabled="index === 0">↑</button>
-          <button @click="moveDown(index)" :disabled="index === photos.length - 1">↓</button>
-          <button @click="removePhoto(index)">✕</button>
+          <button @click="moveUp(index)" :disabled="index === 0 || photos[index].id === reviewStore.mainPhotoId">↑</button>
+          <button @click="moveDown(index)" :disabled="index === photos.length - 1 || photos[index].id === reviewStore.mainPhotoId">↓</button>
+          <button @click="removePhoto(index)" :disabled="photos[index].id === reviewStore.mainPhotoId">✕</button>
           <button :class="{ main: photo.id === reviewStore.mainPhotoId }" @click="setMain(photo.id)">★</button>
         </div>
       </div>
@@ -28,13 +28,61 @@ const reviewStore = useReviewStore()
 const photos = computed(() => reviewStore.photos)
 
 const moveUp = (i) => {
+  // ✅ 메인포토는 이동 불가
+  if (photos.value[i].id === reviewStore.mainPhotoId) {
+    alert('Main photo cannot be moved')
+    return
+  }
+  // 메인포토 바로 아래 항목도 이동 불가
+  if (i > 0 && photos.value[i - 1].id === reviewStore.mainPhotoId) {
+    alert('Main photo must stay at the first position')
+    return
+  }
+  
   if (i > 0) [photos.value[i - 1], photos.value[i]] = [photos.value[i], photos.value[i - 1]]
 }
+
 const moveDown = (i) => {
+  // ✅ 메인포토는 이동 불가
+  if (photos.value[i].id === reviewStore.mainPhotoId) {
+    alert('Main photo cannot be moved')
+    return
+  }
+  
   if (i < photos.value.length - 1) [photos.value[i + 1], photos.value[i]] = [photos.value[i], photos.value[i + 1]]
 }
-const removePhoto = (i) => photos.value.splice(i, 1)
-const setMain = (id) => reviewStore.setMainPhoto(id)
+
+const removePhoto = (i) => {
+  // ✅ 메인포토는 삭제 불가
+  if (photos.value[i].id === reviewStore.mainPhotoId) {
+    alert('Cannot delete main photo. Select another main photo first.')
+    return
+  }
+  photos.value.splice(i, 1)
+}
+
+/* ✅ 메인포토 설정 - 선택 시 맨 앞으로 이동 */
+const setMain = (id) => {
+  // 이미 메인포토가 지정되었으면 그 사진을 원래 위치로 되돌림
+  if (reviewStore.mainPhotoId && reviewStore.mainPhotoId !== id) {
+    const oldMainIndex = photos.value.findIndex(p => p.id === reviewStore.mainPhotoId)
+    if (oldMainIndex !== -1) {
+      photos.value[oldMainIndex].isMain = false
+    }
+  }
+
+  // 새 메인포토를 맨 앞으로 이동
+  const newMainIndex = photos.value.findIndex(p => p.id === id)
+  if (newMainIndex > 0) {
+    const mainPhoto = photos.value.splice(newMainIndex, 1)[0]
+    mainPhoto.isMain = true
+    photos.value.unshift(mainPhoto)
+  } else if (newMainIndex === 0) {
+    photos.value[0].isMain = true
+  }
+
+  reviewStore.setMainPhoto(id)
+}
 </script>
 
 <style scoped>

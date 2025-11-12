@@ -76,15 +76,33 @@ const tripTitle = reviewStore.tripTitle || route.query.title
 const photos = ref([...reviewStore.photos])
 const mainPhotoId = ref(reviewStore.mainPhotoId)
 
-/* 순서 변경 */
+/* 순서 변경 - 메인포토는 고정 */
 const moveUp = (index) => {
+  // ✅ 메인포토는 이동 불가
+  if (photos.value[index].id === mainPhotoId.value) {
+    alert('Main photo cannot be moved')
+    return
+  }
+  // 위로 이동하려는 항목이 메인포토 바로 아래면 스킵
+  if (index > 0 && photos.value[index - 1].id === mainPhotoId.value) {
+    alert('Main photo must stay at the first position')
+    return
+  }
+  
   if (index > 0) {
     const temp = photos.value[index]
     photos.value[index] = photos.value[index - 1]
     photos.value[index - 1] = temp
   }
 }
+
 const moveDown = (index) => {
+  // ✅ 메인포토는 이동 불가
+  if (photos.value[index].id === mainPhotoId.value) {
+    alert('Main photo cannot be moved')
+    return
+  }
+  
   if (index < photos.value.length - 1) {
     const temp = photos.value[index]
     photos.value[index] = photos.value[index + 1]
@@ -94,17 +112,40 @@ const moveDown = (index) => {
 
 /* 삭제 */
 const removePhoto = (id) => {
+  // ✅ 메인포토는 삭제 불가
+  if (id === mainPhotoId.value) {
+    alert('Cannot delete main photo. Select another main photo first.')
+    return
+  }
   photos.value = photos.value.filter((p) => p.id !== id)
-  if (mainPhotoId.value === id) mainPhotoId.value = null
 }
 
-/* 대표사진 지정 */
+/* ✅ 대표사진 지정 - 선택 시 맨 앞으로 이동 */
 const selectMain = (id) => {
+  // 이미 메인포토가 지정되었으면 그 사진을 원래 위치로 되돌림
+  if (mainPhotoId.value && mainPhotoId.value !== id) {
+    const oldMainIndex = photos.value.findIndex(p => p.id === mainPhotoId.value)
+    if (oldMainIndex !== -1) {
+      photos.value[oldMainIndex].isMain = false
+    }
+  }
+
+  // 새 메인포토를 맨 앞으로 이동
+  const newMainIndex = photos.value.findIndex(p => p.id === id)
+  if (newMainIndex > 0) {
+    const mainPhoto = photos.value.splice(newMainIndex, 1)[0]
+    mainPhoto.isMain = true
+    photos.value.unshift(mainPhoto)
+  } else if (newMainIndex === 0) {
+    photos.value[0].isMain = true
+  }
+
   mainPhotoId.value = id
 }
 
 /* 네비게이션 */
 const goBack = () => router.back()
+
 const nextStep = () => {
   if (!mainPhotoId.value) {
     alert('대표사진을 선택해주세요!')

@@ -1,11 +1,6 @@
 <template>
   <div class="review-edit-page">
-    <ReviewHeader
-      title="Create Travel Review"
-      :subtitle="reviewStore.tripTitle"
-      step="5/6"
-      @back="goBack"
-    />
+    <ReviewHeader title="Create Travel Review" :subtitle="reviewStore.tripTitle" step="5/6" @back="goBack" />
 
     <section class="review-section">
       <h6 class="section-title">
@@ -19,12 +14,22 @@
           <p class="photo-count">Photos ({{ photos.length }})</p>
           <button class="edit-btn" @click="showPhotoEditor = true">Edit Photos</button>
         </div>
-        <div class="photo-carousel">
-          <div v-for="(photo, index) in photos" :key="photo.id" class="photo-item">
-            <img :src="photo.url" alt="photo" />
-            <div v-if="photo.id === reviewStore.mainPhotoId" class="main-badge">🌟 Main Photo</div>
-            <div class="photo-index">{{ index + 1 }}/{{ photos.length }}</div>
+        <!-- ✅ 사진 컨테이너 (네비게이션 포함) -->
+        <div class="photo-container">
+          <div class="photo-carousel">
+            <div v-for="(photo, index) in photos" :key="photo.id" class="photo-item">
+              <img :src="photo.url" alt="photo" />
+              <div v-if="photo.id === reviewStore.mainPhotoId" class="main-badge">🌟 Main Photo</div>
+              <div class="photo-index">{{ index + 1 }}/{{ photos.length }}</div>
+            </div>
           </div>
+          <!-- ✅ 이전/다음 네비게이션 버튼 -->
+          <button v-if="photos.length > 1" class="nav-btn nav-prev" @click="prevPhoto" :disabled="currentPhotoIndex === 0">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <button v-if="photos.length > 1" class="nav-btn nav-next" @click="nextPhoto" :disabled="currentPhotoIndex === photos.length - 1">
+            <i class="bi bi-chevron-right"></i>
+          </button>
         </div>
       </div>
 
@@ -82,6 +87,9 @@ const photos = computed(() => reviewStore.photos);
 const caption = ref(reviewStore.caption || "");
 const hashtags = computed(() => reviewStore.hashtags || []);
 
+// ✅ 현재 사진 인덱스
+const currentPhotoIndex = ref(0);
+
 // 모달 상태
 const showPhotoEditor = ref(false);
 const showCaptionEditor = ref(false);
@@ -89,6 +97,29 @@ const showHashtagEditor = ref(false);
 
 // 반응형 저장
 watch(caption, (val) => reviewStore.caption = val);
+
+// ✅ 사진 네비게이션
+const prevPhoto = () => {
+  if (currentPhotoIndex.value > 0) {
+    currentPhotoIndex.value--;
+    scrollToPhoto();
+  }
+};
+
+const nextPhoto = () => {
+  if (currentPhotoIndex.value < photos.value.length - 1) {
+    currentPhotoIndex.value++;
+    scrollToPhoto();
+  }
+};
+
+const scrollToPhoto = () => {
+  const carousel = document.querySelector('.photo-carousel');
+  if (carousel) {
+    const itemWidth = carousel.querySelector('.photo-item').offsetWidth + 16; // 16은 gap
+    carousel.scrollLeft = currentPhotoIndex.value * itemWidth;
+  }
+};
 
 const goBack = () => router.back();
 const goNext = () => {
@@ -101,54 +132,183 @@ const goNext = () => {
 .review-edit-page {
   background-color: #fffaf3;
   min-height: 100vh;
-  padding: 2rem 0.75rem 6rem; /* ✅ 좌우 padding 축소 */
+  padding: 2rem 0.75rem 6rem;
 }
-.section-title { color: #1b3b6f; font-weight: 600; margin-bottom: 1rem; }
-.edit-btn, .change-btn {
-  background: none; border: none; color: #ff8c00; font-weight: 600; cursor: pointer;
+
+.section-title {
+  color: #1b3b6f;
+  font-weight: 600;
+  margin-bottom: 1rem;
 }
-.photo-carousel { 
-  display: flex; 
-  overflow-x: auto; 
+
+.edit-btn,
+.change-btn {
+  background: none;
+  border: none;
+  color: #ff8c00;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ✅ 사진 컨테이너 (네비게이션 포함) */
+.photo-container {
+  position: relative;
+}
+
+.photo-carousel {
+  display: flex;
+  overflow-x: auto;
   overflow-y: hidden;
-  gap: 1rem; 
+  gap: 1rem;
   scroll-behavior: smooth;
   padding-bottom: 0.5rem;
-  margin: 0 -0.5rem;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  scroll-snap-type: x mandatory;
 }
-.photo-item { 
-  position: relative; 
-  flex: 0 0 90%; /* ✅ 75% → 90%로 증가하여 더 큼 */
-  border-radius: 1rem; 
-  overflow: hidden; 
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-  aspect-ratio: 3 / 4; /* ✅ 세로 비율 추가 (반잘림 방지) */
+
+/* 스크롤바 숨기기 */
+.photo-carousel::-webkit-scrollbar {
+  display: none;
 }
-.photo-item img { 
-  width: 100%; 
-  height: 100%; 
-  object-fit: cover; /* ✅ contain에서 cover로 변경 */
+
+.photo-carousel {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
+
+.photo-item {
+  position: relative;
+  flex: 0 0 90%;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  aspect-ratio: 3 / 4;
+  scroll-snap-align: start;
+}
+
+.photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .main-badge {
-  position: absolute; top: .75rem; left: .75rem; background: #1b3b6f; color: #fff;
-  font-size: .75rem; padding: .3rem .6rem; border-radius: .5rem;
+  position: absolute;
+  top: .75rem;
+  left: .75rem;
+  background: #1b3b6f;
+  color: #fff;
+  font-size: .75rem;
+  padding: .3rem .6rem;
+  border-radius: .5rem;
 }
+
 .photo-index {
-  position: absolute; top: .75rem; right: .75rem; background: rgba(0,0,0,0.6);
-  color: white; font-size: .75rem; border-radius: 1rem; padding: .2rem .5rem;
+  position: absolute;
+  top: .75rem;
+  right: .75rem;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: .75rem;
+  border-radius: 1rem;
+  padding: .2rem .5rem;
 }
+
+/* ✅ 네비게이션 버튼 */
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.nav-prev {
+  left: 0.75rem;
+}
+
+.nav-next {
+  right: 0.75rem;
+}
+
 .caption-box {
-  width: 100%; border: 1px solid #ddd; border-radius: 1rem; padding: 1rem; background: #fff;
-  font-size: 0.9rem; line-height: 1.5; resize: none; font-family: 'Kyobo2024', sans-serif;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 1rem;
+  padding: 1rem;
+  background: #fff;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  resize: none;
+  font-family: 'Kyobo2024', sans-serif;
 }
-.hashtag-box { display: flex; flex-wrap: wrap; background: #fff; border: 1px solid #ddd; border-radius: 1rem; padding: 1rem; gap: 0.5rem; }
-.tag { background: #ff8c00; color: #fff; border-radius: 1rem; padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+
+.hashtag-box {
+  display: flex;
+  flex-wrap: wrap;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 1rem;
+  padding: 1rem;
+  gap: 0.5rem;
+}
+
+.tag {
+  background: #ff8c00;
+  color: #fff;
+  border-radius: 1rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+}
+
 .navigation-buttons {
-  display: flex; justify-content: space-between; position: fixed; bottom: 1rem; left: 0; width: 100%; padding: 0 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  bottom: 1rem;
+  left: 0;
+  width: 100%;
+  padding: 0 1.25rem;
 }
-.btn-back, .btn-next { flex: 1; height: 48px; border-radius: 1rem; border: none; font-weight: 600; font-size: 1rem; }
-.btn-back { background: #fff; color: #1b3b6f; border: 2px solid #1b3b6f; margin-right: .75rem; }
-.btn-next { background: #1b3b6f; color: #fff; }
+
+.btn-back,
+.btn-next {
+  flex: 1;
+  height: 48px;
+  border-radius: 1rem;
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.btn-back {
+  background: #fff;
+  color: #1b3b6f;
+  border: 2px solid #1b3b6f;
+  margin-right: .75rem;
+}
+
+.btn-next {
+  background: #1b3b6f;
+  color: #fff;
+}
 </style>
