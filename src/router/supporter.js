@@ -24,14 +24,24 @@ const routes = [
         component: () => import('@/views/supporter/image-ai/SupporterImageAIType.vue')
     },
     {
-        path: '/supporter/image-ai/results',
+        path: '/supporter/image-ai/recommend',
         name: 'SupporterImageAIResults',
-        component: () => import('@/views/supporter/image-ai/SupporterImageAIResults.vue')
+        component: () => import('@/views/supporter/image-ai/SupporterImageAIRecommend.vue')
     },
     {
-        path: '/supporter/image-ai/add-plan',
-        name: 'SupporterImageAIAddPlan',
-        component: () => import('@/views/supporter/image-ai/SupporterImageAIAddPlan.vue')
+        path: '/supporter/image-ai/choice-plan',
+        name: 'SupporterImageAIChoicePlan',
+        component: () => import('@/views/supporter/image-ai/SupporterImageAIChoicePlan.vue')
+    },
+    {
+        path: '/supporter/image-ai/select-plan',
+        name: 'SupporterImageAISelectPlan',
+        component: () => import('@/views/supporter/image-ai/SupporterImageAISelectPlan.vue')
+    },
+    {
+        path: '/supporter/image-ai/complete-plan',
+        name: 'SupporterImageAICompletePlan',
+        component: () => import('@/views/supporter/image-ai/SupporterImageAICompletePlan.vue')
     },
     {
         path: '/supporter/restrooms',
