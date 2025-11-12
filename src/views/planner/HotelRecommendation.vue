@@ -344,8 +344,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/styles/global";
-
 .hotel-card {
   cursor: pointer;
   transition: all 0.3s ease;
