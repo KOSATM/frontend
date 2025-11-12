@@ -2,7 +2,7 @@
   <div class="hashtag-page">
     <!-- 상단 헤더 -->
     <ReviewHeader
-      :title="'Select Hastags'"
+      title="Create Travel Review"
       :subtitle="tripTitle"
       step="4/6"
       @back="goBack"
@@ -10,10 +10,13 @@
 
     <!-- 본문 -->
     <section class="hashtag-section">
-      <h6 class="section-title">Hashtags</h6>
-      <p class="section-subtitle">
-        Select or add custom hashtags ({{ selectedTags.length }} selected)
-      </p>
+        <h6 class="guide-title"><i class="bi bi-hash text-primary me-2"></i>
+          AI Hashtag Suggestions
+        </h6>
+        <p class="guide-subtitle">
+          Get smart hashtag recommendations based on your chosen caption style ✨  
+          You can also add your own custom tags below!
+        </p>
 
       <!-- 선택된 해시태그 목록 -->
       <div class="selected-tags">

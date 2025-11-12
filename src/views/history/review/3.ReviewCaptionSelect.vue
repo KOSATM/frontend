@@ -1,7 +1,7 @@
 <template>
       <div class="review-caption-select">
     <ReviewHeader
-      :title="'Select Caption Style'"
+      title="Create Travel Review"
       :subtitle="tripTitle"
       step="3/6"
       @back="goBack"

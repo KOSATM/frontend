@@ -2,7 +2,7 @@
   <div class="preview-page">
 
     <ReviewHeader
-      title="Instagram Preview"
+      title="Create Travel Review"
       :subtitle="tripTitle"
       step="6/6"
       @back="goBack"

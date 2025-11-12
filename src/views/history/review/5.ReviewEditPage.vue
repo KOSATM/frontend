@@ -1,9 +1,9 @@
 <template>
   <div class="review-edit-page">
     <ReviewHeader
-      :title="'Edit Review'"
+      title="Create Travel Review"
       :subtitle="tripTitle"
-      step="4/6"
+      step="5/6"
       @back="goBack"
     />
 
