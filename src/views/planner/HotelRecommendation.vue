@@ -344,6 +344,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/styles/global";
+
 .hotel-card {
   cursor: pointer;
   transition: all 0.3s ease;
@@ -368,20 +370,4 @@ export default {
   font-weight: 500;
 }
 
-// Use theme colors from _theme.scss
-:root {
-  --bs-primary: #ff8c00;
-  --bs-secondary: #1B3B6F;
-}
-
-// slider
-.form-label {
-  display: block;
-  margin-bottom: 8px;
-}
-
-.form-range {
-  width: 100%;
-  margin-bottom: 8px;
-}
 </style>
