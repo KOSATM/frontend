@@ -6,6 +6,7 @@ import LandingPage from '@/views/LandingPage.vue'
 
 // 히스토리/리뷰
 import HistoryMain from '@/views/history/HistoryMain.vue'
+import EditProfile from '@/views/history/EditProfile.vue'
 import CreateTravelReview from '@/views/history/CreateTravelReview.vue'
 import ReviewPhotoOrder from '@/views/history/ReviewPhotoOrder.vue'
 
@@ -27,6 +28,13 @@ const routes = [
   { path: '/', component: LandingPage },
   { path: '/supporter', component: SupporterMain },
   { path: '/history', component: HistoryMain },
+  
+  // 프로필 편집
+  { 
+    path: '/profile/edit', 
+    name: 'EditProfile',
+    component: EditProfile 
+  },
 
   // 여행 후기 작성
   {
