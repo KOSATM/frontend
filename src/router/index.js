@@ -1,50 +1,28 @@
-// src/router/index.js
 import { createRouter, createWebHistory } from 'vue-router'
 
-// 공통/기본 페이지
+// 기본/공통 페이지
 import LandingPage from '@/views/LandingPage.vue'
-
-// 히스토리/리뷰
-import HistoryMain from '@/views/history/HistoryMain.vue'
-import CreateTravelReview from '@/views/history/CreateTravelReview.vue'
-import ReviewPhotoOrder from '@/views/history/ReviewPhotoOrder.vue'
-
-// 서포터
 import SupporterMain from '@/views/supporter/SupporterMain.vue'
-
-// 플래너 관련
 import PlannerMain from '@/views/planner/PlannerMain.vue'
 import TravelPlanForm from '@/views/planner/TravelPlanForm.vue'
 import HotelRecommendation from '@/views/planner/HotelRecommendation.vue'
 
-
-
-// 하위 라우트 묶음
-import support from './supporter'
+// 하위 라우트 모듈
+import history from './history'
 import planner from './planner'
+import supporter from './supporter'
 
 const routes = [
   { path: '/', component: LandingPage },
   { path: '/supporter', component: SupporterMain },
-  { path: '/history', component: HistoryMain },
+  { path: '/planner', component: PlannerMain },
+  { path: '/planner/form', component: TravelPlanForm },
+  { path: '/planner/hotel', component: HotelRecommendation },
 
-  // 여행 후기 작성
-  {
-    path: '/review/:tripId/:tripTitle?',
-    name: 'CreateTravelReview',
-    component: CreateTravelReview,
-    props: true,
-  },
-  {
-    path: '/review/:tripId/order',
-    name: 'ReviewPhotoOrder',
-    component: ReviewPhotoOrder,
-    props: true,
-  },
-
-  // 나머지 묶음 라우트
-  ...support,
+  // 하위 모듈 라우트 확장
+  ...history,
   ...planner,
+  ...supporter,
 ]
 
 const router = createRouter({
