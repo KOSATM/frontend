@@ -1,11 +1,16 @@
 <template>
-      <div class="review-caption-select">
-    <ReviewHeader
-      title="Create Travel Review"
-      :subtitle="reviewStore.tripTitle"
-      step="3/6"
-      @back="goBack"
-    />
+  <div class="review-caption-select">
+      <PageHeader
+        title="Travelgram"
+        subtitle="Your past travel adventures"
+        icon="bi-instagram"
+      />
+        <StepHeader
+          title="Create Travel Review"
+          :subtitle="reviewStore.tripTitle"
+          step="3/6"
+          @back="goBack"
+        />
     
     <section class="caption-section">
       <h6 class="section-title">
@@ -48,7 +53,8 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
-import ReviewHeader from '@/components/common/StepHeader.vue'
+import StepHeader from '@/components/common/StepHeader.vue'
+import PageHeader from '@/components/common/PageHeader.vue'
 
 const router = useRouter()
 const reviewStore = useReviewStore()
@@ -185,15 +191,11 @@ const goNext = () => {
   font-size: 1.3rem;
 }
 
-/* 버튼 */
+/* 하단 버튼 영역 */
 .navigation-buttons {
   display: flex;
-  justify-content: space-between;
-  position: fixed;
-  bottom: 1rem;
-  left: 0;
-  width: 100%;
-  padding: 0 1.25rem;
+  gap: 0.75rem;
+  margin-top: 2rem;
 }
 
 .btn-back,
@@ -204,7 +206,6 @@ const goNext = () => {
   border: none;
   font-weight: 600;
   font-size: 1rem;
-  transition: all 0.2s;
 }
 
 .btn-back {
@@ -213,12 +214,10 @@ const goNext = () => {
   border: 2px solid #1b3b6f;
   margin-right: 0.75rem;
 }
-
 .btn-next {
   background-color: #1b3b6f;
   color: #fff;
 }
-
 .btn-next:disabled {
   background-color: #ccc;
   cursor: not-allowed;
