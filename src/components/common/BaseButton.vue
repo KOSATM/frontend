@@ -1,22 +1,21 @@
-<!-- 컴포넌트의 UI -->
 <template>
-    <component :is="to ? 'router-link' : 'button'" :to="to" :class="buttonClass" :type="to ? null : type"
-        @click="handleClick">
-        <slot />
-    </component>
+  <component :is="to ? 'router-link' : 'button'" :to="to" :class="buttonClass" :type="to ? null : type"
+    @click="handleClick">
+    <slot />
+  </component>
 </template>
 
-<!-- 컴포넌트의 초기화 또는 이벤트 처리 -->
+<!-- 컴포넌트 초기화 또는 이벤트 처리 -->
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 const props = defineProps({
-    to: String,
-    variant: { type: String, default: 'primary' },
-    size: { type: String, default: 'md' },
-    type: { type: String, default: 'button' },
-    emitClick: { type: Boolean, default: true } // 클릭 emit 여부
+  to: String,
+  variant: { type: String, default: 'primary' },
+  size: { type: String, default: 'md' },
+  type: { type: String, default: 'button' },
+  emitClick: { type: Boolean, default: true } // 클릭 emit 여부
 })
 
 const emit = defineEmits(['click'])
@@ -37,5 +36,5 @@ function handleClick(e) {
 }
 </script>
 
-<!-- 컴포넌트 스타일 정의 -->
+
 <style scoped></style>

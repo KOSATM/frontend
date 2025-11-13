@@ -4,7 +4,7 @@
     <h6 class="settings-title">Settings</h6>
 
     <!-- 프로필 설정 -->
-    <div class="settings-item">
+    <RouterLink class="settings-item" to="/profile/edit" >
       <div class="settings-icon bg-light-primary">
         <i class="bi bi-person-fill text-primary"></i>
       </div>
@@ -13,7 +13,7 @@
         <p>Profile & account settings</p>
       </div>
       <i class="bi bi-chevron-right text-secondary"></i>
-    </div>
+    </RouterLink>
 
     <!-- 환경 설정 -->
     <div class="settings-item">
@@ -30,6 +30,13 @@
 </template>
 
 <script setup>
+import { RouterLink, useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const goToEditProfile = () => {
+  router.push('/profile/edit')
+}
 </script>
 
 <style scoped>
