@@ -12,7 +12,7 @@
 defineProps({
   title: { type: String, required: true },
   subtitle: { type: String, default: "" },
-  icon: { type: String, default: "" }, // Bootstrap Icon class name (e.g., 'bi-clock-history')
+  icon: { type: String, default: "" }, // Bootstrap Icon class name (e.g., 'bi-instagram')
   iconColor: { type: String, default: "#ff8c00" } // optional color prop
 });
 </script>
