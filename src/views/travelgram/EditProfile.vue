@@ -202,7 +202,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseButton from '@/components/common/BaseButton.vue'
-import UploadSection from '@/components/history/UploadSection.vue'
+import UploadSection from '@/components/travelgram/UploadSection.vue'
 import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 

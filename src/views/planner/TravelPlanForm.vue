@@ -173,7 +173,7 @@ import HotelRecommendation from './HotelRecommendation.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
-import UploadSection from '@/components/history/UploadSection.vue'
+import UploadSection from '@/components/travelgram/UploadSection.vue'
 
 const currentStep = ref(1)
 const selectedHotel = ref(null)
