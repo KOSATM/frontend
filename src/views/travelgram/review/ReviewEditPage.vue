@@ -1,4 +1,9 @@
 <template>
+    <PageHeader
+      title="Travelgram"
+      subtitle="Your past travel adventures"
+      icon="bi-instagram"
+    />
   <div class="review-edit-page">
     <StepHeader title="Create Travel Review" :subtitle="reviewStore.tripTitle" step="5/6" @back="goBack" />
 
@@ -74,6 +79,7 @@ import { useReviewStore } from "@/store/reviewStore";
 import CaptionEditorModal from '@/components/travelgram/modals/CaptionEditorModal.vue';
 import HashtagEditorModal from '@/components/travelgram/modals/HashtagEditorModal.vue';
 import StepHeader from "@/components/common/StepHeader.vue";
+import PageHeader from "@/components/common/PageHeader.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -277,14 +283,11 @@ const goNext = () => {
   font-size: 0.85rem;
 }
 
+/* 하단 버튼 영역 */
 .navigation-buttons {
   display: flex;
-  justify-content: space-between;
-  position: fixed;
-  bottom: 1rem;
-  left: 0;
-  width: 100%;
-  padding: 0 1.25rem;
+  gap: 0.75rem;
+  margin-top: 2rem;
 }
 
 .btn-back,
@@ -298,14 +301,17 @@ const goNext = () => {
 }
 
 .btn-back {
-  background: #fff;
+  background-color: #fff;
   color: #1b3b6f;
   border: 2px solid #1b3b6f;
-  margin-right: .75rem;
+  margin-right: 0.75rem;
 }
-
 .btn-next {
-  background: #1b3b6f;
+  background-color: #1b3b6f;
   color: #fff;
+}
+.btn-next:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 </style>

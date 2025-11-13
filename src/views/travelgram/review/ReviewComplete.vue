@@ -1,4 +1,9 @@
 <template>
+  <PageHeader
+    title="Travelgram"
+    subtitle="Your past travel adventures"
+    icon="bi-instagram"
+  />
   <div class="complete-page">
     <div class="complete-container">
       <div class="success-icon">
@@ -36,6 +41,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
+import PageHeader from '@/components/common/PageHeader.vue'
 
 const router = useRouter()
 
