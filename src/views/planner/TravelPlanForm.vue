@@ -1,18 +1,15 @@
 <template>
-  <BackButtonPageHeader title="Let's Plan Your Korean Adventure" subtitle="Tell us about your trip and we'll create a personalized itinerary for you.">
+  <BackButtonPageHeader title="Let's Plan Your Korean Adventure"
+    subtitle="Tell us about your trip and we'll create a personalized itinerary for you.">
   </BackButtonPageHeader>
   <!-- <div class="travel-plan-form"> -->
-    <!-- <div class="form-header mb-4">
+  <!-- <div class="form-header mb-4">
       <router-link to="/planner" class="text-decoration-none">
         <i class="bi bi-arrow-left"></i>
         <span class="ms-2">Create Your Itinerary</span>
       </router-link>
     </div> -->
-  <PageHeader
-    title="Planner"
-    subtitle="Create and manage your Seoul travel itinerary"
-    icon="bi-map"
-  />
+  <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
   <div class="travel-plan-form">
     <div class="form-header mb-4">
       <RouterLink to="/planner" class="text-decoration-none">
@@ -105,16 +102,7 @@
       <!-- Interests Section -->
       <UploadSection icon="bi-heart" title="What Interests You?"
         subtitle="Select all that apply. We'll tailor your itinerary based on your preferences.">
-        <div class="row g-3">
-          <div class="col-6" v-for="interest in interests" :key="interest.id">
-            <div class="d-flex align-items-center border rounded-3 p-3 interest-item h-100"
-              :class="{ 'border-primary bg-primary text-white': tripData.selectedInterests.includes(interest.id) }"
-              @click="toggleInterest(interest.id)">
-              <i :class="interest.icon + ' me-2'"></i>
-              <span class="text-truncate">{{ interest.name }}</span>
-            </div>
-          </div>
-        </div>
+          <BaseSelection :items="interests" v-model="tripData.selectedInterests" />
       </UploadSection>
       <!-- <section class="mb-4">
         <h3 class="section-title">
@@ -174,6 +162,7 @@ import PageHeader from '@/components/common/PageHeader.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 import UploadSection from '@/components/travelgram/UploadSection.vue'
+import BaseSelection from '@/components/common/BaseSelection.vue'
 
 const currentStep = ref(1)
 const selectedHotel = ref(null)

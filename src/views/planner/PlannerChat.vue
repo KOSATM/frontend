@@ -177,7 +177,6 @@ onMounted(() => {
 .planner-chat {
   position: sticky;
   top: var(--app-header-height, 64px); /* 헤더 아래에서 고정 */
-  margin-top: var(--app-header-height, 64px); /* 초기 배치도 동일 간격 → 점프 제거 */
   height: calc(80vh - var(--app-header-height, 64px)); /* 높이 보정(선택) */
   z-index: 10;
   overflow: hidden;
