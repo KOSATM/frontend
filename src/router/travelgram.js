@@ -1,24 +1,24 @@
-// src/router/history.js
-import TravelgramMain from '@/views/history/TravelgramMain.vue'
-import TripDetail from '@/views/history/TripDetail.vue'
+// src/router/travelgram.js
+import TravelgramMain from '@/views/travelgram/TravelgramMain.vue'
+import TripDetail from '@/views/travelgram/TripDetail.vue'
 
 // 리뷰 작성 단계
-import CreateTravelReview from '@/views/history/review/CreateTravelReview.vue'
-import ReviewPhotoOrder from '@/views/history/review/ReviewPhotoOrder.vue'
-import ReviewCaptionSelect from '@/views/history/review/ReviewCaptionSelect.vue'
-import ReviewHashtagSelect from '@/views/history/review/ReviewHashtagSelect.vue'
-import ReviewEditPage from '@/views/history/review/ReviewEditPage.vue'
-import ReviewInstagramPreview from '@/views/history/review/ReviewInstagramPreview.vue'
-import ReviewComplete from '@/views/history/review/ReviewComplete.vue'
+import CreateTravelReview from '@/views/travelgram/review/CreateTravelReview.vue'
+import ReviewPhotoOrder from '@/views/travelgram/review/ReviewPhotoOrder.vue'
+import ReviewCaptionSelect from '@/views/travelgram/review/ReviewCaptionSelect.vue'
+import ReviewHashtagSelect from '@/views/travelgram/review/ReviewHashtagSelect.vue'
+import ReviewEditPage from '@/views/travelgram/review/ReviewEditPage.vue'
+import ReviewInstagramPreview from '@/views/travelgram/review/ReviewInstagramPreview.vue'
+import ReviewComplete from '@/views/travelgram/review/ReviewComplete.vue'
 
-export default [
+const routes = [
   {
     path: '/travelgram',
     name: 'TravelgramMain',
     component: TravelgramMain,
   },
   {
-  path: '/history/:tripId',
+  path: '/travelgram/:tripId',
   name: 'TripDetail',
   component: TripDetail,
   props: true,
@@ -66,3 +66,4 @@ export default [
     props: true,
   },
 ]
+export default routes;

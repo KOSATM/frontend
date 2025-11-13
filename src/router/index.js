@@ -6,6 +6,7 @@ import SupporterMain from '@/views/supporter/SupporterMain.vue'
 import TravelPlanForm from '@/views/planner/TravelPlanForm.vue'
 import HotelRecommendation from '@/views/planner/HotelRecommendation.vue'
 import PlannerCreate from '@/views/planner/PlannerCreate.vue'
+import TravelgramMain from '@/views/travelgram/TravelgramMain.vue'
 
 // 하위 라우트 모듈
 import travelgram from './travelgram'
@@ -14,19 +15,20 @@ import supporter from './supporter'
 
 const routes = [
   { path: '/', component: LandingPage },
+  { path: '/travelgram', component: TravelgramMain },
   { path: '/supporter', component: SupporterMain },
   { path: '/planner', component: PlannerCreate },
   { path: '/planner/form', component: TravelPlanForm },
   { path: '/planner/hotel', component: HotelRecommendation },
 
   // 하위 모듈 라우트 확장
-  ...travelgram,
   ...planner,
   ...supporter,
+  ...travelgram
 ]
 
 const router = createRouter({
-  travelgram: createWebHistory(),
+  history: createWebHistory(),
   routes,
 })
 
