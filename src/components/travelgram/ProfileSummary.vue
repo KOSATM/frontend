@@ -1,5 +1,5 @@
 <template>
-  <section class="profile-summary text-center py-4">
+  <div class="profile-card shadow-sm">
     <!-- 프로필 이미지 -->
     <div class="profile-avatar mx-auto mb-2">
       <div class="avatar-circle">{{ initials }}</div>
@@ -24,8 +24,9 @@
         <p>Completed</p>
       </div>
     </div>
-  </section>
+  </div>
 </template>
+
 
 <script setup>
 defineProps({
@@ -42,58 +43,65 @@ defineProps({
 /* ===============================
    👤 Profile Summary
    =============================== */
-.profile-summary {
-  background-color: #fff;
-  border-radius: 1rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-  margin-bottom: 1.5rem;
-  padding: 2rem 1.5rem;
+.profile-card {
+  background: #ffffff;
+  padding: 1.75rem 1.5rem;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+  text-align: center;
+  transition: all 0.25s ease;
+  border: 1px solid rgba(0,0,0,0.06);
+  margin-top: 2rem; /* 🔥 필요하면 1.5rem~3rem 사이 조절 */
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  }
 }
 
-.avatar-circle {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background-color: #ff8c00;
-  color: #fff;
-  font-weight: 600;
-  font-size: 1.5rem;
+.profile-avatar .avatar-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 999px;
+  background: #ffe5d1;
+  color: #ff7a2a;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
   margin: 0 auto;
 }
 
 .profile-name {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #1b3b6f;
+  font-weight: 700;
+  color: #2b2b2b;
 }
 
 .profile-bio {
   font-size: 0.9rem;
-  color: #6c757d;
-  margin-bottom: 1rem;
+  color: #666;
 }
 
 .profile-stats {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-  padding-top: 1rem;
+  margin-top: 1rem;
+
+  .stat-item {
+    padding: 0 1rem;
+
+    h6 {
+      font-weight: 700;
+      color: #1b3b6f;
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      font-size: 0.8rem;
+      color: #888;
+      margin-bottom: 0;
+    }
+  }
 }
 
-.stat-item h6 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #ff8c00;
-  margin-bottom: 0.25rem;
-}
-
-.stat-item p {
-  font-size: 0.8rem;
-  color: #6c757d;
-  margin: 0;
-}
 </style>

@@ -1,7 +1,12 @@
 <template>
   <div class="photo-upload-page">
+    <PageHeader
+        title="Travelgram"
+        subtitle="Your past travel adventures"
+        icon="bi-instagram"
+      />
     <!-- 🔸 상단 헤더 -->
-    <ReviewHeader
+    <StepHeader
       title="Create Travel Review"
       :subtitle="reviewStore.tripTitle"
       step="1/6"
@@ -110,7 +115,8 @@ import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
 import { v4 as uuidv4 } from 'uuid'
-import ReviewHeader from '@/components/common/StepHeader.vue'
+import StepHeader from '@/components/common/StepHeader.vue'
+import PageHeader from '@/components/common/PageHeader.vue'
 
 const router = useRouter()
 const route = useRoute()

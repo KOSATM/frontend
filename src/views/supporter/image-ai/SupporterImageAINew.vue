@@ -24,6 +24,14 @@
             <div class="mt-2">Tap to Upload & Discover</div>
           </template>
         </div>
+      </label>
+
+      <input id="imageInput" type="file" accept="image/*" class="d-none" @change="onFileChange" />
+      
+      <div class="d-grid gap-2">
+        <button class="btn btn-primary" :disabled="!imagePreview" @click.prevent="goToType">
+          <i class="bi bi-arrow-right-circle me-2"></i> Specify Photo Type
+        </button>
       </div>
     </label>
   </UploadSection>
@@ -65,7 +73,6 @@ const onDrop = (e) => {
   reader.readAsDataURL(f)
 }
 
-// go to type selection, pass preview in history state
 const goToType = () => {
   if (!imagePreview.value) return
   router.push({
@@ -125,9 +132,10 @@ const onHeaderBack = () => {
 </script>
 
 <style scoped>
-.page-banner {
-  background: transparent;
-  align-items: center;
+.page-container {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding: 2rem 1.25rem;
 }
 
 .btn-back {
@@ -137,6 +145,7 @@ const onHeaderBack = () => {
   padding: 6px 8px;
   color: #333;
   cursor: pointer;
+  margin-bottom: 1.5rem;
 }
 
 .btn-back:hover {

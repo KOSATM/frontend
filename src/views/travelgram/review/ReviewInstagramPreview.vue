@@ -1,5 +1,10 @@
 <template>
   <div class="preview-page">
+    <PageHeader
+      title="Travelgram"
+      subtitle="Your past travel adventures"
+      icon="bi-instagram"
+    />
     <!-- 상단 헤더 -->
     <StepHeader
       title="Create Travel Review"
@@ -95,12 +100,10 @@
       </div>
     </section>
 
-    <!-- 하단 버튼 -->
+<!-- 🔥 여기! navigation-buttons는 컨테이너 안의 최하단에 있어야 한다 -->
     <div class="navigation-buttons">
       <button class="btn-back" @click="goBack">Back</button>
-      <button class="btn-next" @click="publish">
-        <i class="bi bi-instagram me-2"></i> Publish to Instagram
-      </button>
+      <button class="btn-next" @click="publish">Publish</button>
     </div>
   </div>
 </template>
@@ -110,6 +113,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
 import StepHeader from '@/components/common/StepHeader.vue'
+import PageHeader from '@/components/common/PageHeader.vue'
 
 // 기본 유저정보
 const user = ref({
@@ -151,10 +155,22 @@ console.log('Store photos length:', reviewStore.photos?.length)
 
 // 복사 기능
 const copyToClipboard = () => {
-  const text = `${reviewStore.caption}\n${reviewStore.hashtags.join(' ')}`
-  navigator.clipboard.writeText(text)
-  alert('📋 Copied to clipboard!')
-}
+  const caption = reviewStore.caption || "";
+  const tags = Array.isArray(reviewStore.hashtags)
+    ? reviewStore.hashtags.join(" ")
+    : "";
+
+  const text = `${caption}\n${tags}`.trim();
+
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      alert("📋 Copied to clipboard!");
+    })
+    .catch(() => {
+      alert("❌ Copy failed. Please try again.");
+    });
+};
 
 // 네비게이션
 const goBack = () => router.back()
@@ -165,6 +181,7 @@ const publish = () => {
 </script>
 
 <style scoped>
+
 .preview-page {
   background-color: #fffaf3;
   min-height: 100vh;
@@ -348,16 +365,13 @@ const publish = () => {
   color: white;
 }
 
-/* 하단 버튼 */
+/* 하단 버튼 영역 */
 .navigation-buttons {
   display: flex;
-  justify-content: space-between;
-  position: fixed;
-  bottom: 1rem;
-  left: 0;
-  width: 100%;
-  padding: 0 0.75rem; /* ✅ padding 축소 */
+  gap: 0.75rem;
+  margin-top: 2rem;
 }
+
 .btn-back,
 .btn-next {
   flex: 1;
@@ -366,8 +380,8 @@ const publish = () => {
   border: none;
   font-weight: 600;
   font-size: 1rem;
-  transition: all 0.2s;
 }
+
 .btn-back {
   background-color: #fff;
   color: #1b3b6f;
@@ -378,7 +392,8 @@ const publish = () => {
   background-color: #1b3b6f;
   color: #fff;
 }
-.btn-next:hover {
-  background-color: #16305c;
+.btn-next:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 </style>

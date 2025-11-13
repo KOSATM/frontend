@@ -22,7 +22,7 @@ defineProps({
   background: linear-gradient(90deg, #fffaf3 0%, #ffffff 100%);
   padding: 1.25rem 1.5rem 1rem;
   border-bottom: 1px solid rgba(27, 59, 111, 0.08);
-}
+  margin-bottom: 1.5rem;
 
 .header-top {
   display: flex;
@@ -40,5 +40,6 @@ defineProps({
   font-size: 0.9rem;
   color: #6c757d;
   margin: 0.35rem 0 0 2rem;
+}
 }
 </style>

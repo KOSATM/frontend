@@ -13,7 +13,9 @@
       :travelDays="28"
       :completed="3"
     />
-      <h4><i class="bi bi-instagram me-2 text-primary"></i> Completed Travel Plans</h4>
+    <h4 class="my-3">
+      <i class="bi bi-instagram me-2 text-primary"></i> Completed Travel Plans
+    </h4>
     
     
     <!-- TripCard 목록 -->

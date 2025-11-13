@@ -1,6 +1,6 @@
 <template>
-  <BackButtonPageHeader title="Let's Plan Your Korean Adventure" subtitle="Tell us about your trip and we'll create a personalized itinerary for you.">
-  </BackButtonPageHeader>
+  <!-- <BackButtonPageHeader title="Let's Plan Your Korean Adventure" subtitle="Tell us about your trip and we'll create a personalized itinerary for you.">
+  </BackButtonPageHeader> -->
   <!-- <div class="travel-plan-form"> -->
     <!-- <div class="form-header mb-4">
       <router-link to="/planner" class="text-decoration-none">
@@ -13,12 +13,13 @@
     subtitle="Create and manage your Seoul travel itinerary"
     icon="bi-map"
   />
+  <StepHeader :step="'1/4'" :title="'Make an Outline'" @back="goBack"/>
   <div class="travel-plan-form">
     <div class="form-header mb-4">
-      <RouterLink to="/planner" class="text-decoration-none">
+      <!-- <RouterLink to="/planner" class="text-decoration-none">
         <i class="bi bi-arrow-left"></i>
         <span class="ms-2">Back</span>
-      </RouterLink>
+      </RouterLink> -->
     </div>
 
     <div v-if="currentStep === 1" class="form-content bg-white rounded-4">
@@ -174,9 +175,12 @@ import PageHeader from '@/components/common/PageHeader.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 import UploadSection from '@/components/travelgram/UploadSection.vue'
+import StepHeader from '@/components/common/StepHeader.vue'
+import { useRouter } from 'vue-router'
 
 const currentStep = ref(1)
 const selectedHotel = ref(null)
+const router = useRouter()
 
 const tripData = ref({
   startDate: new Date().toISOString().split('T')[0],
@@ -216,6 +220,10 @@ const formatBudgetPerDay = () => {
   return tripData.value.currency === 'USD'
     ? `$${amountPerDay.toFixed(2)}`
     : `₩${Math.round(amountPerDay).toLocaleString()}`
+}
+
+const goBack = () => {
+  router.push("/planner")
 }
 
 const nextStep = () => {
