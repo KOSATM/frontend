@@ -23,8 +23,8 @@
       </div>
 
       <div class="button-group">
-        <button class="btn-back" @click="goToHistory">
-          Back to History
+        <button class="btn-back" @click="goToTravelgram">
+          Back to Travelgram
         </button>
         <button class="btn-home" @click="goHome">
           Back to Main
@@ -39,7 +39,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const goToHistory = () => router.push({ name: 'HistoryMain' })
+const goToTravelgram = () => router.push({ name: 'TravelgramMain' })
 const goHome = () => router.push('/')
 </script>
 

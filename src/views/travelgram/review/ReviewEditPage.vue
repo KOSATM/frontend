@@ -1,6 +1,6 @@
 <template>
   <div class="review-edit-page">
-    <ReviewHeader title="Create Travel Review" :subtitle="reviewStore.tripTitle" step="5/6" @back="goBack" />
+    <StepHeader title="Create Travel Review" :subtitle="reviewStore.tripTitle" step="5/6" @back="goBack" />
 
     <section class="review-section">
       <h6 class="section-title">
@@ -12,7 +12,6 @@
       <div class="photo-section">
         <div class="photo-header d-flex justify-content-between align-items-center">
           <p class="photo-count">Photos ({{ photos.length }})</p>
-          <button class="edit-btn" @click="showPhotoEditor = true">Edit Photos</button>
         </div>
         <!-- ✅ 사진 컨테이너 (네비게이션 포함) -->
         <div class="photo-container">
@@ -63,7 +62,6 @@
     </div>
 
     <!-- 🔶 모달 컴포넌트 -->
-    <PhotoEditorModal v-if="showPhotoEditor" @close="showPhotoEditor = false" />
     <CaptionEditorModal v-if="showCaptionEditor" @close="showCaptionEditor = false" />
     <HashtagEditorModal v-if="showHashtagEditor" @close="showHashtagEditor = false" />
   </div>
@@ -73,10 +71,9 @@
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useReviewStore } from "@/store/reviewStore";
-import ReviewHeader from '@/components/common/DetailHeader.vue';
-import PhotoEditorModal from '@/components/history/modals/1.PhotoEditorModal.vue';
-import CaptionEditorModal from '@/components/history/modals/2.CaptionEditorModal.vue';
-import HashtagEditorModal from '@/components/history/modals/3.HashtagEditorModal.vue';
+import CaptionEditorModal from '@/components/travelgram/modals/CaptionEditorModal.vue';
+import HashtagEditorModal from '@/components/travelgram/modals/HashtagEditorModal.vue';
+import StepHeader from "@/components/common/StepHeader.vue";
 
 const route = useRoute();
 const router = useRouter();

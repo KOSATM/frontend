@@ -37,7 +37,7 @@
         <div class="card mb-4 bg-light border-0 shadow-sm p-3">
           <h6 class="mb-2">What's Next?</h6>
           <ul class="mb-0 small">
-            <li>Your itinerary has been saved to History</li>
+            <li>Your itinerary has been saved to Travelgram</li>
             <li>You can modify your plan anytime</li>
             <li>Use the Supporter tab for real-time assistance during your trip</li>
           </ul>

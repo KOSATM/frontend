@@ -1,7 +1,7 @@
 <template>
   <div class="photo-order-page">
     <!-- 🔸 상단 헤더 -->
-    <ReviewHeader
+    <StepHeader
       title="Create Travel Review"
       :subtitle="reviewStore.tripTitle"
       step="2/6"
@@ -66,7 +66,7 @@
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
-import ReviewHeader from '@/components/common/DetailHeader.vue'
+import StepHeader from '@/components/common/StepHeader.vue'
 
 const router = useRouter()
 const route = useRoute()

@@ -37,7 +37,7 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import ReviewHeader from '@/components/common/DetailHeader.vue'
+import ReviewHeader from '@/components/common/StepHeader.vue'
 
 const router = useRouter()
 const route = useRoute()

@@ -110,7 +110,7 @@ import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
 import { v4 as uuidv4 } from 'uuid'
-import ReviewHeader from '@/components/common/DetailHeader.vue'
+import ReviewHeader from '@/components/common/StepHeader.vue'
 
 const router = useRouter()
 const route = useRoute()

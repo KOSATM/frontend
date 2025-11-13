@@ -16,8 +16,8 @@
         <button
           class="btn profile-btn border-0 p-0"
           type="button"
-          @click="goToHistory"
-          title="Go to History"
+          @click="goToTravelgram"
+          title="Go to Travelgram"
         >
           <img
             :src="profileImage"
@@ -51,9 +51,9 @@ const router = useRouter()
 // OAuth 프로필 이미지 (기본값: 사용자 아이콘)
 const profileImage = ref('https://via.placeholder.com/40?text=U')
 
-// 히스토리 페이지로 이동
-const goToHistory = () => {
-  router.push('/history')
+// Travelgram 페이지로 이동
+const goToTravelgram = () => {
+  router.push('/travelgram')
 }
 
 const handleScroll = () => {
