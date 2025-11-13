@@ -12,7 +12,7 @@
       <div class="col-md-10">
         <div class="card mb-4 shadow-sm">
           <div class="card-header bg-primary text-white border-0 rounded-top">
-            <h5 class="mb-0">Trip Summary</h5>
+            <h5 class="mb-0">🧳 Trip Summary</h5>
           </div>
           <div class="card-body">
             <dl class="row mb-3">
@@ -22,14 +22,50 @@
               <dt class="col-4 text-secondary">Total Budget</dt>
               <dd class="col-8">{{ formattedBudget }}</dd>
 
-              <dt class="col-4 text-secondary">Accommodation</dt>
+              <!-- <dt class="col-4 text-secondary">Accommodation</dt>
               <dd class="col-8">
                 <div class="fw-semibold">{{ accommodation.name }}</div>
                 <div class="text-muted small">{{ accommodation.location }}</div>
                 <div class="mt-2 text-primary small">
                   {{ formattedPricePerNight }} /night • × {{ duration }} nights = {{ formattedHotelTotal }}
                 </div>
+              </dd> -->
+            </dl>
+          </div>
+        </div>
+
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header bg-primary text-white border-0 rounded-top">
+            <h5 class="mb-0">🏠 Accommodation Payment Info</h5>
+          </div>
+          <div class="card-body">
+            <dl class="row mb-3">
+              <dt class="col-4 text-secondary">Booking Number</dt>
+              <dd class="col-8">{{ accommodation.bookingNumber }}<br/><small class="text-muted">Starting {{ formattedStartDate }}</small></dd>
+
+              <dt class="col-4 text-secondary">Hotel Name</dt>
+              <dd class="col-8">
+                <div class="fw-semibold">{{ accommodation.name }}</div>
+                <div class="text-muted small">{{ accommodation.location }}</div>
+                
               </dd>
+
+              <dt class="col-4 text-secondary">Payment Amount</dt>
+              <dd class="col-8"><div class="mt-2 text-primary small">
+                  {{ formattedPricePerNight }} /night • × {{ duration }} nights = {{ formattedHotelTotal }}
+                </div></dd>
+
+              <dt class="col-4 text-secondary">Payment Date</dt>
+              <dd class="col-8">{{ accommodation.paymentDate }}</dd>
+
+              <!-- <dt class="col-4 text-secondary">Payment Amount</dt>
+              <dd class="col-8">
+                <div class="fw-semibold">{{ accommodation.name }}</div>
+                <div class="text-muted small">{{ accommodation.location }}</div>
+                <div class="mt-2 text-primary small">
+                  {{ formattedPricePerNight }} /night • × {{ duration }} nights = {{ formattedHotelTotal }}
+                </div>
+              </dd> -->
             </dl>
           </div>
         </div>
@@ -71,7 +107,17 @@ const currency = propsRoute.query.currency || 'USD'
 const accommodation = {
   name: propsRoute.query.accName || 'Seoul Boutique Residence',
   location: propsRoute.query.accLocation || 'Itaewon, Yongsan-gu',
-  pricePerNight: Number(propsRoute.query.accPrice) || 110
+  pricePerNight: Number(propsRoute.query.accPrice) || 110,
+
+  bookingNumber: '1234',
+  paymentDate: new Date().toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric'
+      }) + ' at ' + new Date().toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit'
+      })
 }
 
 const formattedStartDate = computed(() => {

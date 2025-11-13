@@ -308,7 +308,7 @@ export default {
       setTimeout(() => {
         this.isProcessing = false;
         // Navigate to completion page
-        this.$router.push({ name: 'paymentComplete' });
+        this.$router.push({ name: 'bookingComplete' });
       }, 2000);
     }
   },
