@@ -1,10 +1,6 @@
 <template>
   <div class="hotel-payment container py-4">
-    <PageHeader
-      title="Payment"
-      subtitle="Complete your hotel booking"
-      icon="bi-credit-card"
-    />
+    <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
     <StepHeader :step="'4/4'" :title="'Make a Payment for the Stay'" @back="goBack"/>
 
     <!-- Selected Hotel Summary -->
