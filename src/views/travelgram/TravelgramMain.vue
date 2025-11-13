@@ -1,9 +1,9 @@
 <template>
-  <div class="history-page">
+  <div class="travelgram-page">
     <PageHeader
-      title="History"
+      title="Travelgram"
       subtitle="Your past travel adventures"
-      icon="bi-clock-history"
+      icon="bi-instagram"
     />
       <ProfileSummary
       name="Jessica Han"
@@ -13,7 +13,7 @@
       :travelDays="28"
       :completed="3"
     />
-      <h4><i class="bi bi-clock-history me-2 text-primary"></i> Completed Travel Plans</h4>
+      <h4><i class="bi bi-instagram me-2 text-primary"></i> Completed Travel Plans</h4>
     
     
     <!-- TripCard 목록 -->
@@ -33,9 +33,6 @@
       </div>
 
       <div>
-        <!-- 하단 설정 -->
-        <UserSettings />
-        <LogoutButton />
         
     </div>
   </div>
@@ -44,9 +41,7 @@
 <script setup>
 import { ref } from 'vue'
 import TripCard from '@/components/common/TripCard.vue';
-import UserSettings from '@/components/history/UserSettings.vue';
-import LogoutButton from '@/components/common/LogoutButton.vue';
-import ProfileSummary from "@/components/history/ProfileSummary.vue";
+import ProfileSummary from "@/components/travelgram/ProfileSummary.vue";
 import PageHeader from '@/components/common/PageHeader.vue';
 
 // ✅ 하드코딩된 여행 데이터
@@ -81,18 +76,18 @@ const activeId = ref(1)
 </script>
 
 <style scoped>
-.history-page {
+.travelgram-page {
   background-color: #fffaf3;
   min-height: 100vh;
   padding: 2rem 1.25rem;
 }
 
-.history-header {
+.travelgram-header {
   margin-bottom: 1.5rem;
   text-align: left;
 }
 
-.history-header h4 {
+.travelgram-header h4 {
   color: #1B3B6F;
   font-weight: 600;
 }

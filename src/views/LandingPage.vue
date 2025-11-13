@@ -53,7 +53,7 @@ export default {
           icon: "bi bi-map-fill  fs-4",
         },
         {
-          title: "Travel History",
+          title: "Share your journey on Instagram",
           desc: "Keep track of all your Seoul adventures",
           icon: "bi bi-journal-text fs-4",
         },
