@@ -1,21 +1,21 @@
 // src/router/history.js
-import HistoryMain from '@/views/history/0.HistoryMain.vue'
-import TripDetail from '@/views/history/1.TripDetail.vue'
+import TravelgramMain from '@/views/history/TravelgramMain.vue'
+import TripDetail from '@/views/history/TripDetail.vue'
 
 // 리뷰 작성 단계
-import CreateTravelReview from '@/views/history/review/1.CreateTravelReview.vue'
-import ReviewPhotoOrder from '@/views/history/review/2.ReviewPhotoOrder.vue'
-import ReviewCaptionSelect from '@/views/history/review/3.ReviewCaptionSelect.vue'
-import ReviewHashtagSelect from '@/views/history/review/4.ReviewHashtagSelect.vue'
-import ReviewEditPage from '@/views/history/review/5.ReviewEditPage.vue'
-import ReviewInstagramPreview from '@/views/history/review/6.ReviewInstagramPreview.vue'
-import ReviewComplete from '@/views/history/review/7.ReviewComplete.vue'
+import CreateTravelReview from '@/views/history/review/CreateTravelReview.vue'
+import ReviewPhotoOrder from '@/views/history/review/ReviewPhotoOrder.vue'
+import ReviewCaptionSelect from '@/views/history/review/ReviewCaptionSelect.vue'
+import ReviewHashtagSelect from '@/views/history/review/ReviewHashtagSelect.vue'
+import ReviewEditPage from '@/views/history/review/ReviewEditPage.vue'
+import ReviewInstagramPreview from '@/views/history/review/ReviewInstagramPreview.vue'
+import ReviewComplete from '@/views/history/review/ReviewComplete.vue'
 
 export default [
   {
-    path: '/history',
-    name: 'HistoryMain',
-    component: HistoryMain,
+    path: '/travelgram',
+    name: 'TravelgramMain',
+    component: TravelgramMain,
   },
   {
   path: '/history/:tripId',

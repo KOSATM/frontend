@@ -8,7 +8,7 @@ import HotelRecommendation from '@/views/planner/HotelRecommendation.vue'
 import PlannerCreate from '@/views/planner/PlannerCreate.vue'
 
 // 하위 라우트 모듈
-import history from './history'
+import travelgram from './travelgram'
 import planner from './planner'
 import supporter from './supporter'
 
@@ -20,13 +20,13 @@ const routes = [
   { path: '/planner/hotel', component: HotelRecommendation },
 
   // 하위 모듈 라우트 확장
-  ...history,
+  ...travelgram,
   ...planner,
   ...supporter,
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  travelgram: createWebHistory(),
   routes,
 })
 
