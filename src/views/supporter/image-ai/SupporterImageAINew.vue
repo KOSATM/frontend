@@ -1,60 +1,58 @@
 <template>
-  <div class="p-4">
-    <!-- top banner with back button + title/subtitle -->
-    <div class="page-banner d-flex align-items-center mb-3">
-      <button class="btn-back me-3" @click="goBack" aria-label="Back to Supporter">
-        <i class="bi bi-arrow-left"></i>
-      </button>
-      <div class="banner-title">
-        <div class="h6 mb-0">Image-based Travel AI</div>
-        <div class="small text-muted">Find destinations from your photos</div>
-      </div>
-      <div class="ms-auto">
-        <button class="btn btn-sm btn-outline-primary" @click="$emit('new-search')">New Search</button>
-      </div>
-    </div>
+  <div class="page-container">
+    <!-- 상단 헤더 -->
+    <BackButtonPageHeader 
+      title="Image-based Travel AI" 
+      subtitle="Find destinations from your photos"
+      @back="goBack"
+    />
 
-    <section>
-      <div class="card shadow-sm border-0 p-3 image-ai-card">
-        <div class="mb-3">
-          <div class="small"><strong>How it works:</strong></div>
-          <ol class="small text-muted mb-0 ps-3">
-            <li>Upload your travel photo</li>
-            <li>AI analyzes the image</li>
-            <li>Get similar destination recommendations</li>
-          </ol>
-        </div>
+    <!-- 메인 컨텐츠 -->
+    <UploadSection 
+      icon="bi-camera" 
+      title="Upload Travel Photo" 
+      subtitle="Let AI discover similar destinations">
+      
+      <div class="how-it-works mb-4">
+        <div class="small"><strong>How it works:</strong></div>
+        <ol class="small text-muted mb-0 ps-3">
+          <li>Upload your travel photo</li>
+          <li>AI analyzes the image</li>
+          <li>Get similar destination recommendations</li>
+        </ol>
+      </div>
 
-        <label class="upload-area d-block mb-2" @dragover.prevent @drop.prevent="onDrop" for="imageInput">
-          <div class="upload-gradient d-flex align-items-center justify-content-center">
-            <div class="text-center text-white-50 w-100 px-3">
-              <!-- preview image when selected, otherwise camera + text -->
-              <template v-if="imagePreview">
-                <img :src="imagePreview" alt="preview" class="preview-img rounded" />
-              </template>
-              <template v-else>
-                <i class="bi bi-camera fs-1"></i>
-                <div class="mt-2">Tap to Upload & Discover</div>
-              </template>
-            </div>
+      <label class="upload-area d-block mb-3" @dragover.prevent @drop.prevent="onDrop" for="imageInput">
+        <div class="upload-gradient d-flex align-items-center justify-content-center">
+          <div class="text-center text-white-50 w-100 px-3">
+            <!-- preview image when selected, otherwise camera + text -->
+            <template v-if="imagePreview">
+              <img :src="imagePreview" alt="preview" class="preview-img rounded" />
+            </template>
+            <template v-else>
+              <i class="bi bi-cloud-arrow-up fs-1"></i>
+              <div class="mt-2">Tap to Upload & Discover</div>
+            </template>
           </div>
-        </label>
-
-        <div class="d-grid">
-          <input id="imageInput" type="file" accept="image/*" class="d-none" @change="onFileChange" />
-          <!-- 버튼은 '다음(타입 선택)' 역할. 사진 없으면 비활성화 -->
-          <button class="btn btn-primary" :disabled="!imagePreview" @click.prevent="goToType">
-            <i class="bi bi-arrow-right-circle me-2"></i> Specify Photo Type
-          </button>
         </div>
+      </label>
+
+      <input id="imageInput" type="file" accept="image/*" class="d-none" @change="onFileChange" />
+      
+      <div class="d-grid gap-2">
+        <button class="btn btn-primary" :disabled="!imagePreview" @click.prevent="goToType">
+          <i class="bi bi-arrow-right-circle me-2"></i> Specify Photo Type
+        </button>
       </div>
-    </section>
+    </UploadSection>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
+import UploadSection from '@/components/travelgram/UploadSection.vue'
 
 const router = useRouter()
 const imagePreview = ref(null)
@@ -75,7 +73,6 @@ const onDrop = (e) => {
   reader.readAsDataURL(f)
 }
 
-// go to type selection, pass preview in history state
 const goToType = () => {
   if (!imagePreview.value) return
   router.push({
@@ -84,34 +81,79 @@ const goToType = () => {
   })
 }
 
-// back to Supporter main
 const goBack = () => {
   router.push({ name: 'SupporterMain' })
 }
 </script>
 
 <style scoped>
-.page-banner {
-  background: transparent;
-  align-items: center;
+.page-container {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding: 2rem 1.25rem;
 }
-.btn-back {
-  border: none;
-  background: transparent;
-  font-size: 18px;
-  padding: 6px 8px;
-  color: #333;
+
+.how-it-works {
+  padding: 1rem;
+  background-color: #f9fafc;
+  border-radius: 0.75rem;
+  border-left: 4px solid #ff8c00;
+}
+
+.upload-area {
+  display: block;
   cursor: pointer;
+  margin-bottom: 1.5rem;
 }
-.btn-back:hover { background: rgba(0,0,0,0.04); border-radius: 6px; }
 
-.image-ai-card { background: #fff; }
-.upload-area { display:block; cursor: pointer; }
-.upload-gradient { height:160px; border-radius:12px; background: #3A5797; box-shadow: inset 0 1px 0 rgba(255,255,255,0.4); overflow:hidden; display:flex; align-items:center; justify-content:center; }
-.upload-gradient .bi-camera { opacity: 0.85; font-size: 34px; color: rgba(0,0,0,0.45); }
-.preview-img { width:100%; height:100%; object-fit:cover; border-radius:10px; display:block; }
+.upload-gradient {
+  height: 200px;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #1B3B6F 0%, #3A5797 100%);
+  box-shadow: 0 4px 12px rgba(27, 59, 111, 0.2);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
 
-/* disabled button visual */
-button:disabled { opacity: 0.6; cursor: not-allowed; }
-.card { border-radius: 12px; }
+.upload-area:hover .upload-gradient {
+  box-shadow: 0 6px 16px rgba(27, 59, 111, 0.3);
+  transform: translateY(-2px);
+}
+
+.upload-gradient .bi-cloud-arrow-up {
+  opacity: 0.85;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.75rem;
+  display: block;
+}
+
+.btn-primary {
+  background-color: #1b3b6f !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  border: none !important;
+  border-radius: 0.75rem !important;
+  padding: 0.75rem 1.5rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #ff8c00 !important;
+  transform: translateY(-2px) !important;
+}
+
+.btn-primary:disabled {
+  background-color: #b0bfd8 !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+}
 </style>
