@@ -1,10 +1,7 @@
 <template>
   <div class="hotel-payment container py-4">
-    <PageHeader
-      title="Payment"
-      subtitle="Complete your hotel booking"
-      icon="bi-credit-card"
-    />
+    <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
+    <StepHeader :step="'4/4'" :title="'Make a Payment for the Stay'" @back="goBack"/>
 
     <!-- Selected Hotel Summary -->
     <div class="card mb-4">
@@ -236,12 +233,14 @@
 
 <script>
 import PageHeader from '@/components/common/PageHeader.vue';
-import hotelIllust from '@/assets/img/hotel-illust.png'
+import hotelIllust from '@/assets/img/hotel-logo.png'
+import StepHeader from '@/components/common/StepHeader.vue';
 
 export default {
   name: 'HotelPayment',
   components: {
-    PageHeader
+    PageHeader,
+    StepHeader
   },
   data() {
     return {
@@ -278,7 +277,7 @@ export default {
   },
   methods: {
     goBack() {
-      this.$router.back();
+      this.$router.back("/planner/hotel");
     },
     validateCardDetails() {
       if (this.paymentMethod === 'creditCard' || this.paymentMethod === 'debitCard') {

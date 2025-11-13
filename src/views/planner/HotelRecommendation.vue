@@ -1,13 +1,14 @@
 <template>
   <div class="hotel-recommendation container py-4">
     <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
+    <StepHeader :step="'3/4'" :title="'Select an Accommodation'" @back="goBack"/>
 
-    <div class="form-header mx-2 my-4">
+    <!-- <div class="form-header mx-2 my-4">
       <RouterLink to="/planner/edit" class="text-decoration-none">
         <i class="bi bi-arrow-left"></i>
         <span class="ms-2">Back: Revise Itinerary Draft</span>
       </RouterLink>
-    </div>
+    </div> -->
 
     <div class="form-content bg-white rounded-4 p-4">
 
@@ -133,11 +134,13 @@
 import PageHeader from '@/components/common/PageHeader.vue';
 import hotelIllust from '@/assets/img/hotel-logo.png'
 import { ref } from 'vue'
+import StepHeader from '@/components/common/StepHeader.vue';
 
 export default {
   name: 'HotelRecommendation',
   components: {
-    PageHeader
+    PageHeader,
+    StepHeader
   },
   data() {
     return {
@@ -316,6 +319,9 @@ export default {
         // Navigate to payment page
         this.$router.push({ name: 'payment' })
       }
+    },
+    goBack() {
+      this.$router.push("/planner/edit")
     }
   }
 }
