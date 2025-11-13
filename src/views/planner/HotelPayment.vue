@@ -237,7 +237,7 @@
 
 <script>
 import PageHeader from '@/components/common/PageHeader.vue';
-import hotelIllust from '@/assets/img/hotel-illust.png'
+import hotelIllust from '@/assets/img/hotel-logo.png'
 import StepHeader from '@/components/common/StepHeader.vue';
 
 export default {
