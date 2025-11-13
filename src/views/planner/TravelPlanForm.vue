@@ -1,7 +1,7 @@
 <template>
   <BackButtonPageHeader title="Let's Plan Your Korean Adventure" subtitle="Tell us about your trip and we'll create a personalized itinerary for you.">
   </BackButtonPageHeader>
-  <div class="travel-plan-form">
+  <!-- <div class="travel-plan-form"> -->
     <!-- <div class="form-header mb-4">
       <router-link to="/planner" class="text-decoration-none">
         <i class="bi bi-arrow-left"></i>

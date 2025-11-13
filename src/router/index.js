@@ -11,6 +11,7 @@ import PlannerCreate from '@/views/planner/PlannerCreate.vue'
 import history from './history'
 import planner from './planner'
 import supporter from './supporter'
+import EditProfile from '@/views/history/EditProfile.vue'
 
 const routes = [
   { path: '/', component: LandingPage },
@@ -18,6 +19,7 @@ const routes = [
   { path: '/planner', component: PlannerCreate },
   { path: '/planner/form', component: TravelPlanForm },
   { path: '/planner/hotel', component: HotelRecommendation },
+  { path: '/profile/edit', component: EditProfile },
 
   // 하위 모듈 라우트 확장
   ...history,
