@@ -27,7 +27,7 @@
       <div class="mb-3">
         <label for="range4" class="form-label">Accommodation Budget Propertion</label>
         <input type="range" id="range4" class="form-range" min="0" max="100" v-model="rangeValue" />
-        <output :for="'range4'" aria-hidden="true">{{ rangeValue }}%</output>
+        <output :for="'range4'" aria-hidden="true">{{ rangeValue }}% (₩{{ this.budget * this.rangeValue / 100 / this.travelDays }})</output>
       </div>
 
       <!-- Filter Section -->

@@ -3,7 +3,7 @@
     <!-- 플래너 탭 -->
     <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
 
-    <!-- 메인 컨텐츠 -->
+    <!-- 메인 컨텐츠 -->  
     <div class="content-wrapper px-4 py-4">
 
 
@@ -14,7 +14,7 @@
 
       <!-- AI-Recommended Places -->
       <div class="recommended-section mb-4">
-        <h5 class="fw-bold mb-3">AI-Recommended Places</h5>
+        <h5 class="fw-bold">AI-Recommended Places</h5>
 
         <!-- 카드 그리드 -->
         <div class="row g-3 mb-3">
@@ -106,14 +106,13 @@ import { RouterLink } from "vue-router";
 </script>
 
 <style scoped lang="scss">
+// 공용 스타일 임포트
+@import '@/assets/styles/theme';
+
 .planner-create {
   min-height: 100vh;
-  background-color: #f8f9fa;
-}
-
-.planner-tab {
-  background-color: #e7f3ff !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  background-color: $body-bg; // 테마의 베이지 배경
+  font-family: 'Kyobo2024', sans-serif; // 타이포그래피 적용
 }
 
 .content-wrapper {
@@ -121,22 +120,30 @@ import { RouterLink } from "vue-router";
   margin: 0 auto;
 }
 
-/* 검색바 스타일 */
+/* AI-Recommended Places 제목 - 타이포그래피 스타일 적용 */
+.recommended-section h5 {
+  font-family: 'Siganpyo', sans-serif;
+  color: $secondary;
+  font-weight: 700;
+  margin-bottom: 1.5rem !important;
+}
 
-
-/* 추천 카드 스타일 */
+/* 추천 카드 스타일 - 컴포넌트 스타일 적용 */
 .recommendation-card {
   position: relative;
-  border-radius: 16px;
+  border-radius: $border-radius-lg;
   overflow: hidden;
   cursor: pointer;
   height: 150px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: $card-box-shadow;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid $card-border-color;
+  background-color: $card-bg;
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 16px rgba(255, 140, 0, 0.2);
+    border-color: rgba($primary, 0.3);
   }
 
   img {
@@ -163,6 +170,8 @@ import { RouterLink } from "vue-router";
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
     i {
       font-size: 16px;
@@ -171,6 +180,67 @@ import { RouterLink } from "vue-router";
 
   .card-label {
     font-size: 14px;
+    font-weight: 600;
+    font-family: 'Siganpyo', sans-serif;
+  }
+}
+
+/* 버튼 스타일 - BaseButton이 있지만 추가 커스텀 */
+:deep(.btn-primary) {
+  background: linear-gradient(90deg, $primary 0%, lighten($primary, 10%) 100%);
+  border: none;
+  color: #fff;
+  font-weight: 500;
+  border-radius: $border-radius-pill;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba($primary, 0.4);
+  }
+}
+
+/* 그리드 간격 조정 */
+.row.g-3 {
+  margin: 0 -0.75rem;
+  
+  > .col-6 {
+    padding: 0 0.75rem;
+    margin-bottom: 1rem;
+  }
+}
+
+/* 레이아웃 스타일 적용 - 모바일 반응형 */
+@media (max-width: 576px) {
+  .content-wrapper {
+    padding: 1rem !important;
+    margin: 4rem auto 2rem;
+    border-radius: 0.75rem;
+  }
+  
+  .recommendation-card {
+    height: 120px;
+    
+    .card-icon {
+      width: 28px;
+      height: 28px;
+      
+      i {
+        font-size: 14px;
+      }
+    }
+    
+    .card-label {
+      font-size: 12px;
+    }
+    
+    .card-overlay {
+      padding: 8px;
+    }
+  }
+  
+  .recommended-section h5 {
+    font-size: 1.1rem;
   }
 }
 </style>

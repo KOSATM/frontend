@@ -1,4 +1,13 @@
 <template>
+  <BackButtonPageHeader title="Let's Plan Your Korean Adventure" subtitle="Tell us about your trip and we'll create a personalized itinerary for you.">
+  </BackButtonPageHeader>
+  <!-- <div class="travel-plan-form"> -->
+    <!-- <div class="form-header mb-4">
+      <router-link to="/planner" class="text-decoration-none">
+        <i class="bi bi-arrow-left"></i>
+        <span class="ms-2">Create Your Itinerary</span>
+      </router-link>
+    </div> -->
   <PageHeader
     title="Planner"
     subtitle="Create and manage your Seoul travel itinerary"
@@ -12,12 +21,26 @@
       </RouterLink>
     </div>
 
-    <div v-if="currentStep === 1" class="form-content bg-white rounded-4 p-4">
-      <h2 class="text-primary fw-bold mb-3">Let's Plan Your Korean Adventure</h2>
-      <p class="text-secondary mb-4">Tell us about your trip and we'll create a personalized itinerary for you.</p>
+    <div v-if="currentStep === 1" class="form-content bg-white rounded-4">
+      <!-- <h2 class="text-primary fw-bold mb-3">Let's Plan Your Korean Adventure</h2>
+      <p class="text-secondary mb-4">Tell us about your trip and we'll create a personalized itinerary for you.</p> -->
 
       <!-- Trip Duration Section -->
-      <section class="mb-4">
+      <UploadSection icon="bi-calendar-event" title="Trip Duration">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Start Date (Excluding Flight)</label>
+            <input type="date" class="form-control" v-model="tripData.startDate">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Number of Days</label>
+            <select class="form-select" v-model="tripData.duration">
+              <option v-for="n in 14" :key="n" :value="n">{{ n }} days</option>
+            </select>
+          </div>
+        </div>
+      </UploadSection>
+      <!-- <section class="mb-4">
         <h3 class="section-title">
           <i class="bi bi-calendar-event text-accent me-2"></i>
           Trip Duration
@@ -34,10 +57,29 @@
             </select>
           </div>
         </div>
-      </section>
+      </section> -->
 
       <!-- Budget Section -->
-      <section class="mb-4">
+      <UploadSection icon="bi-wallet2" title="Budget">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Maximum Budget</label>
+            <input type="number" class="form-control" v-model="tripData.budget">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Currency</label>
+            <select class="form-select" v-model="tripData.currency">
+              <option value="USD">USD ($)</option>
+              <option value="KRW">KRW (₩)</option>
+            </select>
+          </div>
+        </div>
+        <div class="budget-info text-secondary mt-2" v-if="tripData.budget && tripData.duration">
+          ≈ {{ formatBudgetPerDay() }} per day
+        </div>
+      </UploadSection>
+
+      <!-- <section class="mb-4">
         <h3 class="section-title">
           <i class="bi bi-wallet2 text-accent me-2"></i>
           Budget
@@ -58,10 +100,23 @@
         <div class="budget-info text-secondary mt-2" v-if="tripData.budget && tripData.duration">
           ≈ {{ formatBudgetPerDay() }} per day
         </div>
-      </section>
+      </section> -->
 
       <!-- Interests Section -->
-      <section class="mb-4">
+      <UploadSection icon="bi-heart" title="What Interests You?"
+        subtitle="Select all that apply. We'll tailor your itinerary based on your preferences.">
+        <div class="row g-3">
+          <div class="col-6" v-for="interest in interests" :key="interest.id">
+            <div class="d-flex align-items-center border rounded-3 p-3 interest-item h-100"
+              :class="{ 'border-primary bg-primary text-white': tripData.selectedInterests.includes(interest.id) }"
+              @click="toggleInterest(interest.id)">
+              <i :class="interest.icon + ' me-2'"></i>
+              <span class="text-truncate">{{ interest.name }}</span>
+            </div>
+          </div>
+        </div>
+      </UploadSection>
+      <!-- <section class="mb-4">
         <h3 class="section-title">
           <i class="bi bi-heart text-accent me-2"></i>
           What Interests You?
@@ -69,18 +124,23 @@
         <p class="text-secondary mb-3">Select all that apply. We'll tailor your itinerary based on your preferences.</p>
         <div class="row g-3">
           <div class="col-6" v-for="interest in interests" :key="interest.id">
-            <div class="d-flex align-items-center border rounded-3 p-3 interest-item h-100" 
-                 :class="{ 'border-primary bg-primary text-white': tripData.selectedInterests.includes(interest.id) }"
-                 @click="toggleInterest(interest.id)">
+            <div class="d-flex align-items-center border rounded-3 p-3 interest-item h-100"
+              :class="{ 'border-primary bg-primary text-white': tripData.selectedInterests.includes(interest.id) }"
+              @click="toggleInterest(interest.id)">
               <i :class="interest.icon + ' me-2'"></i>
               <span class="text-truncate">{{ interest.name }}</span>
             </div>
           </div>
         </div>
-      </section>
+      </section> -->
 
       <!-- Additional Preferences -->
-      <section class="mb-4">
+      <UploadSection title="Additional Preferences (Optional)" icon="bi-chat-right-text">
+        <textarea class="form-control" rows="3"
+          placeholder="e.g., I prefer staying near Gangnam, I'm vegetarian, I want to visit BTS-related spots, I wake up late..."
+          v-model="tripData.additionalPreferences"></textarea>
+      </UploadSection>
+      <!-- <section class="mb-4">
         <h3 class="section-title">
           <i class="bi bi-chat-right-text text-accent me-2"></i>
           Additional Preferences (Optional)
@@ -91,7 +151,7 @@
           placeholder="e.g., I prefer staying near Gangnam, I'm vegetarian, I want to visit BTS-related spots, I wake up late..."
           v-model="tripData.additionalPreferences"
         ></textarea>
-      </section>
+      </section> -->
 
       <!-- <RouterLink class="btn btn-primary w-100 py-2" @click="nextStep" to="/planner/edit">
         Next: Choose Your Hotel
@@ -101,11 +161,8 @@
 
     <!-- Hotel Recommendation Step -->
     <div v-else-if="currentStep === 2" class="form-content bg-white rounded-4 p-4">
-      <HotelRecommendation
-        :budget="tripData.budget"
-        :travel-days="tripData.duration"
-        @hotel-selected="onHotelSelected"
-      />
+      <HotelRecommendation :budget="tripData.budget" :travel-days="tripData.duration"
+        @hotel-selected="onHotelSelected" />
     </div>
   </div>
 </template>
@@ -115,6 +172,8 @@ import { ref } from 'vue'
 import HotelRecommendation from './HotelRecommendation.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
+import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
+import UploadSection from '@/components/history/UploadSection.vue'
 
 const currentStep = ref(1)
 const selectedHotel = ref(null)
@@ -154,7 +213,7 @@ const toggleInterest = (id) => {
 
 const formatBudgetPerDay = () => {
   const amountPerDay = tripData.value.budget / tripData.value.duration
-  return tripData.value.currency === 'USD' 
+  return tripData.value.currency === 'USD'
     ? `$${amountPerDay.toFixed(2)}`
     : `₩${Math.round(amountPerDay).toLocaleString()}`
 }
@@ -215,9 +274,10 @@ const onHotelSelected = (hotel) => {
     }
   }
 
-  .form-control, .form-select {
+  .form-control,
+  .form-select {
     border-color: var(--bs-gray-300);
-    
+
     &:focus {
       border-color: var(--bs-primary);
       box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
@@ -227,7 +287,7 @@ const onHotelSelected = (hotel) => {
   .btn-primary {
     background-color: var(--bs-primary);
     border-color: var(--bs-primary);
-    
+
     &:hover {
       background-color: var(--bs-primary-dark);
       border-color: var(--bs-primary-dark);
@@ -237,10 +297,10 @@ const onHotelSelected = (hotel) => {
 
 // Custom CSS Variables
 :root {
-  --bs-primary: #1a237e;  // 남색
+  --bs-primary: #1a237e; // 남색
   --bs-primary-rgb: 26, 35, 126;
   --bs-primary-dark: #0d1b60;
-  --bs-accent: #ff5722;   // 주황색
+  --bs-accent: #ff5722; // 주황색
   --bs-accent-rgb: 255, 87, 34;
 }
 </style>
