@@ -8,7 +8,7 @@
         subtitle="Create and manage your Seoul travel itinerary"
         icon="bi-map"
       />
-      <StepHeader :step="'2/4'" :title="'Check and Adjust Draft'"/>
+      <StepHeader :step="'2/4'" :title="'Check and Adjust Draft'" @back="goBack"/>
       <div class="d-flex gap-3 align-items-center mb-3">
         <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center" style="width: 46px; height: 46px">📅</div>
         <div>
@@ -273,6 +273,9 @@ export default {
     },
   },
   methods: {
+    goBack() {
+      this.$router.push("/planner/travelplan")
+    },
     /* ---------- 공통 유틸 ---------- */
     getIconForType(type) {
       const map = {

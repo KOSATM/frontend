@@ -1,7 +1,7 @@
 <template>
   <div class="hotel-recommendation container py-4">
     <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
-    <StepHeader :step="'3/4'" :title="'Select an Accommodation'"/>
+    <StepHeader :step="'3/4'" :title="'Select an Accommodation'" @back="goBack"/>
 
     <!-- <div class="form-header mx-2 my-4">
       <RouterLink to="/planner/edit" class="text-decoration-none">
@@ -319,6 +319,9 @@ export default {
         // Navigate to payment page
         this.$router.push({ name: 'payment' })
       }
+    },
+    goBack() {
+      this.$router.push("/planner/edit")
     }
   }
 }

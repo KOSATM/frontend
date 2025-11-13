@@ -13,7 +13,7 @@
     subtitle="Create and manage your Seoul travel itinerary"
     icon="bi-map"
   />
-  <StepHeader :step="'1/4'" :title="'Make an Outline'"/>
+  <StepHeader :step="'1/4'" :title="'Make an Outline'" @back="goBack"/>
   <div class="travel-plan-form">
     <div class="form-header mb-4">
       <!-- <RouterLink to="/planner" class="text-decoration-none">
@@ -176,9 +176,11 @@ import BaseButton from '@/components/common/BaseButton.vue'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 import UploadSection from '@/components/travelgram/UploadSection.vue'
 import StepHeader from '@/components/common/StepHeader.vue'
+import { useRouter } from 'vue-router'
 
 const currentStep = ref(1)
 const selectedHotel = ref(null)
+const router = useRouter()
 
 const tripData = ref({
   startDate: new Date().toISOString().split('T')[0],
@@ -218,6 +220,10 @@ const formatBudgetPerDay = () => {
   return tripData.value.currency === 'USD'
     ? `$${amountPerDay.toFixed(2)}`
     : `₩${Math.round(amountPerDay).toLocaleString()}`
+}
+
+const goBack = () => {
+  router.push("/planner")
 }
 
 const nextStep = () => {

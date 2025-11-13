@@ -5,7 +5,7 @@
       subtitle="Complete your hotel booking"
       icon="bi-credit-card"
     />
-    <StepHeader :step="'4/4'" :title="'Make a Payment for the Stay'"/>
+    <StepHeader :step="'4/4'" :title="'Make a Payment for the Stay'" @back="goBack"/>
 
     <!-- Selected Hotel Summary -->
     <div class="card mb-4">
@@ -281,7 +281,7 @@ export default {
   },
   methods: {
     goBack() {
-      this.$router.back();
+      this.$router.back("/planner/hotel");
     },
     validateCardDetails() {
       if (this.paymentMethod === 'creditCard' || this.paymentMethod === 'debitCard') {
