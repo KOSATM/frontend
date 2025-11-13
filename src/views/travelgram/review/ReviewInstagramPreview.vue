@@ -1,7 +1,7 @@
 <template>
   <div class="preview-page">
     <!-- 상단 헤더 -->
-    <ReviewHeader
+    <StepHeader
       title="Create Travel Review"
       :subtitle="reviewStore.tripTitle"
       step="6/6"
@@ -109,7 +109,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
-import ReviewHeader from '@/components/common/DetailHeader.vue'
+import StepHeader from '@/components/common/StepHeader.vue'
 
 // 기본 유저정보
 const user = ref({

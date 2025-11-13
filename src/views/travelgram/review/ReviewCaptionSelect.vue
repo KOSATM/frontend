@@ -48,7 +48,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
-import ReviewHeader from '@/components/common/DetailHeader.vue'
+import ReviewHeader from '@/components/common/StepHeader.vue'
 
 const router = useRouter()
 const reviewStore = useReviewStore()
