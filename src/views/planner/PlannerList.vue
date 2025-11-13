@@ -3,6 +3,12 @@
   <section class="planner-right card shadow-sm rounded-4 h-100 d-flex flex-column">
     <!-- 상단 요약 -->
     <div class="p-4 pb-3 border-bottom">
+      <PageHeader
+        title="Planner"
+        subtitle="Create and manage your Seoul travel itinerary"
+        icon="bi-map"
+      />
+      <StepHeader :step="'2/4'" :title="'Check and Adjust Draft'"/>
       <div class="d-flex gap-3 align-items-center mb-3">
         <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center" style="width: 46px; height: 46px">📅</div>
         <div>
@@ -167,8 +173,15 @@
 </template>
 
 <script>
+import PageHeader from '@/components/common/PageHeader.vue';
+import StepHeader from '@/components/common/StepHeader.vue';
+
 export default {
   name: "PlannerList",
+  components: {
+    PageHeader,
+    StepHeader
+  },
   data() {
     return {
       openDayId: 1,

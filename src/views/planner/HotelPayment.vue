@@ -5,6 +5,7 @@
       subtitle="Complete your hotel booking"
       icon="bi-credit-card"
     />
+    <StepHeader :step="'4/4'" :title="'Make a Payment for the Stay'"/>
 
     <!-- Selected Hotel Summary -->
     <div class="card mb-4">
@@ -237,11 +238,13 @@
 <script>
 import PageHeader from '@/components/common/PageHeader.vue';
 import hotelIllust from '@/assets/img/hotel-illust.png'
+import StepHeader from '@/components/common/StepHeader.vue';
 
 export default {
   name: 'HotelPayment',
   components: {
-    PageHeader
+    PageHeader,
+    StepHeader
   },
   data() {
     return {
