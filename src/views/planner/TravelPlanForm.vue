@@ -8,6 +8,18 @@
         <span class="ms-2">Create Your Itinerary</span>
       </router-link>
     </div> -->
+  <PageHeader
+    title="Planner"
+    subtitle="Create and manage your Seoul travel itinerary"
+    icon="bi-map"
+  />
+  <div class="travel-plan-form">
+    <div class="form-header mb-4">
+      <RouterLink to="/planner" class="text-decoration-none">
+        <i class="bi bi-arrow-left"></i>
+        <span class="ms-2">Back</span>
+      </RouterLink>
+    </div>
 
     <div v-if="currentStep === 1" class="form-content bg-white rounded-4">
       <!-- <h2 class="text-primary fw-bold mb-3">Let's Plan Your Korean Adventure</h2>
@@ -141,7 +153,10 @@
         ></textarea>
       </section> -->
 
-      <BaseButton to="/planner/edit" variant="primary" class="w-100 py-2">Next: Choose Your Hotel</BaseButton>
+      <!-- <RouterLink class="btn btn-primary w-100 py-2" @click="nextStep" to="/planner/edit">
+        Next: Choose Your Hotel
+      </RouterLink> -->
+      <BaseButton to="/planner/edit" variant="primary" class="w-100 py-2">Next: Generate Itinerary Draft</BaseButton>
     </div>
 
     <!-- Hotel Recommendation Step -->
