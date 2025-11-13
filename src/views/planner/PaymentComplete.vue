@@ -45,10 +45,10 @@
       <div class="text-center mt-5">
         <button
           class="btn btn-primary btn-lg px-5"
-          @click="goToHotelSelection"
+          @click="goToBookingComplete"
         >
-          <i class="bi bi-arrow-left me-2"></i>
-          Back to Hotel Selection
+          Check Trip Summary
+          <i class="bi bi-arrow-right ms-2"></i>
         </button>
       </div>
     </div>
@@ -74,7 +74,7 @@ export default {
     }
   },
   methods: {
-    goToHotelSelection() {
+    goToBookingComplete() {
       this.$router.push({ name: 'bookingComplete' });
     }
   }
