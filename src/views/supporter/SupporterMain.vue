@@ -90,6 +90,7 @@
         <div class="card shadow-sm border-0 p-3 detail-area">
           <!-- Image UI (default) -->
           <div v-show="currentTab === 'image'">
+            
             <UploadSection title="Image-based Travel AI" subtitle="Upload photo → Get recommendations">
               <template #icon>
                 <div class="ai-badge"><i class="bi bi-camera-fill"></i></div>
@@ -121,7 +122,7 @@
                     </div>
                   </label>
 
-                  <label class="upload-control d-block" @click.prevent="goToImageAINew" title="History">
+                  <label class="upload-control history-control d-block" @click.prevent="goToImageAINew" title="History">
                     <div class="upload-gradient d-flex align-items-center justify-content-center h-100 w-100">
                       <div class="text-center text-white-50">
                         <i class="bi bi-clock-history fs-1"></i>
@@ -543,9 +544,17 @@ const goToImageAINew = () => {
 }
 
 /* Image UI layout tweaks */
-.image-ui-row { align-items: flex-start; }
-.image-ui-row .how-works { max-width: 56%; }
-.right-controls { display:flex; gap:18px; align-items:flex-start; }
+.image-ui-row { align-items: stretch; margin-top: 8px; }
+.image-ui-row .how-works { max-width: 56%; display: flex; flex-direction: column; justify-content: flex-end; margin-top: 25px;}
+
+/* reduce text size to match Upload button label and tighten spacing */
+.image-ui_row .how-works .small strong { font-size: 1.1rem; }
+.image-ui_row .how-works ol { margin-top: 0.6rem; }
+.image-ui_row .how-works ol li { font-size: 0.9rem; line-height: 1.45; margin-bottom: 6px; }
+
+/* ensure the right side action boxes align their bottom with the left column */
+.right-controls { display: flex; gap: 18px; align-items: flex-end; }
+
 .upload-control {
   width: 160px;
   height: 160px;
@@ -563,5 +572,13 @@ const goToImageAINew = () => {
 @media (max-width: 991px) {
   .upload-control { width: 120px; height: 120px; }
   .image-ui-row .how-works { max-width: 100%; }
+}
+
+/* ensure only history control uses the orange gradient */
+.history-control .upload-gradient {
+  background: #ff8c00 !important;
+}
+.history-control .label-text {
+  color: #ffffff !important;
 }
 </style>
