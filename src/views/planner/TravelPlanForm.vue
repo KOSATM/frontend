@@ -167,6 +167,7 @@ import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 import UploadSection from '@/components/travelgram/UploadSection.vue'
 import StepHeader from '@/components/common/StepHeader.vue'
 import { useRouter } from 'vue-router'
+import BaseSelection from '@/components/common/BaseSelection.vue'
 
 const currentStep = ref(1)
 const selectedHotel = ref(null)
