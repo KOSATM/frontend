@@ -170,7 +170,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import HotelRecommendation from './HotelRecommendation.vue'
+import HotelRecommendation from './hotel/HotelRecommendation.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
