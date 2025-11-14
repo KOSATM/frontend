@@ -10,7 +10,7 @@
         subtitle="Create and manage your Seoul travel itinerary"
         icon="bi-map"
       />
-      <StepHeader :step="'2/4'" :title="'Check and Adjust Draft'" @back="goBack"/>
+      <StepHeader v-if="!travelStore.$state.isTraveling" :step="'2/4'" :title="'Check and Adjust Draft'" @back="goBack"/>
       <div class="d-flex gap-3 align-items-center mb-3">
         <div
           class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
@@ -39,7 +39,7 @@
     </div>
 
     <!-- ▶ Start Day Hero / Current Activity -->
-    <div class="p-4 pt-3">
+    <div v-if="travelStore.$state.isTraveling" class="p-4 pt-3">
       <!-- 아직 시작 안함: 카드 전체 클릭으로 시작 -->
       <div
         v-if="!run.started"
@@ -237,7 +237,10 @@
 
     <!-- CTA -->
     <div class="p-4 pt-0 border-top bg-white">
-      <button class="btn btn-success w-100 rounded-3">Finish Journey</button>
+      <BaseButton v-if="!travelStore.$state.isTraveling" @click="next()" variant="primary" class="w-100 py-2">Next: Select Accommodation</BaseButton>
+      <BaseButton v-else @click="endTrip()" variant="success" class="w-100 py-2">FORCE to End Trip</BaseButton>
+      <!-- <button v-else="travelStore.$state.isTraveling" class="btn btn-success w-100 rounded-3">Finish Journey</button> -->
+      <!-- <button v-else class="btn btn-success w-100 rounded-3" @click="next()">Next: Select Accommodation</button> -->
     </div>
   </section>
 
@@ -281,6 +284,9 @@ import StepHeader from "@/components/common/StepHeader.vue";
 import PlannerReplaceModal from "@/components/planner/PlannerReplaceModal.vue";
 import PlannerActivityDetailsModal from "@/components/planner/PlannerActivityDetailsModal.vue";
 import PlannerActivityCompleteModal from "@/components/planner/PlannerActivityCompleteModal.vue";
+import { useTravelStore } from '@/store/travelStore'
+import { nextTick } from "vue";
+import BaseButton from "@/components/common/BaseButton.vue";
 
 // 간단한 더미 갤러리 (photo1/2/3)
 const defaultGallery = [
@@ -292,6 +298,7 @@ const defaultGallery = [
 export default {
   name: "PlannerList",
   components: {
+    BaseButton,
     PageHeader,
     StepHeader,
     PlannerReplaceModal,
@@ -300,6 +307,7 @@ export default {
   },
   data() {
     return {
+      travelStore: useTravelStore(),
       openDayId: 1, // 화면에서 펼쳐진 Day
       run: {
         started: false,
@@ -993,7 +1001,17 @@ export default {
   },
   methods: {
     goBack() {
+      this.travelStore.decreaseStep();
       this.$router.push("/planner/travelplan");
+    },
+    next() {
+      this.travelStore.increaseStep();
+      this.$router.push("/planner/hotel")
+    },
+    endTrip() {
+      this.travelStore.endTravel();
+      this.travelStore.resetStep();
+      this.$router.push("/planner");
     },
     /* 공통 유틸 */
     // ✅ 항상 한 개만 열리도록
