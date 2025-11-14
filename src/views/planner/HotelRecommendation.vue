@@ -122,9 +122,10 @@
 
       <!-- Confirm Button -->
       <div class="text-center">
-        <RouterLink class="btn btn-primary btn-lg px-5" :disabled="!selectedHotel" @click="confirmSelection" to="/planner/payment">
+        <!-- <RouterLink class="btn btn-primary btn-lg px-5" :disabled="!selectedHotel" @click="confirmSelection" to="/planner/payment">
           Make a Payment
-        </RouterLink>
+        </RouterLink> -->
+        <BaseButton :disabled="!selectedHotel" @click="confirmSelection()" variant="primary" class="w-100 py-2">Next: Make a Payment</BaseButton>
       </div>
     </div>
   </div>
@@ -135,15 +136,19 @@ import PageHeader from '@/components/common/PageHeader.vue';
 import hotelIllust from '@/assets/img/hotel-logo.png'
 import { ref } from 'vue'
 import StepHeader from '@/components/common/StepHeader.vue';
+import BaseButton from '@/components/common/BaseButton.vue';
+import { useTravelStore } from '@/store/travelStore'
 
 export default {
   name: 'HotelRecommendation',
   components: {
+    BaseButton,
     PageHeader,
     StepHeader
   },
   data() {
     return {
+      travelStore: useTravelStore(),
       rangeValue: 50,
       budget: 300000, // This should come from TravelPlanForm
       travelDays: 3,  // This should come from TravelPlanForm
@@ -316,13 +321,14 @@ export default {
       if (this.selectedHotel) {
         // Emit event with selected hotel data
         this.$emit('hotel-selected', this.selectedHotel)
+        this.travelStore.increaseStep()
         // Navigate to payment page
         this.$router.push({ name: 'payment' })
       }
     },
     goBack() {
       this.$router.push("/planner/edit")
-    }
+    },
   }
 }
 </script>

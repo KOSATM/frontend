@@ -8,7 +8,9 @@
 
 
       <!-- Create Budget-Based Itinerary 버튼 -->
-      <BaseButton to="/planner/travelplan" variant="primary" class="w-100 mb-4 py-3 d-flex align-items-center justify-content-center gap-2"><i class="bi bi-plus-lg"></i>
+      <BaseButton variant="primary" 
+      class="w-100 mb-4 py-3 d-flex align-items-center justify-content-center gap-2"
+      @click="next()"><i class="bi bi-plus-lg"></i>
         <span class="fw-semibold">Create Budget-Based Itinerary</span>
       </BaseButton>
 
@@ -102,6 +104,15 @@ import PageHeader from "@/components/common/PageHeader.vue";
 import TipBox from "@/components/common/TipBox.vue";
 import RecommendationCard from "@/components/planner/RecommendationCard.vue";
 import { RouterLink } from "vue-router";
+import { useTravelStore } from '@/store/travelStore'
+import router from "@/router";
+
+const travelStore = useTravelStore()
+
+function next() {
+  travelStore.increaseStep();
+  router.push("/planner/travelplan");
+}
 
 </script>
 
