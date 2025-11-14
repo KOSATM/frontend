@@ -8,6 +8,15 @@ module.exports = defineConfig({
     port: 80,
   },
 
+  css: {
+    loaderOptions: {
+      scss: {
+        additionalData: `
+          @import "@/assets/styles/theme.scss";
+        `,
+      },
+    },
+  },
 
   chainWebpack: config => {
     config.resolve.alias

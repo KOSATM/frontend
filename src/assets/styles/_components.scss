@@ -52,4 +52,65 @@
   vertical-align: middle;
 }
 
+// ===============================
+// 🧳 Trip Card (Travelgram, Planner 등 공통)
+// ===============================
+.trip-card {
+  text-align: left; /* ✅ 부모의 중앙 정렬 상속 제거 */
+  border: 1px solid #eee;
+  background-color: #fff;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* ✅ 내부 아이템 왼쪽 정렬 */
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  cursor: pointer; /* ✅ 클릭 가능 커서 */
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: $primary;
+    box-shadow: 0 4px 12px rgba(255, 140, 0, 0.15);
+  }
+
+
+  img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    margin-right: 1rem;
+  }
+
+  .trip-info {
+    flex: 1;
+
+    .trip-title {
+      font-weight: 600;
+      color: $secondary; // 네이비
+    }
+
+    .trip-meta {
+      font-size: 0.85rem;
+      color: #666;
+    }
+  }
+
+  .badge {
+    background-color: #3ac569;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    color: #fff;
+    font-weight: 500;
+  }
+
+  .icon-chevron {
+    font-size: 1.25rem;
+    color: #bbb;
+  }
+}
 
