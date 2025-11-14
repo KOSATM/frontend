@@ -28,10 +28,12 @@
 </template>
 
 <script setup>
+import defaultProfileImg from '@/assets/img/profile-logo.png'
+
 defineProps({
   name: { type: String, required: true },
   bio: { type: String, required: true },
-  profileImage: { type: String, required: true },
+  profileImage: { type: String, default: defaultProfileImg },
   totalTrips: { type: Number, default: 0 },
   travelDays: { type: Number, default: 0 },
   completed: { type: Number, default: 0 },
