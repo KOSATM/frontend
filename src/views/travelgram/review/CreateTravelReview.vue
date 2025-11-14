@@ -1,17 +1,8 @@
 <template>
   <div class="photo-upload-page">
-    <PageHeader
-        title="Travelgram"
-        subtitle="Your past travel adventures"
-        icon="bi-instagram"
-      />
+    <PageHeader title="Travelgram" subtitle="Your past travel adventures" icon="bi-instagram" />
     <!-- 🔸 상단 헤더 -->
-    <StepHeader
-      title="Create Travel Review"
-      :subtitle="reviewStore.tripTitle"
-      step="1/6"
-      @back="goBack"
-    />
+    <StepHeader title="Create Travel Review" :subtitle="reviewStore.tripTitle" step="1/6" @back="goBack" />
 
     <!-- 여행 정보 카드 -->
     <div class="trip-info-card">
@@ -34,80 +25,94 @@
       </div>
     </div>
 
-    <!-- Accordion 일정 섹션 -->
+    <!-- 일정 정보 섹션 -->
+
     <div class="itinerary-section">
       <h6 class="itinerary-title mb-3">
-        <i class="bi bi-calendar-event me-2 text-primary"></i>Daily Itinerary
+        <i class="bi bi-calendar-event me-2 text-secondary"></i>Daily Itinerary
       </h6>
-      <div class="itinerary-accordion">
-        <div v-for="(day, idx) in currentTripInfo.itinerary" :key="idx" class="accordion-item">
-          <h2 class="accordion-header">
-            <button
-              class="accordion-button"
-              :class="{ collapsed: !day.isOpen }"
-              type="button"
-              @click="day.isOpen = !day.isOpen"
-              :aria-expanded="day.isOpen"
-            >
-              <span class="day-label">Day {{ day.dayNumber }}</span>
-              <span class="day-title">{{ day.title }}</span>
-              <span class="day-date">{{ day.date }}</span>
-            </button>
-          </h2>
-          <div
-            class="accordion-collapse"
-            :class="{ show: day.isOpen }"
-          >
-            <div class="accordion-body">
-              <ul class="activities-list">
-                <li v-for="(activity, aIdx) in day.activities" :key="aIdx" class="activity-item">
-                  <div class="activity-time">{{ activity.time }}</div>
-                  <div class="activity-name">{{ activity.name }}</div>
-                </li>
-              </ul>
+
+      <div class="planner-accordion">
+        <div v-for="day in currentTripInfo.itinerary" :key="day.dayNumber" class="card border-0 shadow-sm rounded-4 overflow-hidden mb-3">
+          <!-- Day Header -->
+          <div class="card-body d-flex justify-content-between align-items-center" :class="openDayId === day.dayNumber ? 'bg-secondary text-white' : 'bg-white'" role="button"
+            @click="toggleDay(day.dayNumber)">
+            <div>
+              <div class="small fw-semibold" :class="openDayId !== day.dayNumber ? 'text-secondary' : ''">
+                Day {{ day.dayNumber }}
+              </div>
+              <h6 class="mb-0 title">{{ day.title }}</h6>
+              <div class="small" :class="openDayId !== day.dayNumber ? 'text-muted' : 'text-white-50'">
+                {{ day.date }}
+              </div>
+            </div>
+
+            <div class="text-end">
+              <div class="small" :class="openDayId === day.dayNumber ? 'text-white-50' : ''">
+                Activities
+              </div>
+              <div class="fw-bold title">{{ day.activities.length }}</div>
+              <div class="small">
+                <span class="chevron" :class="{ 'rotate-180': openDayId === day.dayNumber }">⌃</span>
+              </div>
             </div>
           </div>
+
+          <!-- ▶ Activities collapse area -->
+          <transition name="collapse">
+            <div v-if="openDayId === day.dayNumber" class="list-group list-group-flush">
+              <div v-for="(act, index) in day.activities" :key="index" class="list-group-item d-flex justify-content-between align-items-center activity-row bg-white">
+                <div class="d-flex align-items-start gap-3">
+                  <div class="icon-badge themed theme-default">⏰</div>
+                  <div>
+                    <div class="fw-semibold small title">{{ act.name }}</div>
+
+                    <div class="d-flex align-items-center gap-2 small text-muted sub">
+                      <span class="soft-chip">
+                        <span class="chip-emoji">🕒</span> {{ act.time }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </transition>
         </div>
       </div>
     </div>
 
+
+
     <h6 class="upload-title mb-1">
-      <i class="bi bi-image me-1 text-primary"></i> Upload Photos
+      <i class="bi bi-image me-1 text-secondary"></i> Upload Photos
     </h6>
     <p class="upload-subtitle">
       Upload up to 10 photos from your trip ({{ uploadedImages.length }}/10)
     </p>
     <section class="upload-section">
-      
+
       <!-- 🖼️ 업로드 박스 -->
-        <div class="upload-box" @click="triggerFileInput">
-          <i class="bi bi-cloud-arrow-up fs-2 text-secondary mb-2"></i>
-          <p class="text-secondary mb-0">Click to upload photos</p>
-          <small class="text-muted">JPG, PNG up to 10MB each</small>
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            ref="fileInput"
-            @change="handleFileUpload"
-            hidden
-          />
-        </div>
-
-        <div v-if="uploadedImages.length" class="preview-grid mt-3">
-          <div v-for="(img, idx) in uploadedImages" :key="idx" class="preview-item">
-            <img :src="img.url" :alt="img.name" />
-          </div>
-        </div>
-      </section>
-
-      <!-- 🟦 하단 버튼 -->
-      <div class="navigation-buttons">
-        <button class="btn-next" :disabled="!uploadedImages.length" @click="nextStep">
-          Next Step
-        </button>
+      <div class="upload-box" @click="triggerFileInput">
+        <i class="bi bi-cloud-arrow-up fs-2 text-secondary mb-2"></i>
+        <p class="text-secondary mb-0">Click to upload photos</p>
+        <small class="text-muted">JPG, PNG up to 10MB each</small>
+        <input type="file" multiple accept="image/*" ref="fileInput" @change="handleFileUpload" hidden />
       </div>
+
+      <div v-if="uploadedImages.length" class="preview-grid mt-3">
+        <div v-for="(img, idx) in uploadedImages" :key="idx" class="preview-item">
+          <img :src="img.url" :alt="img.name" />
+        </div>
+      </div>
+    </section>
+
+    <!-- 🟦 하단 버튼 -->
+    <div class="navigation-buttons">
+      <button class="btn-next" :disabled="!uploadedImages.length" @click="nextStep">
+        Next Step
+      </button>
     </div>
+  </div>
 </template>
 
 <script setup>
@@ -130,7 +135,11 @@ reviewStore.setTripInfo(tripId, tripTitle)
 
 const fileInput = ref(null)
 const uploadedImages = ref([])
+const openDayId = ref(1) // 기본 1번 Day 오픈
 
+const toggleDay = (id) => {
+  openDayId.value = id
+}
 // 모든 여행 데이터
 const allTripsData = ref({
   1: {
@@ -297,6 +306,33 @@ const goBack = () => router.back()
 </script>
 
 <style scoped>
+/* PlannerList.vue style */
+.chevron {
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+.list-group-item.activity-row {
+  transition: background-color 0.18s ease, box-shadow 0.18s ease,
+    transform 0.12s ease;
+}
+
+.soft-chip {
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #f8f9fa;
+  border: 1px solid #f1f3f5;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
+
 /* ✅ 전체 페이지 배경 */
 .photo-upload-page {
   background-color: #fffaf3;
@@ -322,16 +358,19 @@ const goBack = () => router.back()
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
-
+.trip-info-header h5 {
+  color: #ffffff !important;
+}
 .trip-info-header {
-  background-color: #ff8c00;
-  color: #fff;
+  background-color: #1B3B6F;
+  color: #ffffff;
   padding: 1rem 1.5rem;
 }
 
 .trip-info-header h5 {
   margin: 0;
   font-weight: 600;
+  
 }
 
 .trip-info-body {
@@ -359,6 +398,8 @@ const goBack = () => router.back()
 }
 
 /* Accordion 일정 섹션 */
+
+
 .itinerary-section {
   background-color: #fff;
   border-radius: 1rem;
@@ -366,102 +407,16 @@ const goBack = () => router.back()
   margin-bottom: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
+
 .itinerary-title {
   font-weight: 600;
   color: #1B3B6F;
 }
+
 .itinerary-accordion {
   background-color: #f5f5f5;
   border-radius: 0.75rem;
   padding: 1rem;
-}
-.accordion-item {
-  background-color: #ececec;
-  border: none;
-  margin-bottom: 0.75rem;
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-.accordion-header {
-  margin: 0;
-}
-.accordion-button {
-  background-color: #d9d9d9;
-  color: #333;
-  font-weight: 500;
-  padding: 1rem;
-  border: none;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  transition: background-color 0.3s ease;
-  width: 100%;
-  cursor: pointer;
-}
-.accordion-button:not(.collapsed) {
-  background-color: #c0c0c0;
-  color: #1B3B6F;
-  box-shadow: none;
-}
-.accordion-button:hover {
-  background-color: #c0c0c0;
-}
-.accordion-button:focus {
-  outline: none;
-  box-shadow: none;
-}
-.day-label {
-  font-weight: 600;
-  min-width: 60px;
-  color: #1B3B6F;
-}
-.day-title {
-  flex: 1;
-  text-align: left;
-  font-weight: 500;
-}
-.day-date {
-  font-size: 0.85rem;
-  color: #666;
-  min-width: 120px;
-  text-align: right;
-}
-.accordion-collapse {
-  overflow: hidden;
-  transition: all 0.3s ease;
-  max-height: 0;
-  opacity: 0;
-}
-.accordion-collapse.show {
-  max-height: 500px;
-  opacity: 1;
-}
-.accordion-body {
-  background-color: #ececec;
-  padding: 1rem;
-}
-.activities-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.activity-item {
-  display: flex;
-  gap: 1rem;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid #c0c0c0;
-}
-.activity-item:last-child {
-  border-bottom: none;
-}
-.activity-time {
-  font-weight: 600;
-  color: #1B3B6F;
-  min-width: 80px;
-}
-.activity-name {
-  flex: 1;
-  color: #333;
 }
 
 /* 업로드 섹션 */
@@ -491,8 +446,10 @@ const goBack = () => router.back()
   background-color: #fff;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  font-size: 1rem; /* ✅ 글씨 키움 */
+  font-size: 1rem;
+  /* ✅ 글씨 키움 */
 }
+
 .upload-box:hover {
   background-color: #fef8f2;
 }
@@ -503,6 +460,7 @@ const goBack = () => router.back()
   flex-wrap: wrap;
   gap: 0.75rem;
 }
+
 .preview-item {
   width: 80px;
   height: 80px;
@@ -510,6 +468,7 @@ const goBack = () => router.back()
   overflow: hidden;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
+
 .preview-item img {
   width: 100%;
   height: 100%;
@@ -522,6 +481,7 @@ const goBack = () => router.back()
   justify-content: flex-end;
   margin-top: 2rem;
 }
+
 .btn-next {
   flex: 1;
   height: 48px;
@@ -533,10 +493,12 @@ const goBack = () => router.back()
   font-size: 1rem;
   transition: all 0.3s ease;
 }
+
 .btn-next:disabled {
   background-color: #b0bfd8;
   cursor: not-allowed;
 }
+
 .btn-next:hover:not(:disabled) {
   background-color: #ff8c00;
 }
