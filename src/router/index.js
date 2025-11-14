@@ -43,7 +43,7 @@ router.beforeEach((to, from, next) => {
 
   if (to.path === '/planner' && travelStore.isTraveling) {
     // 여행 중인 경우 전체 일정 목록으로 리다이렉트
-    return next('/planner/itinerary')
+    return next('/planner/edit')
   }
 
   next()
