@@ -1,6 +1,6 @@
 <template>
   <div class="trip-detail container-fms">
-    <ReviewHeader
+    <StepHeader
       title="Trip Details"
       :subtitle="trip.title"
       step="—"
@@ -37,7 +37,7 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import ReviewHeader from '@/components/common/StepHeader.vue'
+import StepHeader from '@/components/common/StepHeader.vue'
 
 const router = useRouter()
 const route = useRoute()
