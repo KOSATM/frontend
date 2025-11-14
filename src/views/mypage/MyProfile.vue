@@ -250,7 +250,7 @@ const goBack = () => {
 }
 
 const goToEditProfile = () => {
-  router.push('/profile/edit')
+  router.push('/mypage/edit')
 }
 
 // 프로필 이미지 computed
