@@ -1,14 +1,6 @@
 <template>
   <!-- 메인 컨텐츠 -->
   <div class="profile-container container-fms">
-
-    
-    <PageHeader
-      title="My Page"
-      subtitle="Your travel profile"
-      icon="bi-person"
-    />
-
     <!-- 🔙 상단 헤더 -->
     <BackButtonPageHeader title="My Profile" subtitle="Your travel profile"></BackButtonPageHeader>
 
@@ -180,7 +172,6 @@ import { useStore } from 'vuex'
 import BaseButton from '@/components/common/BaseButton.vue'
 import UploadSection from '@/components/travelgram/UploadSection.vue'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
-import PageHeader from '@/components/common/PageHeader.vue';
 
 const router = useRouter()
 const store = useStore()
