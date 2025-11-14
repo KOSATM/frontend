@@ -1,15 +1,15 @@
 <template>
-  <div class="review-header mb-3">
+  <div class="step-header mb-3">
     <!-- 🔙 상단 영역 -->
     <div class="d-flex justify-content-between align-items-center mb-2">
       <div class="d-flex align-items-center">
         <i class="bi bi-arrow-left-short back-icon" @click="$emit('back')"></i>
         <div>
-          <h6 class="review-title mb-0">{{ title }}</h6>
-          <small class="review-subtitle text-muted">{{ subtitle }}</small>
+          <h6 class="step-title mb-0">{{ title }}</h6>
+          <small class="step-subtitle text-muted">{{ subtitle }}</small>
         </div>
       </div>
-      <span class="review-step text-muted">Step {{ step }}</span>
+      <span class="step-step text-muted">Step {{ step }}</span>
     </div>
 
     <!-- 🟦 진행 바 -->
@@ -41,7 +41,7 @@ const progressPercent = computed(() => {
 </script>
 
 <style scoped>
-.review-header {
+.step-header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   padding-bottom: 0.75rem;
 }
@@ -58,12 +58,12 @@ const progressPercent = computed(() => {
   transform: translateX(-2px);
 }
 
-.review-title {
+.step-title {
   font-weight: 700;
   color: #1b3b6f;
 }
 
-.review-step {
+.step-step {
   font-size: 0.9rem;
   color: #6c757d;
 }
