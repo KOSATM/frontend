@@ -20,9 +20,9 @@
             </template>
 
             <ul class="list-unstyled mb-0">
-              <li v-for="(item, idx) in checklist" :key="idx"
+              <li v-for="(item, idx) in sortedChecklist" :key="idx"
                 class="checklist-item d-flex align-items-center p-3 mb-2 rounded" :class="{ 'checked-item': item.done }"
-                @click="toggleItem(idx)" role="button">
+                @click="toggleItem(checklist.indexOf(item))" role="button">
                 <div class="me-3">
                   <div class="circle-check" :class="{ checked: item.done }"></div>
                 </div>
@@ -36,8 +36,9 @@
             </ul>
           </UploadSection>
         </div>
-
+        
         <PlannerChat class="flex-grow-1" />
+
       </div>
 
       <!-- RIGHT COLUMN: map (top) + detail area (bottom) -->
@@ -122,7 +123,7 @@
                     </div>
                   </label>
 
-                  <label class="upload-control history-control d-block" @click.prevent="goToImageAINew" title="History">
+                  <label class="upload-control history-control d-block" @click.prevent="goToImageAIHistory" title="History">
                     <div class="upload-gradient d-flex align-items-center justify-content-center h-100 w-100">
                       <div class="text-center text-white-50">
                         <i class="bi bi-clock-history fs-1"></i>
@@ -195,6 +196,11 @@ const completionPercent = computed(() => Math.round((completedCount.value / chec
 const isComplete = computed(() => completedCount.value === checklist.value.length)
 const progressWidth = computed(() => (isComplete.value ? '100%' : `${completionPercent.value}%`))
 const completionLabel = computed(() => (isComplete.value ? '100% (Complete)' : `${completionPercent.value}%`))
+const sortedChecklist = computed(() => {
+  const undone = checklist.value.filter(item => !item.done)
+  const done = checklist.value.filter(item => item.done)
+  return [...undone, ...done]
+})
 
 // RIGHT: map markers + tabs
 const currentTab = ref('image') // 'image' or 'restroom'
@@ -252,6 +258,15 @@ const goToImageAI = () => {
 // navigator to open new Image AI page
 const goToImageAINew = () => {
   router.push({ name: 'SupporterImageAINew' })
+    .then(() => {
+      // ensure we are at page top after navigation
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+    })
+    .catch(() => { })
+}
+
+const goToImageAIHistory = () => {
+  router.push({ name: 'SupporterImageAIHistory' })
     .then(() => {
       // ensure we are at page top after navigation
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
@@ -361,7 +376,7 @@ const goToImageAINew = () => {
 
 /* detail area */
 .detail-area {
-  min-height: 220px;
+  min-height: 360px;
   border-radius: 12px;
 }
 
@@ -422,17 +437,7 @@ const goToImageAINew = () => {
 .item-title.checkedTitle {
   position: relative;
   color: #555;
-}
-
-.item-title.checkedTitle::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 100%;
-  height: 1.6px;
-  background: rgba(0, 0, 0, 0.6);
-  transform: translateY(-50%);
+  text-decoration: line-through;
 }
 
 .circle-check {
@@ -506,14 +511,17 @@ const goToImageAINew = () => {
 
 .col-md-4.d-flex.flex-column>.checklist-wrapper {
   flex: 1 1 0;
-  min-height: 0;
+  min-height: 220px; /* ensure checklist area keeps consistent height */
+  min-width: 0;
   /* allow proper flex overflow */
   overflow-y: auto;
 }
 
 .col-md-4.d-flex.flex-column>.flex-grow-1 {
   flex: 2 1 0;
-  min-height: 0;
+  min-height: 360px; /* ensure chat area keeps consistent height */
+  min-width: 0;
+  overflow-y: auto;
 }
 
 .checklist-wrapper::-webkit-scrollbar {
@@ -544,13 +552,16 @@ const goToImageAINew = () => {
 }
 
 /* Image UI layout tweaks */
-.image-ui-row { align-items: stretch; margin-top: 8px; }
+.image-ui-row { align-items: stretch; margin-top: 8px; min-height: 230px; height: 100%; }
 .image-ui-row .how-works { max-width: 56%; display: flex; flex-direction: column; justify-content: flex-end; margin-top: 25px;}
 
 /* reduce text size to match Upload button label and tighten spacing */
-.image-ui_row .how-works .small strong { font-size: 1.1rem; }
-.image-ui_row .how-works ol { margin-top: 0.6rem; }
+.image-ui-row .how-works .small strong { font-size: 1.1rem; }
+.image-ui-row .how-works ol { margin-top: 0.6rem; }
 .image-ui_row .how-works ol li { font-size: 0.9rem; line-height: 1.45; margin-bottom: 6px; }
+
+/* ensure list-group (restrooms) uses same min-height so both tabs match */
+.detail-area .list-group { min-height: 230px; }
 
 /* ensure the right side action boxes align their bottom with the left column */
 .right-controls { display: flex; gap: 18px; align-items: flex-end; }
