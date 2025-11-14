@@ -37,6 +37,7 @@ const menuItems = [
   { name: 'planner', label: 'Planner', icon: 'bi bi-map-fill', route: '/planner' },
   { name: 'supporter', label: 'Supporter', icon: 'bi bi-people', route: '/supporter' },
   { name: 'travelgram', label: 'Travelgram', icon: 'bi bi bi-instagram', route: '/travelgram' },
+  { name: 'mypage', label: 'MyPage', icon: 'bi bi-person-circle', route: '/profile' },
 ]
 
 // 현재 라우트에 따라 활성 메뉴 결정 (메인 페이지에서는 null)

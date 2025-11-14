@@ -1,7 +1,12 @@
 <template>
   <div class="hashtag-page">
+    <PageHeader
+      title="Travelgram"
+      subtitle="Your past travel adventures"
+      icon="bi-instagram"
+    />
     <!-- 상단 헤더 -->
-    <ReviewHeader
+    <StepHeader
       title="Create Travel Review"
       :subtitle="reviewStore.tripTitle"
       step="4/6"
@@ -53,26 +58,21 @@
         <button class="btn-add" @click="addTag">Add</button>
       </div>
     </section>
-
-    <!-- 하단 버튼 -->
+    <!-- 🔥 여기! navigation-buttons는 컨테이너 안의 최하단에 있어야 한다 -->
     <div class="navigation-buttons">
       <button class="btn-back" @click="goBack">Back</button>
-      <button
-        class="btn-next"
-        @click="goNext"
-        :disabled="selectedTags.length === 0"
-      >
-        Next Step
-      </button>
+      <button class="btn-next" @click="goNext" :disabled="selectedTags.length === 0">Next Step</button>
     </div>
   </div>
+
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
-import ReviewHeader from '@/components/common/StepHeader.vue'
+import StepHeader from '@/components/common/StepHeader.vue'
+import PageHeader from '@/components/common/PageHeader.vue'
 
 const router = useRouter()
 const reviewStore = useReviewStore()
@@ -236,15 +236,11 @@ const goNext = () => {
   background: #16305c;
 }
 
-/* 하단 버튼 */
+/* 하단 버튼 영역 */
 .navigation-buttons {
   display: flex;
-  justify-content: space-between;
-  position: fixed;
-  bottom: 1rem;
-  left: 0;
-  width: 100%;
-  padding: 0 1.25rem;
+  gap: 0.75rem;
+  margin-top: 2rem;
 }
 
 .btn-back,
@@ -255,7 +251,6 @@ const goNext = () => {
   border: none;
   font-weight: 600;
   font-size: 1rem;
-  transition: all 0.2s;
 }
 
 .btn-back {
@@ -264,12 +259,10 @@ const goNext = () => {
   border: 2px solid #1b3b6f;
   margin-right: 0.75rem;
 }
-
 .btn-next {
   background-color: #1b3b6f;
   color: #fff;
 }
-
 .btn-next:disabled {
   background-color: #ccc;
   cursor: not-allowed;

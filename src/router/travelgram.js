@@ -1,6 +1,8 @@
 // src/router/travelgram.js
 import TravelgramMain from '@/views/travelgram/TravelgramMain.vue'
 import TripDetail from '@/views/travelgram/TripDetail.vue'
+import MyProfile from '@/views/travelgram/MyProfile.vue'
+import EditProfile from '@/views/travelgram/EditProfile.vue'
 
 // 리뷰 작성 단계
 import CreateTravelReview from '@/views/travelgram/review/CreateTravelReview.vue'
@@ -22,6 +24,16 @@ const routes = [
   name: 'TripDetail',
   component: TripDetail,
   props: true,
+  },
+  {
+    path: '/profile',
+    name: 'MyProfile',
+    component: MyProfile,
+  },
+  {
+    path: '/profile/edit',
+    name: 'EditProfile',
+    component: EditProfile,
   },
   {
     path: '/review/:tripId/:tripTitle?',

@@ -47,6 +47,11 @@ const routes = [
         path: '/supporter/restrooms',
         name: 'SupporterRestrooms',
         component: () => import('@/views/supporter/SupporterRestrooms.vue')
+    },
+    {
+        path: '/supporter/checklist',
+        name: 'SupporterChecklist',
+        component: () => import('@/views/supporter/SupporterChecklist.vue')
     }
 ];
 
