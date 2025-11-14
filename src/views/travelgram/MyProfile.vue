@@ -8,7 +8,7 @@
     <UploadSection icon="bi-image" title="Profile Photo" subtitle="Your profile picture">
       <div class="profile-image-upload text-center">
         <div class="current-avatar mb-3">
-          <img v-if="profileData.profileImage" :src="profileData.profileImage" :alt="profileData.displayName"
+          <img v-if="profileImage" :src="profileImage" :alt="profileData.displayName"
             class="avatar-img" />
           <div v-else class="avatar-placeholder">
             <i class="bi bi-person-circle"></i>
@@ -166,13 +166,15 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import BaseButton from '@/components/common/BaseButton.vue'
 import UploadSection from '@/components/travelgram/UploadSection.vue'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 
 const router = useRouter()
+const store = useStore()
 
 // Core 사용자 데이터
 const profileData = reactive({
@@ -250,6 +252,14 @@ const goBack = () => {
 const goToEditProfile = () => {
   router.push('/profile/edit')
 }
+
+// 프로필 이미지 computed
+// store에서 프로필 이미지 가져오기 (없으면 asset의 기본값)
+const profileImage = computed(() => {
+  const stored = store?.getters?.getProfileImage
+  if (stored) return stored
+  return new URL('../../assets/img/profile-logo.png', import.meta.url).href
+})
 
 // 컴포넌트 마운트 시 로컬 스토리지에서 데이터 로드
 onMounted(() => {

@@ -14,6 +14,7 @@ import MyProfile from '@/views/travelgram/MyProfile.vue'
 import travelgram from './travelgram'
 import planner from './planner'
 import supporter from './supporter'
+import { useTravelStore } from '@/store/travelStore'
 
 const routes = [
   { path: '/', component: LandingPage },
@@ -32,6 +33,20 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior() {
+    return { top: 0 };
+  }
+});
+
+router.beforeEach((to, from, next) => {
+  const travelStore = useTravelStore()
+
+  if (to.path === '/planner' && travelStore.isTraveling) {
+    // 여행 중인 경우 전체 일정 목록으로 리다이렉트
+    return next('/planner/itinerary')
+  }
+
+  next()
 })
 
 export default router

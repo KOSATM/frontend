@@ -1,60 +1,48 @@
 <template>
   <div class="hashtag-page">
-    <PageHeader
-      title="Travelgram"
-      subtitle="Your past travel adventures"
-      icon="bi-instagram"
-    />
+    <PageHeader title="Travelgram" subtitle="Your past travel adventures" icon="bi-instagram" />
     <!-- 상단 헤더 -->
-    <StepHeader
-      title="Create Travel Review"
-      :subtitle="reviewStore.tripTitle"
-      step="4/6"
-      @back="goBack"
-    />
+    <StepHeader title="Create Travel Review" :subtitle="reviewStore.tripTitle" step="4/6" @back="goBack" />
 
     <!-- 본문 -->
     <section class="hashtag-section">
-        <h6 class="guide-title"><i class="bi bi-hash text-primary me-2"></i>
-          AI Hashtag Suggestions
+      <h6 class="guide-title"><i class="bi bi-hash text-primary me-2"></i>
+        AI Hashtag Suggestions
+      </h6>
+      <p class="guide-subtitle">
+        Get smart hashtag recommendations based on your chosen caption style ✨
+        You can also add your own custom tags below!
+      </p>
+
+      <!-- 선택된 해시태그 박스 -->
+      <div class="selected-box" v-if="selectedTags.length">
+        <h6 class="box-title text-orange">
+          Selected Hashtags
         </h6>
-        <p class="guide-subtitle">
-          Get smart hashtag recommendations based on your chosen caption style ✨  
-          You can also add your own custom tags below!
-        </p>
-
-      <!-- 선택된 해시태그 목록 -->
-      <div class="selected-tags">
-        <span
-          v-for="tag in selectedTags"
-          :key="tag"
-          class="tag selected"
-          @click="removeTag(tag)"
-        >
-          {{ tag }} ✕
-        </span>
+        <div class="selected-tags">
+          <span v-for="tag in selectedTags" :key="tag" class="tag selected" @click="removeTag(tag)">
+            {{ tag }} ✕
+          </span>
+        </div>
       </div>
 
-      <!-- 추천 해시태그 목록 -->
-      <div class="suggested-tags">
-        <span
-          v-for="tag in allHashtags"
-          :key="tag"
-          :class="['tag', { active: selectedTags.includes(tag) }]"
-          @click="toggleTag(tag)"
-        >
-          {{ tag }}
-        </span>
+      <!-- 추천 해시태그 박스 -->
+      <div class="suggest-box">
+        <h6 class="box-title text-secondary">
+          AI Suggested Tags
+        </h6>
+
+        <div class="suggested-tags">
+          <span v-for="tag in allHashtags" :key="tag" :class="['tag', selectedTags.includes(tag) ? 'ai-selected' : 'ai-default']" @click="toggleTag(tag)">
+            {{ tag }}
+          </span>
+        </div>
       </div>
+
 
       <!-- 커스텀 해시태그 입력 -->
       <div class="add-hashtag mt-3">
-        <input
-          type="text"
-          v-model="newTag"
-          placeholder="Add custom hashtag..."
-          @keyup.enter="addTag"
-        />
+        <input type="text" v-model="newTag" placeholder="Add custom hashtag..." @keyup.enter="addTag" />
         <button class="btn-add" @click="addTag">Add</button>
       </div>
     </section>
@@ -163,42 +151,72 @@ const goNext = () => {
   color: #6c757d;
 }
 
-/* 해시태그 스타일 */
-.tag {
-  display: inline-block;
-  background: #f0f0f0;
-  color: #333;
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 0.4rem 0.75rem;
-  border-radius: 1rem;
-  margin: 0.25rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
+/* 박스 스타일 */
+.selected-box,
+.suggest-box {
+  background: #fff;
+  border-radius: 1.25rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.tag:hover {
-  background: #ffeedb;
+.box-title {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.text-orange {
   color: #ff8c00;
 }
 
-.tag.active,
+.text-primary {
+  color: #1b3b6f;
+}
+
+/* 해시태그 공통 */
+.tag {
+  display: inline-block;
+  padding: 0.45rem 0.9rem;
+  border-radius: 1rem;
+  font-size: 0.9rem;
+  margin: 0.28rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+/* 선택된 해시태그 (주황) */
 .tag.selected {
   background: #ff8c00;
   color: #fff;
 }
 
-/* 선택된 해시태그 */
-.selected-tags {
-  margin-bottom: 1rem;
+.tag.selected:hover {
+  background: #ff7700;
 }
 
-/* 추천 해시태그 */
-.suggested-tags {
-  display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 1rem;
+/* 추천 해시태그 기본 (회색) */
+.tag.ai-default {
+  background: #f0f0f0;
+  color: #333;
 }
+
+.tag.ai-default:hover {
+  background: #ffeedb;
+  color: #ff8c00;
+}
+
+/* 추천 해시태그 - 선택됨 (남색) */
+.tag.ai-selected {
+  background: #1b3b6f;
+  color: #fff;
+}
+
+.tag.ai-selected:hover {
+  background: #162e5a;
+}
+
 
 /* 추가 입력 */
 .add-hashtag {
@@ -259,10 +277,12 @@ const goNext = () => {
   border: 2px solid #1b3b6f;
   margin-right: 0.75rem;
 }
+
 .btn-next {
   background-color: #1b3b6f;
   color: #fff;
 }
+
 .btn-next:disabled {
   background-color: #ccc;
   cursor: not-allowed;

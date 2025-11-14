@@ -80,7 +80,7 @@
         </div>
 
         <div class="d-grid mb-2">
-          <router-link class="btn btn-primary btn-lg" :to="{ path: '/planner/itinerary' }">View Full Itinerary</router-link>
+          <router-link class="btn btn-primary btn-lg" :to="{ path: '/planner/edit' }" @click="startTravel">View Full Itinerary</router-link>
         </div>
 
         <p class="text-muted small mt-3">
@@ -95,7 +95,9 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useTravelStore } from '@/store/travelStore'
 
+const travelStore = useTravelStore()
 const propsRoute = useRoute()
 
 // Try to read data from route query first, otherwise fallback to sample data
@@ -118,6 +120,10 @@ const accommodation = {
         hour: '2-digit',
         minute: '2-digit'
       })
+}
+
+function startTravel() {
+  travelStore.startTravel()
 }
 
 const formattedStartDate = computed(() => {

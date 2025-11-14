@@ -1,11 +1,22 @@
 <template>
   <section class="planner-chat card shadow-sm rounded-4 p-3 d-flex flex-column">
     <!-- Header -->
-    <div class="chat-header d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
-      <div class="badge bg-warning text-white rounded-circle d-flex justify-content-center align-items-center" style="width: 32px; height: 32px">✈</div>
+    <div
+      class="chat-header d-flex align-items-center gap-2 mb-3 pb-2 border-bottom"
+    >
+      <div
+        class="badge bg-warning text-white rounded-circle d-flex justify-content-center align-items-center"
+        style="width: 32px; height: 32px"
+      >
+        ✈
+      </div>
       <div>
-        <h6 class="mb-0" style="font-family: 'Siganpyo', sans-serif">Seoul Journey</h6>
-        <small class="text-muted" style="font-family: 'Kyobo2024', sans-serif">AI Travel Assistant</small>
+        <h6 class="mb-0" style="font-family: 'Siganpyo', sans-serif">
+          Seoul Journey
+        </h6>
+        <small class="text-muted" style="font-family: 'Kyobo2024', sans-serif"
+          >AI Travel Assistant</small
+        >
       </div>
       <div class="ms-auto">
         <span class="badge bg-success-soft text-success small">Online</span>
@@ -18,10 +29,17 @@
         <!-- Initial AI Message -->
         <div class="message ai-message mb-3">
           <div class="message-bubble">
-            <p class="mb-1" style="font-family: 'Kyobo2024', sans-serif">Hello! I'm your AI assistant for planning your Seoul trip. 🇰🇷</p>
-            <p class="mb-0" style="font-family: 'Kyobo2024', sans-serif">Ask me about itinerary changes, food recommendations, or new activities!</p>
+            <p class="mb-1" style="font-family: 'Kyobo2024', sans-serif">
+              Hello! I'm your AI assistant for planning your Seoul trip. 🇰🇷
+            </p>
+            <p class="mb-0" style="font-family: 'Kyobo2024', sans-serif">
+              Ask me about itinerary changes, food recommendations, or new
+              activities!
+            </p>
           </div>
-          <small class="message-time text-muted">{{ formatTime(new Date()) }}</small>
+          <small class="message-time text-muted">{{
+            formatTime(new Date())
+          }}</small>
         </div>
 
         <!-- Dynamic Messages -->
@@ -35,17 +53,31 @@
           }"
         >
           <div class="message-bubble">
-            <p class="mb-0" style="font-family: 'Kyobo2024', sans-serif">{{ message.content }}</p>
-            <div v-if="message.type === 'ai' && message.loading" class="typing-indicator mt-2"><span></span><span></span><span></span></div>
+            <p class="mb-0" style="font-family: 'Kyobo2024', sans-serif">
+              {{ message.content }}
+            </p>
+            <div
+              v-if="message.type === 'ai' && message.loading"
+              class="typing-indicator mt-2"
+            >
+              <span></span><span></span><span></span>
+            </div>
           </div>
-          <small class="message-time text-muted">{{ formatTime(message.timestamp) }}</small>
+          <small class="message-time text-muted">{{
+            formatTime(message.timestamp)
+          }}</small>
         </div>
       </div>
     </div>
 
     <!-- Quick Actions -->
     <div class="quick-actions mb-3">
-      <p class="small text-muted mb-2" style="font-family: 'Kyobo2024', sans-serif">💡 Quick questions:</p>
+      <p
+        class="small text-muted mb-2"
+        style="font-family: 'Kyobo2024', sans-serif"
+      >
+        💡 Quick questions:
+      </p>
       <div class="d-flex gap-2 flex-wrap">
         <button
           @click="sendQuickMessage('I want to start early')"
@@ -61,8 +93,18 @@
         >
           Vegetarian
         </button>
-        <button @click="sendQuickMessage('Recommend me shopping areas')" class="btn btn-sm btn-outline-warning rounded-pill">Shopping</button>
-        <button @click="sendQuickMessage('I want to reduce my budget')" class="btn btn-sm btn-outline-warning rounded-pill">Save budget</button>
+        <button
+          @click="sendQuickMessage('Recommend me shopping areas')"
+          class="btn btn-sm btn-outline-warning rounded-pill"
+        >
+          Shopping
+        </button>
+        <button
+          @click="sendQuickMessage('I want to reduce my budget')"
+          class="btn btn-sm btn-outline-warning rounded-pill"
+        >
+          Save budget
+        </button>
       </div>
     </div>
 
@@ -77,8 +119,16 @@
           class="form-control form-control-sm rounded-start-pill"
           placeholder="Type your message..."
         />
-        <button @click="sendMessage" :disabled="!currentMessage.trim() || isLoading" class="btn btn-warning rounded-end-pill text-white">
-          <span v-if="isLoading" class="spinner-border spinner-border-sm" role="status"></span>
+        <button
+          @click="sendMessage"
+          :disabled="!currentMessage.trim() || isLoading"
+          class="btn btn-warning rounded-end-pill text-white"
+        >
+          <span
+            v-if="isLoading"
+            class="spinner-border spinner-border-sm"
+            role="status"
+          ></span>
           <span v-else>➤</span>
         </button>
       </div>
@@ -95,11 +145,16 @@ const messagesContainer = ref(null);
 const isLoading = ref(false);
 
 const demoResponses = {
-  early: "Nice! We can start around 8:00 AM at Gyeongbokgung and catch the guard-changing ceremony.",
-  vegetarian: "You can try “Sanchon” in Insadong for temple food, or “Plant” in Hongdae for vegan dishes.",
-  shopping: "Myeongdong → Hongdae → Seongsu is a good route for shopping and cafes.",
-  budget: "You can use a 1-day transportation pass and a palace combo ticket to save money.",
-  default: "Tell me a bit more about what you want, and I’ll organize the plan for you 🙂",
+  early:
+    "Nice! We can start around 8:00 AM at Gyeongbokgung and catch the guard-changing ceremony.",
+  vegetarian:
+    "You can try “Sanchon” in Insadong for temple food, or “Plant” in Hongdae for vegan dishes.",
+  shopping:
+    "Myeongdong → Hongdae → Seongsu is a good route for shopping and cafes.",
+  budget:
+    "You can use a 1-day transportation pass and a palace combo ticket to save money.",
+  default:
+    "Tell me a bit more about what you want, and I’ll organize the plan for you 🙂",
 };
 
 const sendMessage = async () => {
@@ -144,7 +199,8 @@ const generateAIResponse = (text) => {
   if (low.includes("early")) return demoResponses.early;
   if (low.includes("vegetarian")) return demoResponses.vegetarian;
   if (low.includes("shopping")) return demoResponses.shopping;
-  if (low.includes("budget") || low.includes("reduce")) return demoResponses.budget;
+  if (low.includes("budget") || low.includes("reduce"))
+    return demoResponses.budget;
   return demoResponses.default;
 };
 
