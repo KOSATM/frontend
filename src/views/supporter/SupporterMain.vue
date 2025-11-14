@@ -1,14 +1,14 @@
 <template>
-  <div class="planner-container py-3 px-3">
+  <div class="planner-container py-3 px-3" ref="containerRef" @scroll="handleScroll">
     <PageHeader title="Supporter" subtitle="Real-time travel support and updates" icon="bi-chat-dots" />
 
     <div class="row gx-4">
       <!-- LEFT COLUMN: checklist (top) + chat (bottom) -->
       <div class="col-md-4 d-flex flex-column gap-3">
         <div class="checklist-wrapper">
-          <UploadSection title="Today's Checklist" icon="bi-journal-text">
+          <UploadSection title="Today's Checklist" icon="bi-journal-text" class="checklist-header" @click.stop="isChecklistExpanded = !isChecklistExpanded">
             <template #actions>
-              <div class="text-end">
+              <div class="text-end" @click.stop>
                 <div class="small text-muted">{{ completedCount }}/{{ checklist.length }}</div>
                 <div class="progress progress-sm" style="width:160px;">
                   <div class="progress-bar" role="progressbar" :class="isComplete ? 'bg-success' : 'bg-warning'"
@@ -19,21 +19,23 @@
               </div>
             </template>
 
-            <ul class="list-unstyled mb-0">
-              <li v-for="(item, idx) in sortedChecklist" :key="idx"
-                class="checklist-item d-flex align-items-center p-3 mb-2 rounded" :class="{ 'checked-item': item.done }"
-                @click="toggleItem(checklist.indexOf(item))" role="button">
-                <div class="me-3">
-                  <div class="circle-check" :class="{ checked: item.done }"></div>
-                </div>
-                <div class="flex-fill">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span class="item-title" :class="{ checkedTitle: item.done }">{{ item.title }}</span>
-                    <div class="text-muted small">{{ item.hint || '' }}</div>
+            <transition name="collapse-height">
+              <ul v-show="isChecklistExpanded" class="list-unstyled mb-0" @click.stop>
+                <li v-for="(item, idx) in sortedChecklist" :key="idx"
+                  class="checklist-item d-flex align-items-center p-3 mb-2 rounded" :class="{ 'checked-item': item.done }"
+                  @click="toggleItem(checklist.indexOf(item))" role="button">
+                  <div class="me-3">
+                    <div class="circle-check" :class="{ checked: item.done }"></div>
                   </div>
-                </div>
-              </li>
-            </ul>
+                  <div class="flex-fill">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span class="item-title" :class="{ checkedTitle: item.done }">{{ item.title }}</span>
+                      <div class="text-muted small">{{ item.hint || '' }}</div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </transition>
           </UploadSection>
         </div>
         
@@ -180,6 +182,25 @@ import UploadSection from '@/components/travelgram/UploadSection.vue'
 import PlannerChat from '@/views/planner/PlannerChat.vue'
 
 const router = useRouter()
+const containerRef = ref(null)
+
+// Checklist collapse state
+const isChecklistExpanded = ref(true)
+const scrollThreshold = 30 // pixels
+
+// Scroll handler for auto-collapse behavior
+const handleScroll = () => {
+  if (!containerRef.value) return
+  const scrollTop = containerRef.value.scrollTop
+  
+  if (scrollTop > scrollThreshold) {
+    // When scrolled down: collapse checklist
+    isChecklistExpanded.value = false
+  } else {
+    // When at top: expand checklist
+    isChecklistExpanded.value = true
+  }
+}
 
 // LEFT: checklist
 const checklist = ref([
@@ -281,6 +302,25 @@ const goToImageAIHistory = () => {
 }
 
 /* two-column spacing handled by Bootstrap .row/.col */
+
+/* collapse animation for checklist */
+.collapse-height-enter-active,
+.collapse-height-leave-active {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.collapse-height-enter-from,
+.collapse-height-leave-to {
+  opacity: 0;
+  max-height: 0;
+}
+
+.collapse-height-enter-to,
+.collapse-height-leave-from {
+  opacity: 1;
+  max-height: 600px;
+}
 
 /* map card */
 .map-container {
@@ -483,6 +523,20 @@ const goToImageAIHistory = () => {
 /* MAP wrapper top row */
 .map-wrapper {
   position: relative;
+}
+
+.checklist-wrapper {
+  cursor: pointer;
+  user-select: none;
+}
+
+.checklist-wrapper :deep(.upload-header) {
+  cursor: pointer;
+  user-select: none;
+}
+
+.checklist-wrapper :deep(.upload-header):hover {
+  opacity: 0.9;
 }
 
 .map-top-row {
