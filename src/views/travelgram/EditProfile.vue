@@ -31,17 +31,17 @@
             </UploadSection>
             
             <!-- 기본 정보 섹션 -->
-            <UploadSection icon="bi-person" title="Basic Information" subtitle="Your personal details">
+            <UploadSection icon="bi-person" title="Basic Information" subtitle="Your account information">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label">Full Name</label>
+                        <label class="form-label">Name</label>
                         <input type="text" class="form-control" v-model="profileData.name"
-                            placeholder="Enter your full name" />
+                            placeholder="Enter your name" />
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Nickname</label>
-                        <input type="text" class="form-control" v-model="profileData.nickname"
-                            placeholder="Enter your nickname" />
+                        <label class="form-label">Korean Name</label>
+                        <input type="text" class="form-control" v-model="profileData.koreanName"
+                            placeholder="한글 이름" />
                     </div>
                     <div class="col-12">
                         <label class="form-label">Email</label>
@@ -49,17 +49,17 @@
                             placeholder="Email from Google OAuth" />
                         <small class="text-muted">Email cannot be changed as it's linked to your Google account</small>
                     </div>
-                    <div class="col-12">
-                        <label class="form-label">Bio</label>
-                        <textarea class="form-control" rows="3" v-model="profileData.bio"
-                            placeholder="Tell us about yourself..."></textarea>
-                    </div>
                 </div>
             </UploadSection>
 
             <!-- 여행 선호도 섹션 -->
-            <UploadSection icon="bi-airplane" title="Travel Preferences" subtitle="Your travel style and interests">
+            <UploadSection icon="bi-airplane" title="Travel Preferences" subtitle="Your travel information">
                 <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nationality</label>
+                        <input type="text" class="form-control" v-model="profileData.nationality"
+                            placeholder="Your country" />
+                    </div>
                     <div class="col-md-6">
                         <label class="form-label">Preferred Currency</label>
                         <select class="form-select" v-model="profileData.preferredCurrency">
@@ -67,15 +67,6 @@
                             <option value="KRW">KRW (₩)</option>
                             <option value="EUR">EUR (€)</option>
                             <option value="JPY">JPY (¥)</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Travel Style</label>
-                        <select class="form-select" v-model="profileData.travelStyle">
-                            <option value="budget">Budget Traveler</option>
-                            <option value="comfort">Comfort Seeker</option>
-                            <option value="luxury">Luxury Traveler</option>
-                            <option value="adventure">Adventure Enthusiast</option>
                         </select>
                     </div>
                 </div>
@@ -93,42 +84,35 @@
                 </div>
             </UploadSection>
 
-            <!-- 결제 정보 섹션 -->
-            <UploadSection icon="bi-credit-card" title="Payment Information" subtitle="Manage your payment methods">
-                <div class="card-list">
-                    <div v-for="(card, index) in profileData.paymentCards" :key="index" class="payment-card mb-2">
-                        <div class="card-info d-flex justify-content-between align-items-center">
-                            <div class="card-details d-flex align-items-center">
-                                <i class="bi bi-credit-card-2-front me-3 text-primary"></i>
-                                <div>
-                                    <div class="card-number">**** **** **** {{ card.lastFour }}</div>
-                                    <div class="card-type text-muted">{{ card.type }} • Expires {{ card.expiry }}</div>
-                                </div>
-                            </div>
-                            <div class="card-actions">
-                                <span v-if="card.isDefault" class="badge bg-primary me-2">Default</span>
-                                <BaseButton variant="outline-danger" size="sm" @click="removePaymentCard(index)">
-                                    <i class="bi bi-trash"></i>
-                                </BaseButton>
-                            </div>
-                        </div>
+            <!-- 의료 정보 섹션 -->
+            <UploadSection icon="bi-heart-pulse" title="Medical Information" subtitle="Important health information">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Allergies</label>
+                        <textarea class="form-control" rows="2" v-model="profileData.medicalInfo.allergies"
+                            placeholder="e.g., Shellfish, Peanuts..."></textarea>
                     </div>
-
-                    <BaseButton variant="outline-primary" class="w-100" @click="showAddCardModal = true">
-                        <i class="bi bi-plus me-2"></i>
-                        Add New Card
-                    </BaseButton>
+                    <div class="col-12">
+                        <label class="form-label">Dietary Restrictions</label>
+                        <textarea class="form-control" rows="2" v-model="profileData.medicalInfo.dietaryRestrictions"
+                            placeholder="e.g., Vegetarian, Gluten-free..."></textarea>
+                    </div>
                 </div>
             </UploadSection>
 
-            <!-- 알림 설정 섹션 -->
-            <UploadSection icon="bi-bell" title="Notification Settings" subtitle="Choose what you want to be notified about">
-                <ToggleSwitch id="emailNotifications" v-model="profileData.notifications.email"
-                    label="Email Notifications"></ToggleSwitch>
-                <ToggleSwitch id="tripReminders" v-model="profileData.notifications.tripReminders"
-                    label="Trip Reminders"></ToggleSwitch>
-                <ToggleSwitch id="promotions" v-model="profileData.notifications.promotions"
-                    label="Promotions & Offers"></ToggleSwitch>
+            <!-- SNS 연동 섹션 -->
+            <UploadSection icon="bi-share" title="Social Media Integration" subtitle="Connected accounts">
+                <div class="social-integration">
+                    <div class="social-item d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-instagram me-2 text-danger"></i>
+                            <span>Instagram</span>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" v-model="profileData.instagramConnected" />
+                        </div>
+                    </div>
+                </div>
             </UploadSection>
 
             <!-- 🟦 하단 버튼 -->
@@ -203,12 +187,10 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseButton from '@/components/common/BaseButton.vue'
 import UploadSection from '@/components/travelgram/UploadSection.vue'
-import ToggleSwitch from '@/components/common/ToggleSwitch.vue'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 
 const router = useRouter()
 const isLoading = ref(false)
-const showAddCardModal = ref(false)
 const profileImageInput = ref(null)
 
 const triggerImageInput = () => {
@@ -217,41 +199,18 @@ const triggerImageInput = () => {
 
 // 임시 사용자 데이터 (Google OAuth 연동은 추후 구현)
 const profileData = reactive({
-    name: 'Jessica Han',
-    nickname: 'JessicaH',
-    email: 'jessica.han@gmail.com',
-    bio: 'Travel enthusiast who loves exploring new cultures and cuisines.',
+    name: 'John Doe',
+    koreanName: '도우존',
+    email: 'john.doe@gmail.com',
     profileImage: '',
+    nationality: 'United States',
     preferredCurrency: 'USD',
-    travelStyle: 'comfort',
-    interests: ['culture', 'food', 'shopping'],
-    paymentCards: [
-        {
-            type: 'Visa',
-            lastFour: '4567',
-            expiry: '12/25',
-            isDefault: true
-        },
-        {
-            type: 'Mastercard',
-            lastFour: '8901',
-            expiry: '08/26',
-            isDefault: false
-        }
-    ],
-    notifications: {
-        email: true,
-        tripReminders: true,
-        promotions: false
-    }
-})
-
-const newCard = reactive({
-    number: '',
-    expiry: '',
-    cvv: '',
-    name: '',
-    isDefault: false
+    interests: ['culture', 'food', 'adventure'],
+    medicalInfo: {
+        allergies: 'Shellfish, Peanuts',
+        dietaryRestrictions: 'Vegetarian, Gluten-free'
+    },
+    instagramConnected: true
 })
 
 const availableInterests = [
@@ -296,42 +255,7 @@ const toggleInterest = (interestId) => {
 }
 
 const addPaymentCard = () => {
-    if (newCard.number && newCard.expiry && newCard.cvv && newCard.name) {
-        // 간단한 카드 번호 유효성 검사
-        const cleanNumber = newCard.number.replace(/\s/g, '')
-        if (cleanNumber.length < 13 || cleanNumber.length > 19) {
-            alert('Please enter a valid card number')
-            return
-        }
-
-        const cardType = cleanNumber.startsWith('4') ? 'Visa' :
-            cleanNumber.startsWith('5') ? 'Mastercard' : 'Other'
-        const lastFour = cleanNumber.slice(-4)
-
-        if (newCard.isDefault) {
-            profileData.paymentCards.forEach(card => card.isDefault = false)
-        }
-
-        profileData.paymentCards.push({
-            type: cardType,
-            lastFour: lastFour,
-            expiry: newCard.expiry,
-            isDefault: newCard.isDefault
-        })
-
-        // 폼 초기화
-        Object.assign(newCard, {
-            number: '',
-            expiry: '',
-            cvv: '',
-            name: '',
-            isDefault: false
-        })
-
-        showAddCardModal.value = false
-    } else {
-        alert('Please fill in all card details')
-    }
+    // ... 기존 코드 ...
 }
 
 const removePaymentCard = (index) => {
@@ -368,33 +292,6 @@ const saveProfile = async () => {
 
 const goBack = () => {
     router.go(-1) // 이전 페이지로 이동
-}
-
-// 카드 번호 포맷팅
-const formatCardNumber = (value) => {
-    const cleaned = value.replace(/\s/g, '')
-    const formatted = cleaned.replace(/(.{4})/g, '$1 ').trim()
-    return formatted
-}
-
-// 만료일 포맷팅
-const formatExpiry = (value) => {
-    const cleaned = value.replace(/\D/g, '')
-    if (cleaned.length >= 2) {
-        return cleaned.slice(0, 2) + '/' + cleaned.slice(2, 4)
-    }
-    return cleaned
-}
-
-// 이벤트 핸들러
-const onCardNumberInput = (event) => {
-    const formatted = formatCardNumber(event.target.value)
-    newCard.number = formatted
-}
-
-const onExpiryInput = (event) => {
-    const formatted = formatExpiry(event.target.value)
-    newCard.expiry = formatted
 }
 
 // 컴포넌트 마운트 시 로컬 스토리지에서 데이터 로드

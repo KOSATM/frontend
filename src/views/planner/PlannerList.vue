@@ -5,6 +5,12 @@
   >
     <!-- 상단 요약 -->
     <div class="p-4 pb-3 border-bottom">
+      <PageHeader
+        title="Planner"
+        subtitle="Create and manage your Seoul travel itinerary"
+        icon="bi-map"
+      />
+      <StepHeader :step="'2/4'" :title="'Check and Adjust Draft'" @back="goBack"/>
       <div class="d-flex gap-3 align-items-center mb-3">
         <div
           class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
@@ -270,6 +276,8 @@
 </template>
 
 <script>
+import PageHeader from "@/components/common/PageHeader.vue";
+import StepHeader from "@/components/common/StepHeader.vue";
 import PlannerReplaceModal from "@/components/planner/PlannerReplaceModal.vue";
 import PlannerActivityDetailsModal from "@/components/planner/PlannerActivityDetailsModal.vue";
 import PlannerActivityCompleteModal from "@/components/planner/PlannerActivityCompleteModal.vue";
@@ -284,6 +292,8 @@ const defaultGallery = [
 export default {
   name: "PlannerList",
   components: {
+    PageHeader,
+    StepHeader,
     PlannerReplaceModal,
     PlannerActivityDetailsModal,
     PlannerActivityCompleteModal,
@@ -982,8 +992,11 @@ export default {
     },
   },
   methods: {
+    goBack() {
+      this.$router.push("/planner/travelplan");
+    },
     /* 공통 유틸 */
-    // ✅ 항상 한 개만 열리도록: 같은 카드 눌러도 닫지 않음
+    // ✅ 항상 한 개만 열리도록
     toggleDay(id) {
       this.openDayId = id;
     },
@@ -1252,6 +1265,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 /* 폰트 */
