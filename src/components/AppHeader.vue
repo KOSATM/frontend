@@ -42,14 +42,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 const navbar = ref(null)
 const router = useRouter()
+const store = useStore()
 
 // OAuth 프로필 이미지 (기본값: 사용자 아이콘)
-const profileImage = ref('https://via.placeholder.com/40?text=U')
+const profileImage = computed(() => {
+  const stored = store?.getters?.getProfileImage
+  if (stored) return stored
+  return new URL('../assets/img/profile-logo.png', import.meta.url).href
+})
 
 // Travelgram 페이지로 이동
 const goToTravelgram = () => {

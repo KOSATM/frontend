@@ -41,10 +41,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import TripCard from '@/components/common/TripCard.vue';
 import ProfileSummary from "@/components/travelgram/ProfileSummary.vue";
 import PageHeader from '@/components/common/PageHeader.vue';
+
+const store = useStore()
 
 // ✅ 하드코딩된 여행 데이터
 const trips = ref([
@@ -75,6 +78,13 @@ const trips = ref([
 ])
 
 const activeId = ref(1)
+
+// store에서 프로필 이미지 가져오기 (없으면 asset의 기본값)
+const profileImage = computed(() => {
+  const stored = store?.getters?.getProfileImage
+  if (stored) return stored
+  return new URL('../../assets/img/profile-logo.png', import.meta.url).href
+})
 </script>
 
 <style scoped>
