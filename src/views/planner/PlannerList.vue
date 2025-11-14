@@ -10,7 +10,11 @@
         subtitle="Create and manage your Seoul travel itinerary"
         icon="bi-map"
       />
-      <StepHeader :step="'2/4'" :title="'Check and Adjust Draft'" @back="goBack"/>
+      <StepHeader
+        :step="'2/4'"
+        :title="'Check and Adjust Draft'"
+        @back="goBack"
+      />
       <div class="d-flex gap-3 align-items-center mb-3">
         <div
           class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
@@ -44,17 +48,17 @@
       <div
         v-if="!run.started"
         class="gradient-hero rounded-4 p-4 position-relative hero-clickable"
-        @click="startDay(openDayId)"
+        @click="startNextDay"
       >
         <div class="text-center text-white">
-          <h5 class="mb-1 title">Start Day {{ openDayId }}</h5>
-          <div class="sub">{{ currentDay?.title }}</div>
-          <div class="sub small">{{ currentDay?.date }}</div>
+          <h5 class="mb-1 title">Start Day {{ heroDay?.id || 1 }}</h5>
+          <div class="sub">{{ heroDay?.title }}</div>
+          <div class="sub small">{{ heroDay?.date }}</div>
           <hr class="hero-sep" />
           <div class="hero-stats">
-            {{ currentDay?.activities.length || 0 }} activities
+            {{ heroDay?.activities.length || 0 }} activities
             <span class="dot">•</span>
-            ${{ currentDay?.dailyCost }}
+            ${{ heroDay?.dailyCost || 0 }}
           </div>
         </div>
       </div>
@@ -121,25 +125,51 @@
         <div
           v-for="(day, dIdx) in days"
           :key="day.id"
-          class="card border-0 shadow-sm rounded-4 overflow-hidden"
+          :class="[
+            'card border-0 shadow-sm rounded-4 overflow-hidden day-card',
+            { 'day-card--done': isDayCompleted(day) },
+          ]"
         >
           <div
-            class="card-body d-flex justify-content-between align-items-center"
-            :class="openDayId === day.id ? 'bg-primary text-white' : 'bg-white'"
+            class="card-body d-flex justify-content-between align-items-center day-header"
+            :class="[
+              openDayId === day.id ? 'bg-primary text-white' : 'bg-white',
+              {
+                'day-header--done': isDayCompleted(day) && openDayId !== day.id,
+              },
+            ]"
             role="button"
             @click="toggleDay(day.id)"
           >
             <div>
               <div
                 class="small fw-semibold"
-                :class="openDayId !== day.id ? 'text-primary' : ''"
+                :class="[
+                  openDayId !== day.id ? 'text-primary' : '',
+                  isDayCompleted(day) && openDayId !== day.id
+                    ? 'text-muted'
+                    : '',
+                ]"
               >
                 Day {{ day.id }}
+                <span
+                  v-if="isDayCompleted(day)"
+                  class="badge badge-day-done ms-1"
+                >
+                  Done
+                </span>
               </div>
-              <h6 class="mb-0 title">{{ day.title }}</h6>
+              <h6
+                class="mb-0 title"
+                :class="{
+                  'text-muted': isDayCompleted(day) && openDayId !== day.id,
+                }"
+              >
+                {{ day.title }}
+              </h6>
               <div
                 class="small"
-                :class="openDayId !== day.id ? 'text-muted' : 'text-white-50'"
+                :class="[openDayId !== day.id ? 'text-muted' : 'text-white-50']"
               >
                 {{ day.date }}
               </div>
@@ -151,7 +181,14 @@
               >
                 Daily Cost
               </div>
-              <div class="fw-bold title">$ {{ day.dailyCost }}</div>
+              <div
+                class="fw-bold title"
+                :class="{
+                  'text-muted': isDayCompleted(day) && openDayId !== day.id,
+                }"
+              >
+                $ {{ day.dailyCost }}
+              </div>
               <div class="small">
                 <span
                   class="chevron"
@@ -300,7 +337,7 @@ export default {
   },
   data() {
     return {
-      openDayId: 1, // 화면에서 펼쳐진 Day
+      openDayId: 1, // 화면에서 펼쳐진 Day (리스트)
       run: {
         started: false,
         startedAt: null,
@@ -990,16 +1027,66 @@ export default {
         status: this.currentStatusText,
       };
     },
+    // 아직 끝나지 않은 Day 중 가장 앞에 있는 것
+    nextAvailableDayId() {
+      const notDoneDay = this.days.find((d) => !this.isDayCompleted(d));
+      return notDoneDay ? notDoneDay.id : null;
+    },
+    // Hero 영역에서 보여줄 Day
+    heroDay() {
+      // 달리는 중이면 항상 그 Day
+      if (this.run.started && this.currentDay) {
+        return this.currentDay;
+      }
+      // 대기 상태면 아직 안 끝난 Day 중 첫 번째
+      const nextId = this.nextAvailableDayId;
+      if (nextId != null) {
+        return this.days.find((d) => d.id === nextId) || this.days[0] || null;
+      }
+      // 다 끝났으면 그냥 첫 번째
+      return this.days[0] || null;
+    },
   },
   methods: {
     goBack() {
       this.$router.push("/planner/travelplan");
     },
+
     /* 공통 유틸 */
-    // ✅ 항상 한 개만 열리도록
-    toggleDay(id) {
-      this.openDayId = id;
+    // Day 완료 여부
+    isDayCompleted(day) {
+      if (!day?.activities || !day.activities.length) return false;
+      return day.activities.every((a) => a.completed);
     },
+
+    // ✅ Day 헤더 토글 규칙
+    toggleDay(id) {
+      // 진행 중 Day
+      const runningDayId = this.run.started ? this.run.dayId : null;
+
+      // 아무것도 진행 중이 아닐 때: 그냥 토글만
+      if (!runningDayId) {
+        this.openDayId = this.openDayId === id ? null : id;
+        return;
+      }
+
+      // 진행 중인 Day를 눌렀을 때
+      if (id === runningDayId) {
+        // 열려 있으면 닫고, 닫혀 있으면 열기 (다른 Day 자동 오픈 X)
+        this.openDayId = this.openDayId === id ? null : id;
+        return;
+      }
+
+      // 진행 중이 아닌 Day를 눌렀을 때
+      if (this.openDayId === id) {
+        // 이미 열려 있던 non-running Day를 닫는 경우 → 달리는 Day 다시 열기
+        this.openDayId = runningDayId;
+      } else {
+        // 그냥 그 Day만 열기
+        this.openDayId = id;
+      }
+    },
+
     getIconForType(type) {
       const map = {
         cafe: "☕",
@@ -1085,16 +1172,24 @@ export default {
       }
     },
 
+    /* 항상 "다음 남은 Day"만 시작 */
+    startNextDay() {
+      if (this.run.started) return;
+      const nextId = this.nextAvailableDayId;
+      if (!nextId) return;
+      this.startDay(nextId);
+    },
+
     /* 시작/진행 */
     startDay(dayId) {
       if (this.run.started) return;
+      if (!dayId) return;
       const day = this.days.find((d) => d.id === dayId);
       if (!day) return;
-      this.openDayId = dayId;
+      this.openDayId = dayId; // 시작하는 Day만 펼치기
       this.run.started = true;
       this.run.startedAt = Date.now();
       this.run.dayId = dayId; // ✅ 진행 중인 Day 저장
-      // 모든 액티비티는 미완료 상태 그대로 → 첫 번째 일정부터 진행
     },
 
     /* 현재 액티비티 완료 모달 열기 */
@@ -1115,7 +1210,7 @@ export default {
       this.completeModal.open = false;
     },
 
-    /* 상세 모달 */
+    /* 상세 모달 (일반 일정 클릭) */
     openDetailsModal(dayIndex, actIndex) {
       const act = this.days[dayIndex].activities[actIndex];
       const details = act.details || this.buildFallbackDetails(act);
@@ -1158,19 +1253,28 @@ export default {
       }
       act.completed = true;
 
-      // 해당 Day 모두 끝났으면(그리고 그 Day가 실제로 run 중인 Day일 때만)
+      // 해당 Day 모두 끝났으면
       const stillLeft = day.activities.some((a) => !a.completed);
-      if (!stillLeft && this.run.dayId === day.id) {
-        this.run.started = false;
-        this.run.startedAt = null;
-        this.run.dayId = null;
+      if (!stillLeft) {
+        // 만약 이 Day가 실제 달리던 Day였다면 run 종료
+        if (this.run.dayId === day.id) {
+          this.run.started = false;
+          this.run.startedAt = null;
+          this.run.dayId = null;
+        }
 
-        // 다음 Day 카드 오픈
+        // 다음 Day 카드 오픈 (규칙 1)
         const nextDay = this.days.find((d) => d.id > day.id);
         if (nextDay) {
           this.openDayId = nextDay.id;
+        } else {
+          // 마지막 날이 끝난 경우엔 아무 Day도 안 펼쳐도 됨
+          this.openDayId = null;
         }
+        return;
       }
+
+      // 아직 남은 액티비티가 있으면 그대로 유지
     },
 
     /* 현재 액티비티 완료 모달에서 Confirm */
@@ -1181,7 +1285,7 @@ export default {
       this.closeCompleteModal();
     },
 
-    /* 상세 모달에서 Save/Complete */
+    /* 상세 모달에서 Save/Complete (현재는 spent만 처리) */
     saveSpent() {
       const { dayIndex: d, actIndex: a, spendInput: val } = this.detailsModal;
       if (d == null || a == null) return;
@@ -1229,10 +1333,20 @@ export default {
       this.replaceModal.open = false;
     },
 
+    /* 추천 일정 카드 클릭 시 → 프리뷰(상세 모달) */
     previewAlt(alt) {
-      this.applyReplacement(alt);
+      const details = alt.details || this.buildFallbackDetails(alt);
+      this.detailsModal = {
+        open: true,
+        dayIndex: this.replaceModal.dayIndex,
+        actIndex: this.replaceModal.actIndex,
+        data: details,
+        spendInput: null,
+      };
+      // 실제 교체는 Replace 버튼으로만
     },
 
+    /* 진짜 교체 */
     applyReplacement(alt) {
       const { dayIndex: d, actIndex: a } = this.replaceModal;
       if (d == null || a == null) return;
@@ -1265,7 +1379,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 /* 폰트 */
@@ -1356,6 +1469,25 @@ export default {
 }
 .rotate-180 {
   transform: rotate(180deg);
+}
+
+/* Day 카드 */
+.day-card {
+  border-radius: 1rem;
+}
+.day-header {
+  transition: background-color 0.18s ease, box-shadow 0.18s ease,
+    transform 0.12s ease;
+}
+.day-header--done {
+  background-color: #f3f4f6 !important;
+}
+.badge-day-done {
+  font-size: 10px;
+  border-radius: 999px;
+  padding: 2px 6px;
+  background: #e5e7eb;
+  color: #6b7280;
 }
 
 /* 액티비티 행 hover & 버튼 */
