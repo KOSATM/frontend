@@ -111,7 +111,7 @@ const travelStore = useTravelStore()
 
 function next() {
   travelStore.increaseStep();
-  router.push("/planner/travelplan");
+  router.push("/planner/edit");
 }
 
 </script>
