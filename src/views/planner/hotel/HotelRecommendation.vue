@@ -1,7 +1,7 @@
 <template>
   <div class="hotel-recommendation container py-4">
     <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
-    <StepHeader :step="'3/4'" :title="'Select an Accommodation'" @back="goBack"/>
+    <!-- <StepHeader :step="'3/4'" :title="'Select an Accommodation'" @back="goBack"/> -->
 
     <!-- <div class="form-header mx-2 my-4">
       <RouterLink to="/planner/edit" class="text-decoration-none">
@@ -135,7 +135,6 @@
 import PageHeader from '@/components/common/PageHeader.vue';
 import hotelIllust from '@/assets/img/hotel-logo.png'
 import { ref } from 'vue'
-import StepHeader from '@/components/common/StepHeader.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
 import { useTravelStore } from '@/store/travelStore'
 
@@ -144,7 +143,6 @@ export default {
   components: {
     BaseButton,
     PageHeader,
-    StepHeader
   },
   data() {
     return {
