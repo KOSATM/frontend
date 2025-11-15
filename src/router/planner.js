@@ -1,6 +1,5 @@
 import HotelRecommendation from "@/views/planner/hotel/HotelRecommendation.vue";
 import PlannerCreate from "@/views/planner/PlannerCreate.vue";
-import TravelPlanForm from "@/views/planner/TravelPlanForm.vue";
 import PlannerEdit from "@/views/planner/edit/PlannerEdit.vue";
 import PlannerChat from "@/views/planner/edit/PlannerChat.vue";
 import PlannerList from "@/views/planner/edit/PlannerList.vue";
@@ -14,12 +13,12 @@ const planner = [
     component: PlannerCreate,
     meta: { title: "새 플랜 생성" },
   },
-  {
-    path: "/planner/travelplan",
-    name: "travelplan",
-    component: TravelPlanForm,
-    meta: { title: "여행 계획 작성" },
-  },
+  // {
+  //   path: "/planner/travelplan",
+  //   name: "travelplan",
+  //   component: TravelPlanForm,
+  //   meta: { title: "여행 계획 작성" },
+  // },
   {
     path: "/planner/edit",
     name: "planedit",

@@ -10,13 +10,7 @@
         subtitle="Create and manage your Seoul travel itinerary"
         icon="bi-map"
       />
-      <!-- 여행 중에는 StepHeader 숨김 -->
-      <StepHeader
-        v-if="!travelStore.$state.isTraveling"
-        :step="'2/4'"
-        :title="'Check and Adjust Draft'"
-        @back="goBack"
-      />
+      <!-- <StepHeader v-if="!travelStore.$state.isTraveling" :step="'2/4'" :title="'Check and Adjust Draft'" @back="goBack"/> -->
       <div class="d-flex gap-3 align-items-center mb-3">
         <div
           class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
@@ -293,16 +287,10 @@
 
     <!-- CTA -->
     <div class="p-4 pt-0 border-top bg-white">
-      <BaseButton
-        v-if="!travelStore.$state.isTraveling"
-        @click="next()"
-        variant="primary"
-        class="w-100 py-2"
-        >Next: Select Accommodation</BaseButton
-      >
-      <BaseButton v-else @click="endTrip()" variant="success" class="w-100 py-2"
-        >FORCE to End Trip</BaseButton
-      >
+      <!-- <BaseButton v-if="!travelStore.$state.isTraveling" @click="next()" variant="primary" class="w-100 py-2">Next: Select Accommodation</BaseButton> -->
+      <BaseButton v-if="travelStore.$state.isTraveling" @click="endTrip()" variant="success" class="w-100 py-2">FORCE to End Trip</BaseButton>
+      <!-- <button v-else="travelStore.$state.isTraveling" class="btn btn-success w-100 rounded-3">Finish Journey</button> -->
+      <!-- <button v-else class="btn btn-success w-100 rounded-3" @click="next()">Next: Select Accommodation</button> -->
     </div>
   </section>
 
@@ -342,7 +330,6 @@
 
 <script>
 import PageHeader from "@/components/common/PageHeader.vue";
-import StepHeader from "@/components/common/StepHeader.vue";
 import PlannerReplaceModal from "@/components/planner/PlannerReplaceModal.vue";
 import PlannerActivityDetailsModal from "@/components/planner/PlannerActivityDetailsModal.vue";
 import PlannerActivityCompleteModal from "@/components/planner/PlannerActivityCompleteModal.vue";
@@ -361,7 +348,6 @@ export default {
   components: {
     BaseButton,
     PageHeader,
-    StepHeader,
     PlannerReplaceModal,
     PlannerActivityDetailsModal,
     PlannerActivityCompleteModal,

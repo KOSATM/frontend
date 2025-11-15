@@ -6,13 +6,33 @@
     <!-- 메인 컨텐츠 -->  
     <div class="content-wrapper px-4 py-4">
 
+      <!-- AI 프롬프트 입력 섹션 -->
+      <div class="prompt-section mb-5">
+        <div class="prompt-card">
+          <div class="prompt-input-wrapper">
+            <textarea
+              class="prompt-input form-control"
+              placeholder="Leave a comment here"
+              v-model="promptInput"
+              rows="4"
+            ></textarea>
+
+            <!-- Button sits inside the textarea wrapper, overlapping the bottom-left -->
+            <button class="btn-generate" @click="generateItinerary" :disabled="!promptInput.trim()">
+              Start
+              <i class="bi bi-play-fill"></i>
+            </button>
+          </div>
+        </div>
+      </div>
 
       <!-- Create Budget-Based Itinerary 버튼 -->
-      <BaseButton variant="primary" 
+      <!-- <BaseButton variant="primary" 
       class="w-100 mb-4 py-3 d-flex align-items-center justify-content-center gap-2"
       @click="next()"><i class="bi bi-plus-lg"></i>
         <span class="fw-semibold">Create Budget-Based Itinerary</span>
-      </BaseButton>
+      </BaseButton> -->
+
 
       <!-- AI-Recommended Places -->
       <div class="recommended-section mb-4">
@@ -104,16 +124,26 @@ import PageHeader from "@/components/common/PageHeader.vue";
 import TipBox from "@/components/common/TipBox.vue";
 import RecommendationCard from "@/components/planner/RecommendationCard.vue";
 import { RouterLink } from "vue-router";
+import { ref } from 'vue'
 import { useTravelStore } from '@/store/travelStore'
 import router from "@/router";
 
 const travelStore = useTravelStore()
+const promptInput = ref('')
 
 function next() {
   travelStore.increaseStep();
-  router.push("/planner/travelplan");
+  router.push("/planner/edit");
 }
 
+function generateItinerary() {
+  if (promptInput.value.trim()) {
+    console.log('Generating itinerary with prompt:', promptInput.value)
+    // AI 기반 일정 생성 로직이 여기에 추가됨
+    // 예: router.push('/planner/form')
+    next()
+  }
+}
 </script>
 
 <style scoped lang="scss">
@@ -129,6 +159,118 @@ function next() {
 .content-wrapper {
   max-width: 800px;
   margin: 0 auto;
+}
+
+/* AI 프롬프트 섹션 */
+.prompt-section {
+  margin-bottom: 2rem;
+}
+
+.prompt-card {
+  background: #ffffff;
+  border: 1px solid rgba(255, 140, 0, 0.15);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.08);
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: rgba(255, 140, 0, 0.3);
+    box-shadow: 0 4px 16px rgba(255, 140, 0, 0.12);
+  }
+}
+
+.prompt-header {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  color: $secondary;
+  
+  i {
+    font-size: 1.2rem;
+    color: $primary;
+  }
+  
+  span:nth-child(2) {
+    color: $secondary;
+    font-family: 'Siganpyo', sans-serif;
+  }
+  
+  span:nth-child(3) {
+    font-size: 0.9rem;
+    color: #999;
+  }
+}
+
+.prompt-input-wrapper {
+  position: relative;
+  display: block;
+
+  .prompt-input {
+    width: 100%;
+    /* add right/bottom padding so the button doesn't overlap the textarea content or border */
+    padding: 1rem 7.5rem 3rem 1rem; /* top right bottom left */
+    border: 1px solid #ddd;
+    border-radius: 0.75rem;
+    font-size: 0.95rem;
+    background-color: #f9f9f9;
+    color: $secondary;
+    font-family: 'Kyobo2024', sans-serif;
+    transition: all 0.2s ease;
+
+    &::placeholder {
+      color: #aaa;
+    }
+
+    &:hover {
+      border-color: rgba($primary, 0.3);
+      background-color: rgba($primary, 0.02);
+    }
+
+    &:focus {
+      border-color: $primary;
+      outline: none;
+      background-color: #fff;
+      box-shadow: 0 0 0 3px rgba($primary, 0.08);
+    }
+  }
+
+  .btn-generate {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    padding: 0.6rem 1.1rem;
+    background: linear-gradient(90deg, $primary 0%, lighten($primary, 5%) 100%);
+    color: white;
+    border: none;
+    border-radius: 28px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 6px 18px rgba($primary, 0.18);
+
+    i {
+      font-size: 0.85rem;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba($primary, 0.22);
+    }
+  }
+
+  @media (max-width: 576px) {
+    .btn-generate {
+      position: static;
+      display: block;
+      width: 100%;
+      margin-top: 0.75rem;
+      border-radius: 0.5rem;
+    }
+  }
 }
 
 /* AI-Recommended Places 제목 - 타이포그래피 스타일 적용 */
