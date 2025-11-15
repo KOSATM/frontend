@@ -537,6 +537,13 @@ const goToImageAIHistory = () => {
   border-radius: 4px;
 }
 
+/* memo-style background for checklist only */
+.checklist-wrapper .upload-section {
+  background: #fff9d6; /* pale paper yellow */
+  border-color: rgba(0,0,0,0.04);
+  box-shadow: inset 0 1px 0 rgba(0,0,0,0.03);
+}
+
 /* responsive adjustments */
 @media (max-width: 991px) {
 

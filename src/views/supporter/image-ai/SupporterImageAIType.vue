@@ -32,16 +32,16 @@
         <div class="check-mark" v-if="selectedType === 'food'">✓</div>
       </li>
 
-      <!-- People -->
+      <!-- Activities (formerly People) -->
       <li class="option-item p-3 mb-2 rounded d-flex align-items-center"
-        :class="{ selected: selectedType === 'people' }" @click="setType('people')" role="button" tabindex="0"
-        @keyup.enter.space.prevent="setType('people')" aria-pressed="false">
+        :class="{ selected: selectedType === 'activities' }" @click="setType('activities')" role="button" tabindex="0"
+        @keyup.enter.space.prevent="setType('activities')" aria-pressed="false">
         <div class="option-icon gradient-3 me-3"><i class="bi bi-person-fill"></i></div>
         <div>
-          <div class="fw-medium">People / Activities</div>
+          <div class="fw-medium">Activities / Experiences</div>
           <div class="small text-muted">Photo spots, cultural experiences</div>
         </div>
-        <div class="check-mark" v-if="selectedType === 'people'">✓</div>
+        <div class="check-mark" v-if="selectedType === 'activities'">✓</div>
       </li>
     </ul>
   </UploadSection>
