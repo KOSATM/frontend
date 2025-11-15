@@ -216,7 +216,7 @@
       >
         Back
       </button>
-      <button
+      <!-- <button
         class="btn btn-primary btn-lg px-5"
         @click="processPayment"
         :disabled="!agreeToTerms || isProcessing"
@@ -226,7 +226,18 @@
           <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
           Processing...
         </span>
-      </button>
+      </button> -->
+      <BaseButton
+        class="btn btn-primary btn-lg px-5"
+        @click="processPayment"
+        :disabled="!agreeToTerms || isProcessing"
+      >
+        <span v-if="!isProcessing">Pay ₩{{ totalAmount.toLocaleString() }}</span>
+        <span v-else>
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          Processing...
+        </span>
+      </BaseButton>
     </div>
   </div>
 </template>
@@ -235,15 +246,19 @@
 import PageHeader from '@/components/common/PageHeader.vue';
 import hotelIllust from '@/assets/img/hotel-logo.png'
 import StepHeader from '@/components/common/StepHeader.vue';
+import BaseButton from '@/components/common/BaseButton.vue';
+import { useTravelStore } from '@/store/travelStore';
 
 export default {
   name: 'HotelPayment',
   components: {
+    BaseButton,
     PageHeader,
     StepHeader
   },
   data() {
     return {
+      travelStore: useTravelStore(),
       selectedHotel: {
         id: 1,
         name: 'Four Seasons Hotel Seoul',
@@ -307,6 +322,7 @@ export default {
       setTimeout(() => {
         this.isProcessing = false;
         // Navigate to completion page
+        // this.travelStore.$state.isTraveling = true;
         this.$router.push({ name: 'bookingComplete' });
       }, 2000);
     }

@@ -10,7 +10,9 @@
         subtitle="Create and manage your Seoul travel itinerary"
         icon="bi-map"
       />
+      <!-- 여행 중에는 StepHeader 숨김 -->
       <StepHeader
+        v-if="!travelStore.$state.isTraveling"
         :step="'2/4'"
         :title="'Check and Adjust Draft'"
         @back="goBack"
@@ -44,7 +46,7 @@
     </div>
 
     <!-- ▶ Start Day Hero / Current Activity -->
-    <div class="p-4 pt-3">
+    <div v-if="travelStore.$state.isTraveling" class="p-4 pt-3">
       <!-- 아직 시작 안함: 카드 전체 클릭으로 시작 -->
       <div
         v-if="!run.started"
@@ -283,8 +285,6 @@
                   </button>
                 </div>
               </div>
-
-              <!-- Day 하단 진행도 없음 -->
             </div>
           </transition>
         </div>
@@ -293,7 +293,16 @@
 
     <!-- CTA -->
     <div class="p-4 pt-0 border-top bg-white">
-      <button class="btn btn-success w-100 rounded-3">Finish Journey</button>
+      <BaseButton
+        v-if="!travelStore.$state.isTraveling"
+        @click="next()"
+        variant="primary"
+        class="w-100 py-2"
+        >Next: Select Accommodation</BaseButton
+      >
+      <BaseButton v-else @click="endTrip()" variant="success" class="w-100 py-2"
+        >FORCE to End Trip</BaseButton
+      >
     </div>
   </section>
 
@@ -337,6 +346,8 @@ import StepHeader from "@/components/common/StepHeader.vue";
 import PlannerReplaceModal from "@/components/planner/PlannerReplaceModal.vue";
 import PlannerActivityDetailsModal from "@/components/planner/PlannerActivityDetailsModal.vue";
 import PlannerActivityCompleteModal from "@/components/planner/PlannerActivityCompleteModal.vue";
+import { useTravelStore } from "@/store/travelStore";
+import BaseButton from "@/components/common/BaseButton.vue";
 
 // 간단한 더미 갤러리 (photo1/2/3)
 const defaultGallery = [
@@ -348,6 +359,7 @@ const defaultGallery = [
 export default {
   name: "PlannerList",
   components: {
+    BaseButton,
     PageHeader,
     StepHeader,
     PlannerReplaceModal,
@@ -356,7 +368,8 @@ export default {
   },
   data() {
     return {
-      openDayId: 1, // 화면에서 펼쳐진 Day (리스트)
+      travelStore: useTravelStore(),
+      openDayId: 1, // 화면에서 펼쳐진 Day
       run: {
         started: false,
         startedAt: null,
@@ -1106,14 +1119,23 @@ export default {
   },
   methods: {
     goBack() {
+      this.travelStore.decreaseStep();
       this.$router.push("/planner/travelplan");
     },
-
     /* 금액 포맷 */
     formatCurrency(amount) {
       if (amount == null || Number.isNaN(amount)) return "$0";
       const rounded = Math.round(amount);
       return `$${rounded.toLocaleString()}`;
+    },
+    next() {
+      this.travelStore.increaseStep();
+      this.$router.push("/planner/hotel");
+    },
+    endTrip() {
+      this.travelStore.endTravel();
+      this.travelStore.resetStep();
+      this.$router.push("/planner");
     },
 
     /* Day별 예상/실제 합계 */
@@ -1162,16 +1184,19 @@ export default {
     toggleDay(id) {
       const runningDayId = this.run.started ? this.run.dayId : null;
 
+      // 여행 실행 중이 아니면 그냥 토글
       if (!runningDayId) {
         this.openDayId = this.openDayId === id ? null : id;
         return;
       }
 
+      // 실행 중인 Day를 눌렀을 때는 그냥 토글
       if (id === runningDayId) {
         this.openDayId = this.openDayId === id ? null : id;
         return;
       }
 
+      // 다른 Day를 누르면: 이미 열려 있으면 runningDay로 복귀, 아니면 해당 Day로 전환
       if (this.openDayId === id) {
         this.openDayId = runningDayId;
       } else {

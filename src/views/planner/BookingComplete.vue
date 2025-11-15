@@ -80,7 +80,7 @@
         </div>
 
         <div class="d-grid mb-2">
-          <router-link class="btn btn-primary btn-lg" :to="{ path: '/planner/itinerary' }" @click="startTravel">View Full Itinerary</router-link>
+          <router-link class="btn btn-primary btn-lg" :to="{ path: '/planner/edit' }" @click="startTravel">View Full Itinerary</router-link>
         </div>
 
         <p class="text-muted small mt-3">

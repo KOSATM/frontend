@@ -157,30 +157,37 @@
       <!-- <RouterLink class="btn btn-primary w-100 py-2" @click="nextStep" to="/planner/edit">
         Next: Choose Your Hotel
       </RouterLink> -->
-      <BaseButton to="/planner/edit" variant="primary" class="w-100 py-2">Next: Generate Itinerary Draft</BaseButton>
+      <BaseButton @click="next()" variant="primary" class="w-100 py-2">Next: Generate Itinerary Draft</BaseButton>
     </div>
 
     <!-- Hotel Recommendation Step -->
-    <div v-else-if="currentStep === 2" class="form-content bg-white rounded-4 p-4">
+    <!-- <div v-else-if="currentStep === 2" class="form-content bg-white rounded-4 p-4">
       <HotelRecommendation :budget="tripData.budget" :travel-days="tripData.duration"
         @hotel-selected="onHotelSelected" />
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import HotelRecommendation from './HotelRecommendation.vue'
+import HotelRecommendation from './hotel/HotelRecommendation.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 import UploadSection from '@/components/travelgram/UploadSection.vue'
 import StepHeader from '@/components/common/StepHeader.vue'
 import { useRouter } from 'vue-router'
+import { useTravelStore } from '@/store/travelStore'
 
 const currentStep = ref(1)
 const selectedHotel = ref(null)
 const router = useRouter()
+const travelStore = useTravelStore()
+
+function next() {
+  travelStore.increaseStep();
+  router.push("/planner/edit");
+}
 
 const tripData = ref({
   startDate: new Date().toISOString().split('T')[0],

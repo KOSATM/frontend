@@ -8,7 +8,10 @@
           <i :class="icon + ' me-1 text-primary'"></i>
           {{ title }}
         </h5>
-        <p class="upload-subtitle mb-0">{{ subtitle }}</p>
+        <template v-if="$slots.subtitle">
+        <slot name="subtitle"></slot>
+      </template>
+      <p v-else class="upload-subtitle mb-0">{{ subtitle }}</p>
       </div>
 
       <!-- 🔸 오른쪽: 액션 슬롯 (조건부) -->
