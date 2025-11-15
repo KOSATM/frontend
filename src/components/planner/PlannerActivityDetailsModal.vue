@@ -1,3 +1,4 @@
+<!-- src/components/planner/PlannerActivityDetailsModal.vue -->
 <template>
   <teleport to="body">
     <div v-if="open" class="modal-backdrop" @click="$emit('close')">
@@ -119,14 +120,12 @@ export default {
     spendInput: { type: Number, default: null },
   },
   emits: ["close", "save-spent", "open-replace", "update:spend-input"],
-
   data() {
     return {
       // ✅ 무조건 이 세 장만 사용 (data.gallery는 안 씀)
       localGallery: [defaultImg1, defaultImg2, defaultImg3],
     };
   },
-
   methods: {
     hasCost(cost) {
       return cost === 0 || (typeof cost === "number" && !Number.isNaN(cost));
