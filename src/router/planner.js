@@ -34,26 +34,12 @@ const planner = [
     },
   },
   {
-    path: "/planner/edit-before-hotel",
-    name: "planeditbeforehotel",
-    components: {
-      default: PlannerEdit,
-      left: PlannerChat,
-      // right: PlannerListBeforeHotel,
-    },
-    meta: {
-      layout: "wide",
-      split: true,
-      title: "플랜 편집 (호텔 선택 전)",
-    },
-  },
-  {
     path: "/planner/itinerary",
     name: "itinerary",
     components: {
-      // default: PlannerItinerary,
+      default: PlannerEdit,
       left: PlannerChat,
-      // right: PlannerListItinerary,
+      right: PlannerList,
     },
     meta: {
       layout: "wide",
@@ -67,24 +53,14 @@ const planner = [
     component: HotelRecommendation,
     meta: { title: "호텔 추천" },
   },
-  {
-    path: "/planner/summary",
-    name: "summary",
-    // component: TripSummary,
-    meta: { title: "여행 요약" },
-  },
+  
   {
     path: "/planner/payment",
     name: "payment",
     component: HotelPayment,
     meta: { title: "결제" },
   },
-  // {
-  //   path: "/planner/payment-complete",
-  //   name: "paymentComplete",
-  //   component: PaymentComplete,
-  //   meta: { title: "결제 완료" },
-  // },
+  
   {
     path: "/planner/booking-complete",
     name: "bookingComplete",

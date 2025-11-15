@@ -101,11 +101,18 @@ const confirm = () => {
   if (!selectedOption.value) return
 
   if (selectedOption.value === 'add' || selectedOption.value === 'replace') {
-    // pass both state and query for reliability; ChoicePlan will fallback to query if needed
+    // attempt to go to PlannerEdit; if route name isn't registered, fall back to SupporterImageAIChoicePlan
     router.push({
-      name: 'SupporterImageAIChoicePlan',
+      name: 'planedit',
       state: { item, mode: selectedOption.value },
       query: { mode: selectedOption.value, itemId: item?.id ?? '', itemName: item?.name ?? '' }
+    }).catch(() => {
+      // fallback for environments where PlannerEdit route is not defined
+      router.push({
+        name: 'SupporterImageAIChoicePlan',
+        state: { item, mode: selectedOption.value },
+        query: { mode: selectedOption.value, itemId: item?.id ?? '', itemName: item?.name ?? '' }
+      }).catch(() => { /* swallow to avoid unhandled */ })
     })
     return
   }
