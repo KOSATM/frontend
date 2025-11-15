@@ -6,13 +6,36 @@
     <!-- 메인 컨텐츠 -->  
     <div class="content-wrapper px-4 py-4">
 
+      <!-- AI 프롬프트 입력 섹션 -->
+      <div class="prompt-section mb-5">
+        <div class="prompt-card">
+          <div class="prompt-header mb-3">
+            <i class="bi bi-sparkles text-primary"></i>
+            <span class="ms-2 fw-semibold">Input the first message to start!</span>
+          </div>
+          
+          <div class="prompt-input-wrapper">
+            <input 
+              type="text" 
+              class="prompt-input" 
+              placeholder="Describe your ideal trip (e.g., budget, interests, activities...)"
+              v-model="promptInput"
+            />
+            <button class="btn-generate" @click="generateItinerary" :disabled="!promptInput.trim()">
+              Start
+              <i class="bi bi-play-fill"></i>
+            </button>
+          </div>
+        </div>
+      </div>
 
       <!-- Create Budget-Based Itinerary 버튼 -->
-      <BaseButton variant="primary" 
+      <!-- <BaseButton variant="primary" 
       class="w-100 mb-4 py-3 d-flex align-items-center justify-content-center gap-2"
       @click="next()"><i class="bi bi-plus-lg"></i>
         <span class="fw-semibold">Create Budget-Based Itinerary</span>
-      </BaseButton>
+      </BaseButton> -->
+
 
       <!-- AI-Recommended Places -->
       <div class="recommended-section mb-4">
@@ -104,16 +127,26 @@ import PageHeader from "@/components/common/PageHeader.vue";
 import TipBox from "@/components/common/TipBox.vue";
 import RecommendationCard from "@/components/planner/RecommendationCard.vue";
 import { RouterLink } from "vue-router";
+import { ref } from 'vue'
 import { useTravelStore } from '@/store/travelStore'
 import router from "@/router";
 
 const travelStore = useTravelStore()
+const promptInput = ref('')
 
 function next() {
   travelStore.increaseStep();
   router.push("/planner/edit");
 }
 
+function generateItinerary() {
+  if (promptInput.value.trim()) {
+    console.log('Generating itinerary with prompt:', promptInput.value)
+    // AI 기반 일정 생성 로직이 여기에 추가됨
+    // 예: router.push('/planner/form')
+    next()
+  }
+}
 </script>
 
 <style scoped lang="scss">
@@ -129,6 +162,113 @@ function next() {
 .content-wrapper {
   max-width: 800px;
   margin: 0 auto;
+}
+
+/* AI 프롬프트 섹션 */
+.prompt-section {
+  margin-bottom: 2rem;
+}
+
+.prompt-card {
+  background: #ffffff;
+  border: 1px solid rgba(255, 140, 0, 0.15);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(255, 140, 0, 0.08);
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: rgba(255, 140, 0, 0.3);
+    box-shadow: 0 4px 16px rgba(255, 140, 0, 0.12);
+  }
+}
+
+.prompt-header {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  color: $secondary;
+  
+  i {
+    font-size: 1.2rem;
+    color: $primary;
+  }
+  
+  span:nth-child(2) {
+    color: $secondary;
+    font-family: 'Siganpyo', sans-serif;
+  }
+  
+  span:nth-child(3) {
+    font-size: 0.9rem;
+    color: #999;
+  }
+}
+
+.prompt-input-wrapper {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+
+  .prompt-input {
+    flex: 1;
+    padding: 0.65rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    background-color: #f9f9f9;
+    color: $secondary;
+    font-family: 'Kyobo2024', sans-serif;
+    transition: all 0.2s ease;
+
+    &::placeholder {
+      color: #aaa;
+    }
+
+    &:hover {
+      border-color: rgba($primary, 0.3);
+      background-color: rgba($primary, 0.02);
+    }
+
+    &:focus {
+      border-color: $primary;
+      outline: none;
+      background-color: #fff;
+      box-shadow: 0 0 0 3px rgba($primary, 0.1);
+    }
+  }
+
+  .btn-generate {
+    flex: 0 0 auto;
+    padding: 0.65rem 1.5rem;
+    background: linear-gradient(90deg, $primary 0%, lighten($primary, 5%) 100%);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+
+    i {
+      font-size: 0.85rem;
+    }
+
+    &:hover {
+      background: linear-gradient(90deg, darken($primary, 5%) 0%, $primary 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba($primary, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
 }
 
 /* AI-Recommended Places 제목 - 타이포그래피 스타일 적용 */
