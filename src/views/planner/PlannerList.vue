@@ -1,21 +1,14 @@
 <!-- src/views/planner/PlannerList.vue -->
 <template>
-  <section
-    class="planner-right card shadow-sm rounded-4 h-100 d-flex flex-column"
-  >
+  <section class="planner-right card shadow-sm rounded-4 h-100 d-flex flex-column">
     <!-- 상단 요약 -->
     <div class="p-4 pb-3 border-bottom">
-      <PageHeader
-        title="Planner"
-        subtitle="Create and manage your Seoul travel itinerary"
-        icon="bi-map"
-      />
-      <StepHeader v-if="!travelStore.$state.isTraveling" :step="'2/4'" :title="'Check and Adjust Draft'" @back="goBack"/>
+      <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
+      <StepHeader v-if="!travelStore.$state.isTraveling" :step="'2/4'" :title="'Check and Adjust Draft'"
+        @back="goBack" />
       <div class="d-flex gap-3 align-items-center mb-3">
-        <div
-          class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
-          style="width: 46px; height: 46px"
-        >
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
           📅
         </div>
         <div>
@@ -41,11 +34,8 @@
     <!-- ▶ Start Day Hero / Current Activity -->
     <div v-if="travelStore.$state.isTraveling" class="p-4 pt-3">
       <!-- 아직 시작 안함: 카드 전체 클릭으로 시작 -->
-      <div
-        v-if="!run.started"
-        class="gradient-hero rounded-4 p-4 position-relative hero-clickable"
-        @click="startDay(openDayId)"
-      >
+      <div v-if="!run.started" class="gradient-hero rounded-4 p-4 position-relative hero-clickable"
+        @click="startDay(openDayId)">
         <div class="text-center text-white">
           <h5 class="mb-1 title">Start Day {{ openDayId }}</h5>
           <div class="sub">{{ currentDay?.title }}</div>
@@ -60,10 +50,7 @@
       </div>
 
       <!-- 시작 후: 현재 진행 카드 -->
-      <div
-        v-else
-        class="card border-0 shadow-sm rounded-4 mb-3 gradient-hero text-white"
-      >
+      <div v-else class="card border-0 shadow-sm rounded-4 mb-3 gradient-hero text-white">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <div class="sub">
@@ -76,11 +63,7 @@
           </div>
 
           <!-- 클릭 시 완료 모달 열기 -->
-          <div
-            class="run-panel rounded-4 px-3 py-3 mb-3"
-            role="button"
-            @click.stop="openCompleteForCurrent"
-          >
+          <div class="run-panel rounded-4 px-3 py-3 mb-3" role="button" @click.stop="openCompleteForCurrent">
             <h6 class="mb-1 title">
               {{ currentActivity?.title || "—" }}
             </h6>
@@ -92,24 +75,13 @@
             </div>
           </div>
 
-          <div
-            class="d-flex justify-content-between align-items-center mb-1 sub"
-          >
+          <div class="d-flex justify-content-between align-items-center mb-1 sub">
             <span>Day {{ currentDay?.id }} Progress</span>
             <span>{{ Math.round(dayProgress) }}%</span>
           </div>
-          <div
-            class="progress-hero"
-            role="progressbar"
-            :aria-valuenow="Math.round(dayProgress)"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            @click.stop="openCompleteForCurrent"
-          >
-            <div
-              class="progress-fill"
-              :style="{ width: dayProgress + '%' }"
-            ></div>
+          <div class="progress-hero" role="progressbar" :aria-valuenow="Math.round(dayProgress)" aria-valuemin="0"
+            aria-valuemax="100" @click.stop="openCompleteForCurrent">
+            <div class="progress-fill" :style="{ width: dayProgress + '%' }"></div>
           </div>
         </div>
       </div>
@@ -118,69 +90,38 @@
     <!-- 본문 리스트 -->
     <div class="planner-scroll flex-grow-1 overflow-auto p-4 pt-3">
       <div class="d-flex flex-column gap-3">
-        <div
-          v-for="(day, dIdx) in days"
-          :key="day.id"
-          class="card border-0 shadow-sm rounded-4 overflow-hidden"
-        >
-          <div
-            class="card-body d-flex justify-content-between align-items-center"
-            :class="openDayId === day.id ? 'bg-primary text-white' : 'bg-white'"
-            role="button"
-            @click="toggleDay(day.id)"
-          >
+        <div v-for="(day, dIdx) in days" :key="day.id" class="card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="card-body d-flex justify-content-between align-items-center"
+            :class="openDayId === day.id ? 'bg-primary text-white' : 'bg-white'" role="button"
+            @click="toggleDay(day.id)">
             <div>
-              <div
-                class="small fw-semibold"
-                :class="openDayId !== day.id ? 'text-primary' : ''"
-              >
+              <div class="small fw-semibold" :class="openDayId !== day.id ? 'text-primary' : ''">
                 Day {{ day.id }}
               </div>
               <h6 class="mb-0 title">{{ day.title }}</h6>
-              <div
-                class="small"
-                :class="openDayId !== day.id ? 'text-muted' : 'text-white-50'"
-              >
+              <div class="small" :class="openDayId !== day.id ? 'text-muted' : 'text-white-50'">
                 {{ day.date }}
               </div>
             </div>
             <div class="text-end">
-              <div
-                class="small"
-                :class="openDayId === day.id ? 'text-white-50' : ''"
-              >
+              <div class="small" :class="openDayId === day.id ? 'text-white-50' : ''">
                 Daily Cost
               </div>
               <div class="fw-bold title">$ {{ day.dailyCost }}</div>
               <div class="small">
-                <span
-                  class="chevron"
-                  :class="{ 'rotate-180': openDayId === day.id }"
-                  >⌃</span
-                >
+                <span class="chevron" :class="{ 'rotate-180': openDayId === day.id }">⌃</span>
               </div>
             </div>
           </div>
 
           <transition name="collapse">
-            <div
-              v-if="openDayId === day.id"
-              class="list-group list-group-flush"
-            >
-              <div
-                v-for="(act, aIdx) in day.activities"
-                :key="aIdx"
-                :class="[
-                  'list-group-item d-flex justify-content-between align-items-center activity-row',
-                  activityRowClass(dIdx, aIdx),
-                ]"
-                @click="openDetailsModal(dIdx, aIdx)"
-              >
+            <div v-if="openDayId === day.id" class="list-group list-group-flush">
+              <div v-for="(act, aIdx) in day.activities" :key="aIdx" :class="[
+                'list-group-item d-flex justify-content-between align-items-center activity-row',
+                activityRowClass(dIdx, aIdx),
+              ]" @click="openDetailsModal(dIdx, aIdx)">
                 <div class="d-flex align-items-start gap-3">
-                  <div
-                    class="icon-badge themed"
-                    :class="'theme-' + (act.type || 'default')"
-                  >
+                  <div class="icon-badge themed" :class="'theme-' + (act.type || 'default')">
                     {{ act.icon || getIconForType(act.type) }}
                   </div>
                   <div class="d-flex flex-column">
@@ -188,9 +129,7 @@
                       <span v-if="act.completed" class="me-2">✅</span>
                       {{ act.title }}
                     </div>
-                    <div
-                      class="d-flex align-items-center gap-2 small text-muted sub"
-                    >
+                    <div class="d-flex align-items-center gap-2 small text-muted sub">
                       <span class="soft-chip">
                         <span class="chip-emoji">⏰</span> {{ act.time }}
                       </span>
@@ -209,20 +148,13 @@
                 <!-- 오른쪽 버튼 영역 -->
                 <div class="d-flex align-items-center gap-2" @click.stop>
                   <!-- 완료된 일정일 때만 되돌리기 -->
-                  <button
-                    v-if="act.completed"
-                    class="btn btn-sm btn-outline-secondary rounded-pill undo-btn"
-                    title="Mark as not done"
-                    @click="toggleComplete(dIdx, aIdx)"
-                  >
+                  <button v-if="act.completed" class="btn btn-sm btn-outline-secondary rounded-pill undo-btn"
+                    title="Mark as not done" @click="toggleComplete(dIdx, aIdx)">
                     ↺
                   </button>
 
-                  <button
-                    class="btn btn-sm btn-outline-danger rounded-pill delete-btn"
-                    title="Delete or replace"
-                    @click="openReplaceModal(dIdx, aIdx)"
-                  >
+                  <button class="btn btn-sm btn-outline-danger rounded-pill delete-btn" title="Delete or replace"
+                    @click="openReplaceModal(dIdx, aIdx)">
                     🗑️
                   </button>
                 </div>
@@ -237,7 +169,8 @@
 
     <!-- CTA -->
     <div class="p-4 pt-0 border-top bg-white">
-      <BaseButton v-if="!travelStore.$state.isTraveling" @click="next()" variant="primary" class="w-100 py-2">Next: Select Accommodation</BaseButton>
+      <BaseButton v-if="!travelStore.$state.isTraveling" @click="next()" variant="primary" class="w-100 py-2">Next:
+        Select Accommodation</BaseButton>
       <BaseButton v-else @click="endTrip()" variant="success" class="w-100 py-2">FORCE to End Trip</BaseButton>
       <!-- <button v-else="travelStore.$state.isTraveling" class="btn btn-success w-100 rounded-3">Finish Journey</button> -->
       <!-- <button v-else class="btn btn-success w-100 rounded-3" @click="next()">Next: Select Accommodation</button> -->
@@ -245,37 +178,18 @@
   </section>
 
   <!-- 모달 컴포넌트들 -->
-  <PlannerReplaceModal
-    :open="replaceModal.open"
-    :target="replaceModal.target"
-    :alternatives="replaceModal.alternatives"
-    @close="closeReplaceModal"
-    @preview-alt="previewAlt"
-    @apply-replacement="applyReplacement"
-    @delete-anyway="deleteAnyway"
-  />
+  <PlannerReplaceModal :open="replaceModal.open" :target="replaceModal.target" :alternatives="replaceModal.alternatives"
+    @close="closeReplaceModal" @preview-alt="previewAlt" @apply-replacement="applyReplacement"
+    @delete-anyway="deleteAnyway" />
 
-  <PlannerActivityDetailsModal
-    :open="detailsModal.open"
-    :data="detailsModal.data"
-    :spend-input="detailsModal.spendInput"
-    @update:spend-input="detailsModal.spendInput = $event"
-    @close="closeDetailsModal"
-    @save-spent="saveSpent"
-    @open-replace="openReplaceFromDetails"
-  />
+  <PlannerActivityDetailsModal :open="detailsModal.open" :data="detailsModal.data"
+    :spend-input="detailsModal.spendInput" @update:spend-input="detailsModal.spendInput = $event"
+    @close="closeDetailsModal" @save-spent="saveSpent" @open-replace="openReplaceFromDetails" />
 
-  <PlannerActivityCompleteModal
-    :open="completeModal.open"
-    :title="completeModal.title"
-    :spend-input="completeModal.spendInput"
-    :comment="completeModal.comment"
-    :quick-stats="currentQuickStats"
-    @update:spend-input="completeModal.spendInput = $event"
-    @update:comment="completeModal.comment = $event"
-    @close="closeCompleteModal"
-    @confirm="completeCurrentActivity"
-  />
+  <PlannerActivityCompleteModal :open="completeModal.open" :title="completeModal.title"
+    :spend-input="completeModal.spendInput" :comment="completeModal.comment" :quick-stats="currentQuickStats"
+    @update:spend-input="completeModal.spendInput = $event" @update:comment="completeModal.comment = $event"
+    @close="closeCompleteModal" @confirm="completeCurrentActivity" />
 </template>
 
 <script>
@@ -1290,6 +1204,7 @@ export default {
 .title {
   font-family: "Siganpyo", sans-serif;
 }
+
 .sub {
   font-family: "Kyobo2024", sans-serif;
 }
@@ -1302,31 +1217,38 @@ export default {
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
   border-radius: 1rem;
 }
+
 .hero-clickable {
   cursor: pointer;
 }
+
 .hero-clickable:hover {
   transform: translateY(-1px);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
 }
+
 .hero-sep {
   border: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.22);
   margin: 14px 0 10px;
 }
+
 .hero-stats {
   font-weight: 600;
 }
+
 .hero-stats .dot {
   padding: 0 0.5rem;
   opacity: 0.8;
 }
+
 .run-panel {
   background: rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 0.75rem;
   cursor: pointer;
 }
+
 .badge-hero {
   background: #3ac569;
   color: #fff;
@@ -1345,6 +1267,7 @@ export default {
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
   cursor: pointer;
 }
+
 .progress-fill {
   height: 100%;
   border-radius: inherit;
@@ -1356,22 +1279,27 @@ export default {
 .planner-right {
   min-height: 0;
 }
+
 .planner-scroll {
   min-height: 0;
 }
+
 .collapse-enter-active,
 .collapse-leave-active {
   transition: all 0.2s ease;
 }
+
 .collapse-enter-from,
 .collapse-leave-to {
   max-height: 0;
   opacity: 0;
 }
+
 .chevron {
   transition: transform 0.2s;
   display: inline-block;
 }
+
 .rotate-180 {
   transform: rotate(180deg);
 }
@@ -1381,14 +1309,17 @@ export default {
   transition: background-color 0.18s ease, box-shadow 0.18s ease,
     transform 0.12s ease;
 }
+
 .activity-row .delete-btn {
   opacity: 0;
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
+
 .activity-row:hover .delete-btn {
   opacity: 1;
   transform: translateY(-1px);
 }
+
 .undo-btn {
   font-size: 12px;
   padding: 4px 10px;
@@ -1399,37 +1330,45 @@ export default {
 .activity-row--upcoming {
   background-color: #ffffff;
 }
+
 .activity-row--current {
   background-color: #e0edff;
   box-shadow: inset 4px 0 0 #2563eb, 0 4px 10px rgba(37, 99, 235, 0.18);
   transform: translateY(-1px);
 }
+
 .activity-row--current .title {
   font-weight: 700;
 }
+
 .activity-row--done {
   background-color: #f9fafb;
   box-shadow: inset 4px 0 0 #d1d5db;
 }
+
 .activity-row--done .title {
   color: #9ca3af;
   font-weight: 400;
   opacity: 0.9;
 }
+
 .activity-row--done .sub,
 .activity-row--done .soft-chip {
   color: #9ca3af;
 }
+
 .activity-row--done .soft-chip {
   background: #f3f4f6;
   border-color: #e5e7eb;
 }
+
 .activity-row--done .icon-badge.themed {
   background: #e5e7eb;
   color: #6b7280;
   filter: grayscale(100%);
   opacity: 0.9;
 }
+
 .activity-row:hover {
   background-color: #fff7eb;
 }
@@ -1445,37 +1384,48 @@ export default {
   font-size: 18px;
   user-select: none;
 }
+
 .theme-cafe {
   background: #fff2e6;
 }
+
 .theme-food {
   background: #ffeaea;
 }
+
 .theme-brunch {
   background: #fff7e0;
 }
+
 .theme-dessert {
   background: #ffeef7;
 }
+
 .theme-palace,
 .theme-museum {
   background: #eaf3ff;
 }
+
 .theme-tower {
   background: #eef4ff;
 }
+
 .theme-walk {
   background: #eafaf1;
 }
+
 .theme-shopping {
   background: #f1f0ff;
 }
+
 .theme-market {
   background: #fff4e6;
 }
+
 .theme-view {
   background: #eaf6ff;
 }
+
 .theme-default {
   background: #f5f6f8;
 }
@@ -1490,6 +1440,7 @@ export default {
   align-items: center;
   gap: 6px;
 }
+
 .chip-emoji {
   font-size: 12px;
   line-height: 1;

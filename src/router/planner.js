@@ -5,13 +5,14 @@ import TripSummary from "@/views/planner/TripSummary.vue";
 import PlannerEdit from "@/views/planner/PlannerEdit.vue";
 import PlannerItinerary from "@/views/planner/PlannerItinerary.vue";
 import PlannerChat from "@/views/planner/PlannerChat.vue";
-import PlannerList from "@/views/planner/PlannerList.vue";
+
 import PlannerListItinerary from "@/views/planner/PlannerListItinerary.vue";
 import PlannerListBeforeHotel from "@/views/planner/PlannerListBeforeHotel.vue";
 import PlannerPage from "@/views/planner/PlannerPage.vue";
 import HotelPayment from "@/views/planner/HotelPayment.vue";
 import PaymentComplete from "@/views/planner/PaymentComplete.vue";
 import BookingComplete from "@/views/planner/BookingComplete.vue";
+import PlannerList from "@/views/planner/PlannerList.vue";
 
 const planner = [
   {
@@ -35,15 +36,9 @@ const planner = [
   {
     path: "/planner/edit",
     name: "planedit",
-    components: {
-      default: PlannerEdit,
-      left: PlannerChat,
-      right: PlannerList,
-    },
+    component: PlannerList,
     meta: {
-      layout: "wide",
-      split: true,
-      title: "플랜 편집",
+      title: "플랜 편집"
     },
   },
   {

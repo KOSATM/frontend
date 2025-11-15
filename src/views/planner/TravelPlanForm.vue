@@ -14,6 +14,7 @@
     icon="bi-map"
   />
   <div class="travel-plan-form">
+    <StepHeader :step="'1/4'" :title="'Make an Outline'" @back="goBack"/>
     <div class="form-header mb-4">
       <!-- <RouterLink to="/planner" class="text-decoration-none">
         <i class="bi bi-arrow-left"></i>
