@@ -106,46 +106,42 @@
   </teleport>
 </template>
 
-<script>
+<script setup>
+import { ref } from "vue";
 import defaultImg1 from "@/assets/planner/activity-default-1.jpg";
 import defaultImg2 from "@/assets/planner/activity-default-2.jpg";
 import defaultImg3 from "@/assets/planner/activity-default-3.jpg";
 
-export default {
-  name: "PlannerActivityDetailsModal",
-  props: {
-    open: { type: Boolean, default: false },
-    data: { type: Object, default: null },
-    spendInput: { type: Number, default: null },
-  },
-  emits: ["close", "save-spent", "open-replace", "update:spend-input"],
+defineProps({
+  open: { type: Boolean, default: false },
+  data: { type: Object, default: null },
+  spendInput: { type: Number, default: null },
+});
 
-  data() {
-    return {
-      // ✅ 무조건 이 세 장만 사용 (data.gallery는 안 씀)
-      localGallery: [defaultImg1, defaultImg2, defaultImg3],
-    };
-  },
+defineEmits(["close", "save-spent", "open-replace", "update:spend-input"]);
 
-  methods: {
-    hasCost(cost) {
-      return cost === 0 || (typeof cost === "number" && !Number.isNaN(cost));
-    },
-    formatCost(cost) {
-      if (cost === 0) return "Free";
-      if (typeof cost === "number") return `$${cost}`;
-      return "";
-    },
-    mapSrc(data) {
-      const q = encodeURIComponent(data?.address || data?.title || "Seoul");
-      return `https://www.google.com/maps?q=${q}&output=embed`;
-    },
-    googleImageUrl(q) {
-      return `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(
-        q || "Seoul travel"
-      )}`;
-    },
-  },
+// ✅ 무조건 이 세 장만 사용 (data.gallery는 안 씀)
+const localGallery = ref([defaultImg1, defaultImg2, defaultImg3]);
+
+const hasCost = (cost) => {
+  return cost === 0 || (typeof cost === "number" && !Number.isNaN(cost));
+};
+
+const formatCost = (cost) => {
+  if (cost === 0) return "Free";
+  if (typeof cost === "number") return `$${cost}`;
+  return "";
+};
+
+const mapSrc = (data) => {
+  const q = encodeURIComponent(data?.address || data?.title || "Seoul");
+  return `https://www.google.com/maps?q=${q}&output=embed`;
+};
+
+const googleImageUrl = (q) => {
+  return `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(
+    q || "Seoul travel"
+  )}`;
 };
 </script>
 

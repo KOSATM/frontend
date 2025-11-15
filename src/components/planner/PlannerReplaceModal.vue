@@ -65,42 +65,41 @@
   </teleport>
 </template>
 
-<script>
-export default {
-  name: "PlannerReplaceModal",
-  props: {
-    open: { type: Boolean, default: false },
-    target: { type: Object, default: null },
-    alternatives: { type: Array, default: () => [] },
-  },
-  emits: ["close", "preview-alt", "apply-replacement", "delete-anyway"],
-  methods: {
-    getIconForType(type) {
-      const map = {
-        cafe: "☕",
-        food: "🍜",
-        brunch: "🥞",
-        dessert: "🍰",
-        palace: "🏯",
-        museum: "🏛️",
-        tower: "🗼",
-        walk: "🚶",
-        shopping: "🛍️",
-        market: "🧺",
-        view: "🌇",
-        default: "📍",
-      };
-      return map[type] || map.default;
-    },
-    hasCost(cost) {
-      return cost === 0 || (typeof cost === "number" && !Number.isNaN(cost));
-    },
-    formatCost(cost) {
-      if (cost === 0) return "Free";
-      if (typeof cost === "number") return `$${cost}`;
-      return "";
-    },
-  },
+<script setup>
+defineProps({
+  open: { type: Boolean, default: false },
+  target: { type: Object, default: null },
+  alternatives: { type: Array, default: () => [] },
+});
+
+defineEmits(["close", "preview-alt", "apply-replacement", "delete-anyway"]);
+
+const getIconForType = (type) => {
+  const map = {
+    cafe: "☕",
+    food: "🍜",
+    brunch: "🥞",
+    dessert: "🍰",
+    palace: "🏯",
+    museum: "🏛️",
+    tower: "🗼",
+    walk: "🚶",
+    shopping: "🛍️",
+    market: "🧺",
+    view: "🌇",
+    default: "📍",
+  };
+  return map[type] || map.default;
+};
+
+const hasCost = (cost) => {
+  return cost === 0 || (typeof cost === "number" && !Number.isNaN(cost));
+};
+
+const formatCost = (cost) => {
+  if (cost === 0) return "Free";
+  if (typeof cost === "number") return `$${cost}`;
+  return "";
 };
 </script>
 

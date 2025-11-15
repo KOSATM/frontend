@@ -70,7 +70,8 @@ main {
 
 /* 기존 container 클래스들 유지 */
 main.container-fms {
-  max-width: 800px;
+  max-width: 1000px;
+  /* margin: 0 0 0 540px; */
   margin: 0 auto;
 }
 

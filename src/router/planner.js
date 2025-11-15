@@ -11,7 +11,6 @@ import PlannerList from "@/views/planner/edit/PlannerList.vue";
 // import PlannerPage from "@/views/planner/PlannerPage.vue";
 import HotelPayment from "@/views/planner/hotel/HotelPayment.vue";
 import BookingComplete from "@/views/planner/BookingComplete.vue";
-import PlannerList from "@/views/planner/PlannerList.vue";
 
 const planner = [
   {
