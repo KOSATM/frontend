@@ -9,18 +9,15 @@
       <!-- AI 프롬프트 입력 섹션 -->
       <div class="prompt-section mb-5">
         <div class="prompt-card">
-          <div class="prompt-header mb-3">
-            <i class="bi bi-sparkles text-primary"></i>
-            <span class="ms-2 fw-semibold">Input the first message to start!</span>
-          </div>
-          
           <div class="prompt-input-wrapper">
-            <input 
-              type="text" 
-              class="prompt-input" 
-              placeholder="Describe your ideal trip (e.g., budget, interests, activities...)"
+            <textarea
+              class="prompt-input form-control"
+              placeholder="Leave a comment here"
               v-model="promptInput"
-            />
+              rows="4"
+            ></textarea>
+
+            <!-- Button sits inside the textarea wrapper, overlapping the bottom-left -->
             <button class="btn-generate" @click="generateItinerary" :disabled="!promptInput.trim()">
               Start
               <i class="bi bi-play-fill"></i>
@@ -206,16 +203,16 @@ function generateItinerary() {
 }
 
 .prompt-input-wrapper {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
+  position: relative;
+  display: block;
 
   .prompt-input {
-    flex: 1;
-    padding: 0.65rem 1rem;
+    width: 100%;
+    /* add right/bottom padding so the button doesn't overlap the textarea content or border */
+    padding: 1rem 7.5rem 3rem 1rem; /* top right bottom left */
     border: 1px solid #ddd;
-    border-radius: 0.5rem;
-    font-size: 0.9rem;
+    border-radius: 0.75rem;
+    font-size: 0.95rem;
     background-color: #f9f9f9;
     color: $secondary;
     font-family: 'Kyobo2024', sans-serif;
@@ -234,39 +231,44 @@ function generateItinerary() {
       border-color: $primary;
       outline: none;
       background-color: #fff;
-      box-shadow: 0 0 0 3px rgba($primary, 0.1);
+      box-shadow: 0 0 0 3px rgba($primary, 0.08);
     }
   }
 
   .btn-generate {
-    flex: 0 0 auto;
-    padding: 0.65rem 1.5rem;
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    padding: 0.6rem 1.1rem;
     background: linear-gradient(90deg, $primary 0%, lighten($primary, 5%) 100%);
     color: white;
     border: none;
-    border-radius: 0.5rem;
+    border-radius: 28px;
     font-weight: 600;
     font-size: 0.95rem;
     cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 0.5rem;
-    white-space: nowrap;
+    box-shadow: 0 6px 18px rgba($primary, 0.18);
 
     i {
       font-size: 0.85rem;
     }
 
     &:hover {
-      background: linear-gradient(90deg, darken($primary, 5%) 0%, $primary 100%);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba($primary, 0.3);
+      box-shadow: 0 8px 22px rgba($primary, 0.22);
     }
+  }
 
-    &:active {
-      transform: translateY(0);
+  @media (max-width: 576px) {
+    .btn-generate {
+      position: static;
+      display: block;
+      width: 100%;
+      margin-top: 0.75rem;
+      border-radius: 0.5rem;
     }
   }
 }
