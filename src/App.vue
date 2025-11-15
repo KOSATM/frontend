@@ -23,7 +23,7 @@ import { ref, watch, computed } from "vue";
 import { useRoute } from "vue-router";
 import AppHeader from "./components/AppHeader.vue";
 import AppFooter from "./components/AppFooter.vue";
-import SideBar from "./components/SideBar.vue";
+import SideBar from "./components/Sidebar.vue";
 import ChatSidebar from "./components/ChatSidebar.vue";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";

@@ -4,22 +4,23 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LandingPage from '@/views/LandingPage.vue'
 import SupporterMain from '@/views/supporter/SupporterMain.vue'
 import TravelPlanForm from '@/views/planner/TravelPlanForm.vue'
-import HotelRecommendation from '@/views/planner/HotelRecommendation.vue'
+import HotelRecommendation from '@/views/planner/hotel/HotelRecommendation.vue'
 import PlannerCreate from '@/views/planner/PlannerCreate.vue'
 import TravelgramMain from '@/views/travelgram/TravelgramMain.vue'
-import EditProfile from '@/views/travelgram/EditProfile.vue'
-import MyProfile from '@/views/travelgram/MyProfile.vue'
+import MyProfile from '@/views/mypage/MyProfile.vue'
 
 // 하위 모듈 라우트
 import travelgram from './travelgram'
 import planner from './planner'
 import supporter from './supporter'
+import mypage from './mypage'
 import { useTravelStore } from '@/store/travelStore'
 
 const routes = [
   { path: '/', component: LandingPage },
   { path: '/travelgram', component: TravelgramMain },
   { path: '/supporter', component: SupporterMain },
+  { path: '/mypage', component: MyProfile },
   { path: '/planner', component: PlannerCreate },
   { path: '/planner/form', component: TravelPlanForm },
   { path: '/planner/hotel', component: HotelRecommendation },
@@ -27,7 +28,8 @@ const routes = [
   // 하위 모듈 라우트 확장
   ...planner,
   ...supporter,
-  ...travelgram
+  ...travelgram,
+  ...mypage,
 ]
 
 const router = createRouter({

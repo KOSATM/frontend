@@ -1,32 +1,20 @@
 // src/router/travelgram.js
 import TravelgramMain from '@/views/travelgram/TravelgramMain.vue'
-import MyProfile from '@/views/travelgram/MyProfile.vue'
-import EditProfile from '@/views/travelgram/EditProfile.vue'
 
 // 리뷰 작성 단계
 import CreateTravelReview from '@/views/travelgram/review/CreateTravelReview.vue'
-import ReviewPhotoOrder from '@/views/travelgram/review/ReviewPhotoOrder.vue'
-import ReviewCaptionSelect from '@/views/travelgram/review/ReviewCaptionSelect.vue'
-import ReviewHashtagSelect from '@/views/travelgram/review/ReviewHashtagSelect.vue'
-import ReviewEditPage from '@/views/travelgram/review/ReviewEditPage.vue'
-import ReviewInstagramPreview from '@/views/travelgram/review/ReviewInstagramPreview.vue'
-import ReviewComplete from '@/views/travelgram/review/ReviewComplete.vue'
+import PhotoOrder from '@/views/travelgram/review/PhotoOrder.vue'
+import CaptionSelect from '@/views/travelgram/review/CaptionSelect.vue'
+import HashtagSelect from '@/views/travelgram/review/HashtagSelect.vue'
+import EditPage from '@/views/travelgram/review/EditPage.vue'
+import InstagramPreview from '@/views/travelgram/review/InstagramPreview.vue'
+import Complete from '@/views/travelgram/review/Complete.vue'
 
 const routes = [
   {
     path: '/travelgram',
     name: 'TravelgramMain',
     component: TravelgramMain,
-  },
-  {
-    path: '/profile',
-    name: 'MyProfile',
-    component: MyProfile,
-  },
-  {
-    path: '/profile/edit',
-    name: 'EditProfile',
-    component: EditProfile,
   },
   {
     path: '/travelgram/:tripId/:tripTitle?',
@@ -36,38 +24,38 @@ const routes = [
   },
   {
     path: '/travelgram/:tripId/order',
-    name: 'ReviewPhotoOrder',
-    component: ReviewPhotoOrder,
+    name: 'PhotoOrder',
+    component: PhotoOrder,
     props: true,
   },
   {
     path: '/travelgram/:tripId/caption',
-    name: 'ReviewCaptionSelect',
-    component: ReviewCaptionSelect,
+    name: 'CaptionSelect',
+    component: CaptionSelect,
     props: true,
   },
   {
     path: '/travelgram/:tripId/hashtags',
     name: 'ReviewHashtagSelect',
-    component: ReviewHashtagSelect,
+    component: HashtagSelect,
     props: true,
   },
   {
     path: '/travelgram/:tripId/edit',
     name: 'ReviewEditPage',
-    component: ReviewEditPage,
+    component: EditPage,
     props: true,
   },
   {
     path: '/travelgram/:tripId/preview',
     name: 'ReviewInstagramPreview',
-    component: ReviewInstagramPreview,
+    component: InstagramPreview,
     props: true,
   },
   {
     path: '/travelgram/:tripId/complete',
     name: 'ReviewComplete',
-    component: ReviewComplete,
+    component: Complete,
     props: true,
   },
 ]
