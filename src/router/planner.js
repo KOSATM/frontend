@@ -3,11 +3,8 @@ import PlannerCreate from "@/views/planner/PlannerCreate.vue";
 import TravelPlanForm from "@/views/planner/TravelPlanForm.vue";
 import TripSummary from "@/views/planner/TripSummary.vue";
 import PlannerEdit from "@/views/planner/PlannerEdit.vue";
-import PlannerItinerary from "@/views/planner/PlannerItinerary.vue";
 import PlannerChat from "@/views/planner/PlannerChat.vue";
 import PlannerList from "@/views/planner/PlannerList.vue";
-import PlannerListItinerary from "@/views/planner/PlannerListItinerary.vue";
-import PlannerListBeforeHotel from "@/views/planner/PlannerListBeforeHotel.vue";
 import PlannerPage from "@/views/planner/PlannerPage.vue";
 import HotelPayment from "@/views/planner/HotelPayment.vue";
 import PaymentComplete from "@/views/planner/PaymentComplete.vue";
@@ -47,26 +44,12 @@ const planner = [
     },
   },
   {
-    path: "/planner/edit-before-hotel",
-    name: "planeditbeforehotel",
-    components: {
-      default: PlannerEdit,
-      left: PlannerChat,
-      right: PlannerListBeforeHotel,
-    },
-    meta: {
-      layout: "wide",
-      split: true,
-      title: "플랜 편집 (호텔 선택 전)",
-    },
-  },
-  {
     path: "/planner/itinerary",
     name: "itinerary",
     components: {
-      default: PlannerItinerary,
+      default: PlannerEdit,
       left: PlannerChat,
-      right: PlannerListItinerary,
+      right: PlannerList,
     },
     meta: {
       layout: "wide",

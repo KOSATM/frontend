@@ -30,6 +30,7 @@
         </div>
       </div>
 
+      <!-- 상단 예산 카드 -->
       <div class="row g-3">
         <div class="col-12 col-md-4" v-for="card in budget" :key="card.label">
           <div class="card border-0 shadow-sm rounded-3" :class="card.bg">
@@ -58,7 +59,7 @@
           <div class="hero-stats">
             {{ heroDay?.activities.length || 0 }} activities
             <span class="dot">•</span>
-            ${{ heroDay?.dailyCost || 0 }}
+            {{ formatCurrency(dayEstimatedCost(heroDay)) }}
           </div>
         </div>
       </div>
@@ -174,6 +175,8 @@
                 {{ day.date }}
               </div>
             </div>
+
+            <!-- ✅ Daily Cost: Est / Spent 분리 -->
             <div class="text-end">
               <div
                 class="small"
@@ -181,14 +184,30 @@
               >
                 Daily Cost
               </div>
+
               <div
                 class="fw-bold title"
                 :class="{
                   'text-muted': isDayCompleted(day) && openDayId !== day.id,
                 }"
               >
-                $ {{ day.dailyCost }}
+                <!-- 예상 비용 -->
+                <div class="d-block">
+                  <span class="small text-muted me-1">Est.</span>
+                  <span>{{ formatCurrency(dayEstimatedCost(day)) }}</span>
+                </div>
+
+                <!-- 실제 지출 -->
+                <div
+                  v-if="hasAnySpentInDay(day)"
+                  class="d-block small fw-semibold"
+                  :class="spentTextClass(day)"
+                >
+                  <span class="me-1">Spent</span>
+                  <span>{{ formatCurrency(dayActualCost(day)) }}</span>
+                </div>
               </div>
+
               <div class="small">
                 <span
                   class="chevron"
@@ -265,7 +284,7 @@
                 </div>
               </div>
 
-              <!-- ⛔ Day 하단 진행도는 제거 -->
+              <!-- Day 하단 진행도 없음 -->
             </div>
           </transition>
         </div>
@@ -341,14 +360,13 @@ export default {
       run: {
         started: false,
         startedAt: null,
-        dayId: null, // ✅ 실제 진행 중인 Day
+        dayId: null, // 실제 진행 중인 Day
       },
-      budget: [
-        { label: "Total Budget", value: "$2000", bg: "bg-warning-subtle" },
-        { label: "Estimated Cost", value: "$1800", bg: "bg-info-subtle" },
-        { label: "Remaining", value: "$200", bg: "bg-success-subtle" },
-      ],
-      // ✅ 7일 일정
+
+      // 총 예산
+      totalBudget: 2000,
+
+      // 7일 일정
       days: [
         {
           id: 1,
@@ -970,7 +988,7 @@ export default {
     };
   },
   computed: {
-    // ✅ 진행 중이면 run.dayId, 아니면 openDayId 기준
+    // 진행 중이면 run.dayId, 아니면 openDayId 기준
     currentDay() {
       if (this.run.started && this.run.dayId != null) {
         return this.days.find((d) => d.id === this.run.dayId) || null;
@@ -1027,6 +1045,45 @@ export default {
         status: this.currentStatusText,
       };
     },
+
+    // 전체 예상 / 실제 / 남은 예산
+    totalEstimated() {
+      return this.days.reduce(
+        (sum, day) => sum + this.dayEstimatedCost(day),
+        0
+      );
+    },
+    totalActual() {
+      return this.days.reduce((sum, day) => sum + this.dayActualCost(day), 0);
+    },
+    remainingBudget() {
+      return this.totalBudget - this.totalActual;
+    },
+
+    // 상단 예산 카드
+    budget() {
+      return [
+        {
+          label: "Total Budget",
+          value: this.formatCurrency(this.totalBudget),
+          bg: "bg-warning-subtle",
+        },
+        {
+          label: "Estimated Cost",
+          value: this.formatCurrency(this.totalEstimated),
+          bg: "bg-info-subtle",
+        },
+        {
+          label: "Remaining",
+          value: this.formatCurrency(this.remainingBudget),
+          bg:
+            this.remainingBudget >= 0
+              ? "bg-success-subtle"
+              : "bg-danger-subtle",
+        },
+      ];
+    },
+
     // 아직 끝나지 않은 Day 중 가장 앞에 있는 것
     nextAvailableDayId() {
       const notDoneDay = this.days.find((d) => !this.isDayCompleted(d));
@@ -1052,37 +1109,72 @@ export default {
       this.$router.push("/planner/travelplan");
     },
 
-    /* 공통 유틸 */
-    // Day 완료 여부
+    /* 금액 포맷 */
+    formatCurrency(amount) {
+      if (amount == null || Number.isNaN(amount)) return "$0";
+      const rounded = Math.round(amount);
+      return `$${rounded.toLocaleString()}`;
+    },
+
+    /* Day별 예상/실제 합계 */
+    dayEstimatedCost(day) {
+      if (!day || !day.activities || !day.activities.length) return 0;
+      return day.activities.reduce((sum, act) => {
+        if (this.hasCost(act.cost) && typeof act.cost === "number") {
+          return sum + act.cost;
+        }
+        return sum;
+      }, 0);
+    },
+    dayActualCost(day) {
+      if (!day || !day.activities || !day.activities.length) return 0;
+      return day.activities.reduce((sum, act) => {
+        if (typeof act.spent === "number" && !Number.isNaN(act.spent)) {
+          return sum + act.spent;
+        }
+        return sum;
+      }, 0);
+    },
+
+    /* Day에 실제 지출이 하나라도 있는지 */
+    hasAnySpentInDay(day) {
+      if (!day || !day.activities) return false;
+      return day.activities.some(
+        (a) => typeof a.spent === "number" && !Number.isNaN(a.spent)
+      );
+    },
+
+    /* Spent 텍스트 색상: 예산 이내면 초록, 초과면 빨강 */
+    spentTextClass(day) {
+      const est = this.dayEstimatedCost(day);
+      const act = this.dayActualCost(day);
+      if (!this.hasAnySpentInDay(day)) return "";
+      return act <= est ? "text-success" : "text-danger";
+    },
+
+    /* Day 완료 여부 */
     isDayCompleted(day) {
       if (!day?.activities || !day.activities.length) return false;
       return day.activities.every((a) => a.completed);
     },
 
-    // ✅ Day 헤더 토글 규칙
+    /* Day 헤더 토글 규칙 */
     toggleDay(id) {
-      // 진행 중 Day
       const runningDayId = this.run.started ? this.run.dayId : null;
 
-      // 아무것도 진행 중이 아닐 때: 그냥 토글만
       if (!runningDayId) {
         this.openDayId = this.openDayId === id ? null : id;
         return;
       }
 
-      // 진행 중인 Day를 눌렀을 때
       if (id === runningDayId) {
-        // 열려 있으면 닫고, 닫혀 있으면 열기 (다른 Day 자동 오픈 X)
         this.openDayId = this.openDayId === id ? null : id;
         return;
       }
 
-      // 진행 중이 아닌 Day를 눌렀을 때
       if (this.openDayId === id) {
-        // 이미 열려 있던 non-running Day를 닫는 경우 → 달리는 Day 다시 열기
         this.openDayId = runningDayId;
       } else {
-        // 그냥 그 Day만 열기
         this.openDayId = id;
       }
     },
@@ -1125,7 +1217,7 @@ export default {
       const ap = h >= 12 ? "PM" : "AM";
       if (h === 0) h = 12;
       else if (h > 12) h -= 12;
-      return `${h}:${m.toString().padStart(2, "0")} ${ap}`;
+      return `${h}:${m.toString().padStart(2, "0")}`;
     },
     progressOf(day) {
       if (!day?.activities?.length) return 0;
@@ -1186,10 +1278,10 @@ export default {
       if (!dayId) return;
       const day = this.days.find((d) => d.id === dayId);
       if (!day) return;
-      this.openDayId = dayId; // 시작하는 Day만 펼치기
+      this.openDayId = dayId;
       this.run.started = true;
       this.run.startedAt = Date.now();
-      this.run.dayId = dayId; // ✅ 진행 중인 Day 저장
+      this.run.dayId = dayId;
     },
 
     /* 현재 액티비티 완료 모달 열기 */
@@ -1253,28 +1345,22 @@ export default {
       }
       act.completed = true;
 
-      // 해당 Day 모두 끝났으면
       const stillLeft = day.activities.some((a) => !a.completed);
       if (!stillLeft) {
-        // 만약 이 Day가 실제 달리던 Day였다면 run 종료
         if (this.run.dayId === day.id) {
           this.run.started = false;
           this.run.startedAt = null;
           this.run.dayId = null;
         }
 
-        // 다음 Day 카드 오픈 (규칙 1)
         const nextDay = this.days.find((d) => d.id > day.id);
         if (nextDay) {
           this.openDayId = nextDay.id;
         } else {
-          // 마지막 날이 끝난 경우엔 아무 Day도 안 펼쳐도 됨
           this.openDayId = null;
         }
         return;
       }
-
-      // 아직 남은 액티비티가 있으면 그대로 유지
     },
 
     /* 현재 액티비티 완료 모달에서 Confirm */
