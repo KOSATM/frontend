@@ -1,7 +1,7 @@
 <template>
   <div class="hotel-payment container py-4">
     <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
-    <StepHeader :step="'4/4'" :title="'Make a Payment for the Stay'" @back="goBack"/>
+    <!-- <StepHeader :step="'4/4'" :title="'Make a Payment for the Stay'" @back="goBack"/> -->
 
     <!-- Selected Hotel Summary -->
     <div class="card mb-4">
@@ -253,8 +253,7 @@ export default {
   name: 'HotelPayment',
   components: {
     BaseButton,
-    PageHeader,
-    StepHeader
+    PageHeader
   },
   data() {
     return {

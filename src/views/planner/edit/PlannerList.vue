@@ -3,6 +3,12 @@
   <section class="planner-right card shadow-sm rounded-4 h-100 d-flex flex-column">
     <!-- 상단 요약 -->
     <div class="p-4 pb-3 border-bottom">
+      <PageHeader
+        title="Planner"
+        subtitle="Create and manage your Seoul travel itinerary"
+        icon="bi-map"
+      />
+      <!-- <StepHeader v-if="!travelStore.$state.isTraveling" :step="'2/4'" :title="'Check and Adjust Draft'" @back="goBack"/> -->
       <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
       <StepHeader v-if="!travelStore.$state.isTraveling" :step="'2/4'" :title="'Check and Adjust Draft'"
         @back="goBack" />
@@ -19,6 +25,7 @@
         </div>
       </div>
 
+      <!-- 상단 예산 카드 -->
       <div class="row g-3">
         <div class="col-12 col-md-4" v-for="card in budget" :key="card.label">
           <div class="card border-0 shadow-sm rounded-3" :class="card.bg">
@@ -34,17 +41,22 @@
     <!-- ▶ Start Day Hero / Current Activity -->
     <div v-if="travelStore.$state.isTraveling" class="p-4 pt-3">
       <!-- 아직 시작 안함: 카드 전체 클릭으로 시작 -->
+      <div
+        v-if="!run.started"
+        class="gradient-hero rounded-4 p-4 position-relative hero-clickable"
+        @click="startNextDay"
+      >
       <div v-if="!run.started" class="gradient-hero rounded-4 p-4 position-relative hero-clickable"
         @click="startDay(openDayId)">
         <div class="text-center text-white">
-          <h5 class="mb-1 title">Start Day {{ openDayId }}</h5>
-          <div class="sub">{{ currentDay?.title }}</div>
-          <div class="sub small">{{ currentDay?.date }}</div>
+          <h5 class="mb-1 title">Start Day {{ heroDay?.id || 1 }}</h5>
+          <div class="sub">{{ heroDay?.title }}</div>
+          <div class="sub small">{{ heroDay?.date }}</div>
           <hr class="hero-sep" />
           <div class="hero-stats">
-            {{ currentDay?.activities.length || 0 }} activities
+            {{ heroDay?.activities.length || 0 }} activities
             <span class="dot">•</span>
-            ${{ currentDay?.dailyCost }}
+            {{ formatCurrency(dayEstimatedCost(heroDay)) }}
           </div>
         </div>
       </div>
@@ -113,6 +125,8 @@
       <BaseButton v-if="!travelStore.$state.isTraveling" @click="next()" variant="primary" class="w-100 py-2">Next:
         Select Accommodation</BaseButton>
       <BaseButton v-else @click="endTrip()" variant="success" class="w-100 py-2">FORCE to End Trip</BaseButton>
+      <!-- <BaseButton v-if="!travelStore.$state.isTraveling" @click="next()" variant="primary" class="w-100 py-2">Next: Select Accommodation</BaseButton> -->
+      <BaseButton v-if="travelStore.$state.isTraveling" @click="endTrip()" variant="success" class="w-100 py-2">FORCE to End Trip</BaseButton>
       <!-- <button v-else="travelStore.$state.isTraveling" class="btn btn-success w-100 rounded-3">Finish Journey</button> -->
       <!-- <button v-else class="btn btn-success w-100 rounded-3" @click="next()">Next: Select Accommodation</button> -->
     </div>
@@ -137,7 +151,6 @@
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import PageHeader from "@/components/common/PageHeader.vue";
-import StepHeader from "@/components/common/StepHeader.vue";
 import PlannerReplaceModal from "@/components/planner/PlannerReplaceModal.vue";
 import PlannerActivityDetailsModal from "@/components/planner/PlannerActivityDetailsModal.vue";
 import PlannerActivityCompleteModal from "@/components/planner/PlannerActivityCompleteModal.vue";
@@ -1154,7 +1167,6 @@ const deleteActivity = (dayIndex, actIndex) => {
   acts.sort((a, b) => parseTime(a.time) - parseTime(b.time));
 };
 </script>
-
 
 <style scoped>
 /* 폰트 */
