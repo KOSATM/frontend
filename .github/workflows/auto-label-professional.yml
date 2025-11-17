@@ -1,4 +1,4 @@
-name: Extended Commit Labeling with Auto Label Creation
+name: Extended Commit Labeling with Custom Professional Labels
 
 on:
   pull_request:
@@ -13,19 +13,19 @@ jobs:
         with:
           script: |
             const labels = {
-              feature: "#1abc9c",
-              bug: "#e74c3c",
-              documentation: "#3498db",
-              style: "#9b59b6",
-              refactor: "#8e44ad",
-              performance: "#f1c40f",
-              test: "#2ecc71",
-              chore: "#95a5a6",
-              build: "#34495e",
-              ci: "#16a085",
-              design: "#e67e22",
-              rename: "#d35400",
-              remove: "#c0392b"
+              "Feature": "1abc9c",
+              "Bug": "e74c3c",
+              "Documentation": "3498db",
+              "Style": "9b59b6",
+              "Refactor": "8e44ad",
+              "Performance": "f1c40f",
+              "Test": "2ecc71",
+              "Chore": "95a5a6",
+              "Build": "34495e",
+              "CI": "16a085",
+              "Design UI": "e67e22",
+              "Rename": "d35400",
+              "Remove": "c0392b"
             };
 
             for (const [name, color] of Object.entries(labels)) {
@@ -49,20 +49,20 @@ jobs:
     needs: create-labels
     runs-on: ubuntu-latest
     steps:
-      - name: Apply extended labels
+      - name: Apply professional labels
         uses: bcoe/conventional-release-labels@v1
         with:
           types: >
-            feat: feature
-            fix: bug
-            docs: documentation
-            style: style
-            refactor: refactor
-            perf: performance
-            test: test
-            chore: chore
-            build: build
-            ci: ci
-            design: design
-            rename: rename
-            remove: remove
+            feat: Feature
+            fix: Bug
+            docs: Documentation
+            style: Style
+            refactor: Refactor
+            perf: Performance
+            test: Test
+            chore: Chore
+            build: Build
+            ci: CI
+            design: Design UI
+            rename: Rename
+            remove: Remove
