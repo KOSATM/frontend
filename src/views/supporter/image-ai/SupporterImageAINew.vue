@@ -2,7 +2,7 @@
   <!-- top banner with back button + title/subtitle -->
   <StepHeader title="Image-based Travel AI" subtitle="Find destinations from your photos" step="1/4"
     @back="onHeaderBack" />
-  <UploadSection icon="bi-camera" title="Image-based Travel AI" subtitle="Upload photo → Get recommendations">
+  <BaseSection icon="bi-camera" title="Image-based Travel AI" subtitle="Upload photo → Get recommendations">
     <div class="mb-3">
       <div class="small"><strong>How it works:</strong></div>
       <ol class="small text-muted mb-0 ps-3">
@@ -26,7 +26,7 @@
         </div>
       </div>
     </label>
-  </UploadSection>
+  </BaseSection>
 
   <section>
     <div class="d-grid">
@@ -41,7 +41,7 @@
 
 <script setup>
 import StepHeader from '@/components/common/StepHeader.vue'
-import UploadSection from '@/components/travelgram/UploadSection.vue'
+import BaseSection from '@/components/common/BaseSection.vue'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 

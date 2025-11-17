@@ -27,17 +27,17 @@
 
       <!-- Accommodation Budget Propertion -->
       <div class="mb-3">
-        <UploadSection icon="bi-percent" title="Accommodation Budget Propertion">
+        <BaseSection icon="bi-percent" title="Accommodation Budget Propertion">
           <input type="range" id="range4" class="form-range" min="0" max="100" v-model="rangeValue" />
           <output :for="'range4'" aria-hidden="true">{{ rangeValue }}% (₩{{ budget * rangeValue / 100 / travelDays
             }})</output>
-        </UploadSection>
+        </BaseSection>
       </div>
 
       <!-- Filter Section -->
       <div class="filter-section mb-4">
         <!-- Accommodation Type -->
-        <UploadSection icon="bi-building" title="Accommodation Type">
+        <BaseSection icon="bi-building" title="Accommodation Type">
           <select v-model="filters.accommodationType" class="form-select rounded-pill">
             <option value="all">All Types</option>
             <option value="hotel">Hotel</option>
@@ -45,7 +45,7 @@
             <option value="hanok">Hanok Style</option>
             <option value="other">Other</option>
           </select>
-        </UploadSection>
+        </BaseSection>
         <!-- <div class="mb-3">
           <label class="form-label d-flex align-items-center">
             <i class="bi bi-building me-2"></i>
@@ -61,12 +61,12 @@
         </div> -->
 
         <!-- Number of Guests -->
-        <UploadSection icon="bi-people" title="Number of Guests">
+        <BaseSection icon="bi-people" title="Number of Guests">
           <div class="input-group">
             <input type="number" v-model="filters.guests" class="form-control rounded-pill" min="1" max="10" />
             <span class="ms-2">Guests</span>
           </div>
-        </UploadSection>
+        </BaseSection>
         <!-- <div class="mb-3">
           <label class="form-label d-flex align-items-center">
             <i class="bi bi-people me-2"></i>
@@ -83,7 +83,7 @@
       <div class="hotel-list mb-4">
         
         <!-- Hotel Cards -->
-        <UploadSection icon="bi-buildings" title="Recommended Hotels" :subtitle="`Showing ${ filteredHotels.length} hotels for ${filters.guests} guests`">
+        <BaseSection icon="bi-buildings" title="Recommended Hotels" :subtitle="`Showing ${ filteredHotels.length} hotels for ${filters.guests} guests`">
         <div class="row g-4">
             <!-- <p class="text-muted mb-3">
               Showing {{ filteredHotels.length }} hotels for {{ filters.guests }} guests
@@ -140,7 +140,7 @@
             </div>
             
           </div>
-        </UploadSection>
+        </BaseSection>
       </div>
 
       <!-- Confirm Button -->
@@ -162,7 +162,7 @@ import PageHeader from '@/components/common/PageHeader.vue';
 import hotelIllust from '@/assets/img/hotel-logo.png';
 import BaseButton from '@/components/common/BaseButton.vue';
 import { useTravelStore } from '@/store/travelStore';
-import UploadSection from '@/components/travelgram/UploadSection.vue';
+import BaseSection from '@/components/common/BaseSection.vue';
 
 const router = useRouter();
 const travelStore = useTravelStore();

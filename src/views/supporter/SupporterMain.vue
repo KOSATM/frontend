@@ -6,7 +6,7 @@
       <!-- LEFT COLUMN: checklist (top) + chat (bottom) -->
       <div class="col-md-4 d-flex flex-column gap-3">
         <div class="checklist-wrapper">
-          <UploadSection title="Today's Checklist" icon="bi-journal-text" class="checklist-header">
+          <BaseSection title="Today's Checklist" icon="bi-journal-text" class="checklist-header">
             <template #subtitle>
               <div class="text-end" @click.stop>
                 <div class="small text-muted">{{ completedCount }}/{{ checklist.length }}</div>
@@ -34,7 +34,7 @@
                 </div>
               </li>
             </ul>
-          </UploadSection>
+          </BaseSection>
         </div>
       </div>
 
@@ -89,7 +89,7 @@
           <!-- Image UI (default) -->
           <div v-show="currentTab === 'image'">
             
-            <UploadSection title="Image-based Travel AI" subtitle="Upload photo → Get recommendations">
+            <BaseSection title="Image-based Travel AI" subtitle="Upload photo → Get recommendations">
               <template #icon>
                 <div class="ai-badge"><i class="bi bi-camera-fill"></i></div>
               </template>
@@ -135,12 +135,12 @@
               <div v-if="imagePreview" class="mt-3">
                 <img :src="imagePreview" alt="preview" class="img-fluid rounded" />
               </div>
-            </UploadSection>
+            </BaseSection>
           </div>
 
           <!-- Restrooms UI -->
           <div v-show="currentTab === 'restroom'">
-            <UploadSection title="Nearby Public Restrooms" subtitle="Find nearby public restrooms">
+            <BaseSection title="Nearby Public Restrooms" subtitle="Find nearby public restrooms">
               <template #icon>
                 <div class="ai-badge"><i class="bi bi-people-fill"></i></div>
               </template>
@@ -161,7 +161,7 @@
                   <div class="ms-3 text-muted"><i class="bi bi-chevron-right"></i></div>
                 </a>
               </div>
-            </UploadSection>
+            </BaseSection>
           </div>
         </div>
       </div>
@@ -173,7 +173,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/components/common/PageHeader.vue'
-import UploadSection from '@/components/travelgram/UploadSection.vue'
+import BaseSection from '@/components/common/BaseSection.vue'
 import PlannerChat from '@/views/planner/edit/PlannerChat.vue'
 
 
@@ -381,7 +381,7 @@ const goToImageAIHistory = () => {
   border-radius: 12px;
 }
 
-/* UploadSection small tweaks */
+/* BaseSection small tweaks */
 .ai-badge {
   width: 44px;
   height: 44px;

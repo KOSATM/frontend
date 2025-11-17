@@ -3,7 +3,7 @@
     <PageHeader title="Supporter" subtitle="Real-time travel support and updates" icon="bi-chat-dots" />
     <!-- ✅ CHECKLIST SECTION -->
 
-    <UploadSection icon="bi-journal-text" title="Today's Checklist" subtitle="Completion Rate">
+    <BaseSection icon="bi-journal-text" title="Today's Checklist" subtitle="Completion Rate">
       <template #actions>
         <div class="text-end">
           <div class="small text-muted">{{ completedCount }}/{{ checklist.length }}</div>
@@ -30,10 +30,10 @@
           </div>
         </li>
       </ul>
-    </UploadSection>
+    </BaseSection>
 
     <!-- ✅ IMAGE-BASED TRAVEL AI (unchanged) -->
-    <UploadSection icon="bi-camera" title="Image-based Travel AI" subtitle="Upload photo → Get recommendations">
+    <BaseSection icon="bi-camera" title="Image-based Travel AI" subtitle="Upload photo → Get recommendations">
       <div class="mb-3">
         <div class="small"><strong>How it works:</strong></div>
         <ol class="small text-muted mb-0 ps-3">
@@ -56,11 +56,11 @@
           </div>
         </div>
       </label>
-    </UploadSection>
+    </BaseSection>
 
     <!-- ✅ RESTROOM SECTION (unchanged) -->
 
-    <UploadSection icon="bi-people-fill" title="Nearby Public Restrooms" subtitle="Find nearby public restrooms">
+    <BaseSection icon="bi-people-fill" title="Nearby Public Restrooms" subtitle="Find nearby public restrooms">
       <div class="card mb-3 map-card p-3 shadow-sm border-0">
         <div class="map-gradient position-relative rounded">
           <div class="gps-center d-flex flex-column align-items-center justify-content-center">
@@ -88,7 +88,7 @@
           <div class="ms-3 text-muted"><i class="bi bi-chevron-right"></i></div>
         </a>
       </div>
-    </UploadSection>
+    </BaseSection>
   </div>
 </template>
 
@@ -96,7 +96,7 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import PageHeader from '@/components/common/PageHeader.vue';
-import UploadSection from '@/components/travelgram/UploadSection.vue';
+import BaseSection from '@/components/common/BaseSection.vue';
 
 const router = useRouter();
 const goToImageAI = () => {

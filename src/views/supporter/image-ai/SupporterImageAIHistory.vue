@@ -3,7 +3,7 @@
 <template>
   <BackButtonPageHeader title="Image-based Travel AI" subtitle="Find destinations from your photos" />
 
-  <UploadSection icon="bi-clock-history" title="AI Recommendation History">
+  <BaseSection icon="bi-clock-history" title="AI Recommendation History">
     <template #actions>
       <router-link class="btn btn-sm btn-primary" :to="{ name: 'SupporterImageAINew' }">+ New Search</router-link>
     </template>
@@ -37,12 +37,12 @@
         No AI history yet. Try "+ New Search" or upload a photo from Supporter main.
       </div>
     </div>
-  </UploadSection>
+  </BaseSection>
 </template>
 
 <script setup>
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue';
-import UploadSection from '@/components/travelgram/UploadSection.vue';
+import BaseSection from '@/components/common/BaseSection.vue';
 const history = [
   {
     date: '2025.11.06',

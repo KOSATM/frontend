@@ -4,7 +4,7 @@
     <!-- <StepHeader :step="'4/4'" :title="'Make a Payment for the Stay'" @back="goBack"/> -->
 
     <!-- Selected Hotel Summary -->
-      <UploadSection icon="bi-building" title="Booking Summary">
+      <BaseSection icon="bi-building" title="Booking Summary">
         <div class="card-body">
           <div class="row mb-3">
             <div class="col-md-4">
@@ -39,7 +39,7 @@
             </div>
           </div>
         </div>
-      </UploadSection>
+      </BaseSection>
 
 
       <!-- <div class="card-header bg-light">
@@ -81,7 +81,7 @@
       </div> -->
 
     <!-- Price Breakdown -->
-      <UploadSection icon="bi-receipt" title="Price Breakdown">
+      <BaseSection icon="bi-receipt" title="Price Breakdown">
         <div class="card-body">
           <div class="d-flex justify-content-between mb-2">
             <span>{{ travelDays }} nights × ₩{{ selectedHotel.price.toLocaleString() }}/night</span>
@@ -97,7 +97,7 @@
             <span class="fs-5 fw-bold text-primary">₩{{ totalAmount.toLocaleString() }}</span>
           </div>
         </div>
-      </UploadSection>
+      </BaseSection>
       <!-- <div class="card-header bg-light">
         <h5 class="mb-0">Price Breakdown</h5>
       </div>
@@ -118,7 +118,7 @@
       </div> -->
 
     <!-- Payment Method Selection -->
-      <UploadSection icon="bi-credit-card-2-front" title="Payment Method">
+      <BaseSection icon="bi-credit-card-2-front" title="Payment Method">
         <div class="row g-3">
           <div class="col-6">
             <div class="payment-item" :class="{ active: paymentMethod === 'creditCard' }"
@@ -148,10 +148,10 @@
             </div>
           </div>
         </div>
-      </UploadSection>
+      </BaseSection>
 
     <!-- Card Details (shown only for card payments) -->
-    <UploadSection v-if="paymentMethod === 'creditCard' || paymentMethod === 'debitCard'" icon="bi-credit-card-2-back" title="Card Details"> 
+    <BaseSection v-if="paymentMethod === 'creditCard' || paymentMethod === 'debitCard'" icon="bi-credit-card-2-back" title="Card Details"> 
         <div class="mb-3">
           <label for="cardName" class="form-label">Cardholder Name</label>
           <input type="text" class="form-control rounded-pill" id="cardName" v-model="cardDetails.name"
@@ -174,7 +174,7 @@
               maxlength="3" />
           </div>
         </div>
-      </UploadSection>
+      </BaseSection>
       <!-- <div class="card-header bg-light">
         <h5 class="mb-0">Card Details</h5>
       </div>
@@ -251,7 +251,7 @@ import hotelIllust from '@/assets/img/hotel-logo.png';
 import StepHeader from '@/components/common/StepHeader.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
 import { useTravelStore } from '@/store/travelStore';
-import UploadSection from '@/components/travelgram/UploadSection.vue';
+import BaseSection from '@/components/common/BaseSection.vue';
 import BaseSelection from '@/components/common/BaseSelection.vue';
 
 const router = useRouter();

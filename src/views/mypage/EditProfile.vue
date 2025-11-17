@@ -5,7 +5,7 @@
             <BackButtonPageHeader title="Edit Profile" subtitle="Update your personal information"></BackButtonPageHeader>
 
             <!-- 프로필 이미지 섹션 -->
-            <UploadSection icon="bi-image" title="Profile Photo" subtitle="Upload your profile picture">
+            <BaseSection icon="bi-image" title="Profile Photo" subtitle="Upload your profile picture">
                 <div class="profile-image-upload text-center">
                     <div class="current-avatar mb-3">
                         <img v-if="profileData.profileImage" :src="profileData.profileImage" :alt="profileData.name"
@@ -28,10 +28,10 @@
                     </div>
                     <input ref="profileImageInput" type="file" accept="image/*" @change="handleImageUpload" hidden />
                 </div>
-            </UploadSection>
+            </BaseSection>
             
             <!-- 기본 정보 섹션 -->
-            <UploadSection icon="bi-person" title="Basic Information" subtitle="Your account information">
+            <BaseSection icon="bi-person" title="Basic Information" subtitle="Your account information">
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Name</label>
@@ -50,10 +50,10 @@
                         <small class="text-muted">Email cannot be changed as it's linked to your Google account</small>
                     </div>
                 </div>
-            </UploadSection>
+            </BaseSection>
 
             <!-- 여행 선호도 섹션 -->
-            <UploadSection icon="bi-airplane" title="Travel Preferences" subtitle="Your travel information">
+            <BaseSection icon="bi-airplane" title="Travel Preferences" subtitle="Your travel information">
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Nationality</label>
@@ -82,10 +82,10 @@
                         </div>
                     </div>
                 </div>
-            </UploadSection>
+            </BaseSection>
 
             <!-- 의료 정보 섹션 -->
-            <UploadSection icon="bi-heart-pulse" title="Medical Information" subtitle="Important health information">
+            <BaseSection icon="bi-heart-pulse" title="Medical Information" subtitle="Important health information">
                 <div class="row g-3">
                     <div class="col-12">
                         <label class="form-label">Allergies</label>
@@ -98,10 +98,10 @@
                             placeholder="e.g., Vegetarian, Gluten-free..."></textarea>
                     </div>
                 </div>
-            </UploadSection>
+            </BaseSection>
 
             <!-- SNS 연동 섹션 -->
-            <UploadSection icon="bi-share" title="Social Media Integration" subtitle="Connected accounts">
+            <BaseSection icon="bi-share" title="Social Media Integration" subtitle="Connected accounts">
                 <div class="social-integration">
                     <div class="social-item d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
@@ -113,7 +113,7 @@
                         </div>
                     </div>
                 </div>
-            </UploadSection>
+            </BaseSection>
 
             <!-- 🟦 하단 버튼 -->
             <div class="next-step-area mt-4">
@@ -186,7 +186,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseButton from '@/components/common/BaseButton.vue'
-import UploadSection from '@/components/travelgram/UploadSection.vue'
+import BaseSection from '@/components/common/BaseSection.vue'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 
 const router = useRouter()

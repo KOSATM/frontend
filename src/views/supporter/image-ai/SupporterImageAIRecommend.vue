@@ -1,7 +1,7 @@
 <template>
   <StepHeader title="Image-based Travel AI" subtitle="AI Analysis Complete" step="3/4"
     @back="router.push({ name: 'SupporterImageAIType' })" />
-  <UploadSection icon="bi bi-images" title="AI Analysis Complete"
+  <BaseSection icon="bi bi-images" title="AI Analysis Complete"
     :subtitle="`Found ${results.length} similar destinations`">
     <template #actions>
       <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'SupporterImageAINew' }">New
@@ -44,7 +44,7 @@
         <div v-if="selectedIndex === i" class="select-check" aria-hidden="true">✓</div>
       </div>
     </div>
-  </UploadSection>
+  </BaseSection>
 
     <div class="d-flex mt-2">
       <router-link class="btn btn-link" :to="{ name: 'SupporterImageAIType' }">Back</router-link>
@@ -59,7 +59,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import StepHeader from '@/components/common/StepHeader.vue'
-import UploadSection from '@/components/travelgram/UploadSection.vue'
+import BaseSection from '@/components/common/BaseSection.vue'
 
 const router = useRouter()
 const selectedIndex = ref(null)

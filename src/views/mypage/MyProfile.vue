@@ -5,7 +5,7 @@
     <BackButtonPageHeader title="My Profile" subtitle="Your travel profile"></BackButtonPageHeader>
 
     <!-- 프로필 이미지 섹션 -->
-    <UploadSection icon="bi-image" title="Profile Photo" subtitle="Your profile picture">
+    <BaseSection icon="bi-image" title="Profile Photo" subtitle="Your profile picture">
       <div class="profile-image-upload text-center">
         <div class="current-avatar mb-3">
           <img v-if="profileImage" :src="profileImage" :alt="profileData.displayName"
@@ -15,10 +15,10 @@
           </div>
         </div>
       </div>
-    </UploadSection>
+    </BaseSection>
     
     <!-- 기본 정보 섹션 -->
-    <UploadSection icon="bi-person" title="Basic Information" subtitle="Your account information">
+    <BaseSection icon="bi-person" title="Basic Information" subtitle="Your account information">
       <div class="row g-3">
         <div class="col-md-6">
           <label class="form-label">Name</label>
@@ -33,10 +33,10 @@
           <div class="form-value">{{ profileData.email }}</div>
         </div>
       </div>
-    </UploadSection>
+    </BaseSection>
 
     <!-- 여행 선호도 섹션 -->
-    <UploadSection icon="bi-airplane" title="Travel Preferences" subtitle="Your travel information">
+    <BaseSection icon="bi-airplane" title="Travel Preferences" subtitle="Your travel information">
       <div class="row g-3 mb-3">
         <div class="col-md-6">
           <label class="form-label">Nationality</label>
@@ -58,10 +58,10 @@
           </div>
         </div>
       </div>
-    </UploadSection>
+    </BaseSection>
 
     <!-- 예약한 호텔 정보 섹션 -->
-    <UploadSection icon="bi-building" title="Reservation" subtitle="Your hotel reservations">
+    <BaseSection icon="bi-building" title="Reservation" subtitle="Your hotel reservations">
       <div class="reservation-list">
         <div v-if="profileData.reservations.length > 0">
           <div v-for="(reservation, index) in profileData.reservations" :key="index" class="reservation-card mb-3">
@@ -93,10 +93,10 @@
           No reservations
         </div>
       </div>
-    </UploadSection>
+    </BaseSection>
 
     <!-- 결제 정보 섹션 -->
-    <UploadSection icon="bi-credit-card" title="Payment Information" subtitle="Your registered payment methods">
+    <BaseSection icon="bi-credit-card" title="Payment Information" subtitle="Your registered payment methods">
       <div class="card-list">
         <div v-if="profileData.paymentMethods.length > 0">
           <div v-for="(card, index) in profileData.paymentMethods" :key="index" class="payment-card mb-2">
@@ -119,10 +119,10 @@
           No payment methods registered
         </div>
       </div>
-    </UploadSection>
+    </BaseSection>
 
     <!-- 의료 정보 섹션 -->
-    <UploadSection icon="bi-heart-pulse" title="Medical Information" subtitle="Important health information">
+    <BaseSection icon="bi-heart-pulse" title="Medical Information" subtitle="Important health information">
       <div class="medical-info">
         <div class="info-section mb-3">
           <label class="form-label">Allergies</label>
@@ -133,10 +133,10 @@
           <div class="form-value">{{ profileData.medicalInfo.dietaryRestrictions || 'None reported' }}</div>
         </div>
       </div>
-    </UploadSection>
+    </BaseSection>
 
     <!-- SNS 연동 섹션 -->
-    <UploadSection icon="bi-share" title="Social Media Integration" subtitle="Connected accounts">
+    <BaseSection icon="bi-share" title="Social Media Integration" subtitle="Connected accounts">
       <div class="social-integration">
         <div class="social-item d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center">
@@ -147,7 +147,7 @@
           <span v-else class="badge bg-secondary">Not Connected</span>
         </div>
       </div>
-    </UploadSection>
+    </BaseSection>
 
     <!-- 🟦 하단 버튼 -->
     <div class="next-step-area mt-4">
@@ -170,7 +170,7 @@ import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import BaseButton from '@/components/common/BaseButton.vue'
-import UploadSection from '@/components/travelgram/UploadSection.vue'
+import BaseSection from '@/components/common/BaseSection.vue'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 
 const router = useRouter()
