@@ -5,14 +5,19 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  add-reviewers:
+  add_reviewers:
     runs-on: ubuntu-latest
     steps:
-      - name: Add default reviewers
-        uses: peter-evans/add-reviewers@v3
+      - name: Add reviewers using GitHub API
+        uses: actions/github-script@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          reviewers: |
-            SeungHun-OH
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const reviewers = ["miouOu", "so0126"]; // 리뷰어 깃헙 ID
             
-
+            await github.rest.pulls.requestReviewers({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              reviewers: reviewers
+            });
