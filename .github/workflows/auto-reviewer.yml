@@ -1,15 +1,18 @@
 name: Auto Add Reviewers
 
 on:
-  pull_request_review:
-    types: [submitted]
+  pull_request:
+    types: [opened, reopened, synchronize]
 
 jobs:
-  auto-add-reviewer:
+  add-reviewers:
     runs-on: ubuntu-latest
     steps:
-      - name: Add reviewer who reviewed
+      - name: Add default reviewers
         uses: peter-evans/add-reviewers@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          reviewers: ${{ github.actor }}
+          reviewers: |
+            SeungHun-OH
+            
+

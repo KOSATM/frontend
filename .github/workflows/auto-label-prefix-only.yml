@@ -1,4 +1,4 @@
-name: Extended Commit Labeling with Custom Professional Labels
+name: Professional Commit Labeling (Prefix Only, No PR Title Check)
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ jobs:
   create-labels:
     runs-on: ubuntu-latest
     steps:
-      - name: Create required labels
+      - name: Create professional labels
         uses: actions/github-script@v7
         with:
           script: |
@@ -49,7 +49,7 @@ jobs:
     needs: create-labels
     runs-on: ubuntu-latest
     steps:
-      - name: Apply professional labels
+      - name: Label PR by commit message prefixes
         uses: bcoe/conventional-release-labels@v1
         with:
           types: >
