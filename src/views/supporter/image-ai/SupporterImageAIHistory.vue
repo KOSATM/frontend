@@ -52,8 +52,7 @@ const history = [
     thumb: '/sample/food-main.jpg',
     recommendations: [
       { thumb: '/sample/rec1.jpg' },
-      { thumb: '/sample/rec2.jpg' },
-      { thumb: '/sample/rec3.jpg' }
+      { thumb: '/sample/rec2.jpg' }
     ]
   },
   {
@@ -64,8 +63,7 @@ const history = [
     thumb: '/sample/food-main.jpg',
     recommendations: [
       { thumb: '/sample/rec1.jpg' },
-      { thumb: '/sample/rec2.jpg' },
-      { thumb: '/sample/rec3.jpg' }
+      { thumb: '/sample/rec2.jpg' }
     ]
   }
 ]
