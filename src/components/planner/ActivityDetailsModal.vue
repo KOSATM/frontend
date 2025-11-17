@@ -1,4 +1,4 @@
-<!-- src/components/planner/PlannerActivityDetailsModal.vue -->
+<!-- src/components/planner/ActivityDetailsModal.vue -->
 <template>
   <teleport to="body">
     <div v-if="open" class="modal-backdrop" @click="$emit('close')">
@@ -113,7 +113,7 @@ import defaultImg2 from "@/assets/planner/activity-default-2.jpg";
 import defaultImg3 from "@/assets/planner/activity-default-3.jpg";
 
 export default {
-  name: "PlannerActivityDetailsModal",
+  name: "ActivityDetailsModal",
   props: {
     open: { type: Boolean, default: false },
     data: { type: Object, default: null },

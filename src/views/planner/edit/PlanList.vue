@@ -295,7 +295,7 @@
   </section>
 
   <!-- 모달 컴포넌트들 -->
-  <PlannerReplaceModal
+  <ReplaceModal
     :open="replaceModal.open"
     :target="replaceModal.target"
     :alternatives="replaceModal.alternatives"
@@ -305,7 +305,7 @@
     @delete-anyway="deleteAnyway"
   />
 
-  <PlannerActivityDetailsModal
+  <ActivityDetailsModal
     :open="detailsModal.open"
     :data="detailsModal.data"
     :spend-input="detailsModal.spendInput"
@@ -315,7 +315,7 @@
     @open-replace="openReplaceFromDetails"
   />
 
-  <PlannerActivityCompleteModal
+  <ActivityCompleteModal
     :open="completeModal.open"
     :title="completeModal.title"
     :spend-input="completeModal.spendInput"
@@ -330,9 +330,9 @@
 
 <script>
 import PageHeader from "@/components/common/PageHeader.vue";
-import PlannerReplaceModal from "@/components/planner/PlannerReplaceModal.vue";
-import PlannerActivityDetailsModal from "@/components/planner/PlannerActivityDetailsModal.vue";
-import PlannerActivityCompleteModal from "@/components/planner/PlannerActivityCompleteModal.vue";
+import ReplaceModal from "@/components/planner/ReplaceModal.vue";
+import ActivityDetailsModal from "@/components/planner/ActivityDetailsModal.vue";
+import ActivityCompleteModal from "@/components/planner/ActivityCompleteModal.vue";
 import { useTravelStore } from "@/store/travelStore";
 import BaseButton from "@/components/common/BaseButton.vue";
 
@@ -344,13 +344,13 @@ const defaultGallery = [
 ];
 
 export default {
-  name: "PlannerList",
+  name: "PlanList",
   components: {
     BaseButton,
     PageHeader,
-    PlannerReplaceModal,
-    PlannerActivityDetailsModal,
-    PlannerActivityCompleteModal,
+    ReplaceModal,
+    ActivityDetailsModal,
+    ActivityCompleteModal,
   },
   data() {
     return {
