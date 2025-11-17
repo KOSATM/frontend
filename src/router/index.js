@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 // 기본/공통 페이지
 import SupporterMain from '@/views/supporter/SupporterMain.vue'
 import HotelRecommendation from '@/views/planner/hotel/HotelRecommendation.vue'
-import PlannerCreate from '@/views/planner/PlannerCreate.vue'
+import CreatePlan from '@/views/planner/CreatePlan.vue'
 import TravelgramMain from '@/views/travelgram/TravelgramMain.vue'
 import MyProfile from '@/views/mypage/MyProfile.vue'
 
@@ -15,7 +15,7 @@ import mypage from './mypage'
 import { useTravelStore } from '@/store/travelStore'
 
 const routes = [
-  { path: '/', component: PlannerCreate },
+  { path: '/', component: CreatePlan },
   { path: '/travelgram', component: TravelgramMain },
   { path: '/supporter', component: SupporterMain },
   { path: '/mypage', component: MyProfile },

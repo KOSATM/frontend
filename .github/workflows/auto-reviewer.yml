@@ -1,0 +1,15 @@
+name: Auto Add Reviewers
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  auto-add-reviewer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add reviewer who reviewed
+        uses: peter-evans/add-reviewers@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          reviewers: ${{ github.actor }}

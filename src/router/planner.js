@@ -1,8 +1,8 @@
 import HotelRecommendation from "@/views/planner/hotel/HotelRecommendation.vue";
-import PlannerCreate from "@/views/planner/PlannerCreate.vue";
-import PlannerEdit from "@/views/planner/edit/PlannerEdit.vue";
-import PlannerChat from "@/views/planner/edit/PlannerChat.vue";
-import PlannerList from "@/views/planner/edit/PlannerList.vue";
+import CreatePlan from "@/views/planner/CreatePlan.vue";
+import EditPlan from "@/views/planner/edit/EditPlan.vue";
+import Chat from "@/views/planner/edit/Chat.vue";
+import PlanList from "@/views/planner/edit/PlanList.vue";
 import HotelPayment from "@/views/planner/hotel/HotelPayment.vue";
 import BookingComplete from "@/views/planner/BookingComplete.vue";
 
@@ -10,7 +10,7 @@ const planner = [
   {
     path: "/planner/create",
     name: "plannercreate",
-    component: PlannerCreate,
+    component: CreatePlan,
     meta: { title: "새 플랜 생성" },
   },
   // {
@@ -23,9 +23,9 @@ const planner = [
     path: "/planner/edit",
     name: "planedit",
     components: {
-      default: PlannerEdit,
-      left: PlannerChat,
-      right: PlannerList,
+      default: EditPlan,
+      left: Chat,
+      right: PlanList,
     },
     meta: {
       layout: "wide",
@@ -37,9 +37,9 @@ const planner = [
     path: "/planner/itinerary",
     name: "itinerary",
     components: {
-      default: PlannerEdit,
-      left: PlannerChat,
-      right: PlannerList,
+      default: EditPlan,
+      left: Chat,
+      right: PlanList,
     },
     meta: {
       layout: "wide",

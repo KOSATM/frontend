@@ -67,7 +67,7 @@
 
 <script>
 export default {
-  name: "PlannerReplaceModal",
+  name: "ReplaceModal",
   props: {
     open: { type: Boolean, default: false },
     target: { type: Object, default: null },
