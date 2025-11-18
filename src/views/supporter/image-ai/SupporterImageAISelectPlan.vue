@@ -51,6 +51,19 @@
 
         <div v-if="selectedOption === 'save'" class="select-check" aria-hidden="true">✓</div>
       </li>
+
+      <!-- Not Interested: now selectable; Confirm required to proceed -->
+      <li class="option p-3 mb-2 rounded d-flex align-items-center" :class="{ selected: selectedOption === 'not_interested' }"
+        @click="selectOption('not_interested')" @keyup.enter.space.prevent="selectOption('not_interested')" role="button" tabindex="0"
+        :aria-pressed="selectedOption === 'not_interested'">
+        <div class="icon no me-3">✕</div>
+        <div class="flex-fill">
+          <div class="fw-medium">Not Interested</div>
+          <div class="small text-muted">Do nothing and return to search</div>
+        </div>
+
+        <div v-if="selectedOption === 'not_interested'" class="select-check" aria-hidden="true">✓</div>
+      </li>
     </ul>
   </BaseSection>
 
@@ -101,19 +114,25 @@ const confirm = () => {
   if (!selectedOption.value) return
 
   if (selectedOption.value === 'add' || selectedOption.value === 'replace') {
-    // attempt to go to PlannerEdit; if route name isn't registered, fall back to SupporterImageAIChoicePlan
+    // attempt to go to EditPlan; if route name isn't registered, fall back to SupporterImageAIChoicePlan
     router.push({
       name: 'planedit',
       state: { item, mode: selectedOption.value },
       query: { mode: selectedOption.value, itemId: item?.id ?? '', itemName: item?.name ?? '' }
     }).catch(() => {
-      // fallback for environments where PlannerEdit route is not defined
+      // fallback for environments where EditPlan route is not defined
       router.push({
         name: 'SupporterImageAIChoicePlan',
         state: { item, mode: selectedOption.value },
         query: { mode: selectedOption.value, itemId: item?.id ?? '', itemName: item?.name ?? '' }
       }).catch(() => { /* swallow to avoid unhandled */ })
     })
+    return
+  }
+
+  // Not Interested -> go back to New Search (no save)
+  if (selectedOption.value === 'not_interested') {
+    router.push({ name: 'SupporterImageAINew' }).catch(() => { })
     return
   }
 
@@ -193,6 +212,12 @@ const confirm = () => {
   font-weight: 700;
   box-shadow: 0 6px 18px rgba(27, 59, 111, 0.12);
   border: 2px solid rgba(255, 255, 255, 0.6);
+}
+
+/* small tweak for Not Interested icon color */
+.option .icon.no {
+  background: #fff5f2;
+  color: #d03b1f;
 }
 
 button:disabled {

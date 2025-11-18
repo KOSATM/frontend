@@ -174,7 +174,6 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/components/common/PageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
-import PlannerChat from '@/views/planner/edit/PlannerChat.vue'
 
 
 const router = useRouter()

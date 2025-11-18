@@ -1,4 +1,4 @@
-<!-- src/components/planner/PlannerActivityDetailsModal.vue -->
+<!-- src/components/planner/ActivityDetailsModal.vue -->
 <template>
   <teleport to="body">
     <div v-if="open" class="modal-backdrop" @click="$emit('close')">

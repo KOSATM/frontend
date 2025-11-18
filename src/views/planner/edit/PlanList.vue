@@ -129,28 +129,47 @@
   </section>
 
   <!-- 모달 컴포넌트들 -->
-  <PlannerReplaceModal :open="replaceModal.open" :target="replaceModal.target" :alternatives="replaceModal.alternatives"
-    @close="closeReplaceModal" @preview-alt="previewAlt" @apply-replacement="applyReplacement"
-    @delete-anyway="deleteAnyway" />
+  <ReplaceModal
+    :open="replaceModal.open"
+    :target="replaceModal.target"
+    :alternatives="replaceModal.alternatives"
+    @close="closeReplaceModal"
+    @preview-alt="previewAlt"
+    @apply-replacement="applyReplacement"
+    @delete-anyway="deleteAnyway"
+  />
 
-  <PlannerActivityDetailsModal :open="detailsModal.open" :data="detailsModal.data"
-    :spend-input="detailsModal.spendInput" @update:spend-input="detailsModal.spendInput = $event"
-    @close="closeDetailsModal" @save-spent="saveSpent" @open-replace="openReplaceFromDetails" />
+  <ActivityDetailsModal
+    :open="detailsModal.open"
+    :data="detailsModal.data"
+    :spend-input="detailsModal.spendInput"
+    @update:spend-input="detailsModal.spendInput = $event"
+    @close="closeDetailsModal"
+    @save-spent="saveSpent"
+    @open-replace="openReplaceFromDetails"
+  />
 
-  <PlannerActivityCompleteModal :open="completeModal.open" :title="completeModal.title"
-    :spend-input="completeModal.spendInput" :comment="completeModal.comment" :quick-stats="currentQuickStats"
-    @update:spend-input="completeModal.spendInput = $event" @update:comment="completeModal.comment = $event"
-    @close="closeCompleteModal" @confirm="completeCurrentActivity" />
+  <ActivityCompleteModal
+    :open="completeModal.open"
+    :title="completeModal.title"
+    :spend-input="completeModal.spendInput"
+    :comment="completeModal.comment"
+    :quick-stats="currentQuickStats"
+    @update:spend-input="completeModal.spendInput = $event"
+    @update:comment="completeModal.comment = $event"
+    @close="closeCompleteModal"
+    @confirm="completeCurrentActivity"
+  />
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import PageHeader from "@/components/common/PageHeader.vue";
-import PlannerReplaceModal from "@/components/planner/PlannerReplaceModal.vue";
-import PlannerActivityDetailsModal from "@/components/planner/PlannerActivityDetailsModal.vue";
-import PlannerActivityCompleteModal from "@/components/planner/PlannerActivityCompleteModal.vue";
-import { useTravelStore } from '@/store/travelStore';
+import ReplaceModal from "@/components/planner/ReplaceModal.vue";
+import ActivityDetailsModal from "@/components/planner/ActivityDetailsModal.vue";
+import ActivityCompleteModal from "@/components/planner/ActivityCompleteModal.vue";
+import { useTravelStore } from "@/store/travelStore";
 import BaseButton from "@/components/common/BaseButton.vue";
 import ActivityList from "@/components/planner/ActivityList.vue";
 import DayCard from "@/components/planner/DayCard.vue";
