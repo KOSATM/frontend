@@ -96,23 +96,20 @@
   </teleport>
 </template>
 
-<script>
-export default {
-  name: "PlannerActivityCompleteModal",
-  props: {
-    open: { type: Boolean, default: false },
-    title: { type: String, default: "" },
-    spendInput: { type: Number, default: null },
-    comment: { type: String, default: "" },
-    quickStats: { type: Object, default: () => ({}) },
-  },
-  emits: ["close", "confirm", "update:spend-input", "update:comment"],
-  methods: {
-    onInput(e) {
-      const val = e.target.value === "" ? null : Number(e.target.value);
-      this.$emit("update:spend-input", val);
-    },
-  },
+<script setup>
+defineProps({
+  open: { type: Boolean, default: false },
+  title: { type: String, default: "" },
+  spendInput: { type: Number, default: null },
+  comment: { type: String, default: "" },
+  quickStats: { type: Object, default: () => ({}) },
+});
+
+const emit = defineEmits(["close", "confirm", "update:spend-input", "update:comment"]);
+
+const onInput = (e) => {
+  const val = e.target.value === "" ? null : Number(e.target.value);
+  emit("update:spend-input", val);
 };
 </script>
 

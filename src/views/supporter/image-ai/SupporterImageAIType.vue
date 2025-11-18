@@ -3,7 +3,7 @@
   <StepHeader title="Image-based Travel AI" subtitle="Find destinations from your photos" step="2/4"
     @back="router.push({ name: 'SupporterImageAINew' })" />
 
-  <UploadSection icon="bi-camera" title="What type of photo is this?">
+  <BaseSection icon="bi-camera" title="What type of photo is this?">
     <div class="preview-wrap mb-3" v-if="preview">
       <img :src="preview" alt="uploaded preview" class="preview-img" />
     </div>
@@ -44,7 +44,7 @@
         <div class="check-mark" v-if="selectedType === 'activities'">✓</div>
       </li>
     </ul>
-  </UploadSection>
+  </BaseSection>
 
     <div class="d-flex mt-2">
       <router-link class="btn btn-link" :to="{ name: 'SupporterImageAINew' }">Back</router-link>
@@ -58,7 +58,7 @@
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import StepHeader from '@/components/common/StepHeader.vue'
-import UploadSection from '@/components/travelgram/UploadSection.vue'
+import BaseSection from '@/components/common/BaseSection.vue'
 
 const router = useRouter()
 const route = useRoute()

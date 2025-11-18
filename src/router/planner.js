@@ -22,15 +22,9 @@ const planner = [
   {
     path: "/planner/edit",
     name: "planedit",
-    components: {
-      default: EditPlan,
-      left: Chat,
-      right: PlanList,
-    },
+    component: PlanList,
     meta: {
-      layout: "wide",
-      split: true,
-      title: "플랜 편집",
+      title: "플랜 편집"
     },
   },
   {
