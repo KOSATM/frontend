@@ -1,6 +1,8 @@
 <!-- src/views/planner/PlannerList.vue -->
 <template>
-  <section class="planner-right card shadow-sm rounded-4 h-100 d-flex flex-column">
+  <section
+    class="planner-right card shadow-sm rounded-4 h-100 d-flex flex-column"
+  >
     <!-- 상단 요약 -->
     <div class="p-4 pb-3 border-bottom">
       <!-- <StepHeader v-if="!travelStore.$state.isTraveling" :step="'2/4'" :title="'Check and Adjust Draft'" @back="goBack"/> -->
@@ -8,8 +10,10 @@
       <StepHeader v-if="!travelStore.$state.isTraveling" :step="'2/4'" :title="'Check and Adjust Draft'"
         @back="goBack" /> -->
       <div class="d-flex gap-3 align-items-center mb-3">
-        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
-          style="width: 46px; height: 46px">
+        <div
+          class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px"
+        >
           📅
         </div>
         <div>
@@ -35,14 +39,12 @@
 
     <!-- ▶ Start Day Hero / Current Activity -->
     <div v-if="travelStore.$state.isTraveling" class="p-4 pt-3">
-      <!-- 아직 시작 안함: 카드 전체 클릭으로 시작 -->
+      <!-- 시작 전: Day 시작 화면 (클릭 가능) -->
       <div
-        v-if="!run.started"
+        v-if="showNextDayHero"
         class="gradient-hero rounded-4 p-4 position-relative hero-clickable"
-        @click="startNextDay"
+        @click="startDay(heroDay?.id || 1)"
       >
-      <div v-if="!run.started" class="gradient-hero rounded-4 p-4 position-relative hero-clickable"
-        @click="startDay(openDayId)">
         <div class="text-center text-white">
           <h5 class="mb-1 title">Start Day {{ heroDay?.id || 1 }}</h5>
           <div class="sub">{{ heroDay?.title }}</div>
@@ -55,10 +57,12 @@
           </div>
         </div>
       </div>
-      </div>
 
-      <!-- 시작 후: 현재 진행 카드 -->
-      <div v-else class="card border-0 shadow-sm rounded-4 mb-3 gradient-hero text-white">
+      <!-- 진행 중: 현재 액티비티 카드 -->
+      <div
+        v-else-if="run.started && currentDay && currentActivity"
+        class="card border-0 shadow-sm rounded-4 mb-3 gradient-hero text-white"
+      >
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <div class="sub">
@@ -71,7 +75,11 @@
           </div>
 
           <!-- 클릭 시 완료 모달 열기 -->
-          <div class="run-panel rounded-4 px-3 py-3 mb-3" role="button" @click.stop="openCompleteForCurrent">
+          <div
+            class="run-panel rounded-4 px-3 py-3 mb-3"
+            role="button"
+            @click.stop="openCompleteForCurrent"
+          >
             <h6 class="mb-1 title">
               {{ currentActivity?.title || "—" }}
             </h6>
@@ -83,13 +91,24 @@
             </div>
           </div>
 
-          <div class="d-flex justify-content-between align-items-center mb-1 sub">
+          <div
+            class="d-flex justify-content-between align-items-center mb-1 sub"
+          >
             <span>Day {{ currentDay?.id }} Progress</span>
             <span>{{ Math.round(dayProgress) }}%</span>
           </div>
-          <div class="progress-hero" role="progressbar" :aria-valuenow="Math.round(dayProgress)" aria-valuemin="0"
-            aria-valuemax="100" @click.stop="openCompleteForCurrent">
-            <div class="progress-fill" :style="{ width: dayProgress + '%' }"></div>
+          <div
+            class="progress-hero"
+            role="progressbar"
+            :aria-valuenow="Math.round(dayProgress)"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            @click.stop="openCompleteForCurrent"
+          >
+            <div
+              class="progress-fill"
+              :style="{ width: dayProgress + '%' }"
+            ></div>
           </div>
         </div>
       </div>
@@ -118,13 +137,16 @@
 
     <!-- CTA -->
     <div class="p-4 pt-0 border-top bg-white">
-      <BaseButton v-if="!travelStore.$state.isTraveling" @click="next()" variant="primary" class="w-100 py-2">Next:
-        Select Accommodation</BaseButton>
-      <BaseButton v-else @click="endTrip()" variant="success" class="w-100 py-2">FORCE to End Trip</BaseButton>
-      <!-- <BaseButton v-if="!travelStore.$state.isTraveling" @click="next()" variant="primary" class="w-100 py-2">Next: Select Accommodation</BaseButton> -->
-      <BaseButton v-if="travelStore.$state.isTraveling" @click="endTrip()" variant="success" class="w-100 py-2">FORCE to End Trip</BaseButton>
-      <!-- <button v-else="travelStore.$state.isTraveling" class="btn btn-success w-100 rounded-3">Finish Journey</button> -->
-      <!-- <button v-else class="btn btn-success w-100 rounded-3" @click="next()">Next: Select Accommodation</button> -->
+      <BaseButton
+        v-if="!travelStore.$state.isTraveling"
+        @click="next()"
+        variant="primary"
+        class="w-100 py-2"
+        >Next: Select Accommodation</BaseButton
+      >
+      <BaseButton v-else @click="endTrip()" variant="success" class="w-100 py-2"
+        >FORCE to End Trip</BaseButton
+      >
     </div>
   </section>
 
@@ -817,20 +839,19 @@ const completeModal = ref({
   comment: "",
 });
 
-// ✅ 진행 중이면 run.dayId, 아니면 openDayId 기준
+// ✅ 실제 진행 중인 Day만 추적 (openDayId와 무관)
 const currentDay = computed(() => {
   if (run.value.started && run.value.dayId != null) {
     return days.value.find((d) => d.id === run.value.dayId) || null;
   }
-  return days.value.find((d) => d.id === openDayId.value) || null;
+  return null; // 진행 중이 아니면 null
 });
 
 const currentDayIndex = computed(() => {
-  const targetId =
-    run.value.started && run.value.dayId != null
-      ? run.value.dayId
-      : openDayId.value;
-  return days.value.findIndex((d) => d.id === targetId);
+  if (run.value.started && run.value.dayId != null) {
+    return days.value.findIndex((d) => d.id === run.value.dayId);
+  }
+  return -1; // 진행 중이 아니면 -1
 });
 
 const currentActivityIndex = computed(() => {
@@ -883,6 +904,50 @@ const currentQuickStats = computed(() => {
   };
 });
 
+// Hero Day (다음 시작할 Day)
+const heroDay = computed(() => {
+  // 다음 시작할 Day (미완료 액티비티가 있는 첫 번째 Day)
+  return (
+    days.value.find((d) => d.activities.some((a) => !a.completed)) ||
+    days.value[0]
+  );
+});
+
+// Day 시작 화면 표시 여부
+const showNextDayHero = computed(() => {
+  if (!travelStore.$state.isTraveling) return false;
+
+  // 아직 여행을 시작하지 않았거나
+  if (!run.value.started) return true;
+
+  // 진행 중인 Day의 모든 액티비티가 완료되었을 때
+  if (run.value.started && currentDay.value) {
+    const allCompleted = currentDay.value.activities.every((a) => a.completed);
+    return allCompleted;
+  }
+
+  return false;
+});
+
+// Cost calculation functions
+const dayEstimatedCost = (day) => {
+  if (!day?.activities) return 0;
+  return day.activities.reduce((sum, a) => sum + (a.cost || 0), 0);
+};
+
+const dayActualCost = (day) => {
+  if (!day?.activities) return 0;
+  return day.activities.reduce((sum, a) => {
+    const spent = typeof a.spent === "number" ? a.spent : 0;
+    return sum + spent;
+  }, 0);
+};
+
+const formatCurrency = (amount) => {
+  if (typeof amount !== "number") return "$0";
+  return `$${amount.toFixed(0)}`;
+};
+
 // Methods
 const goBack = () => {
   travelStore.decreaseStep();
@@ -901,9 +966,13 @@ const endTrip = () => {
 };
 
 /* 공통 유틸 */
-// ✅ 항상 한 개만 열리도록
+// ✅ 아코디언 토글: 같은 카드 클릭 시 닫기 가능
 const toggleDay = (id) => {
-  openDayId.value = id;
+  if (openDayId.value === id) {
+    openDayId.value = null; // 같은 카드 클릭 시 닫기
+  } else {
+    openDayId.value = id; // 다른 카드 열기
+  }
 };
 
 const getIconForType = (type) => {
@@ -1073,17 +1142,23 @@ const completeActivity = (dayIndex, actIndex, spendInput, comment) => {
   }
   act.completed = true;
 
-  // 해당 Day 모두 끝났으면(그리고 그 Day가 실제로 run 중인 Day일 때만)
+  // 해당 Day 모두 끝났으면 Hero 화면 표시 (다음 Day 시작 대기)
   const stillLeft = day.activities.some((a) => !a.completed);
   if (!stillLeft && run.value.dayId === day.id) {
-    run.value.started = false;
-    run.value.startedAt = null;
-    run.value.dayId = null;
-
-    // 다음 Day 카드 오픈
+    // ✅ Day 완료 시 Hero 화면이 표시되도록 상태만 초기화
     const nextDay = days.value.find((d) => d.id > day.id);
     if (nextDay) {
+      // 다음 Day 카드 열기 (Hero 화면 표시됨)
       openDayId.value = nextDay.id;
+      // run 상태 초기화 (Hero 화면에서 다시 시작 버튼 클릭 대기)
+      run.value.started = false;
+      run.value.startedAt = null;
+      run.value.dayId = null;
+    } else {
+      // 모든 Day 완료
+      run.value.started = false;
+      run.value.startedAt = null;
+      run.value.dayId = null;
     }
   }
 };
