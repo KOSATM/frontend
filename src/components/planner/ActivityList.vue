@@ -70,15 +70,6 @@ defineEmits(["openDetails", "toggleComplete", "openReplace"]);
 </script>
 
 <style scoped>
-/* === 폰트 === */
-.title {
-  font-family: "Siganpyo", sans-serif;
-}
-
-.sub {
-  font-family: "Kyobo2024", sans-serif;
-}
-
 /* === 전환 === */
 .collapse-enter-active,
 .collapse-leave-active {

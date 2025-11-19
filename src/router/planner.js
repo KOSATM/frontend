@@ -47,14 +47,14 @@ const planner = [
     component: Hotel,
     meta: { title: "호텔 추천" },
   },
-  
+
   {
     path: "/planner/payment",
     name: "payment",
     component: Payment,
     meta: { title: "결제" },
   },
-  
+
   {
     path: "/planner/booking-complete",
     name: "bookingComplete",

@@ -42,14 +42,18 @@
       <!-- 시작 전: Day 시작 화면 (클릭 가능) -->
       <div
         v-if="showNextDayHero"
-        class="gradient-hero rounded-4 p-4 position-relative hero-clickable"
+        class="gradient-hero hero-clickable rounded-4 p-4 position-relative"
+        :class="heroMeta.theme"
         @click="startDay(heroDay?.id || 1)"
       >
-        <div class="text-center text-white">
+        <div class="text-center hero-text">
           <h5 class="mb-1 title">Start Day {{ heroDay?.id || 1 }}</h5>
+
           <div class="sub">{{ heroDay?.title }}</div>
           <div class="sub small">{{ heroDay?.date }}</div>
+
           <hr class="hero-sep" />
+
           <div class="hero-stats">
             {{ heroDay?.activities.length || 0 }} activities
             <span class="dot">•</span>
@@ -62,6 +66,7 @@
       <div
         v-else-if="run.started && currentDay && currentActivity"
         class="card border-0 shadow-sm rounded-4 mb-3 gradient-hero text-white"
+        :class="heroMeta.theme"
       >
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
@@ -1256,6 +1261,30 @@ const deleteActivity = (dayIndex, actIndex) => {
   }
   acts.sort((a, b) => parseTime(a.time) - parseTime(b.time));
 };
+
+/* ------------------------------------------------------
+   HERO TIME THEME TABLE
+   시간대별 (테마 + 아이콘 + CSS 클래스)
+------------------------------------------------------ */
+const HERO_THEMES = [
+  { key: "morning", start: 5, end: 11, theme: "hero--morning" },
+  { key: "day", start: 11, end: 16, theme: "hero--day" },
+  { key: "sunset", start: 16, end: 20, theme: "hero--sunset" },
+  { key: "night", start: 20, end: 24, theme: "hero--night" },
+  { key: "late-night", start: 0, end: 5, theme: "hero--night" },
+];
+
+// const heroMeta = computed(() => {
+//   const hour = new Date().getHours();
+//   return (
+//     HERO_THEMES.find((t) => hour >= t.start && hour < t.end) || HERO_THEMES[0]
+//   );
+// });
+// 랜덤 테마 선택
+const heroMeta = computed(() => {
+  const randomIndex = Math.floor(Math.random() * 4); // 0-3 (4가지 테마)
+  return HERO_THEMES[randomIndex];
+});
 </script>
 
 <style scoped>
@@ -1268,22 +1297,93 @@ const deleteActivity = (dayIndex, actIndex) => {
   font-family: "Kyobo2024", sans-serif;
 }
 
-/* 히어로/진행 카드 */
+/* -------------------------------
+   기본 Hero 공통 스타일
+-------------------------------- */
 .gradient-hero {
-  color: #fff;
-  background: linear-gradient(135deg, #2c4672, #2e4b77 55%, #ffb25a);
-  background-color: #2c4672;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
-  border-radius: 1rem;
+  border-radius: 1.3rem;
+  transition: background 0.6s ease, box-shadow 0.5s ease, filter 0.4s ease;
 }
 
 .hero-clickable {
   cursor: pointer;
+  transition: transform 0.35s ease, box-shadow 0.5s ease, filter 0.4s ease;
 }
 
-.hero-clickable:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+.hero-text h5,
+.hero-text .sub,
+.hero-stats {
+  color: #fff !important; /* 기본적으로 글씨는 흰색 */
+}
+
+/* -------------------------------
+   시간대별 테마
+-------------------------------- */
+
+/* -------------------------------
+   MORNING — 차분한 오렌지
+-------------------------------- */
+.hero--morning {
+  background: linear-gradient(135deg, #ffd7a3 0%, #ffc48c 45%, #ffb07a 100%);
+  box-shadow: 0 4px 12px rgba(255, 180, 120, 0.22);
+}
+.hero--morning.hero-clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(255, 200, 160, 0.35),
+    0 0 40px rgba(255, 180, 140, 0.45);
+  filter: brightness(1.06);
+}
+
+/* -------------------------------
+   DAY — 파스텔 블루
+-------------------------------- */
+.hero--day {
+  background: linear-gradient(135deg, #88b8ff 0%, #6ea2ff 45%, #568bff 100%);
+  box-shadow: 0 4px 12px rgba(120, 150, 255, 0.22);
+}
+.hero--day.hero-clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(140, 170, 255, 0.35),
+    0 0 40px rgba(110, 150, 255, 0.45);
+  filter: brightness(1.07);
+}
+
+/* -------------------------------
+   SUNSET — 부드러운 주황
+-------------------------------- */
+.hero--sunset {
+  background: linear-gradient(135deg, #ffb36b 0%, #ff944d 45%, #ff7a3c 100%);
+  box-shadow: 0 4px 12px rgba(255, 140, 90, 0.22);
+}
+.hero--sunset.hero-clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(255, 140, 90, 0.35),
+    0 0 40px rgba(255, 110, 70, 0.45);
+  filter: brightness(1.07);
+}
+
+/* -------------------------------
+   NIGHT — 딥블루 + 텍스트 더 선명하게
+-------------------------------- */
+.hero--night {
+  background: linear-gradient(135deg, #1f2937 0%, #27324a 45%, #1c2535 100%);
+  box-shadow: 0 4px 12px rgba(40, 60, 90, 0.22);
+}
+
+/* Night에서 텍스트가 너무 안 보임 → Glow 효과 추가 */
+.hero--night .hero-text h5,
+.hero--night .hero-text .sub,
+.hero--night .hero-stats {
+  color: #ffffff !important;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.35);
+}
+
+/* Night Hover */
+.hero--night.hero-clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(120, 140, 255, 0.25),
+    0 0 40px rgba(90, 110, 255, 0.35);
+  filter: brightness(1.06);
 }
 
 .hero-sep {
