@@ -98,7 +98,7 @@ const goNext = () => {
   const selectedCaption = captionStyles.find(s => s.id === selectedStyle.value)
   reviewStore.setCaption(selectedCaption.text)
   reviewStore.nextStep()
-  router.push({ name: 'ReviewHashtagSelect' })
+  router.push({ name: 'HashtagSelect' })
 }
 </script>
 

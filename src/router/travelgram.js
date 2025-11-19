@@ -1,5 +1,5 @@
 // src/router/travelgram.js
-import TravelgramMain from '@/views/travelgram/TravelgramMain.vue'
+import Travelgram from '@/views/travelgram/index.vue'
 
 // 리뷰 작성 단계
 import CreateTravelReview from '@/views/travelgram/review/CreateTravelReview.vue'
@@ -13,8 +13,8 @@ import Complete from '@/views/travelgram/review/Complete.vue'
 const routes = [
   {
     path: '/travelgram',
-    name: 'TravelgramMain',
-    component: TravelgramMain,
+    name: 'Travelgram',
+    component: Travelgram,
   },
   {
     path: '/travelgram/:tripId/:tripTitle?',

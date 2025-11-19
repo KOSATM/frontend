@@ -127,7 +127,7 @@ const scrollToPhoto = () => {
 const goBack = () => router.back();
 const goNext = () => {
   reviewStore.setCaption(caption.value);
-  router.push({ name: 'ReviewInstagramPreview', params: { tripId: route.params.tripId } });
+  router.push({ name: 'InstagramPreview', params: { tripId: route.params.tripId } });
 };
 </script>
 

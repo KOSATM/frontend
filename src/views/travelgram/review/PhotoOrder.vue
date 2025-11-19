@@ -154,7 +154,7 @@ const nextStep = () => {
   reviewStore.nextStep()
 
   router.push({
-    name: 'ReviewCaptionSelect',
+    name: 'CaptionSelect',
     params: { tripId: route.params.tripId },
     query: { title: tripTitle }
   })

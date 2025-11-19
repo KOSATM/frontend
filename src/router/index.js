@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import SupporterMain from '@/views/supporter/SupporterMain.vue'
 import HotelRecommendation from '@/views/planner/hotel/HotelRecommendation.vue'
 import CreatePlan from '@/views/planner/CreatePlan.vue'
-import TravelgramMain from '@/views/travelgram/TravelgramMain.vue'
+import Travelgram from '@/views/travelgram/index.vue'
 import MyProfile from '@/views/mypage/MyProfile.vue'
 
 // 하위 모듈 라우트
@@ -16,7 +16,7 @@ import { useTravelStore } from '@/store/travelStore'
 
 const routes = [
   { path: '/', component: CreatePlan },
-  { path: '/travelgram', component: TravelgramMain },
+  { path: '/travelgram', component: Travelgram },
   { path: '/supporter', component: SupporterMain },
   { path: '/mypage', component: MyProfile },
   // { path: '/planner', component: PlannerCreate },
