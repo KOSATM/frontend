@@ -1,9 +1,9 @@
-import HotelRecommendation from "@/views/planner/hotel/HotelRecommendation.vue";
+import Hotel from "@/views/planner/hotel/Recommendation.vue";
 import CreatePlan from "@/views/planner/CreatePlan.vue";
 import EditPlan from "@/views/planner/edit/EditPlan.vue";
 import Chat from "@/views/planner/edit/Chat.vue";
 import PlanList from "@/views/planner/edit/PlanList.vue";
-import HotelPayment from "@/views/planner/hotel/HotelPayment.vue";
+import Payment from "@/views/planner/hotel/Payment.vue";
 import BookingComplete from "@/views/planner/BookingComplete.vue";
 
 const planner = [
@@ -44,14 +44,14 @@ const planner = [
   {
     path: "/planner/hotel",
     name: "hotel",
-    component: HotelRecommendation,
+    component: Hotel,
     meta: { title: "호텔 추천" },
   },
   
   {
     path: "/planner/payment",
     name: "payment",
-    component: HotelPayment,
+    component: Payment,
     meta: { title: "결제" },
   },
   

@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 // 기본/공통 페이지
 import SupporterMain from '@/views/supporter/SupporterMain.vue'
-import HotelRecommendation from '@/views/planner/hotel/HotelRecommendation.vue'
+import Hotel from '@/views/planner/hotel/Recommendation.vue'
 import CreatePlan from '@/views/planner/CreatePlan.vue'
 import Travelgram from '@/views/travelgram/index.vue'
 import MyProfile from '@/views/mypage/MyProfile.vue'
@@ -21,7 +21,7 @@ const routes = [
   { path: '/mypage', component: MyProfile },
   // { path: '/planner', component: PlannerCreate },
   // { path: '/planner/form', component: TravelPlanForm },
-  { path: '/planner/hotel', component: HotelRecommendation },
+  { path: '/planner/hotel', component: Hotel },
 
   // 하위 모듈 라우트 확장
   ...planner,
