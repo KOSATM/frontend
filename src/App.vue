@@ -2,11 +2,11 @@
   <div id="app">
     <AppHeader @toggle-sidebar="isSidebarOpen = true" />
     <SideBar :isOpen="isSidebarOpen" @close="isSidebarOpen = false" />
-    
+
     <div class="app-layout">
       <!-- 좌측 채팅 -->
       <ChatSidebar />
-      
+
       <!-- 우측 메인 컨텐츠 -->
       <div class="main-content">
         <main :class="mainClass">
@@ -85,11 +85,11 @@ main.container-split {
     flex-direction: column;
     padding-top: 60px; /* 모바일에서도 동일한 헤더 높이 */
   }
-  
+
   .main-content {
     min-height: auto;
   }
-  
+
   main {
     min-height: auto;
     padding: 1rem;
