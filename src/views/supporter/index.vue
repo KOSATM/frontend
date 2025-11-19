@@ -5,17 +5,19 @@
     <div class="row gx-4">
       <!-- LEFT COLUMN: checklist (top) + chat (bottom) -->
       <div class="col-md-4 d-flex flex-column gap-3">
+        <!-- Weather component -->
+        <WeatherCard />
+
         <div class="checklist-wrapper">
           <BaseSection title="Today's Checklist" icon="bi-journal-text" class="checklist-header">
             <template #subtitle>
-              <div class="text-end" @click.stop>
-                <div class="small text-muted">{{ completedCount }}/{{ checklist.length }}</div>
-                <div class="progress progress-sm" style="width:300px;">
+              <div class="subtitle-container" @click.stop>
+                <div class="progress progress-bar-row" style="height:8px; position:relative;">
                   <div class="progress-bar" role="progressbar" :class="isComplete ? 'bg-success' : 'bg-warning'"
                     :style="{ width: progressWidth }" :aria-valuenow="completionPercent" aria-valuemin="0"
                     aria-valuemax="100"></div>
+                  <div class="progress-percent-top small">{{ completionPercent }}%</div>
                 </div>
-                <div class="small text-muted mt-1">{{ completionLabel }}</div>
               </div>
             </template>
 
@@ -61,7 +63,7 @@
           </div>
 
           <div class="card map-container shadow-sm border-0 p-0 position-relative">
-            <div class="map-gradient position-relative rounded" style="height:380px; overflow:visible;">
+            <div class="map-gradient position-relative rounded" style="height:300px; overflow:visible;">
               <!-- image-history markers -->
               <template v-if="currentTab === 'image'">
                 <i v-for="(m, i) in imageHistoryMarkers" :key="'img-' + i"
@@ -85,7 +87,6 @@
         </div>
 
         <!-- BOTTOM RIGHT: detail area that switches content -->
-        <div class="card shadow-sm border-0 p-3 detail-area">
           <!-- Image UI (default) -->
           <div v-show="currentTab === 'image'">
             
@@ -95,7 +96,7 @@
               </template>
 
               <div class="image-ui-row d-flex gap-3 align-items-start">
-                <div class="how-works flex-fill">
+                <div class="col how-works">
                   <div class="small"><strong>How it works:</strong></div>
                   <ol class="small text-muted mb-0 ps-3">
                     <li>Upload your travel photo</li>
@@ -104,8 +105,8 @@
                   </ol>
                 </div>
 
-                <div class="right-controls d-flex flex-row align-items-center justify-content-end">
-                  <label class="upload-control me-3 d-block" @dragover.prevent @drop.prevent="onDrop" for="imageInput"
+                <div class="col upload-column d-flex">
+                  <label class="upload-control d-block" @dragover.prevent @drop.prevent="onDrop" for="imageInput"
                     @click.prevent="goToImageAINew" title="Open Image AI">
                     <div class="upload-gradient d-flex align-items-center justify-content-center h-100 w-100">
                       <div class="text-center text-white-50">
@@ -114,12 +115,14 @@
                         </template>
                         <template v-else>
                           <i class="bi bi-camera fs-1"></i>
-                          <div class="mt-2 label-text">Upload & Discover</div>
+                          <div class="mt-2 label-text">Upload</div>
                         </template>
                       </div>
                     </div>
-                  </label>
+                </label>
+                </div>
 
+                <div class="col history-column d-flex">
                   <label class="upload-control history-control d-block" @click.prevent="goToImageAIHistory" title="History">
                     <div class="upload-gradient d-flex align-items-center justify-content-center h-100 w-100">
                       <div class="text-center text-white-50">
@@ -162,7 +165,6 @@
                 </a>
               </div>
             </BaseSection>
-          </div>
         </div>
       </div>
     </div>
@@ -174,6 +176,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/components/common/PageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
+import WeatherCard from '@/components/supporter/WeatherCard.vue'
 
 
 const router = useRouter()
@@ -275,6 +278,55 @@ const goToImageAIHistory = () => {
 <style scoped>
 .planner-container {
   color: var(--foreground);
+}
+
+/* Weather card */
+.weather-strip { margin-bottom: 16px; }
+.weather-card { border-radius: 8px; overflow: hidden; }
+.weather-top { background: #2f79b8; padding: 18px; display: flex; align-items: center; gap: 12px; }
+.weather-top .weather-icon { width: 64px; height: 64px; display:flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.08); border-radius: 10px; }
+.weather-top .temp-value { font-size: 36px; font-weight: 700; }
+.weather-top .temp-unit { font-size: 18px; margin-bottom: 6px; }
+.weather-top .desc { font-size: 14px; opacity: 0.95; }
+.weather-top .location { font-size: 12px; opacity: 0.85; }
+
+.weather-bottom { display:flex; background:#fff; }
+.weather-bottom .stat { padding: 12px 16px; }
+.weather-bottom .stat .stat-icon { font-size:18px; color:#4b5563; }
+.weather-bottom .stat .stat-value { font-size:16px; margin-top:4px; }
+.weather-bottom .stat-label { font-size:12px; color:#6b7280; margin-top:4px; }
+.weather-bottom .border-start{ border-left:1px solid rgba(0,0,0,0.06); }
+.weather-bottom .border-end{ border-right:1px solid rgba(0,0,0,0.06); }
+
+.weather-strip .card { padding: 10px; }
+
+.weather-top {
+  background: #3A5797;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 16px;
+}
+
+.weather-icon {
+  /* icon size and positioning */
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.temp-value {
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-right: 4px;
+}
+
+.desc {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.location {
+  font-size: 0.8rem;
+  opacity: 0.8;
 }
 
 /* two-column spacing handled by Bootstrap .row/.col */
@@ -403,6 +455,17 @@ const goToImageAIHistory = () => {
   color: #fff;
 }
 
+/* history box: use site orange and ensure white icons/text */
+.image-ui-row .history-column .upload-gradient {
+  background: linear-gradient(180deg, #ff8c00 0%, #ff7a00 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+}
+.image-ui-row .history-column .upload-gradient .text-white-50,
+.image-ui-row .history-column .upload-gradient i,
+.image-ui-row .history-column .label-text {
+  color: #ffffff !important;
+}
+
 .preview-img {
   width: 100%;
   height: 100%;
@@ -418,8 +481,8 @@ const goToImageAIHistory = () => {
   transition: opacity .28s ease, transform .12s ease;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
+  gap: 0px; /* reduced gap to bring checkbox closer to text */
+  padding: 10px; /* slightly reduced padding for compactness */
 }
 
 .checklist-item.checked-item {
@@ -430,7 +493,7 @@ const goToImageAIHistory = () => {
 }
 
 .item-title {
-  font-size: 15px;
+  font-size: 13px;
   color: #222;
 }
 
@@ -440,9 +503,17 @@ const goToImageAIHistory = () => {
   text-decoration: line-through;
 }
 
+/* progress wrapper: bar + percent on the right */
+.progress-wrapper { display:flex; align-items:center; gap:8px; }
+.progress { flex: 1 1 auto; border-radius: 6px; overflow: hidden; }
+.progress-percent { font-weight:400; font-size:12px; color:#6b7280; min-width:40px; text-align:right; }
+.subtitle-container { position: relative; padding-top: 25px; }
+.progress-bar-row { width: 100%; border-radius: 6px; overflow: visible; }
+.progress-percent-top { position: absolute; top: -23px; right: 8px; font-weight:400; font-size:12px; color:#6b7280; z-index:2; pointer-events:none; background: rgba(255,255,255,0); padding:0 2px; }
+
 .circle-check {
-  width: 24px;
-  height: 24px;
+  width: 18px; /* smaller checkbox */
+  height: 18px;
   border-radius: 50%;
   border: 2px solid #d1d5db;
   background: #fff;
@@ -461,7 +532,7 @@ const goToImageAIHistory = () => {
   content: "✓";
   color: #fff;
   font-weight: 700;
-  font-size: 12px;
+  font-size: 10px; /* smaller check mark to match reduced size */
   line-height: 1;
 }
 
@@ -560,44 +631,38 @@ const goToImageAIHistory = () => {
 }
 
 /* Image UI layout tweaks */
-.image-ui-row { align-items: stretch; margin-top: 8px; min-height: 230px; height: 100%; }
-.image-ui-row .how-works { max-width: 56%; display: flex; flex-direction: column; justify-content: flex-end; margin-top: 25px;}
+@media (min-width: 0) {
+  .image-ui-row { align-items: stretch; margin-top: 8px; min-height: 140px; height: 100%; display: flex; }
+  /* explicit 2:1:1 ratio */
+  .image-ui-row .how-works { flex: 2 2 0; min-width: 0; display: flex; flex-direction: column; justify-content: flex-start; margin-top: 0; gap: 8px; padding-right: 12px; }
+  .image-ui-row .upload-column, .image-ui-row .history-column { flex: 1 1 0; min-width: 0; display:flex; align-items: stretch; justify-content: center; }
+  .image-ui-row .col { min-width: 0; }
 
-/* reduce text size to match Upload button label and tighten spacing */
-.image-ui-row .how-works .small strong { font-size: 1.1rem; }
-.image-ui-row .how-works ol { margin-top: 0.6rem; }
-.image-ui_row .how-works ol li { font-size: 0.9rem; line-height: 1.45; margin-bottom: 6px; }
+  /* make each column a column flex container so children can stretch to full height */
+  .image-ui-row .col { display: flex; flex-direction: column; }
 
-/* ensure list-group (restrooms) uses same min-height so both tabs match */
-.detail-area .list-group { min-height: 230px; }
+  /* ensure upload and history controls fill their column equally */
+  .image-ui-row .upload-column .upload-control,
+  .image-ui-row .history-column .upload-control {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+  }
 
-/* ensure the right side action boxes align their bottom with the left column */
-.right-controls { display: flex; gap: 18px; align-items: flex-end; }
-
-.upload-control {
-  width: 160px;
-  height: 160px;
-  border-radius: 16px;
-  overflow: hidden;
-  cursor: pointer;
-  background: transparent;
-}
-.upload-control .upload-gradient { height: 100%; border-radius: 16px; }
-.upload-control .preview-img { width: 100%; height: 100%; object-fit: cover; }
-.upload-control i { font-size: 2.2rem; opacity: 0.95; }
-.upload-control .label-text { font-size: 1rem; margin-top: 8px; color: rgba(255,255,255,0.95); }
-
-/* make sure smaller screens still behave */
-@media (max-width: 991px) {
-  .upload-control { width: 120px; height: 120px; }
-  .image-ui-row .how-works { max-width: 100%; }
-}
-
-/* ensure only history control uses the orange gradient */
-.history-control .upload-gradient {
-  background: #ff8c00 !important;
-}
-.history-control .label-text {
-  color: #ffffff !important;
+  .image-ui-row .upload-column .upload-gradient,
+  .image-ui-row .history-column .upload-gradient {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 140px; /* ensure both boxes have enough height and match */
+  }
 }
 </style>
