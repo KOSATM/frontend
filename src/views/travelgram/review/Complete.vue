@@ -45,7 +45,7 @@ import PageHeader from '@/components/common/PageHeader.vue'
 
 const router = useRouter()
 
-const goToTravelgram = () => router.push({ name: 'TravelgramMain' })
+const goToTravelgram = () => router.push({ name: 'Travelgram' })
 const goHome = () => router.push('/')
 </script>
 

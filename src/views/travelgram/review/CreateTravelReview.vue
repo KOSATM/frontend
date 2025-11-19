@@ -296,7 +296,7 @@ const nextStep = () => {
   reviewStore.setPhotos(uploadedImages.value)
   reviewStore.nextStep()
   router.push({
-    name: 'ReviewPhotoOrder',
+    name: 'PhotoOrder',
     params: { tripId },
     query: { title: tripTitle },
   })

@@ -117,7 +117,7 @@ const goNext = () => {
   // ✅ 선택된 해시태그를 store에 저장
   reviewStore.setHashtags(selectedTags.value)
   reviewStore.nextStep()
-  router.push({ name: 'ReviewEditPage' })
+  router.push({ name: 'EditPage' })
 }
 </script>
 

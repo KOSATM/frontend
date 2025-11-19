@@ -149,7 +149,7 @@ const nextPhoto = () => {
 }
 
 // 디버깅용 로그
-console.log('ReviewInstagramPreview mounted')
+console.log('InstagramPreview mounted')
 console.log('Store photos:', reviewStore.photos)
 console.log('Store photos length:', reviewStore.photos?.length)
 
@@ -176,7 +176,7 @@ const copyToClipboard = () => {
 const goBack = () => router.back()
 const publish = () => {
   alert('✅ Your post has been published to Instagram!')
-  router.push({ name: 'ReviewComplete' })
+  router.push({ name: 'Complete' })
 }
 </script>
 

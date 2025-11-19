@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 // 기본/공통 페이지
-import SupporterMain from '@/views/supporter/index.vue'
-import HotelRecommendation from '@/views/planner/hotel/HotelRecommendation.vue'
+import SupporterMain from '@/views/supporter/SupporterMain.vue'
+import Hotel from '@/views/planner/hotel/Recommendation.vue'
 import CreatePlan from '@/views/planner/CreatePlan.vue'
-import TravelgramMain from '@/views/travelgram/TravelgramMain.vue'
+import Travelgram from '@/views/travelgram/index.vue'
 import MyProfile from '@/views/mypage/MyProfile.vue'
 
 // 하위 모듈 라우트
@@ -16,12 +16,12 @@ import { useTravelStore } from '@/store/travelStore'
 
 const routes = [
   { path: '/', component: CreatePlan },
-  { path: '/travelgram', component: TravelgramMain },
+  { path: '/travelgram', component: Travelgram },
   { path: '/supporter', component: SupporterMain },
   { path: '/mypage', component: MyProfile },
   // { path: '/planner', component: PlannerCreate },
   // { path: '/planner/form', component: TravelPlanForm },
-  { path: '/planner/hotel', component: HotelRecommendation },
+  { path: '/planner/hotel', component: Hotel },
 
   // 하위 모듈 라우트 확장
   ...planner,
