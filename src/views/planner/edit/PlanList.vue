@@ -1274,12 +1274,12 @@ const HERO_THEMES = [
   { key: "late-night", start: 0, end: 5, theme: "hero--night" },
 ];
 
-// const heroMeta = computed(() => {
-//   const hour = new Date().getHours();
-//   return HERO_THEMES.find(t => hour >= t.start && hour < t.end) || HERO_THEMES[0];
-// });
-
-const heroMeta = computed(() => HERO_THEMES.find((t) => t.key === "day"));
+const heroMeta = computed(() => {
+  const hour = new Date().getHours();
+  return (
+    HERO_THEMES.find((t) => hour >= t.start && hour < t.end) || HERO_THEMES[0]
+  );
+});
 </script>
 
 <style scoped>
