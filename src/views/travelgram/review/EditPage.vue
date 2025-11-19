@@ -67,8 +67,8 @@
     </div>
 
     <!-- 🔶 모달 컴포넌트 -->
-    <CaptionEditorModal v-if="showCaptionEditor" @close="showCaptionEditor = false" />
-    <HashtagEditorModal v-if="showHashtagEditor" @close="showHashtagEditor = false" />
+    <CaptionEditor v-if="showCaptionEditor" @close="showCaptionEditor = false" />
+    <HashtagEditor v-if="showHashtagEditor" @close="showHashtagEditor = false" />
   </div>
 </template>
 
@@ -76,8 +76,8 @@
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useReviewStore } from "@/store/reviewStore";
-import CaptionEditorModal from '@/components/travelgram/modals/CaptionEditorModal.vue';
-import HashtagEditorModal from '@/components/travelgram/modals/HashtagEditorModal.vue';
+import CaptionEditor from '@/components/travelgram/modals/CaptionEditor.vue';
+import HashtagEditor from '@/components/travelgram/modals/HashtagEditor.vue';
 import StepHeader from "@/components/common/StepHeader.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
 
@@ -94,7 +94,6 @@ const hashtags = computed(() => reviewStore.hashtags || []);
 const currentPhotoIndex = ref(0);
 
 // 모달 상태
-const showPhotoEditor = ref(false);
 const showCaptionEditor = ref(false);
 const showHashtagEditor = ref(false);
 
