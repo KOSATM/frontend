@@ -5,53 +5,53 @@ const routes = [
     },
     {
         path: '/supporter',
-        name: 'SupporterMain',
-        component: () => import('@/views/supporter/SupporterMain.vue')
+        name: 'Supporter',
+        component: () => import('@/views/supporter/index.vue')
     },
     {
         path: '/supporter/image-ai/history',
-        name: 'SupporterImageAIHistory',
-        component: () => import('@/views/supporter/image-ai/SupporterImageAIHistory.vue')
+        name: 'History',
+        component: () => import('@/views/supporter/image-ai/History.vue')
     },
     {
         path: '/supporter/image-ai/new-search',
-        name: 'SupporterImageAINew',
-        component: () => import('@/views/supporter/image-ai/SupporterImageAINew.vue')
+        name: 'New',
+        component: () => import('@/views/supporter/image-ai/New.vue')
     },
     {
         path: '/supporter/image-ai/img-type',
-        name: 'SupporterImageAIType',
-        component: () => import('@/views/supporter/image-ai/SupporterImageAIType.vue')
+        name: 'ImageType',
+        component: () => import('@/views/supporter/image-ai/ImageType.vue')
     },
     {
         path: '/supporter/image-ai/recommend',
-        name: 'SupporterImageAIResults',
-        component: () => import('@/views/supporter/image-ai/SupporterImageAIRecommend.vue')
+        name: 'AiRecommend',
+        component: () => import('@/views/supporter/image-ai/AiRecommend.vue')
     },
     {
         path: '/supporter/image-ai/choice-plan',
-        name: 'SupporterImageAIChoicePlan',
-        component: () => import('@/views/supporter/image-ai/SupporterImageAIChoicePlan.vue')
+        name: 'ChoicePlan',
+        component: () => import('@/views/supporter/image-ai/ChoicePlan.vue')
     },
     {
         path: '/supporter/image-ai/select-plan',
-        name: 'SupporterImageAISelectPlan',
-        component: () => import('@/views/supporter/image-ai/SupporterImageAISelectPlan.vue')
+        name: 'SelectPlan',
+        component: () => import('@/views/supporter/image-ai/SelectPlan.vue')
     },
     {
         path: '/supporter/image-ai/complete-plan',
-        name: 'SupporterImageAICompletePlan',
-        component: () => import('@/views/supporter/image-ai/SupporterImageAICompletePlan.vue')
+        name: 'Complete',
+        component: () => import('@/views/supporter/image-ai/Complete.vue')
     },
     {
         path: '/supporter/restrooms',
-        name: 'SupporterRestrooms',
-        component: () => import('@/views/supporter/SupporterRestrooms.vue')
+        name: 'RestroomsMap',
+        component: () => import('@/views/supporter/RestroomsMap.vue')
     },
     {
         path: '/supporter/checklist',
-        name: 'SupporterChecklist',
-        component: () => import('@/views/supporter/SupporterChecklist.vue')
+        name: 'Checklist',
+        component: () => import('@/views/supporter/Checklist.vue')
     }
 ];
 

@@ -99,7 +99,7 @@
     <div v-if="toast.visible" class="action-toast">{{ toast.message }}</div>
 
     <div class="d-flex mt-3">
-      <router-link class="btn btn-link" :to="{ name: 'SupporterImageAINew' }">Back</router-link>
+      <router-link class="btn btn-link" :to="{ name: 'New' }">Back</router-link>
       <button class="btn btn-primary ms-auto" :disabled="!hasChanges" @click="done">
         Apply / Done
       </button>
@@ -319,7 +319,7 @@ const done = () => {
     return
   }
   // pass modified plans (could save via API)
-  router.push({ name: 'SupporterImageAICompletePlan', state: { plans: plansDays.value } })
+  router.push({ name: 'Complete', state: { plans: plansDays.value } })
 }
 </script>
 

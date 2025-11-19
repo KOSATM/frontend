@@ -3,7 +3,7 @@
 
   <BaseSection icon="bi-list-check" title="How would you like to use this?" subtitle="Completion Rate">
     <template #actions>
-      <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'SupporterImageAINew' }">New Search</router-link>
+      <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'New' }">New Search</router-link>
     </template>
 
     <div class="selected-place card p-3 mb-3 d-flex align-items-center">
@@ -68,7 +68,7 @@
   </BaseSection>
 
   <div class="d-flex mt-3">
-    <router-link class="btn btn-link" :to="{ name: 'SupporterImageAIResults' }">Back</router-link>
+    <router-link class="btn btn-link" :to="{ name: 'AiRecommend' }">Back</router-link>
     <button class="btn btn-primary ms-auto" :disabled="!selectedOption" @click="confirm">
       Confirm
     </button>
@@ -114,7 +114,7 @@ const confirm = () => {
   if (!selectedOption.value) return
 
   if (selectedOption.value === 'add' || selectedOption.value === 'replace') {
-    // attempt to go to EditPlan; if route name isn't registered, fall back to SupporterImageAIChoicePlan
+    // attempt to go to EditPlan; if route name isn't registered, fall back to ChoicePlan
     router.push({
       name: 'planedit',
       state: { item, mode: selectedOption.value },
@@ -122,7 +122,7 @@ const confirm = () => {
     }).catch(() => {
       // fallback for environments where EditPlan route is not defined
       router.push({
-        name: 'SupporterImageAIChoicePlan',
+        name: 'ChoicePlan',
         state: { item, mode: selectedOption.value },
         query: { mode: selectedOption.value, itemId: item?.id ?? '', itemName: item?.name ?? '' }
       }).catch(() => { /* swallow to avoid unhandled */ })
@@ -132,13 +132,13 @@ const confirm = () => {
 
   // Not Interested -> go back to New Search (no save)
   if (selectedOption.value === 'not_interested') {
-    router.push({ name: 'SupporterImageAINew' }).catch(() => { })
+    router.push({ name: 'New' }).catch(() => { })
     return
   }
 
   // save only -> go to history (placeholder)
   if (selectedOption.value === 'save') {
-    router.push({ name: 'SupporterImageAIHistory' })
+    router.push({ name: 'History' })
   }
 }
 </script>

@@ -69,22 +69,22 @@ const onDrop = (e) => {
 const goToType = () => {
   if (!imagePreview.value) return
   router.push({
-    name: 'SupporterImageAIType',
-    state: { preview: imagePreview.value, from: 'SupporterImageAINew' }
+    name: 'ImageType',
+    state: { preview: imagePreview.value, from: 'New' }
   })
 }
 
 // StepHeader의 back 클릭 처리:
 // - 여러 소스(route.state.from, route.query.from, document.referrer, history.state.back)를 확인하여
-//   이전이 SupporterImageAIHistory인 경우 해당 라우트로 이동
+//   이전이 History인 경우 해당 라우트로 이동
 // - 아니면 SupporterMain의 image-ai 섹션으로 이동 (query: { focus: 'image-ai' })
 const onHeaderBack = () => {
   try {
     const fromState = route?.state?.from
     const fromQuery = route?.query?.from
 
-    if (fromState === 'SupporterImageAIHistory' || fromQuery === 'SupporterImageAIHistory') {
-      router.push({ name: 'SupporterImageAIHistory' }).catch(() => { })
+    if (fromState === 'History' || fromQuery === 'History') {
+      router.push({ name: 'History' }).catch(() => { })
       return
     }
 
@@ -93,8 +93,8 @@ const onHeaderBack = () => {
       try {
         const refPath = new URL(document.referrer, window.location.origin).pathname
         const resolved = router.resolve(refPath)
-        if (resolved && resolved.name === 'SupporterImageAIHistory') {
-          router.push({ name: 'SupporterImageAIHistory' }).catch(() => { })
+        if (resolved && resolved.name === 'History') {
+          router.push({ name: 'History' }).catch(() => { })
           return
         }
       } catch (e) {
@@ -107,8 +107,8 @@ const onHeaderBack = () => {
       const hstate = window.history && window.history.state
       if (hstate && hstate.back) {
         const resolvedBack = router.resolve(hstate.back)
-        if (resolvedBack && resolvedBack.name === 'SupporterImageAIHistory') {
-          router.push({ name: 'SupporterImageAIHistory' }).catch(() => { })
+        if (resolvedBack && resolvedBack.name === 'History') {
+          router.push({ name: 'History' }).catch(() => { })
           return
         }
       }

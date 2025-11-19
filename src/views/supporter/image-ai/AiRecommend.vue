@@ -1,10 +1,10 @@
 <template>
   <StepHeader title="Image-based Travel AI" subtitle="AI Analysis Complete" step="3/4"
-    @back="router.push({ name: 'SupporterImageAIType' })" />
+    @back="router.push({ name: 'ImageType' })" />
   <BaseSection icon="bi bi-images" title="AI Analysis Complete"
     :subtitle="`Found ${results.length} similar destinations`">
     <template #actions>
-      <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'SupporterImageAINew' }">New
+      <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'New' }">New
         Search</router-link>
     </template>
 
@@ -47,7 +47,7 @@
   </BaseSection>
 
     <div class="d-flex mt-2">
-      <router-link class="btn btn-link" :to="{ name: 'SupporterImageAIType' }">Back</router-link>
+      <router-link class="btn btn-link" :to="{ name: 'ImageType' }">Back</router-link>
       <button class="btn btn-primary ms-auto" :disabled="selectedIndex === null" @click="addPlan">
         Add Plan
       </button>
@@ -99,7 +99,7 @@ const addPlan = () => {
   if (selectedIndex.value === null) return
   const item = results[selectedIndex.value]
   router.push({
-    name: 'SupporterImageAISelectPlan',
+    name: 'SelectPlan',
     state: { item }
   })
 }

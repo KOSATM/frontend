@@ -1,11 +1,11 @@
-// filepath: c:\kosa-course\userProject\ATM\projects\frontend\src\views\supporter\image-ai\SupporterImageAIHistory.vue
+// filepath: c:\kosa-course\userProject\ATM\projects\frontend\src\views\supporter\image-ai\History.vue
 
 <template>
   <BackButtonPageHeader title="Image-based Travel AI" subtitle="Find destinations from your photos" />
 
   <BaseSection icon="bi-clock-history" title="AI Recommendation History">
     <template #actions>
-      <router-link class="btn btn-sm btn-primary" :to="{ name: 'SupporterImageAINew' }">+ New Search</router-link>
+      <router-link class="btn btn-sm btn-primary" :to="{ name: 'New' }">+ New Search</router-link>
     </template>
     <div class="history-list">
       <div v-for="(h, i) in history" :key="i" class="history-item card p-3 mb-3">
@@ -43,6 +43,7 @@
 <script setup>
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue';
 import BaseSection from '@/components/common/BaseSection.vue';
+
 const history = [
   {
     date: '2025.11.06',

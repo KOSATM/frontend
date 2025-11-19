@@ -250,11 +250,11 @@ const onDrop = (e) => {
 
 // quick route helper (kept for compatibility)
 const goToImageAI = () => {
-  router.push({ name: 'SupporterImageAIHistory' }).catch(() => { })
+  router.push({ name: 'History' }).catch(() => { })
 }
 // navigator to open new Image AI page
 const goToImageAINew = () => {
-  router.push({ name: 'SupporterImageAINew' })
+  router.push({ name: 'New' })
     .then(() => {
       // ensure we are at page top after navigation
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
@@ -263,7 +263,7 @@ const goToImageAINew = () => {
 }
 
 const goToImageAIHistory = () => {
-  router.push({ name: 'SupporterImageAIHistory' })
+  router.push({ name: 'History' })
     .then(() => {
       // ensure we are at page top after navigation
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })

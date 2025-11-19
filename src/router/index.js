@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 // 기본/공통 페이지
-import SupporterMain from '@/views/supporter/SupporterMain.vue'
+import SupporterMain from '@/views/supporter/index.vue'
 import HotelRecommendation from '@/views/planner/hotel/HotelRecommendation.vue'
 import CreatePlan from '@/views/planner/CreatePlan.vue'
 import TravelgramMain from '@/views/travelgram/TravelgramMain.vue'

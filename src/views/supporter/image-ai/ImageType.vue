@@ -1,7 +1,7 @@
 <template>
 
   <StepHeader title="Image-based Travel AI" subtitle="Find destinations from your photos" step="2/4"
-    @back="router.push({ name: 'SupporterImageAINew' })" />
+    @back="router.push({ name: 'New' })" />
 
   <BaseSection icon="bi-camera" title="What type of photo is this?">
     <div class="preview-wrap mb-3" v-if="preview">
@@ -47,7 +47,7 @@
   </BaseSection>
 
     <div class="d-flex mt-2">
-      <router-link class="btn btn-link" :to="{ name: 'SupporterImageAINew' }">Back</router-link>
+      <router-link class="btn btn-link" :to="{ name: 'New' }">Back</router-link>
       <button class="btn btn-primary ms-auto" :disabled="!selectedType" @click="goNext">
         Next
       </button>
@@ -78,7 +78,7 @@ const setType = (type) => {
 const goNext = () => {
   if (!selectedType.value) return
   router.push({
-    name: 'SupporterImageAIResults',
+    name: 'AiRecommend',
     state: { preview: preview.value, type: selectedType.value }
   })
 }

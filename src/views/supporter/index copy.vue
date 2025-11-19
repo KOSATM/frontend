@@ -100,7 +100,7 @@ import BaseSection from '@/components/common/BaseSection.vue';
 
 const router = useRouter();
 const goToImageAI = () => {
-  router.push({ name: 'SupporterImageAIHistory' });
+  router.push({ name: 'History' });
 };
 
 // checklist data
