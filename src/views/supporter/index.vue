@@ -2,40 +2,9 @@
   <div class="planner-container py-3 px-3">
     <PageHeader title="Supporter" subtitle="Real-time travel support and updates" icon="bi-chat-dots" />
 
-    <!-- MAP wrapper: full width at top -->
-    <div class="map-wrapper-full mb-4">
-      <div class="map-top-row d-flex align-items-start justify-content-between mb-2">
-        <nav class="browser-tabs" role="tablist" aria-label="Map tabs">
-          <button role="tab" :aria-selected="currentTab === 'image'"
-            :class="['tab-btn', { active: currentTab === 'image' }]" @click="currentTab = 'image'">
-            Image-based Travel AI
-          </button>
-          <button role="tab" :aria-selected="currentTab === 'restroom'"
-            :class="['tab-btn', { active: currentTab === 'restroom' }]" @click="currentTab = 'restroom'">
-            Restrooms
-          </button>
-        </nav>
-
-        <div class="map-file-label small text-muted" role="button" title="Files">
-          <i class="bi bi-folder2-open-fill"></i>
-        </div>
-      </div>
-
-      <div class="card map-container shadow-sm border-0 p-0 position-relative">
-        <div class="map-gradient position-relative rounded" style="height:600px; overflow:hidden;">
-          <iframe
-            :src="mapSrc"
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0; border-radius: 12px;"
-          ></iframe>
-        </div>
-      </div>
-    </div>
-
     <div class="row gx-4">
-      <!-- LEFT COLUMN: weather + checklist -->
-      <div class="col-md-6 d-flex flex-column gap-3">
+      <!-- LEFT COLUMN: checklist (top) + chat (bottom) -->
+      <div class="col-md-4 d-flex flex-column gap-3">
         <!-- Weather component -->
         <WeatherCard />
 
@@ -71,11 +40,56 @@
         </div>
       </div>
 
-      <!-- RIGHT COLUMN: detail area that switches content -->
-      <div class="col-md-6 d-flex flex-column gap-3">
-        <!-- Image UI (default) -->
-        <div v-show="currentTab === 'image'">
+      <!-- RIGHT COLUMN: map (top) + detail area (bottom) -->
+      <div class="col-md-8 d-flex flex-column gap-3">
+        <!-- MAP wrapper: tabs + file label sit above the card to avoid overlap -->
+        <div class="map-wrapper">
+          <div class="map-top-row d-flex align-items-start justify-content-between mb-2">
+            <nav class="browser-tabs" role="tablist" aria-label="Map tabs">
+              <button role="tab" :aria-selected="currentTab === 'image'"
+                :class="['tab-btn', { active: currentTab === 'image' }]" @click="currentTab = 'image'">
+                Image-based Travel AI
+              </button>
+              <button role="tab" :aria-selected="currentTab === 'restroom'"
+                :class="['tab-btn', { active: currentTab === 'restroom' }]" @click="currentTab = 'restroom'">
+                Restrooms
+              </button>
+            </nav>
 
+            <!-- file label moved into top row so it's not positioned over map content -->
+            <div class="map-file-label small text-muted" role="button" title="Files">
+              <i class="bi bi-folder2-open-fill"></i>
+            </div>
+          </div>
+
+          <div class="card map-container shadow-sm border-0 p-0 position-relative">
+            <div class="map-gradient position-relative rounded" style="height:300px; overflow:visible;">
+              <!-- image-history markers -->
+              <template v-if="currentTab === 'image'">
+                <i v-for="(m, i) in imageHistoryMarkers" :key="'img-' + i"
+                  class="bi bi-camera-fill map-marker marker-image" :style="{ left: m.left, top: m.top }"
+                  :title="m.title"></i>
+              </template>
+
+              <!-- restroom markers -->
+              <template v-if="currentTab === 'restroom'">
+                <i v-for="(m, i) in mapMarkers" :key="'rest-' + i"
+                  class="bi bi-people-fill restroom-icon map-marker marker-restroom"
+                  :style="{ left: m.left, top: m.top }" title="Restroom"></i>
+              </template>
+
+              <div class="gps-center d-flex flex-column align-items-center justify-content-center">
+                <i class="bi bi-send fs-1 text-primary"></i>
+                <div class="text-primary small mt-1">GPS Loading...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTTOM RIGHT: detail area that switches content -->
+          <!-- Image UI (default) -->
+          <div v-show="currentTab === 'image'">
+            
             <BaseSection title="Image-based Travel AI" subtitle="Upload photo → Get recommendations">
               <template #icon>
                 <div class="ai-badge"><i class="bi bi-camera-fill"></i></div>
@@ -188,23 +202,8 @@ const sortedChecklist = computed(() => {
   return [...undone, ...done]
 })
 
-// RIGHT: map with Naver Maps embed
+// RIGHT: map markers + tabs
 const currentTab = ref('image') // 'image' or 'restroom'
-
-// Naver Maps embed URL based on current tab
-const currentLocation = ref('서울')
-const mapSrc = computed(() => {
-  let searchQuery = currentLocation.value
-  
-  // restroom 탭일 때는 주변 화장실 검색
-  if (currentTab.value === 'restroom') {
-    searchQuery = `${currentLocation.value} 주변 화장실`
-  }
-  
-  const q = encodeURIComponent(searchQuery)
-  // Naver Maps embed URL with search query
-  return `https://map.naver.com/v5/search/${q}?c=15,0,0,0,dh`
-})
 
 // sample image-history markers (these would normally come from real history data)
 const imageHistoryMarkers = ref([

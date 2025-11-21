@@ -1,7 +1,7 @@
 <template>
   <nav ref="navbar" class="navbar navbar-fms fixed-top" >
     <div class="container-fluid d-flex justify-content-between align-items-center px-3">
-      <!-- 좌측: 로고 -->
+      <!-- 로고 (좌측) -->
       <router-link to="/" class="navbar-brand d-flex align-items-center text-decoration-none">
         <img
           src="@/assets/img/logo-bg-rm.png"
@@ -10,57 +10,24 @@
         />
       </router-link>
 
-      <!-- 우측: 프로필 이미지 + 햄버거 버튼 -->
-      <div class="d-flex align-items-center gap-2">
-        <!-- OAuth 프로필 이미지 -->
-        <button
-          class="btn profile-btn border-0 p-0"
-          type="button"
-          @click="goToTravelgram"
-          title="Go to Travelgram"
-        >
-          <img
-            :src="profileImage"
-            alt="Profile"
-            class="profile-img"
-          />
-        </button>
-
-        <!-- 햄버거 버튼 -->
-        <button
-          class="btn text-white fs-4 border-0 p-2"
-          type="button"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#sidebar"
-          aria-controls="sidebar"
-        >
-          <i class="bi bi-list"></i>
-        </button>
-      </div>
+      <!-- 햄버거 버튼 (우측) -->
+      <button
+        class="btn text-white fs-4 border-0 p-2"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#sidebar"
+        aria-controls="sidebar"
+      >
+        <i class="bi bi-list"></i>
+      </button>
     </div>
   </nav>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 const navbar = ref(null)
-const router = useRouter()
-const store = useStore()
-
-// OAuth 프로필 이미지 (기본값: 사용자 아이콘)
-const profileImage = computed(() => {
-  const stored = store?.getters?.getProfileImage
-  if (stored) return stored
-  return new URL('../assets/img/profile-logo.png', import.meta.url).href
-})
-
-// Travelgram 페이지로 이동
-const goToTravelgram = () => {
-  router.push('/travelgram')
-}
 
 const handleScroll = () => {
   if (window.scrollY > 20) navbar.value?.classList.add('scrolled')
@@ -88,32 +55,6 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
 .logo-img {
   height: 40px;
   object-fit: contain;
-}
-
-.profile-img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.profile-img:hover {
-  transform: scale(1.1);
-}
-
-.profile-btn {
-  background: none !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 !important;
-  border-radius: 50%;
-}
-
-.profile-btn:hover {
-  background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 .btn {
