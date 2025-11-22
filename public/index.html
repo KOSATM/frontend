@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
+
+    <!-- Naver Client ID (환경 변수 또는 기본값) -->
+    <script>
+      window.NAVER_CLIENT_ID = '<%= process.env.VUE_APP_NAVER_CLIENT_ID %>'
+    </script>
   </head>
   <body>
     <noscript>

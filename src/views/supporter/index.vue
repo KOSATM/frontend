@@ -26,10 +26,7 @@
       </div>
 
       <div class="card map-container shadow-sm border-0 p-0 position-relative">
-        <div class="map-gradient position-relative rounded" style="height:600px; overflow:hidden;">
-          <iframe :src="mapSrc" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-            style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0; border-radius: 12px;"></iframe>
-        </div>
+        <NaverMap />
       </div>
     </div>
 
@@ -121,48 +118,17 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/components/common/PageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import WeatherCard from '@/components/supporter/WeatherCard.vue'
-
-
+import NaverMap from '@/components/supporter/NaverMap.vue'
 
 const router = useRouter()
 
-// RIGHT: map with Naver Maps embed
-const currentTab = ref('image') // 'image' or 'restroom'
-
-// Naver Maps embed URL based on current tab
-const currentLocation = ref('서울')
-const mapSrc = computed(() => {
-  let searchQuery = currentLocation.value
-
-  // restroom 탭일 때는 주변 화장실 검색
-  if (currentTab.value === 'restroom') {
-    searchQuery = `${currentLocation.value} 주변 화장실`
-  }
-
-  const q = encodeURIComponent(searchQuery)
-  // Naver Maps embed URL with search query
-  return `https://map.naver.com/v5/search/${q}?c=15,0,0,0,dh`
-})
-
-// sample image-history markers (these would normally come from real history data)
-const imageHistoryMarkers = ref([
-  { left: '18%', top: '28%', title: 'Photo: Han River' },
-  { left: '40%', top: '62%', title: 'Photo: Old Town' },
-  { left: '72%', top: '33%', title: 'Photo: Market' },
-])
-
-// restroom markers (existing)
-const mapMarkers = ref([
-  { left: '20%', top: '25%' },
-  { left: '35%', top: '60%' },
-  { left: '70%', top: '30%' },
-  { left: '85%', top: '55%' },
-])
+// Map-related state
+const currentTab = ref('image')
 
 const restrooms = ref([
   { name: 'Gangnam Station Public Restroom', distance: '80m away', hours: '24/7' },
@@ -179,8 +145,6 @@ const onFileChange = (e) => {
   const reader = new FileReader()
   reader.onload = (ev) => {
     imagePreview.value = ev.target.result
-    // optionally push a new history marker (demo)
-    imageHistoryMarkers.value.push({ left: '60%', top: '45%', title: 'New Photo' })
   }
   reader.readAsDataURL(f)
 }
@@ -190,7 +154,6 @@ const onDrop = (e) => {
   const reader = new FileReader()
   reader.onload = (ev) => {
     imagePreview.value = ev.target.result
-    imageHistoryMarkers.value.push({ left: '60%', top: '45%', title: 'Dropped Photo' })
   }
   reader.readAsDataURL(f)
 }
