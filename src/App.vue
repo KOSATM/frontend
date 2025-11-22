@@ -16,10 +16,12 @@
         </main>
       </div>
 
-      <!-- 우측 채팅 2 -->
+      <!-- 우측 컨텐츠 -->
       <div class="sidebar-right">
         <WeatherCard/>
-        <Checklist/>
+        <div class="checklist-container">
+          <Checklist/>
+        </div>
       </div>
     </div>
     <AppFooter />
@@ -85,6 +87,13 @@ const mainClass = computed(() => {
   background: #fff;
   border-left: 1px solid #e0e0e0;
   overflow-y: auto;
+  padding: 1.5rem 0.75rem;
+}
+
+/* Checklist 컨테이너 - 가운데 정렬 및 크기 조정 */
+.checklist-container {
+  max-width: 90%;
+  margin: 1.5rem auto 0;
 }
 
 /* 메인 컨텐츠 */

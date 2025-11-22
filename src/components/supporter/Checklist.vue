@@ -1,15 +1,17 @@
 <template>
   <BaseSection title="Today's Checklist" icon="bi-journal-text" bgColor="#fff9d6">
-    <template #subtitle>
-      <div class="subtitle-container" @click.stop>
-        <div class="progress progress-bar-row" style="height:8px; position:relative;">
-          <div class="progress-bar" role="progressbar" :class="isComplete ? 'bg-success' : 'bg-warning'"
-            :style="{ width: progressWidth }" :aria-valuenow="completionPercent" aria-valuemin="0"
-            aria-valuemax="100"></div>
-          <div class="progress-percent-top small">{{ completionPercent }}%</div>
+
+    <div class="progress-wrapper mb-3">
+          <div class="progress progress-bar-row m-3" :class="{ 'progress-complete': isComplete }">
+            <div class="progress-bar" role="progressbar" :class="isComplete ? 'bg-success' : 'bg-warning'"
+              :style="{ width: progressWidth }" :aria-valuenow="completionPercent" aria-valuemin="0"
+              aria-valuemax="100"></div>
+            <div class="progress-stats">
+              <div class="text-muted small mb-2">{{ completedCount }}/{{ checklist.length }}</div>
+              <div class="text-muted small mt-2 mb-1">{{ completionLabel }}</div>
+            </div>
+          </div>
         </div>
-      </div>
-    </template>
 
     <ul class="list-unstyled mb-0" @click.stop>
       <li v-for="(item, idx) in sortedChecklist" :key="idx"
@@ -52,6 +54,7 @@ const completionPercent = computed(() =>
 )
 const isComplete = computed(() => completedCount.value === checklist.value.length)
 const progressWidth = computed(() => (isComplete.value ? '100%' : `${completionPercent.value}%`))
+const completionLabel = computed(() => (isComplete.value ? '100% (complete)' : `${completionPercent.value}%`))
 const sortedChecklist = computed(() => {
   const undone = checklist.value.filter(item => !item.done)
   const done = checklist.value.filter(item => item.done)
@@ -117,25 +120,43 @@ const sortedChecklist = computed(() => {
 
 .subtitle-container {
   position: relative;
-  padding-top: 25px;
+  padding-top: 0;
+}
+
+.progress-wrapper {
+  display: flex;
+  width: 100%;
 }
 
 .progress-bar-row {
+  display: flex;
+  align-items: center;
   width: 100%;
+  height: 12px;
   border-radius: 6px;
   overflow: visible;
+  position: relative;
+  background-color: #e9ecef;
 }
 
-.progress-percent-top {
+.progress-bar-row .progress-bar {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.progress-complete {
+  background-color: #d1f5e0 !important;
+}
+
+.progress-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
   position: absolute;
-  top: -23px;
-  right: 8px;
-  font-weight: 400;
-  font-size: 12px;
-  color: #6b7280;
-  z-index: 2;
-  pointer-events: none;
-  background: rgba(255, 255, 255, 0);
-  padding: 0 2px;
+  right: 0;
+  text-align: right;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  line-height: 1.2;
 }
 </style>
