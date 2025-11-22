@@ -1,6 +1,6 @@
 <!-- 컴포넌트의 UI -->
 <template>
-    <div class="upload-section mb-4">
+    <div class="upload-section mb-4" :style="{ backgroundColor: bgColor }">
     <div class="upload-header d-flex justify-content-between align-items-center mb-3">
       <!-- 🔹 왼쪽: 아이콘 + 제목/부제목 -->
       <div class="upload-header-text">
@@ -32,7 +32,8 @@
 defineProps({
     title: String,
     subtitle: String,
-    icon: String
+    icon: String,
+    bgColor: { type: String, default: '#f9fafc' }
 })
 </script>
 

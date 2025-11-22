@@ -1,5 +1,5 @@
 <template>
-  <BaseSection title="Today's Checklist" icon="bi-journal-text" bgColor="#fff9d6">
+  <BaseSection title="Today's Checklist" icon="bi-journal-text" class="checklist-header">
     <template #subtitle>
       <div class="subtitle-container" @click.stop>
         <div class="progress progress-bar-row" style="height:8px; position:relative;">
@@ -60,7 +60,6 @@ const sortedChecklist = computed(() => {
 </script>
 
 <style scoped>
-
 .checklist-item {
   background: #fff;
   border: 1px solid #ececec;

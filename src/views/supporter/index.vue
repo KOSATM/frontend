@@ -3,7 +3,7 @@
     <PageHeader title="Supporter" subtitle="Real-time travel support and updates" icon="bi-chat-dots" />
     <!-- Weather component -->
     <div class="m-4">
-      <WeatherCard />
+      <!-- <WeatherCard /> -->
     </div>
 
     <!-- MAP wrapper: full width at top -->
@@ -126,7 +126,7 @@ import { useRouter } from 'vue-router'
 import PageHeader from '@/components/common/PageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import WeatherCard from '@/components/supporter/WeatherCard.vue'
-import Checklist from '@/components/supporter/Checklist.vue'
+
 
 
 const router = useRouter()
