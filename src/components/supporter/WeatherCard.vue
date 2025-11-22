@@ -10,24 +10,6 @@
         <div class="wc-loc">Seoul, KR</div>
       </div>
     </div>
-
-    <div class="wc-bottom">
-      <div class="wc-stat">
-        <div class="wc-stat-icon"><i class="bi bi-cloud-drizzle"></i></div>
-        <div class="wc-stat-value">{{ weather.precip }} mm</div>
-        <div class="wc-stat-label">Precip</div>
-      </div>
-      <div class="wc-stat wc-divider">
-        <div class="wc-stat-icon"><i class="bi bi-droplet"></i></div>
-        <div class="wc-stat-value">{{ weather.humidity }}%</div>
-        <div class="wc-stat-label">Humidity</div>
-      </div>
-      <div class="wc-stat">
-        <div class="wc-stat-icon"><i class="bi bi-wind"></i></div>
-        <div class="wc-stat-value">{{ weather.windspeed }} m/s</div>
-        <div class="wc-stat-label">Wind</div>
-      </div>
-    </div>
   </div>
 </template>
 

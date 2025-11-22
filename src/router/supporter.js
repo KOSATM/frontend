@@ -51,7 +51,7 @@ const routes = [
     {
         path: '/supporter/checklist',
         name: 'Checklist',
-        component: () => import('@/views/supporter/Checklist.vue')
+        component: () => import('@/components/supporter/Checklist.vue')
     }
 ];
 
