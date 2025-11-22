@@ -16,8 +16,8 @@
         </main>
       </div>
 
-      <!-- 우측 컨텐츠 -->
-      <div class="sidebar-right">
+      <!-- 우측 컨텐츠 - supporter 페이지에서만 표시 -->
+      <div v-if="route.path.includes('supporter')" class="sidebar-right">
         <WeatherCard/>
         <div class="checklist-container">
           <Checklist/>
