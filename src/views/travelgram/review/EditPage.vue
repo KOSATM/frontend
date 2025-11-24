@@ -41,7 +41,6 @@
       <div class="caption-section mt-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <h6>Caption</h6>
-          <button class="change-btn" @click="showCaptionEditor = true">Change</button>
         </div>
         <textarea v-model="caption" rows="4" class="caption-box" maxlength="2200"></textarea>
         <p class="char-count">{{ caption.length }} characters</p>
@@ -51,7 +50,6 @@
       <div class="hashtag-section mt-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <h6>Hashtags</h6>
-          <button class="change-btn" @click="showHashtagEditor = true">Change</button>
         </div>
         <div class="hashtag-box">
           <span v-for="tag in hashtags" :key="tag" class="tag">{{ tag }}</span>
@@ -65,10 +63,6 @@
       <button class="btn-back" @click="goBack">Back</button>
       <button class="btn-next" @click="goNext">Next Step</button>
     </div>
-
-    <!-- 🔶 모달 컴포넌트 -->
-    <CaptionEditor v-if="showCaptionEditor" @close="showCaptionEditor = false" />
-    <HashtagEditor v-if="showHashtagEditor" @close="showHashtagEditor = false" />
   </div>
 </template>
 
@@ -76,8 +70,6 @@
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useReviewStore } from "@/store/reviewStore";
-import CaptionEditor from '@/components/travelgram/modals/CaptionEditor.vue';
-import HashtagEditor from '@/components/travelgram/modals/HashtagEditor.vue';
 import StepHeader from "@/components/common/StepHeader.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
 
@@ -92,10 +84,6 @@ const hashtags = computed(() => reviewStore.hashtags || []);
 
 // ✅ 현재 사진 인덱스
 const currentPhotoIndex = ref(0);
-
-// 모달 상태
-const showCaptionEditor = ref(false);
-const showHashtagEditor = ref(false);
 
 // 반응형 저장
 watch(caption, (val) => reviewStore.caption = val);
