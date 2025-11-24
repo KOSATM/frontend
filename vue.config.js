@@ -13,4 +13,14 @@ module.exports = defineConfig({
       .set('~bootstrap', path.resolve(__dirname, 'node_modules/bootstrap'))
       .set('@', path.resolve(__dirname, 'src'))
   },
+
+    css: {
+    loaderOptions: {
+      scss: {
+        additionalData: `
+          @import "@/assets/styles/theme.scss";
+        `,
+      },
+    },
+  },
 })
