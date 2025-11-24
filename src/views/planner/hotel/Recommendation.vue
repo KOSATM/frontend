@@ -365,7 +365,7 @@ const goBack = () => {
 }
 
 .budget-details {
-  border: 1px solid rgba($primary, 0.2);
+  border: 1px solid rgba(var(--bs-primary-rgb), 0.2);
 }
 
 .badge {
