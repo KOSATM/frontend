@@ -26,7 +26,22 @@
       </div>
 
       <div class="card map-container shadow-sm border-0 p-0 position-relative">
-        <NaverMap />
+        <!-- Image 탭 지도 -->
+        <NaverMap
+          v-if="currentTab === 'image'"
+          :markers="historyMarkers"
+          :initialCenter="{ lat: 37.45, lng: 127.05 }"
+          :initialZoom="11"
+          :fitBoundsMode="true"
+        />
+        <!-- Restroom 탭 지도 -->
+        <NaverMap 
+          v-if="currentTab === 'restroom'"
+          :markers="restroomMarkers"
+          :initialCenter="{ lat: 37.365, lng: 127.105 }"
+          :initialZoom="15"
+          :fitBoundsMode="false"
+        />
       </div>
     </div>
 
@@ -112,7 +127,6 @@
           </div>
         </BaseSection>
       </div>
-
     </div>
   </div>
 </template>
@@ -129,6 +143,21 @@ const router = useRouter()
 
 // Map-related state
 const currentTab = ref('image')
+
+// 히스토리 마커 (Image 탭)
+const historyMarkers = ref([
+  { lat: 37.3595704, lng: 127.105399, title: '강남역' },
+  { lat: 37.4979, lng: 127.0276, title: '서울역' },
+  { lat: 37.5665, lng: 126.9780, title: '경복궁' },
+  { lat: 37.5502, lng: 126.9754, title: '덕수궁' }
+])
+
+// 화장실 마커 (Restroom 탭)
+const restroomMarkers = ref([
+  { lat: 37.3595704, lng: 127.105399, title: 'Gangnam Station' },
+  { lat: 37.3610, lng: 127.1070, title: 'COEX Mall' },
+  { lat: 37.3680, lng: 127.1120, title: 'Bongeunsa Temple' }
+])
 
 const restrooms = ref([
   { name: 'Gangnam Station Public Restroom', distance: '80m away', hours: '24/7' },

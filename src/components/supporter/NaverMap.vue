@@ -1,6 +1,6 @@
 <!-- filepath: c:\kosa-course\userProject\ATM\projects\frontend\src\components\supporter\NaverMap.vue -->
 <template>
-    <div class="map-gradient position-relative rounded" style="height:600px; overflow:hidden;">
+    <div class="map-gradient position-relative rounded" style="height: 600px;">
         <!-- 로딩 중 표시 -->
         <div v-if="isMapLoading" class="map-loading">
             <div class="spinner-border text-primary" role="status">
@@ -23,6 +23,7 @@ const infowindow = ref(null)
 const userLocation = ref(null)
 
 const props = defineProps({
+    //지도에 표시할 마커 배열 (lat, lng, title, info 포함)
     markers: {
         type: Array,
         default: () => [
@@ -30,9 +31,20 @@ const props = defineProps({
             { lat: 37.4979, lng: 127.0276, title: '서울역' }
         ]
     },
-    enableGeolocation: {
+    //지도 초기 중심 좌표 (위도, 경도)
+    initialCenter: {
+        type: Object,
+        default: () => ({ lat: 37.3595704, lng: 127.105399 })
+    },
+    //지도 초기 줌 레벨 (기본값: 10)
+    initialZoom: {
+        type: Number,
+        default: 10
+    },
+    //true: 모든 마커가 보이도록 자동 조정 / false: 초기 설정 유지(사용자 위치 중심)
+    fitBoundsMode: {
         type: Boolean,
-        default: true
+        default: false
     }
 })
 
@@ -71,91 +83,95 @@ onMounted(async () => {
 
 function initializeMap() {
     const mapOptions = {
-        center: new window.naver.maps.LatLng(37.3595704, 127.105399),
-        zoom: 10,
+        center: new window.naver.maps.LatLng(props.initialCenter.lat, props.initialCenter.lng),
+        zoom: props.initialZoom,
         mapTypeId: window.naver.maps.MapTypeId.NORMAL,
-        // 지도 타입 컨트롤
-        mapTypeControl: true,
-        mapTypeControlOptions: {
-            style: window.naver.maps.MapTypeControlStyle.BUTTON,
-            position: window.naver.maps.Position.TOP_RIGHT
-        },
-        // 줌 컨트롤
-        zoomControl: true,
-        zoomControlOptions: {
-            style: window.naver.maps.ZoomControlStyle.SMALL,
-            position: window.naver.maps.Position.TOP_RIGHT
-        },
-        // 스케일 컨트롤
-        scaleControl: true,
-        scaleControlOptions: {
-            position: window.naver.maps.Position.RIGHT_CENTER
-        },
-        // 로고 컨트롤
-        logoControl: true,
-        logoControlOptions: {
-            position: window.naver.maps.Position.TOP_LEFT
-        },
-        // 지도 데이터 컨트롤
-        mapDataControl: true,
-        mapDataControlOptions: {
-            position: window.naver.maps.Position.BOTTOM_LEFT
-        }
     }
     map.value = new window.naver.maps.Map('map', mapOptions)
 
     // InfoWindow 생성
     infowindow.value = new window.naver.maps.InfoWindow()
 
-    // Marker 추가
-    addMarkers()
+    // Geolocation 요청 먼저 (fitBounds 전에)
+    requestGeolocation()
 
-    // Geolocation 요청
-    if (props.enableGeolocation) {
-        requestGeolocation()
-    }
+    // Marker 추가 (fitBounds가 필요하면 여기서 실행)
+    addMarkers()
 
     isMapLoading.value = false
 }
 
 function addMarkers() {
-    props.markers.forEach((marker) => {
-        const markerObj = new window.naver.maps.Marker({
-            position: new window.naver.maps.LatLng(marker.lat, marker.lng),
-            map: map.value,
-            title: marker.title
-        })
+    // fitBoundsMode가 true면 모든 마커가 보이도록 조정
+    if (props.fitBoundsMode && props.markers.length > 1) {
+        const bounds = new window.naver.maps.LatLngBounds()
+        
+        props.markers.forEach((marker) => {
+            const position = new window.naver.maps.LatLng(marker.lat, marker.lng)
+            bounds.extend(position)
+            
+            const markerObj = new window.naver.maps.Marker({
+                position: position,
+                map: map.value,
+                title: marker.title
+            })
 
-        // Marker 클릭 이벤트
-        window.naver.maps.Event.addListener(markerObj, 'click', async function() {
-            // 마커 정보 표시
-            let content = marker.info
-            
-            // info가 없으면 Reverse Geocoding으로 주소 조회
-            if (!content) {
-                content = await getReverseGeocodeInfo(marker.lat, marker.lng, marker.title)
-            }
-            
-            infowindow.value.setContent(content)
-            infowindow.value.open(map.value, markerObj)
+            window.naver.maps.Event.addListener(markerObj, 'click', async function() {
+                let content = marker.info
+                if (!content) {
+                    content = await getReverseGeocodeInfo(marker.lat, marker.lng, marker.title)
+                }
+                infowindow.value.setContent(content)
+                infowindow.value.open(map.value, markerObj)
+            })
         })
-    })
+        
+        // 모든 마커가 보이도록 지도 범위 조정
+        if (!bounds.isEmpty()) {
+            map.value.fitBounds(bounds)
+            map.value.setZoom(map.value.getZoom() - 1)
+        }
+    } else {
+        // fitBoundsMode가 false면 기본 방식
+        props.markers.forEach((marker) => {
+            const markerObj = new window.naver.maps.Marker({
+                position: new window.naver.maps.LatLng(marker.lat, marker.lng),
+                map: map.value,
+                title: marker.title
+            })
+
+            window.naver.maps.Event.addListener(markerObj, 'click', async function() {
+                let content = marker.info
+                if (!content) {
+                    content = await getReverseGeocodeInfo(marker.lat, marker.lng, marker.title)
+                }
+                infowindow.value.setContent(content)
+                infowindow.value.open(map.value, markerObj)
+            })
+        })
+    }
 }
 
-// Reverse Geocoding API 호출
+// Reverse Geocoding API 호출 (백엔드)
 async function getReverseGeocodeInfo(lat, lng, title) {
     try {
+        // 백엔드 API 호출
         const response = await fetch(
-            `https://maps.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${lng},${lat}&orders=addr,roadaddr`,
+            `/api/geo/reverse?lat=${lat}&lng=${lng}`,
             {
+                method: 'GET',
                 headers: {
-                    'X-NCP-APIGW-API-KEY-ID': window.NAVER_CLIENT_ID
+                    'Content-Type': 'application/json'
                 }
             }
         )
-        const data = await response.json()
         
-        console.log('API 응답:', data)
+        if (!response.ok) {
+            throw new Error(`API 오류: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        console.log('백엔드 API 응답:', data)
         
         if (data.results && data.results.length > 0) {
             // 법정동/행정동 주소 찾기
@@ -255,17 +271,71 @@ async function getReverseGeocodeInfo(lat, lng, title) {
             `
         }
     } catch (error) {
-        console.error('Reverse Geocoding 오류:', error)
+        console.error('백엔드 API 오류:', error)
     }
     
-    // 기본값 (실패 시)
+    // 기본값 (실패 시) - 가짜 데이터
+    return getDefaultPlaceInfo(lat, lng, title)
+}
+
+// 기본값 정보 (API 실패 시 표시)
+function getDefaultPlaceInfo(lat, lng, title) {
+    // 장소별 기본 정보
+    const defaultData = {
+        '강남역': {
+            addr: '서울시 강남구 강남대로 396',
+            roadAddr: '서울시 강남구 테헤란로 강남역',
+            zipcode: '06000',
+            building: '강남역 쇼핑몰'
+        },
+        '서울역': {
+            addr: '서울시 중구 중로 1 서울역',
+            roadAddr: '서울시 중구 한강로 1',
+            zipcode: '04402',
+            building: '서울역'
+        }
+    }
+    
+    const placeInfo = defaultData[title] || {
+        addr: `위치 ${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+        roadAddr: '주소 정보 없음',
+        zipcode: '',
+        building: ''
+    }
+    
     return `
-        <div style="padding: 15px; min-width: 200px;">
-            <strong>${title}</strong><br/>
-            <p style="margin: 10px 0; font-size: 12px; color: #666;">
-                위도: ${lat.toFixed(4)}<br/>
-                경도: ${lng.toFixed(4)}
-            </p>
+        <div style="padding: 15px; min-width: 300px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;">
+            <div style="border-bottom: 1px solid #e0e0e0; padding-bottom: 10px; margin-bottom: 10px;">
+                <strong style="font-size: 18px; color: #333;">${title}</strong>
+                ${placeInfo.building ? `<div style="color: #666; font-size: 12px; margin-top: 4px;">${placeInfo.building}</div>` : ''}
+            </div>
+            
+            ${placeInfo.addr ? `
+            <div style="margin-bottom: 10px;">
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">법정동</div>
+                <div style="font-size: 12px; color: #333; line-height: 1.5;">${placeInfo.addr}</div>
+            </div>
+            ` : ''}
+            
+            ${placeInfo.roadAddr ? `
+            <div style="margin-bottom: 10px;">
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">도로명</div>
+                <div style="font-size: 12px; color: #333; line-height: 1.5;">${placeInfo.roadAddr}</div>
+            </div>
+            ` : ''}
+            
+            ${placeInfo.zipcode ? `
+            <div style="margin-bottom: 10px;">
+                <div style="font-size: 12px; color: #999; margin-bottom: 4px;">우편번호</div>
+                <div style="font-size: 12px; color: #333;">${placeInfo.zipcode}</div>
+            </div>
+            ` : ''}
+            
+            <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid #e0e0e0;">
+                <div style="font-size: 11px; color: #999;">
+                    좌표: ${lat.toFixed(6)}, ${lng.toFixed(6)}
+                </div>
+            </div>
         </div>
     `
 }
@@ -291,11 +361,7 @@ function onSuccessGeolocation(position) {
     // 사용자 위치 저장
     userLocation.value = location
 
-    // 지도 중심을 사용자 위치로 변경
-    map.value.setCenter(location)
-    map.value.setZoom(15)
-
-    // 현재 위치에 Marker 추가 (빨간색)
+    // 현재 위치에 Marker 추가 (빨간색) - 항상 표시
     new window.naver.maps.Marker({
         position: location,
         map: map.value,
@@ -306,8 +372,14 @@ function onSuccessGeolocation(position) {
         }
     })
 
-    // 현재 위치로 이동 버튼 추가
+    // 현재 위치로 이동 버튼 추가 - 항상 표시
     addMyLocationButton(location)
+
+    // fitBoundsMode가 false (Restroom 탭)일 때만 지도 중심을 사용자 위치로 변경
+    if (!props.fitBoundsMode) {
+        map.value.setCenter(location)
+        map.value.setZoom(15)
+    }
 
     console.log('사용자 위치:', location.toString())
 }
