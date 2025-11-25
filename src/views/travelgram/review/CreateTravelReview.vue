@@ -325,17 +325,19 @@ const handleFileUpload = async (event) => {
 // ------------------------------
 // 2) 백엔드 업로드 함수
 // ------------------------------
-const uploadSinglePhoto = async (file, groupId, orderIndex) => {
-  const data = { groupId, fileName: file.name, orderIndex }
+const uploadSinglePhoto = async (files, groupId, orderIndex) => {
+  const data = { groupId, fileName: files.name, orderIndex }
 
   const form = new FormData()
   form.append(
     "data", 
     new Blob([JSON.stringify(data)], { type: "application/json" })
   )
-  form.append("file", file)
+  for (const file of files) {
+  form.append('files', file)
+  }
 
-  const res = await axios.post("/review/photo/upload", form, {
+  const res = await axios.post("/review/photo", form, {
     headers: { "Content-Type": "multipart/form-data" }
   })
 
@@ -345,6 +347,34 @@ const uploadSinglePhoto = async (file, groupId, orderIndex) => {
     url: res.data.fileUrl
   }
 }
+const uploadMultiplePhotos = async (files, groupId) => {
+  const form = new FormData()
+
+  // 파일 개수만큼 orderIndex 부여
+  let orderIndex = 0
+
+  for (const file of files) {
+    const data = {
+      groupId,
+      fileName: file.name,
+      orderIndex: orderIndex++
+    }
+
+    form.append(
+      "dataList",
+      new Blob([JSON.stringify(data)], { type: "application/json" })
+    )
+
+    form.append("files", file)
+  }
+
+  const res = await axios.post("/review/photo/multi", form, {
+    headers: { "Content-Type": "multipart/form-data" }
+  })
+
+  return res.data
+}
+
 
 
 // Step 2로 이동
