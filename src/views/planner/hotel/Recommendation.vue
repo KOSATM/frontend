@@ -158,7 +158,6 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import PageHeader from '@/components/common/PageHeader.vue';
 import hotelIllust from '@/assets/img/hotel-logo.png';
 import BaseButton from '@/components/common/BaseButton.vue';
 import { useTravelStore } from '@/store/travelStore';
@@ -365,7 +364,7 @@ const goBack = () => {
 }
 
 .budget-details {
-  border: 1px solid rgba($primary, 0.2);
+  border: 1px solid rgba(#ffb347, 0.2);
 }
 
 .badge {
