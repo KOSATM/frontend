@@ -272,108 +272,85 @@ const triggerFileInput = () => fileInput.value?.click()
 // 1) 파일 선택 핸들러 (미리보기 + 업로드)
 // ------------------------------
 const handleFileUpload = async (event) => {
-  const files = Array.from(event.target.files)
+  const files = Array.from(event.target.files);
 
   if (uploadedImages.value.length + files.length > 10) {
-    alert('최대 10장까지만 업로드할 수 있습니다.')
-    return
+    alert('최대 10장까지만 업로드할 수 있습니다.');
+    return;
   }
 
-  files.forEach((file, index) => {
-    const reader = new FileReader()
+  // ✅ 기존에 올라와 있던 이미지 개수
+  const baseOrderIndex = uploadedImages.value.length;
 
-    reader.onload = async (e) => {
-      const tempId = uuidv4()
+ files.forEach((file, index) => {
+    const reader = new FileReader();
+    const tempId = uuidv4();
+    const orderIndex = baseOrderIndex + index; // ✅ 이 파일의 확정 orderIndex
 
-      // 🔥 Base64 미리보기에 orderIndex 정확하게 포함
+    reader.onload = (e) => {
       uploadedImages.value.push({
         id: tempId,
         name: file.name,
-        url: e.target.result,  // Base64
+        url: e.target.result,   // Base64
         file,
         uploading: true,
-        // 🔥 기존 배열 길이 + FileList index
-        orderIndex: uploadedImages.value.length + index
-      })
+        orderIndex,             // ✅ 고정된 orderIndex 사용
+      });
+    };
 
-      // 🔥 이후 업로드
-      const uploaded = await uploadSinglePhoto(
-        file,
-        reviewStore.groupId,
-        uploadedImages.value.length - 1 // 또는 pushed 된 index 활용 가능
-      )
+    reader.readAsDataURL(file);
+  });
 
-      // 🔥 Base64 → S3 URL 교체
-      const idx = uploadedImages.value.findIndex((img) => img.id === tempId)
-      if (idx !== -1) {
-        uploadedImages.value[idx] = {
-          ...uploadedImages.value[idx],
-          id: uploaded.id,
-          url: uploaded.url,
-          file: null,
-          uploading: false,
-        }
-      }
+  // ✅ 모든 미리보기 push를 시작한 뒤, 실제 업로드
+  const uploadedList = await uploadPhotos(files, reviewStore.groupId, baseOrderIndex);
+
+  uploadedList.forEach((uploaded) => {
+    const idx = uploadedImages.value.findIndex(
+      (img) => img.orderIndex === uploaded.orderIndex
+    );
+  
+    if (idx !== -1) {
+      uploadedImages.value[idx] = {
+        ...uploadedImages.value[idx],
+        id: uploaded.photoId,    // 백엔드에서 내려주는 필드명에 맞게
+        url: uploaded.fileUrl,   // S3 URL
+        file: null,
+        uploading: false,
+      };
     }
-
-    reader.readAsDataURL(file)
-  })
-}
-
-
-
+  });
+  };
 // ------------------------------
-// 2) 백엔드 업로드 함수
+// 2) 백엔드 업로드 함수 (단일/멀티 모두 지원)
 // ------------------------------
-const uploadSinglePhoto = async (files, groupId, orderIndex) => {
-  const data = { groupId, fileName: files.name, orderIndex }
+const uploadPhotos = async (files, groupId, startOrderIndex = 0) => {
+  const form = new FormData();
 
-  const form = new FormData()
-  form.append(
-    "data", 
-    new Blob([JSON.stringify(data)], { type: "application/json" })
-  )
-  for (const file of files) {
-  form.append('files', file)
-  }
+  // ✅ 단일 File이 들어와도 배열로 통일
+  const fileArray = Array.isArray(files) ? files : [files];
 
-  const res = await axios.post("/review/photo", form, {
-    headers: { "Content-Type": "multipart/form-data" }
-  })
-
-  // 반환 형태 통일
-  return {
-    id: res.data.photoId,
-    url: res.data.fileUrl
-  }
-}
-const uploadMultiplePhotos = async (files, groupId) => {
-  const form = new FormData()
-
-  // 파일 개수만큼 orderIndex 부여
-  let orderIndex = 0
-
-  for (const file of files) {
+  fileArray.forEach((file, idx) => {
     const data = {
       groupId,
       fileName: file.name,
-      orderIndex: orderIndex++
-    }
+      orderIndex: startOrderIndex + idx, // 시작 인덱스 + 상대 인덱스
+    };
 
     form.append(
       "dataList",
       new Blob([JSON.stringify(data)], { type: "application/json" })
-    )
+    );
 
-    form.append("files", file)
-  }
+    form.append("files", file);
+  });
 
-  const res = await axios.post("/review/photo/multi", form, {
+  const res = await axios.post("/review/photo", form, {
     headers: { "Content-Type": "multipart/form-data" }
-  })
+  });
 
-  return res.data
-}
+  // ✅ 항상 "리스트"가 반환된다고 가정
+  return res.data;  // ex) [{ photoId, fileUrl, orderIndex }, ...]
+};
 
 
 
@@ -444,9 +421,11 @@ const goBack = () => router.back()
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
+
 .trip-info-header h5 {
   color: #ffffff !important;
 }
+
 .trip-info-header {
   background-color: #1B3B6F;
   color: #ffffff;
@@ -456,7 +435,7 @@ const goBack = () => router.back()
 .trip-info-header h5 {
   margin: 0;
   font-weight: 600;
-  
+
 }
 
 .trip-info-body {
