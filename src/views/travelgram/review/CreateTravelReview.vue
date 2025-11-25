@@ -279,31 +279,37 @@ const handleFileUpload = async (event) => {
     return
   }
 
-  for (const file of files) {
+  files.forEach((file, index) => {
     const reader = new FileReader()
 
     reader.onload = async (e) => {
       const tempId = uuidv4()
 
-      // 👇 Base64 미리보기 먼저 추가됨
+      // 🔥 Base64 미리보기에 orderIndex 정확하게 포함
       uploadedImages.value.push({
         id: tempId,
         name: file.name,
-        url: e.target.result,  // Base64 미리보기
+        url: e.target.result,  // Base64
         file,
         uploading: true,
+        // 🔥 기존 배열 길이 + FileList index
+        orderIndex: uploadedImages.value.length + index
       })
 
-      // 👇 이제 백엔드(S3)로 업로드
-      const uploaded = await uploadSinglePhoto(file, reviewStore.groupId)
+      // 🔥 이후 업로드
+      const uploaded = await uploadSinglePhoto(
+        file,
+        reviewStore.groupId,
+        uploadedImages.value.length - 1 // 또는 pushed 된 index 활용 가능
+      )
 
-      // 👇 Base64 → S3 URL 교체
+      // 🔥 Base64 → S3 URL 교체
       const idx = uploadedImages.value.findIndex((img) => img.id === tempId)
       if (idx !== -1) {
         uploadedImages.value[idx] = {
-          id: uploaded.id,      // DB photoId
-          name: file.name,
-          url: uploaded.url,    // S3 URL로 대체
+          ...uploadedImages.value[idx],
+          id: uploaded.id,
+          url: uploaded.url,
           file: null,
           uploading: false,
         }
@@ -311,15 +317,16 @@ const handleFileUpload = async (event) => {
     }
 
     reader.readAsDataURL(file)
-  }
+  })
 }
+
 
 
 // ------------------------------
 // 2) 백엔드 업로드 함수
 // ------------------------------
-const uploadSinglePhoto = async (file, groupId) => {
-  const data = { groupId, fileName: file.name }
+const uploadSinglePhoto = async (file, groupId, orderIndex) => {
+  const data = { groupId, fileName: file.name, orderIndex }
 
   const form = new FormData()
   form.append(

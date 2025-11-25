@@ -22,7 +22,8 @@ export const useReviewStore = defineStore('review', {
         id: p.id ?? i + 1,
         url: p.url,      // ✅ 항상 url 기준
         name: p.name,
-        file: p.file ?? null
+        file: p.file ?? null,
+        orderIndex: p.orderIndex ?? i  // ← 순서 보존
       }))
     },
     setMainPhoto(id) {
