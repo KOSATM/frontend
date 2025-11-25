@@ -122,7 +122,7 @@ import { useReviewStore } from '@/store/reviewStore'
 import { v4 as uuidv4 } from 'uuid'
 import StepHeader from '@/components/common/StepHeader.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
-import axios from 'axios'
+import { uploadReviewPhotos } from '@/api/travelgramApi'
 
 const router = useRouter()
 const route = useRoute()
@@ -324,7 +324,7 @@ const handleFileUpload = async (event) => {
 // 2) 백엔드 업로드 함수 (단일/멀티 모두 지원)
 // ------------------------------
 const uploadPhotos = async (files, groupId, startOrderIndex = 0) => {
-  const form = new FormData();
+  const formData = new FormData()
 
   // ✅ 단일 File이 들어와도 배열로 통일
   const fileArray = Array.isArray(files) ? files : [files];
@@ -336,17 +336,15 @@ const uploadPhotos = async (files, groupId, startOrderIndex = 0) => {
       orderIndex: startOrderIndex + idx, // 시작 인덱스 + 상대 인덱스
     };
 
-    form.append(
+    formData.append(
       "dataList",
       new Blob([JSON.stringify(data)], { type: "application/json" })
     );
 
-    form.append("files", file);
+    formData.append("files", file);
   });
 
-  const res = await axios.post("/review/photo", form, {
-    headers: { "Content-Type": "multipart/form-data" }
-  });
+  const res = await uploadReviewPhotos(formData)
 
   // ✅ 항상 "리스트"가 반환된다고 가정
   return res.data;  // ex) [{ photoId, fileUrl, orderIndex }, ...]
