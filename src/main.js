@@ -7,6 +7,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css'
 import 'bootstrap'
 import '@/assets/styles/global.scss'
 
+
 createApp(App)
   .use(createPinia())
   .use(router)
