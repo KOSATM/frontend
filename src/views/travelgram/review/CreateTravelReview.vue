@@ -116,13 +116,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { uploadReviewPhotos } from '@/api/travelgramApi'
+import PageHeader from '@/components/common/PageHeader.vue'
+import StepHeader from '@/components/common/StepHeader.vue'
 import { useReviewStore } from '@/store/reviewStore'
 import { v4 as uuidv4 } from 'uuid'
-import StepHeader from '@/components/common/StepHeader.vue'
-import PageHeader from '@/components/common/PageHeader.vue'
-import { uploadReviewPhotos } from '@/api/travelgramApi'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
@@ -262,12 +262,21 @@ const allTripsData = ref({
   }
 })
 
+import { createReviewPhotoGroup } from '@/api/travelgramApi'
+
+
+onMounted(async () => {
+  const result = await createReviewPhotoGroup()
+  reviewStore.groupId = result.groupId   // 이 값이 있어야 업로드 성공
+})
+
+
+
 const currentTripInfo = computed(() => {
   return allTripsData.value[tripId] || { location: '', date: '', cost: '', itinerary: [] }
 })
 
 const triggerFileInput = () => fileInput.value?.click()
-
 // ------------------------------
 // 1) 파일 선택 핸들러 (미리보기 + 업로드)
 // ------------------------------
@@ -282,7 +291,7 @@ const handleFileUpload = async (event) => {
   // ✅ 기존에 올라와 있던 이미지 개수
   const baseOrderIndex = uploadedImages.value.length;
 
- files.forEach((file, index) => {
+  files.forEach((file, index) => {
     const reader = new FileReader();
     const tempId = uuidv4();
     const orderIndex = baseOrderIndex + index; // ✅ 이 파일의 확정 orderIndex
@@ -291,64 +300,85 @@ const handleFileUpload = async (event) => {
       uploadedImages.value.push({
         id: tempId,
         name: file.name,
-        url: e.target.result,   // Base64
+        url: e.target.result,  // Base64
         file,
         uploading: true,
-        orderIndex,             // ✅ 고정된 orderIndex 사용
+        orderIndex,       // ✅ 고정된 orderIndex 사용
       });
     };
 
     reader.readAsDataURL(file);
   });
 
-  // ✅ 모든 미리보기 push를 시작한 뒤, 실제 업로드
-  const uploadedList = await uploadPhotos(files, reviewStore.groupId, baseOrderIndex);
+  // 🚨 Unhandled error 방지 및 업로드 실패 처리
+  try {
+    // ✅ 모든 미리보기 push를 시작한 뒤, 실제 업로드
+    const uploadedList = await uploadPhotos(files, reviewStore.groupId, baseOrderIndex);
 
-  uploadedList.forEach((uploaded) => {
-    const idx = uploadedImages.value.findIndex(
-      (img) => img.orderIndex === uploaded.orderIndex
+    // 응답이 Array인지 확인하고 처리
+    const finalUploadedList = uploadedList.data || [];
+
+    finalUploadedList.forEach((uploaded) => {
+      const idx = uploadedImages.value.findIndex(
+        (img) => img.orderIndex === uploaded.orderIndex
+      );
+
+      if (idx !== -1) {
+        uploadedImages.value[idx] = {
+          ...uploadedImages.value[idx],
+          id: uploaded.id,  // 백엔드에서 내려주는 필드명에 맞게
+          url: uploaded.fileUrl,  // S3 URL
+          file: null,
+          uploading: false,
+        };
+      }
+    });
+
+  } catch (error) {
+    console.error('File upload failed:', error.response?.status, error.message);
+    alert('사진 업로드에 실패했습니다. 서버 설정을 확인해주세요.');
+
+    // 업로드 실패 시, 미리보기로 추가했던 항목들 제거
+    uploadedImages.value = uploadedImages.value.filter(
+      (img) => img.uploading === false || img.orderIndex < baseOrderIndex
     );
-  
-    if (idx !== -1) {
-      uploadedImages.value[idx] = {
-        ...uploadedImages.value[idx],
-        id: uploaded.photoId,    // 백엔드에서 내려주는 필드명에 맞게
-        url: uploaded.fileUrl,   // S3 URL
-        file: null,
-        uploading: false,
-      };
-    }
-  });
-  };
+  }
+};
 // ------------------------------
 // 2) 백엔드 업로드 함수 (단일/멀티 모두 지원)
 // ------------------------------
 const uploadPhotos = async (files, groupId, startOrderIndex = 0) => {
-  const formData = new FormData()
-
-  // ✅ 단일 File이 들어와도 배열로 통일
+  const formData = new FormData();
   const fileArray = Array.isArray(files) ? files : [files];
+  const metadataList = []; // 💡 메타데이터 리스트를 저장할 배열
 
   fileArray.forEach((file, idx) => {
-    const data = {
-      groupId,
+    const json = {
+      groupId: reviewStore.groupId,
       fileName: file.name,
-      orderIndex: startOrderIndex + idx, // 시작 인덱스 + 상대 인덱스
+      orderIndex: startOrderIndex + idx
     };
 
-    formData.append(
-      "dataList",
-      new Blob([JSON.stringify(data)], { type: "application/json" })
-    );
+    // 💡 1. 메타데이터 객체를 리스트에 추가합니다.
+    metadataList.push(json);
 
+    // 2. 파일 자체는 여전히 'files' 키로 개별 append 합니다.
     formData.append("files", file);
   });
 
-  const res = await uploadReviewPhotos(formData)
+  // 💡 3. 모든 메타데이터를 배열로 묶어 단 하나의 JSON 문자열로 변환하여 append 합니다.
+  formData.append("dataListJson", JSON.stringify(metadataList));
 
-  // ✅ 항상 "리스트"가 반환된다고 가정
-  return res.data;  // ex) [{ photoId, fileUrl, orderIndex }, ...]
+
+  // 디버깅용
+  for (let pair of formData.entries()) {
+    console.log("FD:", pair[0], pair[1]);
+  }
+  console.log(">>> REQUEST HEADERS:", formData);
+
+  return uploadReviewPhotos(formData);
 };
+
 
 
 
