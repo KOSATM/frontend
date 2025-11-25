@@ -122,6 +122,7 @@ import { useReviewStore } from '@/store/reviewStore'
 import { v4 as uuidv4 } from 'uuid'
 import StepHeader from '@/components/common/StepHeader.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
+import axios from 'axios'
 
 const router = useRouter()
 const route = useRoute()
@@ -267,7 +268,10 @@ const currentTripInfo = computed(() => {
 
 const triggerFileInput = () => fileInput.value?.click()
 
-const handleFileUpload = (event) => {
+// ------------------------------
+// 1) 파일 선택 핸들러 (미리보기 + 업로드)
+// ------------------------------
+const handleFileUpload = async (event) => {
   const files = Array.from(event.target.files)
 
   if (uploadedImages.value.length + files.length > 10) {
@@ -275,21 +279,66 @@ const handleFileUpload = (event) => {
     return
   }
 
-  files.forEach((file) => {
-    // FileReader를 사용하여 Base64로 변환
+  for (const file of files) {
     const reader = new FileReader()
-    reader.onload = (e) => {
-      const preview = {
-        id: uuidv4(),
+
+    reader.onload = async (e) => {
+      const tempId = uuidv4()
+
+      // 👇 Base64 미리보기 먼저 추가됨
+      uploadedImages.value.push({
+        id: tempId,
         name: file.name,
-        url: e.target.result, // ✅ Base64 문자열
+        url: e.target.result,  // Base64 미리보기
         file,
+        uploading: true,
+      })
+
+      // 👇 이제 백엔드(S3)로 업로드
+      const uploaded = await uploadSinglePhoto(file, reviewStore.groupId)
+
+      // 👇 Base64 → S3 URL 교체
+      const idx = uploadedImages.value.findIndex((img) => img.id === tempId)
+      if (idx !== -1) {
+        uploadedImages.value[idx] = {
+          id: uploaded.id,      // DB photoId
+          name: file.name,
+          url: uploaded.url,    // S3 URL로 대체
+          file: null,
+          uploading: false,
+        }
       }
-      uploadedImages.value.push(preview)
     }
+
     reader.readAsDataURL(file)
-  })
+  }
 }
+
+
+// ------------------------------
+// 2) 백엔드 업로드 함수
+// ------------------------------
+const uploadSinglePhoto = async (file, groupId) => {
+  const data = { groupId, fileName: file.name }
+
+  const form = new FormData()
+  form.append(
+    "data", 
+    new Blob([JSON.stringify(data)], { type: "application/json" })
+  )
+  form.append("file", file)
+
+  const res = await axios.post("/review/photo/upload", form, {
+    headers: { "Content-Type": "multipart/form-data" }
+  })
+
+  // 반환 형태 통일
+  return {
+    id: res.data.photoId,
+    url: res.data.fileUrl
+  }
+}
+
 
 // Step 2로 이동
 const nextStep = () => {
