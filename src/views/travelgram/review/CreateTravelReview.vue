@@ -92,7 +92,7 @@
     <section class="upload-section">
 
       <!-- 🖼️ 업로드 박스 -->
-      <div class="upload-box" @click="triggerFileInput">
+      <div v-if="isReady" class="upload-box" @click="triggerFileInput">
         <i class="bi bi-cloud-arrow-up fs-2 text-secondary mb-2"></i>
         <p class="text-secondary mb-0">Click to upload photos</p>
         <small class="text-muted">JPG, PNG up to 10MB each</small>
@@ -140,7 +140,8 @@ const toggleDay = (id) => {
 }
 // 모든 여행 데이터
 const allTripsData = ref({})
-
+// 🔥 업로드 UI를 보여줄 준비되었는지 여부
+const isReady = ref(false);
 // import { createReviewPhotoGroup } from '@/api/travelgramApi'
 import { createReview } from '@/api/travelgramApi'
 
@@ -151,8 +152,12 @@ onMounted(async () => {
   
   // 2) 리뷰 생성
   const res = await createReview(reviewStore.tripId);
+  console.log("📌 Review created:", res);
 
+  // 3) store에 저장
   reviewStore.setReviewInfo(res.reviewPostId, res.groupId);
+  // 4) 업로드 화면 활성화
+  isReady.value = true;
 });
 // onMounted(async () => {
 //   const result = await createReviewPhotoGroup()
