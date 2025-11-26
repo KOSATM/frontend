@@ -92,7 +92,7 @@
     <section class="upload-section">
 
       <!-- 🖼️ 업로드 박스 -->
-      <div class="upload-box" @click="triggerFileInput">
+      <div v-if="isReady" class="upload-box" @click="triggerFileInput">
         <i class="bi bi-cloud-arrow-up fs-2 text-secondary mb-2"></i>
         <p class="text-secondary mb-0">Click to upload photos</p>
         <small class="text-muted">JPG, PNG up to 10MB each</small>
@@ -131,9 +131,6 @@ const reviewStore = useReviewStore()
 const tripId = route.params.tripId
 const tripTitle = route.query.title || 'My Trip'
 
-// store에 여행 정보 저장
-reviewStore.setTripInfo(tripId, tripTitle)
-
 const fileInput = ref(null)
 const uploadedImages = ref([])
 const openDayId = ref(1) // 기본 1번 Day 오픈
@@ -142,133 +139,30 @@ const toggleDay = (id) => {
   openDayId.value = id
 }
 // 모든 여행 데이터
-const allTripsData = ref({
-  1: {
-    location: 'Jeju Island',
-    date: 'Oct 15 - Oct 18, 2024',
-    cost: '500',
-    itinerary: [
-      {
-        dayNumber: 1,
-        title: 'Arrival & Beach Exploration',
-        date: 'Oct 15, 2024',
-        isOpen: true,
-        activities: [
-          { time: '2:00 PM', name: 'Arrive at Jeju Airport' },
-          { time: '3:30 PM', name: 'Hotel Check-in' },
-          { time: '5:00 PM', name: 'Sunset at Hallim Park' },
-          { time: '7:00 PM', name: 'Dinner at Local Restaurant' }
-        ]
-      },
-      {
-        dayNumber: 2,
-        title: 'Waterfall & Nature',
-        date: 'Oct 16, 2024',
-        isOpen: false,
-        activities: [
-          { time: '9:00 AM', name: 'Jeongbang Waterfall Visit' },
-          { time: '11:30 AM', name: 'Lunch at Seafood Restaurant' },
-          { time: '2:00 PM', name: 'Teddy Bear Museum' },
-          { time: '6:00 PM', name: 'Evening Stroll at Harbor' }
-        ]
-      },
-      {
-        dayNumber: 3,
-        title: 'Mountain & Cafe Tour',
-        date: 'Oct 17, 2024',
-        isOpen: false,
-        activities: [
-          { time: '8:00 AM', name: 'Hike Seongsan Ilchulbong' },
-          { time: '11:00 AM', name: 'Traditional Haenyeo Show' },
-          { time: '1:00 PM', name: 'Lunch Break' },
-          { time: '3:00 PM', name: 'Jeju Coffee Museum' }
-        ]
-      },
-      {
-        dayNumber: 4,
-        title: 'Departure',
-        date: 'Oct 18, 2024',
-        isOpen: false,
-        activities: [
-          { time: '10:00 AM', name: 'Hotel Check-out' },
-          { time: '11:00 AM', name: 'Shopping at Lotte Mart' },
-          { time: '1:00 PM', name: 'Lunch at Airport' },
-          { time: '3:00 PM', name: 'Depart Jeju' }
-        ]
-      }
-    ]
-  },
-  2: {
-    location: 'Tokyo, Japan',
-    date: 'Sep 20 - Sep 25, 2024',
-    cost: '1200',
-    itinerary: [
-      {
-        dayNumber: 1,
-        title: 'Tokyo Arrival',
-        date: 'Sep 20, 2024',
-        isOpen: true,
-        activities: [
-          { time: '11:00 AM', name: 'Arrive at Narita Airport' },
-          { time: '1:00 PM', name: 'Hotel Check-in' },
-          { time: '3:00 PM', name: 'Shibuya Crossing Visit' },
-          { time: '6:00 PM', name: 'Dinner at Izakaya' }
-        ]
-      },
-      {
-        dayNumber: 2,
-        title: 'Sushi & Traditional Food',
-        date: 'Sep 21, 2024',
-        isOpen: false,
-        activities: [
-          { time: '8:00 AM', name: 'Tsukiji Outer Market Tour' },
-          { time: '11:00 AM', name: 'Sushi Making Class' },
-          { time: '2:00 PM', name: 'Lunch at Famous Sushi Restaurant' },
-          { time: '5:00 PM', name: 'Street Food Tour' }
-        ]
-      }
-    ]
-  },
-  3: {
-    location: 'Busan',
-    date: 'Aug 10 - Aug 12, 2024',
-    cost: '300',
-    itinerary: [
-      {
-        dayNumber: 1,
-        title: 'Coastal City Arrival',
-        date: 'Aug 10, 2024',
-        isOpen: true,
-        activities: [
-          { time: '2:00 PM', name: 'Arrive at Busan' },
-          { time: '3:00 PM', name: 'Hotel Check-in' },
-          { time: '5:00 PM', name: 'Gamcheon Culture Village' },
-          { time: '7:00 PM', name: 'Sunset at Dadaepo Beach' }
-        ]
-      },
-      {
-        dayNumber: 2,
-        title: 'Beach & Markets',
-        date: 'Aug 11, 2024',
-        isOpen: false,
-        activities: [
-          { time: '9:00 AM', name: 'Haeundae Beach' },
-          { time: '12:00 PM', name: 'Lunch at Seafood Market' },
-          { time: '2:00 PM', name: 'Beomeosa Temple' },
-          { time: '5:00 PM', name: 'Street Shopping' }
-        ]
-      }
-    ]
-  }
-})
-
-import { createReviewPhotoGroup } from '@/api/travelgramApi'
-
+const allTripsData = ref({})
+// 🔥 업로드 UI를 보여줄 준비되었는지 여부
+const isReady = ref(false);
+// import { createReviewPhotoGroup } from '@/api/travelgramApi'
+import { createReview } from '@/api/travelgramApi'
 
 onMounted(async () => {
-  const result = await createReviewPhotoGroup()
-  reviewStore.groupId = result.groupId   // 이 값이 있어야 업로드 성공
-})
+
+  // 1) trip 정보 저장
+  reviewStore.setTripInfo(route.params.tripId, route.query.title)
+  
+  // 2) 리뷰 생성
+  const res = await createReview(reviewStore.tripId);
+  console.log("📌 Review created:", res);
+
+  // 3) store에 저장
+  reviewStore.setReviewInfo(res.reviewPostId, res.groupId);
+  // 4) 업로드 화면 활성화
+  isReady.value = true;
+});
+// onMounted(async () => {
+//   const result = await createReviewPhotoGroup()
+//   reviewStore.groupId = result.groupId   // 이 값이 있어야 업로드 성공
+// })
 
 
 

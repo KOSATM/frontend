@@ -4,6 +4,9 @@ export const useReviewStore = defineStore('review', {
   state: () => ({
     tripId: null,
     tripTitle: '',
+    reviewPostId: null, // 🔥 리뷰 생성(createReview)에서 받아옴
+    groupId: null, // 🔥 사진 업로드에 반드시 필요
+
     photos: [],        // [{ id, url, file }]
     mainPhotoId: null,
     caption: '',
@@ -16,6 +19,12 @@ export const useReviewStore = defineStore('review', {
       this.tripId = id
       this.tripTitle = title
     },
+    // 🔥 createReview 호출 결과를 저장
+    setReviewInfo(postId, groupId) {
+      this.reviewPostId = postId
+      this.groupId = groupId
+    },
+
     // ✅ 구조를 { id, url, file } 로 통일
     setPhotos(photoArray) {
       this.photos = photoArray.map((p, i) => ({
@@ -41,6 +50,9 @@ export const useReviewStore = defineStore('review', {
     resetReview() {
       this.tripId = null
       this.tripTitle = ''
+      this.reviewPostId = null
+      this.groupId = null
+
       this.photos = []
       this.mainPhotoId = null
       this.caption = ''
