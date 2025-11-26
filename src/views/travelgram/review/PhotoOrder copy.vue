@@ -71,7 +71,6 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
-import { updatePhotoOrder } from '@/api/travelgramApi'
 import StepHeader from '@/components/common/StepHeader.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 import TipBox from '@/components/common/TipBox.vue'
@@ -147,28 +146,13 @@ const removePhoto = (id) => {
 /* -----------------------------------
    🔥 5) 다음 단계
 ----------------------------------- */
-
-const nextStep = async () => {
+const nextStep = () => {
   if (!mainPhotoId.value) return
 
-  // 1) Store 업데이트
   reviewStore.setPhotos(photos.value)
   reviewStore.setMainPhoto(mainPhotoId.value)
-
-  // 2) 백엔드에 보낼 orderIndex payload 만들기
-  const payload = {
-    groupId: reviewStore.groupId,
-    photos: photos.value.map((p, i) => ({
-      photoId: p.id,
-      orderIndex: i
-    }))
-  }
-
-  // 3) 🔥 사진 순서 업데이트 API 호출
-  await updatePhotoOrder(payload)
-
-  // 4) 다음 스텝 이동
   reviewStore.nextStep()
+
   router.push({
     name: 'CaptionSelect',
     params: { tripId: route.params.tripId },
