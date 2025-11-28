@@ -33,9 +33,11 @@
       </h6>
 
       <div class="planner-accordion">
-        <div v-for="day in currentTripInfo.itinerary" :key="day.dayNumber" class="card border-0 shadow-sm rounded-4 overflow-hidden mb-3">
+        <div v-for="day in currentTripInfo.itinerary" :key="day.dayNumber"
+          class="card border-0 shadow-sm rounded-4 overflow-hidden mb-3">
           <!-- Day Header -->
-          <div class="card-body d-flex justify-content-between align-items-center" :class="openDayId === day.dayNumber ? 'bg-secondary text-white' : 'bg-white'" role="button"
+          <div class="card-body d-flex justify-content-between align-items-center"
+            :class="openDayId === day.dayNumber ? 'bg-secondary text-white' : 'bg-white'" role="button"
             @click="toggleDay(day.dayNumber)">
             <div>
               <div class="small fw-semibold" :class="openDayId !== day.dayNumber ? 'text-secondary' : ''">
@@ -61,7 +63,8 @@
           <!-- ▶ Activities collapse area -->
           <transition name="collapse">
             <div v-if="openDayId === day.dayNumber" class="list-group list-group-flush">
-              <div v-for="(act, index) in day.activities" :key="index" class="list-group-item d-flex justify-content-between align-items-center activity-row bg-white">
+              <div v-for="(act, index) in day.activities" :key="index"
+                class="list-group-item d-flex justify-content-between align-items-center activity-row bg-white">
                 <div class="d-flex align-items-start gap-3">
                   <div class="icon-badge themed theme-default">⏰</div>
                   <div>
@@ -116,7 +119,7 @@
 </template>
 
 <script setup>
-import { uploadReviewPhotos } from '@/api/travelgramApi'
+import api from '@/api/travelgramApi'
 import PageHeader from '@/components/common/PageHeader.vue'
 import StepHeader from '@/components/common/StepHeader.vue'
 import { useReviewStore } from '@/store/reviewStore'
@@ -143,19 +146,17 @@ const allTripsData = ref({})
 // 🔥 업로드 UI를 보여줄 준비되었는지 여부
 const isReady = ref(false);
 // import { createReviewPhotoGroup } from '@/api/travelgramApi'
-import { createReview } from '@/api/travelgramApi'
-
 onMounted(async () => {
-
   // 1) trip 정보 저장
   reviewStore.setTripInfo(route.params.tripId, route.query.title)
-  
-  // 2) 리뷰 생성
-  const res = await createReview(reviewStore.tripId);
+
+  // 2) 리뷰 생성 - planId를 명시적인 객체 형태로 전달 (백엔드 요청 본문에 맞게)
+
+  const res = await api.createReview(reviewStore.tripId); // 👈 수정된 부분
   console.log("📌 Review created:", res);
 
   // 3) store에 저장
-  reviewStore.setReviewInfo(res.reviewPostId, res.groupId);
+  reviewStore.setReviewInfo(res.data.reviewPostId, res.data.groupId);
   // 4) 업로드 화면 활성화
   isReady.value = true;
 });
@@ -270,7 +271,7 @@ const uploadPhotos = async (files, groupId, startOrderIndex = 0) => {
   }
   console.log(">>> REQUEST HEADERS:", formData);
 
-  return uploadReviewPhotos(formData);
+  return api.uploadReviewPhotos(formData);
 };
 
 
