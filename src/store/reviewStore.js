@@ -6,6 +6,7 @@ export const useReviewStore = defineStore('review', {
     tripTitle: '',
     reviewPostId: null, // 🔥 리뷰 생성(createReview)에서 받아옴
     photoGroupId: null, // 🔥 사진 업로드에 반드시 필요
+    hashtagGroupId: null,
 
     photos: [],        // [{ id, url, file }]
     mainPhotoId: null,
@@ -13,7 +14,6 @@ export const useReviewStore = defineStore('review', {
     styleId: null,
     caption: '',
 
-    hashtagGroupId: null,
     aiHashtags: [],        // ✅ AI가 제안해 준 태그들
     selectedHashtags: [],  // ✅ 사용자가 최종 선택한 태그들
     step: 1,
@@ -25,9 +25,10 @@ export const useReviewStore = defineStore('review', {
       this.tripTitle = title
     },
     // 🔥 createReview 호출 결과를 저장
-    setReviewInfo(postId, groupId) {
+    setReviewInfo(postId, pGroupId, hGroupId) {
       this.reviewPostId = postId
-      this.groupId = groupId
+      this.photoGroupId = pGroupId
+      this.hashtagGroupId = hGroupId
     },
 
     // ✅ 구조를 { id, url, file } 로 통일

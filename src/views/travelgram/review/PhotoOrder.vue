@@ -157,7 +157,7 @@ const nextStep = async () => {
 
   // 2) 백엔드에 보낼 orderIndex payload 만들기
   const payload = {
-    groupId: reviewStore.groupId,
+    photoGroupId: reviewStore.photoGroupId,
     photos: photos.value.map((p, i) => ({
       photoId: p.id,
       orderIndex: i

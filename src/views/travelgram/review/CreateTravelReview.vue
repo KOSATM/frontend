@@ -153,17 +153,13 @@ onMounted(async () => {
   // 2) 리뷰 생성 - planId를 명시적인 객체 형태로 전달 (백엔드 요청 본문에 맞게)
 
   const res = await api.createReview(reviewStore.tripId); // 👈 수정된 부분
-  console.log("📌 Review created:", res);
+  console.log("📌 Review created:", res.data);
 
   // 3) store에 저장
-  reviewStore.setReviewInfo(res.data.reviewPostId, res.data.groupId);
+  reviewStore.setReviewInfo(res.data.reviewPostId, res.data.photoGroupId, res.data.hashtagGroupId);
   // 4) 업로드 화면 활성화
   isReady.value = true;
 });
-// onMounted(async () => {
-//   const result = await createReviewPhotoGroup()
-//   reviewStore.groupId = result.groupId   // 이 값이 있어야 업로드 성공
-// })
 
 
 
@@ -208,7 +204,7 @@ const handleFileUpload = async (event) => {
   // 🚨 Unhandled error 방지 및 업로드 실패 처리
   try {
     // ✅ 모든 미리보기 push를 시작한 뒤, 실제 업로드
-    const uploadedList = await uploadPhotos(files, reviewStore.groupId, baseOrderIndex);
+    const uploadedList = await uploadPhotos(files, reviewStore.photoGroupId, baseOrderIndex);
 
     // 응답이 Array인지 확인하고 처리
     const finalUploadedList = uploadedList.data || [];
@@ -242,14 +238,14 @@ const handleFileUpload = async (event) => {
 // ------------------------------
 // 2) 백엔드 업로드 함수 (단일/멀티 모두 지원)
 // ------------------------------
-const uploadPhotos = async (files, groupId, startOrderIndex = 0) => {
+const uploadPhotos = async (files, photoGroupId, startOrderIndex = 0) => {
   const formData = new FormData();
   const fileArray = Array.isArray(files) ? files : [files];
   const metadataList = []; // 💡 메타데이터 리스트를 저장할 배열
 
   fileArray.forEach((file, idx) => {
     const json = {
-      groupId: reviewStore.groupId,
+      photoGroupId: reviewStore.photoGroupId,
       fileName: file.name,
       orderIndex: startOrderIndex + idx
     };
