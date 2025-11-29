@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
 import StepHeader from '@/components/common/StepHeader.vue'
@@ -65,28 +65,31 @@ import PageHeader from '@/components/common/PageHeader.vue'
 const router = useRouter()
 const reviewStore = useReviewStore()
 
-// ✅ 추천 해시태그 목록
-const allHashtags = ref([
-  '#JejuIsland',
-  '#JejuTravel',
-  '#Korea',
-  '#TravelKorea',
-  '#IslandLife',
-  '#BeachVibes',
-  '#NatureLovers',
-  '#Wanderlust',
-  '#TravelPhotography',
-  '#AsiaTravel',
-  '#JejuHealing',
-  '#KoreaTrip',
-  '#InstaTravel',
-  '#TravelGram',
-  '#ExploreKorea'
-])
+// ✅ AI가 제안한 전체 태그
+const allHashtags = computed(() => reviewStore.aiHashtags || [])
 
 // ✅ 선택 상태 관리
-const selectedTags = ref(['#JejuIsland', '#JejuTravel', '#Korea', '#TravelKorea', '#IslandLife', '#BeachVibes', '#NatureLovers', '#Wanderlust'])
+const selectedTags = ref([])
 const newTag = ref('')
+
+
+// 컴포넌트 처음 들어왔을 때
+onMounted(() => {
+  if (reviewStore.selectedHashtags?.length) {
+    // 이미 이전 단계에서 선택한 값이 있으면 그거 복원
+    selectedTags.value = [...reviewStore.selectedHashtags]
+  } else {
+    // 처음이라면 AI 제안 전체를 기본 선택
+    selectedTags.value = [...allHashtags.value]
+  }
+})
+
+// 만약 aiHashtags가 비동기로 나중에 들어오는 구조라면 watch도 추가
+watch(allHashtags, (newVal) => {
+  if (!reviewStore.selectedHashtags?.length && selectedTags.value.length === 0) {
+    selectedTags.value = [...newVal]
+  }
+})
 
 // ✅ 선택 토글
 const toggleTag = (tag) => {
@@ -114,8 +117,7 @@ const addTag = () => {
 // ✅ 이동
 const goBack = () => router.back()
 const goNext = () => {
-  // ✅ 선택된 해시태그를 store에 저장
-  reviewStore.setHashtags(selectedTags.value)
+  reviewStore.setHashtags(selectedTags.value) // ✅ 최종 선택 저장
   reviewStore.nextStep()
   router.push({ name: 'EditPage' })
 }
