@@ -95,45 +95,49 @@ onMounted(() => {
     photos.value[0].isMain = true
   }
 })
-
+const syncMainPhoto = () => {
+  if (photos.value.length > 0) {
+    mainPhotoId.value = photos.value[0].id
+  }
+}
 /* -----------------------------------
    🔥 2) 카드 전체 클릭 → 대표사진 지정
    🔥 대표사진은 항상 맨 위로 이동
 ----------------------------------- */
 const selectMain = (id) => {
-  const index = photos.value.findIndex((p) => p.id === id)
-  if (index === -1) return
+  const index = photos.value.findIndex(p => p.id === id)
+  if (index <= 0) return
 
-  const selected = photos.value[index]
-
-  // 기존 대표 사진 isMain 제거
-  const oldMain = photos.value.find((p) => p.id === mainPhotoId.value)
-  if (oldMain) oldMain.isMain = false
-
-  // 대표사진 설정 + 맨 앞으로 이동
-  photos.value.splice(index, 1)
-  selected.isMain = true
+  const selected = photos.value.splice(index, 1)[0]
   photos.value.unshift(selected)
 
-  mainPhotoId.value = id
+  syncMainPhoto()
 }
+
 
 /* -----------------------------------
    🔥 3) 대표 사진 제외한 항목만 순서 이동 가능
 ----------------------------------- */
 const moveUp = (idx) => {
-  if (idx === 0) return        // 대표사진은 이동 불가
+  if (idx === 0) return
+
   const temp = photos.value[idx]
   photos.value[idx] = photos.value[idx - 1]
   photos.value[idx - 1] = temp
+
+  syncMainPhoto()
 }
 
+
 const moveDown = (idx) => {
-  if (idx === 0) return        // 대표사진 이동 불가
+  if (idx === 0) return
   if (idx >= photos.value.length - 1) return
+
   const temp = photos.value[idx]
   photos.value[idx] = photos.value[idx + 1]
   photos.value[idx + 1] = temp
+
+  syncMainPhoto()
 }
 
 /* -----------------------------------
@@ -141,8 +145,12 @@ const moveDown = (idx) => {
 ----------------------------------- */
 const removePhoto = (id) => {
   if (id === mainPhotoId.value) return
-  photos.value = photos.value.filter((p) => p.id !== id)
+
+  photos.value = photos.value.filter(p => p.id !== id)
+
+  syncMainPhoto()
 }
+
 
 /* -----------------------------------
    🔥 5) 다음 단계
