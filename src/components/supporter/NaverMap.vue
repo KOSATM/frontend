@@ -13,14 +13,17 @@
         <div id="map" style="width: 100%; height: 100%;"></div>
     </div>
 </template>
-
 <script setup>
+import store from '@/store'
+import { useSupporterStore } from '@/store/supporterStore'
 import { ref, onMounted } from 'vue'
+import { useStore } from 'vuex'
 
 const isMapLoading = ref(true)
 const map = ref(null)
 const infowindow = ref(null)
 const userLocation = ref(null)
+const userAddress = ref('') //사용자 주소를 저장할 ref
 
 const props = defineProps({
     //지도에 표시할 마커 배열 (lat, lng, title, info 포함)
@@ -64,7 +67,7 @@ const loadNaverMaps = () => {
 
         // script 태그 동적 생성
         const script = document.createElement('script')
-        script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${window.NAVER_CLIENT_ID}&callback=onNaverMapsLoad&language=en`
+        script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${window.NAVER_CLIENT_ID}&submodules=geocoder&callback=onNaverMapsLoad&language=en`
         script.type = 'text/javascript'
         document.head.appendChild(script)
     })
@@ -360,6 +363,22 @@ function onSuccessGeolocation(position) {
 
     // 사용자 위치 저장
     userLocation.value = location
+    
+    // 사용자 위치를 주소로 변환
+    window.naver.maps.Service.reverseGeocode({
+        coords: new window.naver.maps.LatLng(position.coords.latitude, position.coords.longitude),
+    }, function(status, response) {
+        if (status !== window.naver.maps.Service.Status.OK) {
+            console.error('Reverse Geocode 오류:', status)
+        }
+        var result = response.v2, // 검색 결과의 컨테이너
+        address = result.address; //검색 결과로 만든 주소
+        const store = useSupporterStore()
+        store.setUserAddress(address);
+
+        console.log(store.getUserAddress.jibunAddress);
+    }
+)
 
     // 현재 위치에 Marker 추가 (빨간색) - 항상 표시
     new window.naver.maps.Marker({
