@@ -8,7 +8,7 @@ import CaptionSelect from '@/views/travelgram/review/CaptionSelect.vue'
 import HashtagSelect from '@/views/travelgram/review/HashtagSelect.vue'
 import EditPage from '@/views/travelgram/review/EditPage.vue'
 import InstagramPreview from '@/views/travelgram/review/InstagramPreview.vue'
-import Complete from '@/views/travelgram/review/Complete.vue'
+import Complete from '@/views/travelgram/review/CompleteReview.vue'
 
 const routes = [
   {
@@ -17,43 +17,43 @@ const routes = [
     component: Travelgram,
   },
   {
-    path: '/travelgram/:tripId/:tripTitle?',
+    path: '/travelgram/:planId/:planTitle?',
     name: 'CreateTravelReview',
     component: CreateTravelReview,
     props: true,
   },
   {
-    path: '/travelgram/:tripId/order',
+    path: '/travelgram/:planId/order',
     name: 'PhotoOrder',
     component: PhotoOrder,
     props: true,
   },
   {
-    path: '/travelgram/:tripId/caption',
+    path: '/travelgram/:planId/caption',
     name: 'CaptionSelect',
     component: CaptionSelect,
     props: true,
   },
   {
-    path: '/travelgram/:tripId/hashtags',
+    path: '/travelgram/:planId/hashtags',
     name: 'HashtagSelect',
     component: HashtagSelect,
     props: true,
   },
   {
-    path: '/travelgram/:tripId/edit',
+    path: '/travelgram/:planId/edit',
     name: 'EditPage',
     component: EditPage,
     props: true,
   },
   {
-    path: '/travelgram/:tripId/preview',
+    path: '/travelgram/:planId/preview',
     name: 'InstagramPreview',
     component: InstagramPreview,
     props: true,
   },
   {
-    path: '/travelgram/:tripId/complete',
+    path: '/travelgram/:planId/complete',
     name: 'Complete',
     component: Complete,
     props: true,

@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 
 export const useReviewStore = defineStore('review', {
   state: () => ({
-    tripId: null,
-    tripTitle: '',
+    planId: null,
+    planTitle: '',
     reviewPostId: null, // 🔥 리뷰 생성(createReview)에서 받아옴
     photoGroupId: null, // 🔥 사진 업로드에 반드시 필요
     hashtagGroupId: null,
@@ -21,8 +21,8 @@ export const useReviewStore = defineStore('review', {
 
   actions: {
     setTripInfo(id, title) {
-      this.tripId = id
-      this.tripTitle = title
+      this.planId = id
+      this.planTitle = title
     },
     // 🔥 createReview 호출 결과를 저장
     setReviewInfo(postId, pGroupId, hGroupId) {
@@ -58,8 +58,8 @@ export const useReviewStore = defineStore('review', {
       this.step++
     },
     resetReview() {
-      this.tripId = null
-      this.tripTitle = ''
+      this.planId = null
+      this.planTitle = ''
       this.reviewPostId = null
       this.groupId = null
 

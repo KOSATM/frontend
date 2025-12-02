@@ -2,12 +2,12 @@
   <div class="photo-upload-page">
     <PageHeader title="Travelgram" subtitle="Your past travel adventures" icon="bi-instagram" />
     <!-- 🔸 상단 헤더 -->
-    <StepHeader title="Create Travel Review" :subtitle="reviewStore.tripTitle" step="1/6" @back="goBack" />
+    <StepHeader title="Create Travel Review" :subtitle="reviewStore.planTitle" step="1/6" @back="goBack" />
 
     <!-- 여행 정보 카드 -->
     <div class="trip-info-card">
       <div class="trip-info-header">
-        <h5>{{ tripTitle }}</h5>
+        <h5>{{ planTitle }}</h5>
       </div>
       <div class="trip-info-body">
         <div class="info-row">
@@ -131,8 +131,8 @@ const router = useRouter()
 const route = useRoute()
 const reviewStore = useReviewStore()
 
-const tripId = route.params.tripId
-const tripTitle = route.query.title || 'My Trip'
+const planId = route.params.planId
+const planTitle = route.query.title || 'My Trip'
 
 const fileInput = ref(null)
 const uploadedImages = ref([])
@@ -148,11 +148,11 @@ const isReady = ref(false);
 // import { createReviewPhotoGroup } from '@/api/travelgramApi'
 onMounted(async () => {
   // 1) trip 정보 저장
-  reviewStore.setTripInfo(route.params.tripId, route.query.title)
+  reviewStore.setTripInfo(route.params.planId, route.query.title)
 
   // 2) 리뷰 생성 - planId를 명시적인 객체 형태로 전달 (백엔드 요청 본문에 맞게)
 
-  const res = await api.createReview(reviewStore.tripId); // 👈 수정된 부분
+  const res = await api.createReview(reviewStore.planId); // 👈 수정된 부분
   console.log("📌 Review created:", res.data);
 
   // 3) store에 저장
@@ -164,7 +164,7 @@ onMounted(async () => {
 
 
 const currentTripInfo = computed(() => {
-  return allTripsData.value[tripId] || { location: '', date: '', cost: '', itinerary: [] }
+  return allTripsData.value[planId] || { location: '', date: '', cost: '', itinerary: [] }
 })
 
 const triggerFileInput = () => fileInput.value?.click()
@@ -279,8 +279,8 @@ const nextStep = () => {
   reviewStore.nextStep()
   router.push({
     name: 'PhotoOrder',
-    params: { tripId },
-    query: { title: tripTitle },
+    params: { planId },
+    query: { title: planTitle },
   })
 }
 

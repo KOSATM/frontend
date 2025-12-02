@@ -8,7 +8,7 @@
     <!-- 🔸 상단 헤더 -->
     <StepHeader
       title="Create Travel Review"
-      :subtitle="reviewStore.tripTitle"
+      :subtitle="reviewStore.planTitle"
       step="2/6"
       @back="goBack"
     />
@@ -80,7 +80,7 @@ const router = useRouter()
 const route = useRoute()
 const reviewStore = useReviewStore()
 
-const tripTitle = reviewStore.tripTitle || route.query.title
+const planTitle = reviewStore.planTitle || route.query.title
 
 /* 🔥 대표사진/사진들 */
 const photos = ref([...reviewStore.photos])
@@ -179,8 +179,8 @@ const nextStep = async () => {
   reviewStore.nextStep()
   router.push({
     name: 'CaptionSelect',
-    params: { tripId: route.params.tripId },
-    query: { title: tripTitle }
+    params: { planId: route.params.planId },
+    query: { title: planTitle }
   })
 }
 

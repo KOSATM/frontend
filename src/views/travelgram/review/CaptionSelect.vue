@@ -7,7 +7,7 @@
       />
         <StepHeader
           title="Create Travel Review"
-          :subtitle="reviewStore.tripTitle"
+          :subtitle="reviewStore.planTitle"
           step="3/6"
           @back="goBack"
         />

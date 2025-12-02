@@ -23,7 +23,7 @@
       <TripCard
       v-for="trip in trips"
         :key="trip.id"
-        :tripId="trip.id" 
+        :planId="trip.id" 
         :title="trip.title"
         :location="trip.location"
         :date="trip.date"

@@ -27,7 +27,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const props = defineProps({
-  tripId: [String, Number],           // ← 가능하면 id를 같이 넘기자
+  planId: [String, Number],           // ← 가능하면 id를 같이 넘기자
   title: { type: String, required: true },
   location: String,
   date: String,
@@ -39,7 +39,7 @@ const props = defineProps({
 const goToReview = () => {
   router.push({
     name: 'CreateTravelReview',
-    params: { tripId: props.tripId },
+    params: { planId: props.planId },
     query: { title: props.title },
   })
 }
