@@ -12,8 +12,8 @@
     <!-- 통계 -->
     <div class="profile-stats d-flex justify-content-center text-center">
       <div class="stat-item">
-        <h6>{{ totalTrips }}</h6>
-        <p>Total Trips</p>
+        <h6>{{ totalplans }}</h6>
+        <p>Total plans</p>
       </div>
       <div class="stat-item">
         <h6>{{ travelDays }}</h6>
@@ -34,7 +34,7 @@ defineProps({
   name: { type: String, required: true },
   bio: { type: String, required: true },
   profileImage: { type: String, default: defaultProfileImg },
-  totalTrips: { type: Number, default: 0 },
+  totalplans: { type: Number, default: 0 },
   travelDays: { type: Number, default: 0 },
   completed: { type: Number, default: 0 },
 });

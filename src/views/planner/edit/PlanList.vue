@@ -149,8 +149,8 @@
         class="w-100 py-2"
         >Next: Select Accommodation</BaseButton
       >
-      <BaseButton v-else @click="endTrip()" variant="success" class="w-100 py-2"
-        >FORCE to End Trip</BaseButton
+      <BaseButton v-else @click="endplan()" variant="success" class="w-100 py-2"
+        >FORCE to End plan</BaseButton
       >
     </div>
   </section>
@@ -686,7 +686,7 @@ const days = ref([
   },
   {
     id: 6,
-    title: "Gangwon Day Trip",
+    title: "Gangwon Day plan",
     date: "Nov 11, 2025",
     dailyCost: 120,
     activities: [
@@ -964,7 +964,7 @@ const next = () => {
   router.push("/planner/hotel");
 };
 
-const endTrip = () => {
+const endplan = () => {
   travelStore.endTravel();
   travelStore.resetStep();
   router.push("/planner");

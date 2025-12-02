@@ -1,16 +1,16 @@
 <template>
-  <div class="trip-card" @click="goToReview">
+  <div class="plan-card" @click="goToReview">
     <!-- 썸네일 -->
-    <img :src="image" alt="trip image" />
+    <img :src="image" alt="plan image" />
 
     <!-- 본문 -->
-    <div class="trip-info">
+    <div class="plan-info">
       <div class="d-flex align-items-center mb-1">
         <span class="badge me-2">✔ {{ status }}</span>
-        <h6 class="trip-title mb-0">{{ title }}</h6>
+        <h6 class="plan-title mb-0">{{ title }}</h6>
       </div>
-      <p class="trip-meta mb-1">{{ location }}</p>
-      <p class="trip-meta mb-0">
+      <p class="plan-meta mb-1">{{ location }}</p>
+      <p class="plan-meta mb-0">
         <i class="bi bi-calendar-event me-1"></i>{{ date }}<br />
         <i class="bi bi-currency-dollar me-1"></i>{{ price }}
       </p>

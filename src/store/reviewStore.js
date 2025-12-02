@@ -20,7 +20,7 @@ export const useReviewStore = defineStore('review', {
   }),
 
   actions: {
-    setTripInfo(id, title) {
+    setplanInfo(id, title) {
       this.planId = id
       this.planTitle = title
     },

@@ -5,22 +5,22 @@
     <StepHeader title="Create Travel Review" :subtitle="reviewStore.planTitle" step="1/6" @back="goBack" />
 
     <!-- 여행 정보 카드 -->
-    <div class="trip-info-card">
-      <div class="trip-info-header">
+    <div class="plan-info-card">
+      <div class="plan-info-header">
         <h5>{{ planTitle }}</h5>
       </div>
-      <div class="trip-info-body">
+      <div class="plan-info-body">
         <div class="info-row">
           <span class="info-label">Location</span>
-          <span class="info-value">{{ currentTripInfo.location }}</span>
+          <span class="info-value">{{ currentplanInfo.location }}</span>
         </div>
         <div class="info-row">
           <span class="info-label">Date</span>
-          <span class="info-value">{{ currentTripInfo.date }}</span>
+          <span class="info-value">{{ currentplanInfo.date }}</span>
         </div>
         <div class="info-row">
           <span class="info-label">Budget</span>
-          <span class="info-value">${{ currentTripInfo.cost }}</span>
+          <span class="info-value">${{ currentplanInfo.cost }}</span>
         </div>
       </div>
     </div>
@@ -33,7 +33,7 @@
       </h6>
 
       <div class="planner-accordion">
-        <div v-for="day in currentTripInfo.itinerary" :key="day.dayNumber"
+        <div v-for="day in currentplanInfo.itinerary" :key="day.dayNumber"
           class="card border-0 shadow-sm rounded-4 overflow-hidden mb-3">
           <!-- Day Header -->
           <div class="card-body d-flex justify-content-between align-items-center"
@@ -90,7 +90,7 @@
       <i class="bi bi-image me-1 text-secondary"></i> Upload Photos
     </h6>
     <p class="upload-subtitle">
-      Upload up to 10 photos from your trip ({{ uploadedImages.length }}/10)
+      Upload up to 10 photos from your plan ({{ uploadedImages.length }}/10)
     </p>
     <section class="upload-section">
 
@@ -132,7 +132,7 @@ const route = useRoute()
 const reviewStore = useReviewStore()
 
 const planId = route.params.planId
-const planTitle = route.query.title || 'My Trip'
+const planTitle = route.query.title || 'My plan'
 
 const fileInput = ref(null)
 const uploadedImages = ref([])
@@ -142,13 +142,13 @@ const toggleDay = (id) => {
   openDayId.value = id
 }
 // 모든 여행 데이터
-const allTripsData = ref({})
+const allplansData = ref({})
 // 🔥 업로드 UI를 보여줄 준비되었는지 여부
 const isReady = ref(false);
 // import { createReviewPhotoGroup } from '@/api/travelgramApi'
 onMounted(async () => {
-  // 1) trip 정보 저장
-  reviewStore.setTripInfo(route.params.planId, route.query.title)
+  // 1) plan 정보 저장
+  reviewStore.setplanInfo(route.params.planId, route.query.title)
 
   // 2) 리뷰 생성 - planId를 명시적인 객체 형태로 전달 (백엔드 요청 본문에 맞게)
 
@@ -163,8 +163,8 @@ onMounted(async () => {
 
 
 
-const currentTripInfo = computed(() => {
-  return allTripsData.value[planId] || { location: '', date: '', cost: '', itinerary: [] }
+const currentplanInfo = computed(() => {
+  return allplansData.value[planId] || { location: '', date: '', cost: '', itinerary: [] }
 })
 
 const triggerFileInput = () => fileInput.value?.click()
@@ -333,7 +333,7 @@ const goBack = () => router.back()
 }
 
 /* 여행 정보 카드 */
-.trip-info-card {
+.plan-info-card {
   background-color: #fff;
   border-radius: 1rem;
   margin-bottom: 2rem;
@@ -341,23 +341,23 @@ const goBack = () => router.back()
   overflow: hidden;
 }
 
-.trip-info-header h5 {
+.plan-info-header h5 {
   color: #ffffff !important;
 }
 
-.trip-info-header {
+.plan-info-header {
   background-color: #1B3B6F;
   color: #ffffff;
   padding: 1rem 1.5rem;
 }
 
-.trip-info-header h5 {
+.plan-info-header h5 {
   margin: 0;
   font-weight: 600;
 
 }
 
-.trip-info-body {
+.plan-info-body {
   padding: 1.5rem;
 }
 

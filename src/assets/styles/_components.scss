@@ -53,9 +53,9 @@
 }
 
 // ===============================
-// 🧳 Trip Card (Travelgram, Planner 등 공통)
+// 🧳 plan Card (Travelgram, Planner 등 공통)
 // ===============================
-.trip-card {
+.plan-card {
   text-align: left; /* ✅ 부모의 중앙 정렬 상속 제거 */
   border: 1px solid #eee;
   background-color: #fff;
@@ -85,15 +85,15 @@
     margin-right: 1rem;
   }
 
-  .trip-info {
+  .plan-info {
     flex: 1;
 
-    .trip-title {
+    .plan-title {
       font-weight: 600;
       color: $secondary; // 네이비
     }
 
-    .trip-meta {
+    .plan-meta {
       font-size: 0.85rem;
       color: #666;
     }
