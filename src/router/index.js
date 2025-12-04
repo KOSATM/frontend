@@ -13,16 +13,19 @@ import planner from './planner'
 import supporter from './supporter'
 import mypage from './mypage'
 import { useTravelStore } from '@/store/travelStore'
+import OAuthCallback from '@/views/auth/OAuthCallback.vue'
 
 const routes = [
+  // OAuth 콜백 (하위 라우트보다 앞에)
+  { path: '/login/oauth2/code/google', component: OAuthCallback },
+  
+  // 기본 라우트
   { path: '/', component: CreatePlan },
   { path: '/travelgram', component: Travelgram },
   { path: '/supporter', component: Supporter },
   { path: '/mypage', component: MyProfile },
-  // { path: '/planner', component: PlannerCreate },
-  // { path: '/planner/form', component: TravelPlanForm },
   { path: '/planner/hotel', component: Hotel },
-
+  
   // 하위 모듈 라우트 확장
   ...planner,
   ...supporter,
@@ -41,13 +44,9 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const travelStore = useTravelStore()
 
-  if (to.path === '/planner' && travelStore.isTraveling) {
-    // 여행 중인 경우 전체 일정 목록으로 리다이렉트
-    return next('/planner/edit')
-  } else if (to.path === '/planner' && !travelStore.isTraveling) {
+  if (to.path === '/planner/edit' && !travelStore.isTraveling) {
     return next('/')
   }
-
 
   next()
 })

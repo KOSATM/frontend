@@ -12,19 +12,19 @@
 
       <!-- 우측: 프로필 이미지 + 햄버거 버튼 -->
       <div class="d-flex align-items-center gap-2">
-        <!-- OAuth 프로필 이미지 -->
-        <button
+        <!-- OAuth 로그인 / 프로필 이미지 버튼 -->
+        <a
+          href="http://localhost:8080/oauth2/authorization/google"
           class="btn profile-btn border-0 p-0"
-          type="button"
-          @click="goToTravelgram"
-          title="Go to Travelgram"
+          title="Login with Google OAuth"
         >
           <img
-            :src="profileImage"
+            src="@/assets/img/profile-logo.png"
             alt="Profile"
             class="profile-img"
+            :title="'Profile'"
           />
-        </button>
+        </a>
 
         <!-- 햄버거 버튼 -->
         <button
@@ -42,20 +42,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
 
 const navbar = ref(null)
 const router = useRouter()
-const store = useStore()
-
-// OAuth 프로필 이미지 (기본값: 사용자 아이콘)
-const profileImage = computed(() => {
-  const stored = store?.getters?.getProfileImage
-  if (stored) return stored
-  return new URL('../assets/img/profile-logo.png', import.meta.url).href
-})
 
 // Travelgram 페이지로 이동
 const goToTravelgram = () => {
