@@ -104,17 +104,21 @@
 
       <div v-if="uploadedImages.length" class="preview-grid mt-3">
         <div v-for="(img, idx) in uploadedImages" :key="idx" class="preview-item">
-          <img :src="img.url" :alt="img.name" />
+          <img :src="img.url" :alt="img.name" :class="{ 'opacity-50': img.uploading }" />
+
+          <div v-if="img.uploading" class="upload-spinner">
+            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+          </div>
         </div>
       </div>
-    </section>
+  </section>
 
-    <!-- 🟦 하단 버튼 -->
-    <div class="navigation-buttons">
-      <button class="btn-next" :disabled="!uploadedImages.length" @click="nextStep">
-        Next Step
-      </button>
-    </div>
+  <!-- 🟦 하단 버튼 -->
+  <div class="navigation-buttons">
+    <button class="btn-next" :disabled="!uploadedImages.length" @click="nextStep">
+      Next Step
+    </button>
+  </div>
   </div>
 </template>
 
@@ -169,7 +173,7 @@ const currentplanInfo = computed(() => {
 
 const triggerFileInput = () => fileInput.value?.click()
 // ------------------------------
-// 1) 파일 선택 핸들러 (미리보기 + 업로드)
+// 1) 파일 선택 핸들러 (즉시 미리보기 + 동시 업로드)
 // ------------------------------
 const handleFileUpload = async (event) => {
   const files = Array.from(event.target.files);
@@ -179,96 +183,77 @@ const handleFileUpload = async (event) => {
     return;
   }
 
-  // ✅ 기존에 올라와 있던 이미지 개수
   const baseOrderIndex = uploadedImages.value.length;
 
-  files.forEach((file, index) => {
-    const reader = new FileReader();
-    const tempId = uuidv4();
-    const orderIndex = baseOrderIndex + index; // ✅ 이 파일의 확정 orderIndex
+  // ✅ [STEP 1] 즉시 미리보기 생성 (FileReader 제거)
+  // URL.createObjectURL은 파일을 읽을 필요 없이 브라우저 메모리 주소만 따오므로 즉시 실행됩니다.
+  const newPreviewImages = files.map((file, index) => ({
+    id: uuidv4(),      // 임시 ID
+    name: file.name,
+    url: URL.createObjectURL(file), // ⭐ 핵심: 즉시 미리보기 URL 생성
+    file: file,
+    uploading: true,   // 로딩 상태 표시용
+    orderIndex: baseOrderIndex + index,
+  }));
 
-    reader.onload = (e) => {
-      uploadedImages.value.push({
-        id: tempId,
-        name: file.name,
-        url: e.target.result,  // Base64
-        file,
-        uploading: true,
-        orderIndex,       // ✅ 고정된 orderIndex 사용
-      });
-    };
+  // 화면에 바로 반영 (사용자는 이미지가 바로 뜬 것처럼 느낌)
+  uploadedImages.value = [...uploadedImages.value, ...newPreviewImages];
 
-    reader.readAsDataURL(file);
-  });
-
-  // 🚨 Unhandled error 방지 및 업로드 실패 처리
+  // ✅ [STEP 2] 백그라운드에서 업로드 수행
   try {
-    // ✅ 모든 미리보기 push를 시작한 뒤, 실제 업로드
     const uploadedList = await uploadPhotos(files, reviewStore.photoGroupId, baseOrderIndex);
-
-    // 응답이 Array인지 확인하고 처리
     const finalUploadedList = uploadedList.data || [];
 
+    // ✅ [STEP 3] 업로드가 완료되면 S3 URL로 교체해주기
     finalUploadedList.forEach((uploaded) => {
-      const idx = uploadedImages.value.findIndex(
+      const targetImg = uploadedImages.value.find(
         (img) => img.orderIndex === uploaded.orderIndex
       );
 
-      if (idx !== -1) {
-        uploadedImages.value[idx] = {
-          ...uploadedImages.value[idx],
-          id: uploaded.id,  // 백엔드에서 내려주는 필드명에 맞게
-          url: uploaded.fileUrl,  // S3 URL
-          file: null,
-          uploading: false,
-        };
+      if (targetImg) {
+        // 기존 blob: URL 메모리 해제 (메모리 누수 방지)
+        URL.revokeObjectURL(targetImg.url);
+
+        // 서버에서 받은 진짜 URL과 ID로 교체
+        targetImg.url = uploaded.fileUrl;
+        targetImg.id = uploaded.id;
+        targetImg.uploading = false; // 로딩 완료
+        targetImg.file = null;       // 원본 파일 객체는 이제 필요 없음
       }
     });
 
-  } catch (error) {
-    console.error('File upload failed:', error.response?.status, error.message);
-    alert('사진 업로드에 실패했습니다. 서버 설정을 확인해주세요.');
+    console.log("업로드 완료 및 URL 교체 성공");
 
-    // 업로드 실패 시, 미리보기로 추가했던 항목들 제거
+  } catch (error) {
+    console.error('File upload failed:', error);
+    alert('사진 업로드에 실패했습니다.');
+
+    // 실패 시, 방금 추가했던 가짜 이미지들 삭제
     uploadedImages.value = uploadedImages.value.filter(
-      (img) => img.uploading === false || img.orderIndex < baseOrderIndex
+      (img) => img.orderIndex < baseOrderIndex
     );
+  } finally {
+    // input 초기화 (같은 파일 다시 선택 가능하게)
+    if (fileInput.value) fileInput.value.value = '';
   }
 };
-// ------------------------------
-// 2) 백엔드 업로드 함수 (단일/멀티 모두 지원)
-// ------------------------------
+// ============================================================
+// 2) 백엔드 업로드 함수 (여기가 '다이어트' 된 핵심 부분)
+// ============================================================
 const uploadPhotos = async (files, photoGroupId, startOrderIndex = 0) => {
   const formData = new FormData();
+  
+  formData.append("photoGroupId", photoGroupId);
+  formData.append("startOrderIndex", startOrderIndex);
+
   const fileArray = Array.isArray(files) ? files : [files];
-  const metadataList = []; // 💡 메타데이터 리스트를 저장할 배열
-
-  fileArray.forEach((file, idx) => {
-    const json = {
-      photoGroupId: reviewStore.photoGroupId,
-      fileName: file.name,
-      orderIndex: startOrderIndex + idx
-    };
-
-    // 💡 1. 메타데이터 객체를 리스트에 추가합니다.
-    metadataList.push(json);
-
-    // 2. 파일 자체는 여전히 'files' 키로 개별 append 합니다.
-    formData.append("files", file);
+  fileArray.forEach((file) => {
+    formData.append("files", file); 
   });
-
-  // 💡 3. 모든 메타데이터를 배열로 묶어 단 하나의 JSON 문자열로 변환하여 append 합니다.
-  formData.append("dataListJson", JSON.stringify(metadataList));
-
-
-  // 디버깅용
-  for (let pair of formData.entries()) {
-    console.log("FD:", pair[0], pair[1]);
-  }
-  console.log(">>> REQUEST HEADERS:", formData);
 
   return api.uploadReviewPhotos(formData);
 };
+
 
 
 
@@ -446,13 +431,24 @@ const goBack = () => router.back()
 }
 
 .preview-item {
+  position: relative;
   width: 80px;
   height: 80px;
   border-radius: 0.75rem;
   overflow: hidden;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
+.upload-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
 
+.opacity-50 {
+  opacity: 0.5;
+}
 .preview-item img {
   width: 100%;
   height: 100%;
