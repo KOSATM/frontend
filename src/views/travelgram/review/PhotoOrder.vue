@@ -71,7 +71,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
-import { updatePhotoOrder } from '@/api/travelgramApi'
+import api from '@/api/travelgramApi'
 import StepHeader from '@/components/common/StepHeader.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 import TipBox from '@/components/common/TipBox.vue'
@@ -80,6 +80,7 @@ const router = useRouter()
 const route = useRoute()
 const reviewStore = useReviewStore()
 
+const planId = reviewStore.planId;
 const planTitle = reviewStore.planTitle || route.query.title
 
 /* 🔥 대표사진/사진들 */
@@ -173,13 +174,13 @@ const nextStep = async () => {
   }
 
   // 3) 🔥 사진 순서 업데이트 API 호출
-  await updatePhotoOrder(payload)
+  await api.updatePhotoOrder(payload)
 
   // 4) 다음 스텝 이동
   reviewStore.nextStep()
   router.push({
     name: 'CaptionSelect',
-    params: { planId: route.params.planId },
+    params: { planId: planId },
     query: { title: planTitle }
   })
 }
