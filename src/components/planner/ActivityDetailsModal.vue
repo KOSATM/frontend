@@ -53,7 +53,7 @@
           <!-- 📸 로컬 이미지 3장 스크롤 -->
           <div class="left">
             <div class="image-wrapper">
-              <div class="image-strip">
+              <div class="image-splan">
                 <div
                   v-for="(url, i) in localGallery"
                   :key="'local-' + i"
@@ -212,20 +212,20 @@ const googleImageUrl = (q) => {
   display: flex;
   flex-direction: column;
 }
-.image-strip {
+.image-splan {
   display: flex;
   overflow-x: auto;
   gap: 10px;
   scroll-snap-type: x mandatory;
   scrollbar-width: thin;
 }
-.image-strip::-webkit-scrollbar {
+.image-splan::-webkit-scrollbar {
   height: 6px;
 }
-.image-strip::-webkit-scrollbar-track {
+.image-splan::-webkit-scrollbar-track {
   background: transparent;
 }
-.image-strip::-webkit-scrollbar-thumb {
+.image-splan::-webkit-scrollbar-thumb {
   background: rgba(148, 163, 184, 0.8);
   border-radius: 999px;
 }

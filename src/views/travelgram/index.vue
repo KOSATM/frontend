@@ -9,7 +9,7 @@
       name="Jessica Han"
       bio="Travel Enthusiast"
       initials="JH"
-      :totalTrips="12"
+      :totalplans="12"
       :travelDays="28"
       :completed="3"
     />
@@ -18,19 +18,19 @@
     </h4>
     
     
-    <!-- TripCard 목록 -->
-    <div class="trip-list">
-      <TripCard
-      v-for="trip in trips"
-        :key="trip.id"
-        :tripId="trip.id" 
-        :title="trip.title"
-        :location="trip.location"
-        :date="trip.date"
-        :cost="trip.cost"
-        :image="trip.image"
-        :isActive="trip.id === activeId"
-        @click="activeId = trip.id"
+    <!-- planCard 목록 -->
+    <div class="plan-list">
+      <planCard
+      v-for="plan in plans"
+        :key="plan.id"
+        :planId="plan.id" 
+        :title="plan.title"
+        :location="plan.location"
+        :date="plan.date"
+        :cost="plan.cost"
+        :image="plan.image"
+        :isActive="plan.id === activeId"
+        @click="activeId = plan.id"
         />
       </div>
 
@@ -43,17 +43,17 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import TripCard from '@/components/common/TripCard.vue';
+import planCard from '@/components/common/PlanCard.vue';
 import ProfileSummary from "@/components/travelgram/ProfileSummary.vue";
 import PageHeader from '@/components/common/PageHeader.vue';
 
 const store = useStore()
 
 // ✅ 하드코딩된 여행 데이터
-const trips = ref([
+const plans = ref([
   {
     id: 3,
-    title: 'Jeju Island Healing Trip',
+    title: 'Jeju Island Healing plan',
     location: 'Jeju Island',
     date: 'Oct 15 - Oct 18, 2024',
     cost: '500',
@@ -104,7 +104,7 @@ const profileImage = computed(() => {
   font-weight: 600;
 }
 
-.trip-list {
+.plan-list {
   margin-bottom: 2rem;
 }
 </style>

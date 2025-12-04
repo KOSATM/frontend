@@ -217,7 +217,7 @@ const goToImageAIHistory = () => {
 }
 
 /* Weather card */
-.weather-strip {
+.weather-splan {
   margin-bottom: 16px;
 }
 
@@ -297,7 +297,7 @@ const goToImageAIHistory = () => {
   border-right: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.weather-strip .card {
+.weather-splan .card {
   padding: 10px;
 }
 

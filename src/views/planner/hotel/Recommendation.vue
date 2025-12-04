@@ -17,7 +17,7 @@
 
         <h2 class="text-secondary mb-3">Recommended Hotels for Your Stay</h2>
         <p class="text-muted">
-          based on your {{ travelDays }}-day trip with ₩{{ budget.toLocaleString() }} budget
+          based on your {{ travelDays }}-day plan with ₩{{ budget.toLocaleString() }} budget
         </p>
         <div class="d-flex justify-content-between align-items-center budget-details p-3 bg-light rounded-pill">
           <span>Budget per night</span>

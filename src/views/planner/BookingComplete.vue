@@ -12,7 +12,7 @@
       <div class="col-md-10">
         <div class="card mb-4 shadow-sm">
           <div class="card-header bg-primary text-white border-0 rounded-top">
-            <h5 class="mb-0">🧳 Trip Summary</h5>
+            <h5 class="mb-0">🧳 plan Summary</h5>
           </div>
           <div class="card-body">
             <dl class="row mb-3">
@@ -75,7 +75,7 @@
           <ul class="mb-0 small">
             <li>Your itinerary has been saved to Travelgram</li>
             <li>You can modify your plan anytime</li>
-            <li>Use the Supporter tab for real-time assistance during your trip</li>
+            <li>Use the Supporter tab for real-time assistance during your plan</li>
           </ul>
         </div>
 

@@ -5,7 +5,7 @@
       icon="bi-instagram"
     />
   <div class="review-edit-page">
-    <StepHeader title="Create Travel Review" :subtitle="reviewStore.tripTitle" step="5/6" @back="goBack" />
+    <StepHeader title="Create Travel Review" :subtitle="reviewStore.planTitle" step="5/6" @back="goBack" />
 
     <section class="review-section">
       <h6 class="section-title">
@@ -114,7 +114,7 @@ const scrollToPhoto = () => {
 const goBack = () => router.back();
 const goNext = () => {
   reviewStore.setCaption(caption.value);
-  router.push({ name: 'InstagramPreview', params: { tripId: route.params.tripId } });
+  router.push({ name: 'InstagramPreview', params: { planId: route.params.planId } });
 };
 </script>
 

@@ -1,18 +1,15 @@
 <template>
-  <div class="trip-card" @click="goToReview">
-    <!-- 썸네일 -->
-    <img :src="image" alt="trip image" />
+  <div class="plan-card" @click="goToReview">
 
     <!-- 본문 -->
-    <div class="trip-info">
+    <div class="plan-info">
       <div class="d-flex align-items-center mb-1">
         <span class="badge me-2">✔ {{ status }}</span>
-        <h6 class="trip-title mb-0">{{ title }}</h6>
+        <h6 class="plan-title mb-0">{{ title }}</h6>
       </div>
-      <p class="trip-meta mb-1">{{ location }}</p>
-      <p class="trip-meta mb-0">
+      <p class="plan-meta mb-0">
         <i class="bi bi-calendar-event me-1"></i>{{ date }}<br />
-        <i class="bi bi-currency-dollar me-1"></i>{{ price }}
+        <i class="bi bi-currency-dollar me-1"></i>{{ budget }}
       </p>
     </div>
 
@@ -27,11 +24,10 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const props = defineProps({
-  tripId: [String, Number],           // ← 가능하면 id를 같이 넘기자
-  title: { type: String, required: true },
-  location: String,
+  planId: [String, Number],           // ← 가능하면 id를 같이 넘기자
+  planTitle: { type: String, required: true },
   date: String,
-  price: String,
+  budget: String,
   image: String,
   status: { type: String, default: 'Done' }
 })
@@ -39,8 +35,8 @@ const props = defineProps({
 const goToReview = () => {
   router.push({
     name: 'CreateTravelReview',
-    params: { tripId: props.tripId },
-    query: { title: props.title },
+    params: { planId: props.planId },
+    query: { title: props.planTitle },
   })
 }
 </script>

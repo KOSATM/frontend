@@ -7,7 +7,7 @@
       />
         <StepHeader
           title="Create Travel Review"
-          :subtitle="reviewStore.tripTitle"
+          :subtitle="reviewStore.planTitle"
           step="3/6"
           @back="goBack"
         />
@@ -71,7 +71,7 @@ const captionStyles = [
   {
     id: 'casual',
     label: 'Casual',
-    text: 'Living my best island life in Jeju! 🌴🌞 The beaches here are absolutely stunning and the vibes are unmatched. Already planning my next trip back! Who wants to join? 📸',
+    text: 'Living my best island life in Jeju! 🌴🌞 The beaches here are absolutely stunning and the vibes are unmatched. Already planning my next plan back! Who wants to join? 📸',
     labelClass: 'casual'
   },
   {

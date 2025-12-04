@@ -2,7 +2,7 @@
   <div class="hashtag-page">
     <PageHeader title="Travelgram" subtitle="Your past travel adventures" icon="bi-instagram" />
     <!-- 상단 헤더 -->
-    <StepHeader title="Create Travel Review" :subtitle="reviewStore.tripTitle" step="4/6" @back="goBack" />
+    <StepHeader title="Create Travel Review" :subtitle="reviewStore.planTitle" step="4/6" @back="goBack" />
 
     <!-- 본문 -->
     <section class="hashtag-section">

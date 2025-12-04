@@ -8,7 +8,7 @@
     <!-- 상단 헤더 -->
     <StepHeader
       title="Create Travel Review"
-      :subtitle="reviewStore.tripTitle"
+      :subtitle="reviewStore.planTitle"
       step="6/6"
       @back="goBack"
     />

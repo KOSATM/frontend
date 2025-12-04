@@ -21,7 +21,7 @@
         <div class="message ai-message mb-3">
           <div class="message-bubble">
             <p class="mb-1" style="font-family: 'Kyobo2024', sans-serif">
-              Hello! I'm your AI assistant for planning your Seoul trip. 🇰🇷
+              Hello! I'm your AI assistant for planning your Seoul plan. 🇰🇷
             </p>
             <p class="mb-0" style="font-family: 'Kyobo2024', sans-serif">
               Ask me about itinerary changes, food recommendations, or new
