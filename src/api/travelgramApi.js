@@ -8,9 +8,8 @@ export const createReview = async(planId)=>{
 
 /* 2) 리뷰 사진 업로드 */
 export const uploadReviewPhotos = async (formData) => {
-  return api.post('/reviews/photos/upload', formData, {
-})}
-
+  return api.post('/reviews/photos/upload', formData);
+}
 // 3) 리뷰 사진 순서 업데이트
 export const updatePhotoOrder = async (payload) => {
   return api.put('/reviews/photo/order', payload)
