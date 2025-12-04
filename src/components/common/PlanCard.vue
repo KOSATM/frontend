@@ -1,7 +1,5 @@
 <template>
   <div class="plan-card" @click="goToReview">
-    <!-- 썸네일 -->
-    <img src="@/assets/img/logo.png" alt="logo" />
 
     <!-- 본문 -->
     <div class="plan-info">
