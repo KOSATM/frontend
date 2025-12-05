@@ -14,7 +14,7 @@
       <div class="d-flex align-items-center gap-3">
         <!-- 로그인 상태 표시 -->
         <div v-if="isLoggedIn" class="login-info d-flex align-items-center gap-2">
-          <span class="user-info text-white">{{ userInfo }}</span>
+          <span class="user-info">{{ userInfo }}</span>
           <button
             @click="handleLogout"
             class="logout-btn"
@@ -73,11 +73,20 @@ const isLoggedIn = computed(() => {
   return !!localStorage.getItem('jwtToken')
 })
 
-// 사용자 정보 표시 (userId + email)
+// 사용자 정보 표시 (이름)
 const userInfo = computed(() => {
+  const userProfileStr = localStorage.getItem('userProfile')
   const userId = localStorage.getItem('userId')
-  const email = localStorage.getItem('email')
-  return userId ? `${userId} (${email})` : ''
+  
+  if (userProfileStr) {
+    try {
+      const userProfile = JSON.parse(userProfileStr)
+      return userProfile.koreanName || userProfile.name || userId
+    } catch (e) {
+      return userId
+    }
+  }
+  return userId
 })
 
 // 로그아웃 함수
@@ -193,6 +202,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
   font-weight: 600;
   font-size: 13px;
   white-space: nowrap;
+  color: #ff8c00;
 }
 
 /* 로그아웃 버튼 */

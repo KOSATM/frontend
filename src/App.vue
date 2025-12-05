@@ -64,22 +64,26 @@ onMounted(() => {
 
   if (token) {
     console.log("🔐 OAuth 토큰 수신:", token);
+    console.log("📊 수신한 데이터:", JSON.stringify({
+      token,
+      userId,
+      email,
+      timestamp: new Date().toISOString()
+    }, null, 2));
 
     // 토큰 저장
     localStorage.setItem("jwtToken", token);
     localStorage.setItem("accessToken", token);
     localStorage.setItem("userId", userId);
     localStorage.setItem("email", email);
-    localStorage.setItem(
-      "user",
-      JSON.stringify({
-        id: userId,
-        email,
-        name: email.split("@")[0],
-      })
-    );
+    const userData = {
+      id: userId,
+      email,
+      name: email.split("@")[0],
+    };
+    localStorage.setItem("user", JSON.stringify(userData));
 
-    console.log("✅ 토큰 저장 완료");
+    console.log("✅ 저장된 데이터:", JSON.stringify(userData, null, 2));
 
     // 홈으로 리다이렉트
     setTimeout(() => {
