@@ -52,7 +52,7 @@ const store = useStore()
 // ✅ 하드코딩된 여행 데이터
 const plans = ref([
   {
-    id: 3,
+    id: 80,
     title: 'Jeju Island Healing plan',
     location: 'Jeju Island',
     date: 'Oct 15 - Oct 18, 2024',
@@ -60,7 +60,7 @@ const plans = ref([
     image: 'https://images.unsplash.com/photo-1585508889309-6c7f49f4f2b2?w=800'
   },
   {
-    id: 4,
+    id: 81,
     title: 'Tokyo Food Tour',
     location: 'Tokyo, Japan',
     date: 'Sep 20 - Sep 25, 2024',
@@ -68,7 +68,7 @@ const plans = ref([
     image: 'https://images.unsplash.com/photo-1576416981707-5c16f8e3ff04?w=800'
   },
   {
-    id: 5,
+    id: 82,
     title: 'Busan City Escape',
     location: 'Busan',
     date: 'Aug 10 - Aug 12, 2024',
