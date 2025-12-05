@@ -41,14 +41,14 @@ const router = createRouter({
   }
 });
 
-router.beforeEach((to, from, next) => {
-  const travelStore = useTravelStore()
+// router.beforeEach((to, from, next) => {
+//   const travelStore = useTravelStore()
 
-  if (to.path === '/planner/edit' && !travelStore.isTraveling) {
-    return next('/')
-  }
+//   if (to.path === '/planner/edit' && !travelStore.isTraveling) {
+//     return next('/')
+//   }
 
-  next()
-})
+//   next()
+// })
 
 export default router

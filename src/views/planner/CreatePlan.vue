@@ -127,8 +127,12 @@ import { RouterLink } from "vue-router";
 import { ref } from 'vue'
 import { useTravelStore } from '@/store/travelStore'
 import router from "@/router";
+import ChatSidebar from "@/components/ChatSidebar.vue";
+import { useChatStore } from "@/store/chatStore";
 
 const travelStore = useTravelStore()
+const chatStore = useChatStore();
+
 const promptInput = ref('')
 
 function next() {
@@ -141,9 +145,54 @@ function generateItinerary() {
     console.log('Generating itinerary with prompt:', promptInput.value)
     // AI 기반 일정 생성 로직이 여기에 추가됨
     // 예: router.push('/planner/form')
+    chatStore.sendMessage(promptInput.value);
     next()
   }
 }
+
+const sendMessage = async () => {
+  if (promptInput.value.trim() || ChatSidebar.isLoading.value) return;
+
+  const userMessage = {
+    id: Date.now(),
+    type: "user",
+    content: promptInput.value,
+    timestamp: new Date(),
+  };
+
+  const request = {
+    userId: 1,
+    message: promptInput.value
+  }
+
+  ChatSidebar.chatMessages.value.push(userMessage);
+
+  const toProcess = promptInput.value;
+  promptInput.value = "";
+  
+  // 텍스트 영역 높이 초기화
+  if (ChatSidebar.textareaRef.value) {
+    ChatSidebar.textareaRef.value.style.height = 'auto';
+  }
+  
+  ChatSidebar.isLoading.value = true;
+
+  // await ChatSidebar.nextTick();
+  // ChatSidebar.scrollToBottom();
+
+  setTimeout(async () => {
+    const aiText = await ChatSidebar.generateAIResponse(toProcess);
+    ChatSidebar.chatMessages.value.push({
+      id: Date.now() + 1,
+      type: "ai",
+      content: aiText,
+      timestamp: new Date(),
+    });
+    ChatSidebar.isLoading.value = false;
+    // await nextTick();
+    // scrollToBottom();
+  }, 900);
+};
 </script>
 
 <style scoped lang="scss">

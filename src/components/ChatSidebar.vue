@@ -124,13 +124,17 @@
 </template>
 
 <script setup>
-import { ref, nextTick, onMounted } from "vue";
+import chatApi from "@/api/chatApi";
+import { useChatStore } from "@/store/chatStore";
+import { ref, nextTick, onMounted, watch } from "vue";
 
 const currentMessage = ref("");
 const chatMessages = ref([]);
 const messagesContainer = ref(null);
 const textareaRef = ref(null);
 const isLoading = ref(false);
+
+const chatStore = useChatStore();
 
 // 텍스트 영역 자동 높이 조절
 const autoResize = () => {
@@ -162,6 +166,14 @@ const sendMessage = async () => {
     content: currentMessage.value,
     timestamp: new Date(),
   };
+
+  console.log(userMessage);
+
+  const request = {
+    userId: 1,
+    message: currentMessage.value
+  }
+
   chatMessages.value.push(userMessage);
 
   const toProcess = currentMessage.value;
@@ -178,7 +190,7 @@ const sendMessage = async () => {
   scrollToBottom();
 
   setTimeout(async () => {
-    const aiText = generateAIResponse(toProcess);
+    const aiText = await generateAIResponse(toProcess);
     chatMessages.value.push({
       id: Date.now() + 1,
       type: "ai",
@@ -196,14 +208,16 @@ const sendQuickMessage = (text) => {
   sendMessage();
 };
 
-const generateAIResponse = (text) => {
+const generateAIResponse = async (text) => {
   const low = text.toLowerCase();
   if (low.includes("early")) return demoResponses.early;
   if (low.includes("vegetarian")) return demoResponses.vegetarian;
   if (low.includes("shopping")) return demoResponses.shopping;
   if (low.includes("budget") || low.includes("reduce"))
     return demoResponses.budget;
-  return demoResponses.default;
+  const res = await chatApi.chat(text);
+  console.log(res);
+  return res;
 };
 
 const scrollToBottom = () => {
@@ -223,6 +237,17 @@ const formatTime = (date) => {
 onMounted(() => {
   scrollToBottom();
 });
+
+watch(
+  () => chatStore.messageToSend,
+  (msg) => {
+    if (msg) {
+      console.log("Sending message:", msg);
+      currentMessage.value = msg;
+      sendMessage();
+    }
+  }
+)
 </script>
 
 <style scoped>
