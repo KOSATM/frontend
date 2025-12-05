@@ -11,20 +11,40 @@
       </router-link>
 
       <!-- 우측: 프로필 이미지 + 햄버거 버튼 -->
-      <div class="d-flex align-items-center gap-2">
-        <!-- OAuth 프로필 이미지 -->
-        <button
+      <div class="d-flex align-items-center gap-3">
+        <!-- 로그인 상태 표시 -->
+        <div v-if="isLoggedIn" class="login-info d-flex align-items-center gap-2">
+          <span class="user-info">{{ userInfo }}</span>
+          <button
+            @click="handleLogout"
+            class="logout-btn"
+            title="Logout"
+          >
+            로그아웃
+          </button>
+        </div>
+
+        <!-- OAuth 로그인 / 프로필 이미지 버튼 -->
+        <a
+          v-if="!isLoggedIn"
+          href="http://localhost:8080/oauth2/authorization/google"
           class="btn profile-btn border-0 p-0"
-          type="button"
-          @click="goToTravelgram"
-          title="Go to Travelgram"
+          title="Login with Google OAuth"
         >
           <img
-            :src="profileImage"
+            src="@/assets/img/profile-logo.png"
             alt="Profile"
             class="profile-img"
           />
-        </button>
+        </a>
+
+        <!-- 로그인 후 프로필 이미지 -->
+        <img
+          v-else
+          src="@/assets/img/profile-logo.png"
+          alt="Profile"
+          class="profile-img-logged-in"
+        />
 
         <!-- 햄버거 버튼 -->
         <button
@@ -44,22 +64,40 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
 
 const navbar = ref(null)
 const router = useRouter()
-const store = useStore()
 
-// OAuth 프로필 이미지 (기본값: 사용자 아이콘)
-const profileImage = computed(() => {
-  const stored = store?.getters?.getProfileImage
-  if (stored) return stored
-  return new URL('../assets/img/profile-logo.png', import.meta.url).href
+// 로그인 상태 확인
+const isLoggedIn = computed(() => {
+  return !!localStorage.getItem('jwtToken')
 })
 
-// Travelgram 페이지로 이동
-const goToTravelgram = () => {
-  router.push('/travelgram')
+// 사용자 정보 표시 (이름)
+const userInfo = computed(() => {
+  const userProfileStr = localStorage.getItem('userProfile')
+  const userId = localStorage.getItem('userId')
+  
+  if (userProfileStr) {
+    try {
+      const userProfile = JSON.parse(userProfileStr)
+      return userProfile.koreanName || userProfile.name || userId
+    } catch (e) {
+      return userId
+    }
+  }
+  return userId
+})
+
+// 로그아웃 함수
+const handleLogout = () => {
+  localStorage.removeItem('jwtToken')
+  localStorage.removeItem('accessToken')
+  localStorage.removeItem('userId')
+  localStorage.removeItem('email')
+  localStorage.removeItem('user')
+  console.log('✅ 로그아웃 완료')
+  window.location.href = '/'
 }
 
 const handleScroll = () => {
@@ -150,5 +188,49 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
 
 .offcanvas-header h5 {
   color: #1b3b6f;
+}
+
+/* 로그인 정보 */
+.login-info {
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-info {
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+  color: #ff8c00;
+}
+
+/* 로그아웃 버튼 */
+.logout-btn {
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 1px solid white;
+  color: white;
+  background-color: #ff8c00;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-block;
+  height: auto;
+  width: auto;
+  font-weight: 600;
+}
+
+.logout-btn:hover {
+  background-color: #ff9e33;
+  border-color: white;
+}
+
+.profile-img-logged-in {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
 }
 </style>

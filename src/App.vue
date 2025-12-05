@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import AppHeader from "./components/AppHeader.vue";
 import AppFooter from "./components/AppFooter.vue";
@@ -53,6 +53,43 @@ const mainClass = computed(() => {
   if (route.meta.layout === "wide") classes.push("container-wide");
   if (route.meta.split) classes.push("container-split");
   return classes;
+});
+
+// ✅ OAuth 콜백 처리
+onMounted(() => {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("token");
+  const userId = params.get("userId");
+  const email = params.get("email");
+
+  if (token) {
+    console.log("🔐 OAuth 토큰 수신:", token);
+    console.log("📊 수신한 데이터:", JSON.stringify({
+      token,
+      userId,
+      email,
+      timestamp: new Date().toISOString()
+    }, null, 2));
+
+    // 토큰 저장
+    localStorage.setItem("jwtToken", token);
+    localStorage.setItem("accessToken", token);
+    localStorage.setItem("userId", userId);
+    localStorage.setItem("email", email);
+    const userData = {
+      id: userId,
+      email,
+      name: email.split("@")[0],
+    };
+    localStorage.setItem("user", JSON.stringify(userData));
+
+    console.log("✅ 저장된 데이터:", JSON.stringify(userData, null, 2));
+
+    // 홈으로 리다이렉트
+    setTimeout(() => {
+      window.location.href = "http://localhost:80/";
+    }, 500);
+  }
 });
 </script>
 
