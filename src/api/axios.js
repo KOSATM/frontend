@@ -1,8 +1,7 @@
 import axios from 'axios'
 
 const instance = axios.create({
-  baseURL: process.env.VUE_APP_API_URL || 'http://localhost:8080',
-  timeout: 10000
+  baseURL: process.env.VUE_APP_API_BASE_URL,
 })
 
 // 요청 인터셉터
