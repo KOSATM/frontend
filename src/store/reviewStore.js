@@ -7,7 +7,6 @@ export const useReviewStore = defineStore('review', {
     reviewPostId: null, // 🔥 리뷰 생성(createReview)에서 받아옴
     photoGroupId: null, // 🔥 사진 업로드에 반드시 필요
     hashtagGroupId: null,
-
     photos: [],        // [{ id, url, file }]
     mainPhotoId: null,
 

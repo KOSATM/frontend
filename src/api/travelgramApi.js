@@ -15,8 +15,17 @@ const updatePhotoOrder = async (payload) => {
   return api.put('/reviews/photo/order', payload)
 }
 
+// 🔥 [추가] 사진 분석 요청 API
+const analyzePhotoMood = async(photoGroupId) =>{
+    // Post 요청, 파라미터로 photoGroupId 전달
+    return api.post('/reviews/photo/analyze', null, {
+  params: { photoGroupId: photoGroupId }
+})
+}
+
 export default {
     createReview,
     uploadReviewPhotos,
-    updatePhotoOrder
+    updatePhotoOrder,
+    analyzePhotoMood
 };

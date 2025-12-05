@@ -61,10 +61,20 @@
 
 <div class="navigation-buttons">
   <button class="btn-back" @click="goBack">Back</button>
-  <button class="btn-next" @click="nextStep" :disabled="!mainPhotoId">Next Step</button>
-</div>
-
+  <button class="btn-next" @click="nextStep" :disabled="!mainPhotoId || isLoading">
+        <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+        {{ isLoading ? 'Analyzing...' : 'Next Step' }}
+      </button>
     </div>
+
+    <div v-if="isLoading" class="loading-overlay">
+      <div class="loading-content">
+        <div class="spinner-border text-primary mb-3" role="status"></div>
+        <h5>Analyzing your photos...</h5>
+        <p>Detecting mood & creating summary</p>
+      </div>
+    </div>
+</div>
 </template>
 
 <script setup>
@@ -157,38 +167,77 @@ const removePhoto = (id) => {
    🔥 5) 다음 단계
 ----------------------------------- */
 
+const isLoading = ref(false) // 🔥 로딩 상태 추가
+
 const nextStep = async () => {
   if (!mainPhotoId.value) return
+  
+  // 로딩 시작
+  isLoading.value = true
 
-  // 1) Store 업데이트
-  reviewStore.setPhotos(photos.value)
-  reviewStore.setMainPhoto(mainPhotoId.value)
+  try {
+    // 1) Store 업데이트 (로컬 상태 저장)
+    reviewStore.setPhotos(photos.value)
+    reviewStore.setMainPhoto(mainPhotoId.value)
 
-  // 2) 백엔드에 보낼 orderIndex payload 만들기
-  const payload = {
-    photoGroupId: reviewStore.photoGroupId,
-    photos: photos.value.map((p, i) => ({
-      photoId: p.id,
-      orderIndex: i
-    }))
+    // 2) 순서 업데이트용 Payload 생성
+    const orderPayload = {
+      photoGroupId: reviewStore.photoGroupId,
+      photos: photos.value.map((p, i) => ({
+        photoId: p.id,
+        orderIndex: i
+      }))
+    }
+
+    // 3) 🔥 [순서 저장]과 [사진 분석]을 병렬로 처리 (시간 단축)
+    // 순서 저장이 분석에 영향을 미친다면 await api.updatePhotoOrder(...)를 먼저 하세요.
+    // 여기서는 순서 저장 후 -> 분석 요청 순서로 작성합니다.
+    
+    await api.updatePhotoOrder(orderPayload) // 순서 저장
+
+    // 3. 🔥 [분석 요청] 그냥 호출만 하고 결과값은 안 받음 (await는 해야 함)
+    // await를 안 하면 분석이 끝나기 전에 다음 페이지가 로딩되어, 
+    // 다음 페이지에서 DB를 조회할 때 데이터가 아직 없을 수도 있습니다.
+    await api.analyzePhotoMood(reviewStore.photoGroupId)
+    
+    
+    // 6) 다음 스텝 이동
+    reviewStore.nextStep()
+    router.push({
+      name: 'CaptionSelect',
+      params: { planId: planId },
+      query: { title: planTitle }
+    })
+
+  } catch (error) {
+    console.error("Failed to process photos:", error)
+    alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+  } finally {
+    // 로딩 종료
+    isLoading.value = false
   }
-
-  // 3) 🔥 사진 순서 업데이트 API 호출
-  await api.updatePhotoOrder(payload)
-
-  // 4) 다음 스텝 이동
-  reviewStore.nextStep()
-  router.push({
-    name: 'CaptionSelect',
-    params: { planId: planId },
-    query: { title: planTitle }
-  })
 }
 
 const goBack = () => router.back()
 </script>
 
 <style scoped>
+/* 🔥 로딩 오버레이 스타일 (화면 중앙에 띄우기) */
+.loading-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+.loading-content {
+  text-align: center;
+  color: #1b3b6f;
+}
 /* ✅ 페이지 전체 배경 */
 .photo-order-page {
   background-color: #fffaf3;
