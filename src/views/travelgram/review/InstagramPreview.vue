@@ -1,17 +1,8 @@
 <template>
   <div class="preview-page">
-    <PageHeader
-      title="Travelgram"
-      subtitle="Your past travel adventures"
-      icon="bi-instagram"
-    />
+    <PageHeader title="Travelgram" subtitle="Your past travel adventures" icon="bi-instagram" />
     <!-- 상단 헤더 -->
-    <StepHeader
-      title="Create Travel Review"
-      :subtitle="reviewStore.planTitle"
-      step="6/6"
-      @back="goBack"
-    />
+    <StepHeader title="Create Travel Review" :subtitle="reviewStore.planTitle" step="6/6" @back="goBack" />
 
     <!-- 📸 인스타그램 프리뷰 섹션 -->
     <section class="preview-section">
@@ -35,29 +26,16 @@
 
         <!-- 사진 캐러셀 -->
         <div class="photo-carousel">
-          <img
-            :src="currentPhoto.url"
-            class="preview-photo"
-            :alt="currentPhoto.name"
-            @error="handleImageError"
-          />
+          <img :src="currentPhoto.url" class="preview-photo" :alt="currentPhoto.name" @error="handleImageError" />
           <div class="photo-index">{{ currentIndex + 1 }}/{{ reviewStore.photos.length }}</div>
-          
+
           <!-- ✅ 이전/다음 버튼 -->
-          <button 
-            v-if="reviewStore.photos.length > 1"
-            class="nav-btn nav-prev" 
-            @click="prevPhoto"
-            :disabled="currentIndex === 0"
-          >
+          <button v-if="reviewStore.photos.length > 1" class="nav-btn nav-prev" @click="prevPhoto"
+            :disabled="currentIndex === 0">
             <i class="bi bi-chevron-left"></i>
           </button>
-          <button 
-            v-if="reviewStore.photos.length > 1"
-            class="nav-btn nav-next" 
-            @click="nextPhoto"
-            :disabled="currentIndex === reviewStore.photos.length - 1"
-          >
+          <button v-if="reviewStore.photos.length > 1" class="nav-btn nav-next" @click="nextPhoto"
+            :disabled="currentIndex === reviewStore.photos.length - 1">
             <i class="bi bi-chevron-right"></i>
           </button>
         </div>
@@ -78,8 +56,10 @@
         </div>
 
         <!-- 해시태그 -->
-        <div class="insta-hashtags" v-if="reviewStore.hashtags.length">
-          <span v-for="tag in reviewStore.hashtags" :key="tag">{{ tag }}</span>
+        <div class="insta-hashtags" v-if="reviewStore.selectedHashtags.length">
+          <span v-for="tag in reviewStore.selectedHashtags" :key="tag.id">
+            #{{ tag.name }}
+          </span>
         </div>
 
         <p class="time-posted">2 hours ago</p>
@@ -100,7 +80,7 @@
       </div>
     </section>
 
-<!-- 🔥 여기! navigation-buttons는 컨테이너 안의 최하단에 있어야 한다 -->
+    <!-- 🔥 여기! navigation-buttons는 컨테이너 안의 최하단에 있어야 한다 -->
     <div class="navigation-buttons">
       <button class="btn-back" @click="goBack">Back</button>
       <button class="btn-next" @click="publish">Publish</button>
@@ -156,11 +136,12 @@ console.log('Store photos length:', reviewStore.photos?.length)
 // 복사 기능
 const copyToClipboard = () => {
   const caption = reviewStore.caption || "";
-  const tags = Array.isArray(reviewStore.hashtags)
-    ? reviewStore.hashtags.join(" ")
+  // ✅ 수정: map을 사용해 name만 추출하고 앞에 #을 붙임
+  const tags = Array.isArray(reviewStore.selectedHashtags)
+    ? reviewStore.selectedHashtags.map(tag => `#${tag.name}`).join(" ")
     : "";
 
-  const text = `${caption}\n${tags}`.trim();
+  const text = `${caption}\n\n${tags}`.trim(); // 줄바꿈(\n) 두 번 넣으면 더 깔끔합니다.
 
   navigator.clipboard
     .writeText(text)
@@ -181,25 +162,27 @@ const publish = () => {
 </script>
 
 <style scoped>
-
 .preview-page {
   background-color: #fffaf3;
   min-height: 100vh;
-  padding: 1.5rem 0.75rem 6rem; /* ✅ 좌우 padding 축소 */
+  padding: 1.5rem 0.75rem 6rem;
+  /* ✅ 좌우 padding 축소 */
 }
 
 /* 제목 */
 .section-title {
   color: #1b3b6f;
   font-weight: 600;
-  padding: 0 1.25rem; /* ✅ 내부 padding 추가 */
+  padding: 0 1.25rem;
+  /* ✅ 내부 padding 추가 */
 }
 
 .section-subtitle {
   font-size: 0.9rem;
   color: #6c757d;
   margin-bottom: 1rem;
-  padding: 0 1.25rem; /* ✅ 내부 padding 추가 */
+  padding: 0 1.25rem;
+  /* ✅ 내부 padding 추가 */
 }
 
 /* 인스타 카드 */
@@ -209,7 +192,8 @@ const publish = () => {
   border: 1px solid #ddd;
   overflow: hidden;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  margin: 1rem 0.75rem 2rem 0.75rem; /* ✅ margin 축소 */
+  margin: 1rem 0.75rem 2rem 0.75rem;
+  /* ✅ margin 축소 */
 }
 
 /* 프로필 */
@@ -219,6 +203,7 @@ const publish = () => {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #f1f1f1;
 }
+
 .profile-circle {
   width: 36px;
   height: 36px;
@@ -232,6 +217,7 @@ const publish = () => {
   justify-content: center;
   margin-right: 0.75rem;
 }
+
 .profile-info p {
   color: #777;
   font-size: 0.8rem;
@@ -313,6 +299,7 @@ const publish = () => {
   font-size: 1.3rem;
   color: #333;
 }
+
 .likes-count {
   font-weight: 600;
   font-size: 0.9rem;
@@ -335,9 +322,11 @@ const publish = () => {
   display: flex;
   gap: 0.25rem;
 }
+
 .insta-hashtags span {
   cursor: pointer;
 }
+
 .time-posted {
   color: #888;
   font-size: 0.8rem;
@@ -348,8 +337,10 @@ const publish = () => {
 .copy-section {
   text-align: center;
   margin-bottom: 1.5rem;
-  padding: 0 1.25rem; /* ✅ 내부 padding 추가 */
+  padding: 0 1.25rem;
+  /* ✅ 내부 padding 추가 */
 }
+
 .btn-copy {
   background: #fff;
   border: 2px solid #1b3b6f;
@@ -360,6 +351,7 @@ const publish = () => {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .btn-copy:hover {
   background: #1b3b6f;
   color: white;
@@ -388,10 +380,12 @@ const publish = () => {
   border: 2px solid #1b3b6f;
   margin-right: 0.75rem;
 }
+
 .btn-next {
   background-color: #1b3b6f;
   color: #fff;
 }
+
 .btn-next:disabled {
   background-color: #ccc;
   cursor: not-allowed;

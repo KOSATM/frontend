@@ -52,9 +52,9 @@
           <h6>Hashtags</h6>
         </div>
         <div class="hashtag-box">
-          <span v-for="tag in hashtags" :key="tag" class="tag">{{ tag }}</span>
+          <span v-for="(tag,index) in selectedHashtags" :key="index" class="tag">{{ tag.name}}</span>
         </div>
-        <p class="tag-count">{{ hashtags.length }} hashtag(s)</p>
+        <p class="tag-count">{{ selectedHashtags.length }} hashtag(s)</p>
       </div>
     </section>
 
@@ -80,7 +80,7 @@ const reviewStore = useReviewStore();
 // store 데이터
 const photos = computed(() => reviewStore.photos);
 const caption = ref(reviewStore.caption || "");
-const hashtags = computed(() => reviewStore.hashtags || []);
+const selectedHashtags = computed(() => reviewStore.selectedHashtags || []);
 
 // ✅ 현재 사진 인덱스
 const currentPhotoIndex = ref(0);
