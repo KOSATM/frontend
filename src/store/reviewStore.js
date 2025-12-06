@@ -14,7 +14,7 @@ export const useReviewStore = defineStore('review', {
     generatedOptions: [], // 백엔드에서 받은 4가지 스타일 전체 데이터 ({style, hashtags})
     
     // 👇 선택된 정보들
-    styleId: null, // [중요] 사용자가 선택한 스타일의 ID (DB 저장용)
+    reviewStyleId: null, // [중요] 사용자가 선택한 스타일의 ID (DB 저장용)
     caption: '', // 선택된 캡션 (화면 표시용)
     selectedHashtags: [],  // ✅ 사용자가 최종 선택한 태그들
 
@@ -58,7 +58,7 @@ export const useReviewStore = defineStore('review', {
     selectStyleOption(option) {
 
       // 스타일 ID 저장 (나중에 DB 업데이트할 때 필수!)
-      this.styleId = option.style.id
+      this.reviewStyleId = option.style.id
       // 캡션 저장
       this.caption = option.style.caption
       
@@ -78,7 +78,7 @@ export const useReviewStore = defineStore('review', {
       this.planTitle = ''
       this.reviewPostId = null
       this.groupId = null
-
+      this.reviewStyleId = null
       this.photos = []
       this.mainPhotoId = null
       this.caption = ''
