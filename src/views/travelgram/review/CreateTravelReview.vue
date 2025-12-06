@@ -113,12 +113,24 @@
       </div>
   </section>
 
+<div v-if="isAnalyzing" class="alert alert-info mt-3 d-flex align-items-center">
+      <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+      <div>
+        <strong>AI Analyzing Photos...</strong>
+        <span class="small ms-1">Please wait for the summary generation to complete.</span>
+      </div>
+    </div>
   <!-- 🟦 하단 버튼 -->
   <div class="navigation-buttons">
-    <button class="btn-next" :disabled="!uploadedImages.length" @click="nextStep">
-      Next Step
-    </button>
-  </div>
+      <button 
+        class="btn-next" 
+        :disabled="!canProceed" 
+        @click="nextStep"
+      >
+        <span v-if="isAnalyzing">Analyzing...</span>
+        <span v-else>Next Step</span>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -128,7 +140,7 @@ import PageHeader from '@/components/common/PageHeader.vue'
 import StepHeader from '@/components/common/StepHeader.vue'
 import { useReviewStore } from '@/store/reviewStore'
 import { v4 as uuidv4 } from 'uuid'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted,onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -141,6 +153,9 @@ const planTitle = route.query.title || 'My plan'
 const fileInput = ref(null)
 const uploadedImages = ref([])
 const openDayId = ref(1) // 기본 1번 Day 오픈
+
+const isAnalyzing = ref(false) // 분석 진행 중 여부
+const pollingInterval = ref(null) // 타이머 저장 변수
 
 const toggleDay = (id) => {
   openDayId.value = id
@@ -165,6 +180,72 @@ onMounted(async () => {
   isReady.value = true;
 });
 
+// ------------------------------------------------------------
+// [수정] 분석 상태 확인 (Polling) 함수 - 로직 개선
+// ------------------------------------------------------------
+const checkAnalysisStatus = async () => {
+  if (!reviewStore.photoGroupId) return;
+
+  try {
+    // 1. 백엔드 조회
+    const res = await api.getReviewPhotos(reviewStore.photoGroupId);
+    const serverPhotos = res.data.data || [];
+
+    // 로그로 데이터 확인 (디버깅용)
+    console.log("📸 Server Photos:", serverPhotos);
+
+    // 2. 내 로컬 이미지 상태 업데이트
+    // (서버 데이터를 기준으로 매칭되는 로컬 이미지에 '분석완료' 딱지를 붙여줍니다)
+    uploadedImages.value.forEach(localImg => {
+      // 업로드 중인건 패스
+      if (localImg.uploading) return;
+
+      // ID 비교 (문자열로 변환하여 안전하게 비교)
+      const match = serverPhotos.find(s => String(s.id) === String(localImg.id));
+
+      if (match && match.summary) {
+        localImg.isAnalyzed = true;
+        localImg.summary = match.summary; // 데이터 동기화
+      }
+    });
+
+    // 3. 종료 조건 확인
+    // "업로드 중인게 하나도 없고" && "모든 이미지가 분석 완료(isAnalyzed) 상태"여야 함
+    const isAllUploaded = uploadedImages.value.every(img => !img.uploading);
+    const isAllAnalyzed = uploadedImages.value.every(img => img.isAnalyzed);
+
+    if (uploadedImages.value.length > 0 && isAllUploaded && isAllAnalyzed) {
+      console.log('✅ 모든 사진 분석 완료!');
+      stopPolling();
+      isAnalyzing.value = false;
+    } else {
+      // 아직 덜 됐으면 계속 진행
+      isAnalyzing.value = true;
+    }
+
+  } catch (err) {
+    console.error('Polling failed', err);
+  }
+};
+
+const startPolling = () => {
+  if (pollingInterval.value) return
+  isAnalyzing.value = true
+  console.log('⏳ AI 분석 상태 확인 시작...')
+  pollingInterval.value = setInterval(checkAnalysisStatus, 3000) // 3초마다 확인
+}
+
+const stopPolling = () => {
+  if (pollingInterval.value) {
+    clearInterval(pollingInterval.value)
+    pollingInterval.value = null
+  }
+}
+
+// 컴포넌트가 꺼질 때 폴링 중지 (메모리 누수 방지)
+onUnmounted(() => {
+  stopPolling()
+})
 
 
 const currentplanInfo = computed(() => {
@@ -209,7 +290,7 @@ const handleFileUpload = async (event) => {
       const targetImg = uploadedImages.value.find(
         (img) => img.orderIndex === uploaded.orderIndex
       );
-
+      startPolling()
       if (targetImg) {
         // 기존 blob: URL 메모리 해제 (메모리 누수 방지)
         URL.revokeObjectURL(targetImg.url);
@@ -237,6 +318,12 @@ const handleFileUpload = async (event) => {
     if (fileInput.value) fileInput.value.value = '';
   }
 };
+
+const canProceed = computed(() => {
+  return uploadedImages.value.length > 0 
+      && !uploadedImages.value.some(img => img.uploading)
+      && !isAnalyzing.value
+})
 // ============================================================
 // 2) 백엔드 업로드 함수 (여기가 '다이어트' 된 핵심 부분)
 // ============================================================

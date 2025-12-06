@@ -22,10 +22,17 @@ const analyzePhotoMood = async(photoGroupId) =>{
   params: { photoGroupId: photoGroupId }
 })
 }
+// [추가] 조회용 API
+const getReviewPhotos = async(photoGroupId) =>{
+    return api.get('/reviews/photos', {
+      params: { photoGroupId }
+    });
+}
 
 export default {
     createReview,
     uploadReviewPhotos,
     updatePhotoOrder,
-    analyzePhotoMood
+    analyzePhotoMood,
+    getReviewPhotos
 };
