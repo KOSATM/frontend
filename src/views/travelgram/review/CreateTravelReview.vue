@@ -5,7 +5,7 @@
     <StepHeader title="Create Travel Review" :subtitle="reviewStore.planTitle" step="1/6" @back="goBack" />
 
     <!-- 여행 정보 카드 -->
-    <div class="plan-info-card">
+    <div class="plan-info-card" v-if="currentplanInfo">
       <div class="plan-info-header">
         <h5>{{ planTitle }}</h5>
       </div>
@@ -25,9 +25,11 @@
       </div>
     </div>
 
+    
+
     <!-- 일정 정보 섹션 -->
 
-    <div class="itinerary-section">
+    <div class="itinerary-section" v-if="currentplanInfo && currentplanInfo.itinerary">
       <h6 class="itinerary-title mb-3">
         <i class="bi bi-calendar-event me-2 text-secondary"></i>Daily Itinerary
       </h6>
@@ -157,27 +159,81 @@ const openDayId = ref(1) // 기본 1번 Day 오픈
 const isAnalyzing = ref(false) // 분석 진행 중 여부
 const pollingInterval = ref(null) // 타이머 저장 변수
 
+const currentplanInfo = ref(null)
 const toggleDay = (id) => {
-  openDayId.value = id
+  openDayId.value = openDayId.value === id ? null : id // 토글 기능
 }
-// 모든 여행 데이터
-const allplansData = ref({})
+// 🔹 [추가] 상세 일정 가져오는 함수
+const fetchPlanDetail = async () => {
+  try {
+    // 백엔드 API 호출 (GET /plans/{planId}/detail)
+    const res = await api.getPlanDetail(planId)
+    const data = res.data
+
+    // 📍 [수정] Location 추출 로직
+    // plan 객체에 location이 없으므로, 첫 번째 날짜의 첫 번째 장소 주소를 사용
+    let derivedLocation = 'Seoul, Korea' // 기본값
+
+    // 데이터가 있고, 첫째날에 장소가 하나라도 있다면
+    if (data.days && data.days.length > 0) {
+      const firstDay = data.days[0]
+      if (firstDay.places && firstDay.places.length > 0) {
+        const rawAddress = firstDay.places[0].address || ''
+        // 주소 앞부분 2단어만 추출 (예: "서울특별시 송파구 올림픽로..." -> "서울특별시 송파구")
+        const addressParts = rawAddress.split(' ')
+        if (addressParts.length >= 2) {
+          derivedLocation = `${addressParts[0]} ${addressParts[1]}`
+        } else if (addressParts.length === 1) {
+          derivedLocation = addressParts[0]
+        }
+      }
+    }
+
+    currentplanInfo.value = {
+      location: derivedLocation, // 👈 추출한 지역 사용
+      date: `${data.plan.startDate} ~ ${data.plan.endDate}`,
+      cost: Number(data.plan.budget).toLocaleString(),
+      
+      // itinerary 매핑 로직 (기존 유지)
+      itinerary: data.days.map(d => ({
+        dayNumber: d.day.dayIndex,
+        title: d.day.title,
+        date: d.day.planDate,
+        activities: d.places.map(p => ({
+          name: p.placeName || p.title,
+          // startAt이 ISO string("2025-12-13T01:00:00Z")으로 오므로 시간만 추출
+          time: p.startAt ? p.startAt.substring(11, 16) : 'Anytime', 
+          address: p.address
+        }))
+      }))
+    }
+  } catch (error) {
+    console.error("상세 일정을 불러오는데 실패했습니다:", error)
+    currentplanInfo.value = { location: '-', date: '-', cost: '0', itinerary: [] }
+  }
+}
 // 🔥 업로드 UI를 보여줄 준비되었는지 여부
 const isReady = ref(false);
 // import { createReviewPhotoGroup } from '@/api/travelgramApi'
 onMounted(async () => {
-  // 1) plan 정보 저장
-  reviewStore.setplanInfo(route.params.planId, route.query.title)
 
-  // 2) 리뷰 생성 - planId를 명시적인 객체 형태로 전달 (백엔드 요청 본문에 맞게)
+  // 1) Store에 정보 저장
+  reviewStore.setplanInfo(planId, planTitle)
 
-  const res = await api.createReview(reviewStore.planId); // 👈 수정된 부분
-  console.log("📌 Review created:", res.data);
+  // 2) 상세 일정 데이터 로드 (비동기)
+  await fetchPlanDetail()
 
-  // 3) store에 저장
-  reviewStore.setReviewInfo(res.data.reviewPostId, res.data.photoGroupId, res.data.hashtagGroupId);
-  // 4) 업로드 화면 활성화
-  isReady.value = true;
+  // 3) 리뷰 생성 API 호출
+  try {
+    const res = await api.createReview(planId) 
+    console.log("📌 Review created:", res.data)
+    reviewStore.setReviewInfo(res.data.reviewPostId, res.data.photoGroupId, res.data.hashtagGroupId)
+    isReady.value = true
+  } catch (error) {
+    console.error("리뷰 생성 실패:", error)
+    alert("리뷰 생성 초기화에 실패했습니다.")
+  }
+
 });
 
 // ------------------------------------------------------------
@@ -248,9 +304,6 @@ onUnmounted(() => {
 })
 
 
-const currentplanInfo = computed(() => {
-  return allplansData.value[planId] || { location: '', date: '', cost: '', itinerary: [] }
-})
 
 const triggerFileInput = () => fileInput.value?.click()
 // ------------------------------

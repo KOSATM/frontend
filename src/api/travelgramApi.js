@@ -1,5 +1,15 @@
 import api from './axios'
 
+// 🔹 [수정] 백엔드 Path Variable 형식(/plans/user/{userId})에 맞게 URL 수정
+const getEndedPlanByUserId = async (userId) => {
+  const res = await api.get(`/plans/user/${userId}`)
+  return res.data
+}
+// 🔹 [추가] 상세 일정 조회 API 함수
+const getPlanDetail = async (planId) => {
+  const res = await api.get(`/plans/${planId}/detail`)
+  return res.data
+}
 // 1) 리뷰 포스트 + 리뷰 사진 그룹 생성 (review_posts, review_photo_groups auto increment 생성)
 const createReview = async(planId)=>{
   const res = await api.post('/reviews/create', {planId})
@@ -58,6 +68,8 @@ const createHashtags = async(payload)=>{
   return api.post('/reviews/hashtags/create',payload)
 }
 export default {
+    getEndedPlanByUserId,
+    getPlanDetail,
     createReview,
     uploadReviewPhotos,
     updatePhotoOrder,

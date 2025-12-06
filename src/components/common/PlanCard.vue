@@ -5,7 +5,7 @@
     <div class="plan-info">
       <div class="d-flex align-items-center mb-1">
         <span class="badge me-2">✔ {{ status }}</span>
-        <h6 class="plan-title mb-0">{{ title }}</h6>
+        <h6 class="plan-title mb-0">{{ planTitle }}</h6>
       </div>
       <p class="plan-meta mb-0">
         <i class="bi bi-calendar-event me-1"></i>{{ date }}<br />
