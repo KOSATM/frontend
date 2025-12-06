@@ -63,8 +63,8 @@ import BaseSection from '@/components/common/BaseSection.vue'
 const router = useRouter()
 const route = useRoute()
 
-// accept preview from route.state.preview or route.query.preview
-const preview = ref(route?.state?.preview || route?.query?.preview || '/sample/default.jpg')
+// New.vue에서 query parameter로 전달받은 이미지 데이터
+const preview = ref(route.query?.preview || null)
 
 // 선택 상태
 const selectedType = ref(null)
@@ -74,12 +74,14 @@ const setType = (type) => {
   selectedType.value = selectedType.value === type ? null : type
 }
 
-// Next 클릭 시 결과 페이지로 이동 (preview + type 전달)
-const goNext = () => {
+// Next 클릭 시 결과 페이지로 이동
+const goNext = async () => {
   if (!selectedType.value) return
+  
+  // AiRecommend 페이지로 이동 (type 정보 전달)
   router.push({
     name: 'AiRecommend',
-    state: { preview: preview.value, type: selectedType.value }
+    query: { preview: preview.value, type: selectedType.value }
   })
 }
 </script>
@@ -93,7 +95,7 @@ const goNext = () => {
 
 .preview-img {
   width: 100%;
-  height: 160px;
+  height: 280px;
   object-fit: cover;
   border-radius: 12px;
   display: block;
