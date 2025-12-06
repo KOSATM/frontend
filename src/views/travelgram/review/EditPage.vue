@@ -52,7 +52,7 @@
           <h6>Hashtags</h6>
         </div>
         <div class="hashtag-box">
-          <span v-for="(tag,index) in selectedHashtags" :key="index" class="tag">{{ tag.name}}</span>
+          <span v-for="(tag,index) in selectedHashtags" :key="index" class="tag">#{{ tag.name}}</span>
         </div>
         <p class="tag-count">{{ selectedHashtags.length }} hashtag(s)</p>
       </div>
