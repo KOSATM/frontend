@@ -75,26 +75,24 @@ const isLoggedIn = computed(() => {
 
 // 사용자 정보 표시 (이름)
 const userInfo = computed(() => {
-  const userProfileStr = localStorage.getItem('userProfile')
-  const userId = localStorage.getItem('userId')
+  const userStr = localStorage.getItem('user')
   
-  if (userProfileStr) {
+  if (userStr) {
     try {
-      const userProfile = JSON.parse(userProfileStr)
-      return userProfile.koreanName || userProfile.name || userId
+      const user = JSON.parse(userStr)
+      return user.name || user.email || 'User'
     } catch (e) {
-      return userId
+      console.error('Failed to parse user:', e)
+      return 'User'
     }
   }
-  return userId
+  return 'User'
 })
 
 // 로그아웃 함수
 const handleLogout = () => {
   localStorage.removeItem('jwtToken')
   localStorage.removeItem('accessToken')
-  localStorage.removeItem('userId')
-  localStorage.removeItem('email')
   localStorage.removeItem('user')
   console.log('✅ 로그아웃 완료')
   window.location.href = '/'
@@ -168,22 +166,22 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
 }
 
 .nav-item {
-  background-color: #ff8c00; /* 기본: 진한 오렌지 */
-  color: #fff !important;    /* 글씨 흰색 */
+  background-color: #ff8c00;
+  color: #fff !important;
   text-decoration: none;
   font-weight: 500;
   transition: all 0.25s ease;
   border-radius: 8px;
 
   &:hover {
-    background-color: #ff9e33; /* 약간 밝은 오렌지 */
+    background-color: #ff9e33;
   }
 }
 
 .nav-item.active {
-  background-color: #f8f9fa; /* ✅ Bootstrap light tone */
-  color: #ff8c00 !important; /* ✅ 글자 주황색 반전 */
-  box-shadow: inset 0 0 0 1px #ff8c00; /* 선택된 느낌 강조선 */
+  background-color: #f8f9fa;
+  color: #ff8c00 !important;
+  box-shadow: inset 0 0 0 1px #ff8c00;
 }
 
 .offcanvas-header h5 {
