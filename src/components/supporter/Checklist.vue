@@ -35,6 +35,22 @@
 import { ref, computed } from 'vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 
+// 스토어에서 현재 여행정보 빼내서 씀
+import { useTravelStore } from '@/store/travelStore'
+
+const travelStore = useTravelStore()
+
+// 설정
+travelStore.setPlanInfo(81, 3, '2025-11-23')
+
+// 조회
+console.log(travelStore.planId)    // 81
+console.log(travelStore.dayIndex)  // 3
+console.log(travelStore.planDate)  // 2025-11-23
+
+// 초기화
+travelStore.clearPlanInfo()
+
 const checklist = ref([
   { title: 'Camera battery fully charged?', done: false, highlight: true },
   { title: "Today's weather: Rainy / Bring umbrella 🌂", done: false, highlight: true },
