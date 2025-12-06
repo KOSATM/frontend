@@ -46,6 +46,17 @@ const selectStyle = async (reviewPostId, reviewStyleId) => {
     }
   });
 }
+const updateCaption = async(reviewPostId, caption)=>{
+  return api.post('/reviews/caption/update',null,{
+    params:{
+      reviewPostId: reviewPostId,
+      caption: caption
+    }
+  });
+}
+const createHashtags = async(payload)=>{
+  return api.post('/reviews/hashtags/create',payload)
+}
 export default {
     createReview,
     uploadReviewPhotos,
@@ -53,5 +64,7 @@ export default {
     analyzePhotoMood,
     getReviewPhotos,
     generateAiStyles,
-    selectStyle
+    selectStyle,
+    updateCaption,
+    createHashtags
 };
