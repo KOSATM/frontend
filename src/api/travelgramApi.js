@@ -35,12 +35,23 @@ const generateAiStyles = async (planId, reviewPostId) => {
     params: { planId, reviewPostId }
   });
 }
-
+const selectStyle = async (reviewPostId, reviewStyleId) => {
+  // 🔥 [수정됨] 
+  // 두 번째 인자(Body)는 null로 비우고, 
+  // 세 번째 인자(Config)의 params에 데이터를 넣어야 백엔드가 인식합니다.
+  return api.post('/reviews/style/select', null, {
+    params: {
+      reviewPostId: reviewPostId,
+      reviewStyleId: reviewStyleId
+    }
+  });
+}
 export default {
     createReview,
     uploadReviewPhotos,
     updatePhotoOrder,
     analyzePhotoMood,
     getReviewPhotos,
-    generateAiStyles
+    generateAiStyles,
+    selectStyle
 };

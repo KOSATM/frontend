@@ -108,15 +108,14 @@ const getLabelClass = (code) => {
   }
 }
 const goBack = () => router.back()
-const goNext = () => {
+const goNext = async() => {
   if (selectedIndex.value === null) return
 
   // 1. 선택된 옵션 객체 가져오기
   const selectedOption = reviewStore.generatedOptions[selectedIndex.value]
-
   // 2. Store Action 호출 -> caption과 hashtags 상태 업데이트
   reviewStore.selectStyleOption(selectedOption)
-
+  await api.selectStyle(reviewStore.reviewPostId,reviewStore.reviewStyleId)
   // 3. 다음 페이지(해시태그 선택)로 이동
   reviewStore.nextStep()
   router.push({ name: 'HashtagSelect' })
