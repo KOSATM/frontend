@@ -12,7 +12,9 @@ const getPlanDetail = async (planId) => {
 }
 // 1) 리뷰 포스트 + 리뷰 사진 그룹 생성 (review_posts, review_photo_groups auto increment 생성)
 const createReview = async(planId)=>{
-  const res = await api.post('/reviews/create', {planId})
+  const res = await api.post('/reviews/create', null, {
+    params: {planId: planId}
+})
   return res.data
 } 
 
