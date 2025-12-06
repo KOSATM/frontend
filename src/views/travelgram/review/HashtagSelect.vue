@@ -61,6 +61,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
+import api from '@/api/travelgramApi'
 import StepHeader from '@/components/common/StepHeader.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 
@@ -130,14 +131,42 @@ const addCustomTag = () => {
 
 const goBack = () => router.back()
 
-const goNext = () => {
-  // ✅ 최종 저장: displayTags 중에서 selectedSet에 있는 것만 필터링해서 Store에 저장
-  const finalTags = displayTags.value.filter(tag => selectedSet.value.has(tag.name))
-  
-  reviewStore.setHashtags(finalTags)
-  reviewStore.nextStep()
-  router.push({ name: 'EditPage' }) // 다음 페이지 이름 확인 필요
+const goNext = async() => {
+  // 1. 최종 선택된 태그 객체들 필터링
+  try{
+    // 예: [{id: 1, name: '여행'}, {id: null, name: '맛집'}]
+    const finalTags = displayTags.value.filter(tag => selectedSet.value.has(tag.name));
+    
+    // 2. 백엔드 DTO(List<String> names)에 맞게 '이름'만 추출해서 문자열 배열로 변환
+    // 예: ['여행', '맛집']
+    const tagNames = finalTags.map(tag => tag.name);
+
+    // 3. Store에서 hashtagGroupId 가져오기
+    // (이전 단계나 초기 로딩 시 Store에 저장되어 있어야 합니다)
+    const groupId = reviewStore.hashtagGroupId; 
+
+    if (!groupId) {
+        alert("해시태그 그룹 ID를 찾을 수 없습니다.");
+        return;
+    }
+
+    // ✅ 4. Payload(DTO) 구성
+    const payload = {
+      hashtagGroupId: groupId, // 백엔드 필드명: hashtagGroupId
+      names: tagNames          // 백엔드 필드명: names
+    };
+
+    // 5. API 호출 (경로와 payload 전달)
+    await api.createHashtags(payload);
+    reviewStore.nextStep();
+
+    router.push({ name: 'EditPage' }); // 다음 페이지 이름 확인 필요
+  }catch(error){
+    console.error("해시태그 저장 중 오류 발생: ", error);
+    alert("해시태그 저장에 실패했습니다.");
+  }
 }
+
 </script>
 
 <style scoped>

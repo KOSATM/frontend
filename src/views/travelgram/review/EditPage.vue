@@ -70,6 +70,7 @@
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useReviewStore } from "@/store/reviewStore";
+import api from "@/api/travelgramApi"
 import StepHeader from "@/components/common/StepHeader.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
 
@@ -112,10 +113,28 @@ const scrollToPhoto = () => {
 };
 
 const goBack = () => router.back();
-const goNext = () => {
-  reviewStore.setCaption(caption.value);
-  router.push({ name: 'InstagramPreview', params: { planId: route.params.planId } });
-};
+const goNext = async() => {
+
+try {
+    // 1) 스토어에 상태 저장 (클라이언트 상태 동기화)
+    reviewStore.setCaption(caption.value);
+
+    // 2) API 호출 (DB 업데이트)
+    // reviewPostId가 없으면 에러 방지 (선택사항)
+    if (reviewStore.reviewPostId) {
+      await api.updateCaption(reviewStore.reviewPostId, caption.value);
+    } else {
+      console.warn("reviewPostId가 없습니다. 저장을 건너뜁니다.");
+    }
+
+    // 3) 다음 페이지로 이동
+    router.push({ name: 'InstagramPreview', params: { planId: route.params.planId } });
+
+  } catch (error) {
+    console.error("캡션 저장 중 오류 발생:", error);
+    alert("저장에 실패했습니다. 다시 시도해주세요.");
+  }
+};  
 </script>
 
 <style scoped>
