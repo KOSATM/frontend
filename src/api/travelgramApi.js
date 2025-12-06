@@ -29,10 +29,18 @@ const getReviewPhotos = async(photoGroupId) =>{
     });
 }
 
+const generateAiStyles = async (planId, reviewPostId) => {
+  // 백엔드 컨트롤러에 맞게 파라미터 전달
+  return api.post('/ai/review/generate-styles', null, {
+    params: { planId, reviewPostId }
+  });
+}
+
 export default {
     createReview,
     uploadReviewPhotos,
     updatePhotoOrder,
     analyzePhotoMood,
-    getReviewPhotos
+    getReviewPhotos,
+    generateAiStyles
 };

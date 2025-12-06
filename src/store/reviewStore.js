@@ -10,11 +10,14 @@ export const useReviewStore = defineStore('review', {
     photos: [],        // [{ id, url, file }]
     mainPhotoId: null,
 
-    styleId: null,
-    caption: '',
-
-    aiHashtags: [],        // ✅ AI가 제안해 준 태그들
+    // AI 관련 State
+    generatedOptions: [], // 백엔드에서 받은 4가지 스타일 전체 데이터 ({style, hashtags})
+    
+    // 👇 선택된 정보들
+    styleId: null, // [중요] 사용자가 선택한 스타일의 ID (DB 저장용)
+    caption: '', // 선택된 캡션 (화면 표시용)
     selectedHashtags: [],  // ✅ 사용자가 최종 선택한 태그들
+
     step: 1,
   }),
 
@@ -47,8 +50,22 @@ export const useReviewStore = defineStore('review', {
     setCaption(text) {
       this.caption = text
     },
-    setAiHashtags(list) {
-      this.aiHashtags = list
+    setGeneratedOptions(options) {
+      this.generatedOptions = options
+    },
+
+    // [수정] 캡션 선택 시 캡션과 해시태그를 동시에 세팅
+    selectStyleOption(option) {
+
+      // 스타일 ID 저장 (나중에 DB 업데이트할 때 필수!)
+      this.styleId = option.style.id
+      // 캡션 저장
+      this.caption = option.style.caption
+      
+      // 해당 스타일의 해시태그들을 초기 선택값으로 저장
+      // (백엔드 구조: hashtags: [{name: 'food', ...}, ...])
+      // 화면 표시를 위해 문자열 배열이나 객체 배열 그대로 저장
+      this.selectedHashtags = option.hashtags
     },
     setHashtags(list) {
       this.selectedHashtags = list
@@ -65,7 +82,7 @@ export const useReviewStore = defineStore('review', {
       this.photos = []
       this.mainPhotoId = null
       this.caption = ''
-      this.hashtags = []
+      this.selectedHashtags = []
       this.step = 1
     },
   },
