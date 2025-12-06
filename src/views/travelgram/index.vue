@@ -1,83 +1,111 @@
 <template>
   <div class="travelgram-page">
-    <PageHeader
-      title="Travelgram"
-      subtitle="Your past travel adventures"
-      icon="bi-instagram"
-    />
-      <ProfileSummary
-      name="Jessica Han"
-      bio="Travel Enthusiast"
-      initials="JH"
-      :totalplans="12"
-      :travelDays="28"
-      :completed="3"
-    />
+    <PageHeader title="Travelgram" subtitle="Your past travel adventures" icon="bi-instagram" />
+    <ProfileSummary name="Jessica Han" bio="Travel Enthusiast" initials="JH" :totalplans="12" :travelDays="28"
+      :completed="3" />
     <h4 class="my-3">
       <i class="bi bi-instagram me-2 text-primary"></i> Completed Travel Plans
     </h4>
-    
-    
-    <!-- planCard 목록 -->
-    <div class="plan-list">
-      <planCard
-      v-for="plan in plans"
-        :key="plan.id"
-        :planId="plan.id" 
-        :title="plan.title"
-        :location="plan.location"
-        :date="plan.date"
-        :cost="plan.cost"
-        :image="plan.image"
-        :isActive="plan.id === activeId"
-        @click="activeId = plan.id"
-        />
-      </div>
 
-      <div>
-        
+
+    <div v-if="loading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <div v-else-if="plans.length === 0" class="text-center py-5 text-muted">
+      <p>완료된 여행 기록이 없습니다.</p>
+    </div>
+
+    <div v-else class="plan-list">
+      <planCard v-for="plan in plans" :key="plan.id" :planId="plan.id" :planTitle="plan.title || '제목 없는 여행'"
+        :location="'Seoul, Korea'" :date="plan.formattedDate" :budget="plan.formattedBudget" :status="'Done'"
+        @click="goToReview(plan.id, plan.title)" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import api from '@/api/travelgramApi'
 import planCard from '@/components/common/PlanCard.vue';
 import ProfileSummary from "@/components/travelgram/ProfileSummary.vue";
 import PageHeader from '@/components/common/PageHeader.vue';
 
 const store = useStore()
+const router = useRouter()
 
-// ✅ 하드코딩된 여행 데이터
-const plans = ref([
-  {
-    id: 80,
-    title: 'Jeju Island Healing plan',
-    location: 'Jeju Island',
-    date: 'Oct 15 - Oct 18, 2024',
-    cost: '500',
-    image: 'https://images.unsplash.com/photo-1585508889309-6c7f49f4f2b2?w=800'
-  },
-  {
-    id: 81,
-    title: 'Tokyo Food Tour',
-    location: 'Tokyo, Japan',
-    date: 'Sep 20 - Sep 25, 2024',
-    cost: '1200',
-    image: 'https://images.unsplash.com/photo-1576416981707-5c16f8e3ff04?w=800'
-  },
-  {
-    id: 82,
-    title: 'Busan City Escape',
-    location: 'Busan',
-    date: 'Aug 10 - Aug 12, 2024',
-    cost: '300',
-    image: 'https://images.unsplash.com/photo-1613810739984-31af6a4bb3b8?w=800'
+// 상태 관리
+const plans = ref([])
+const loading = ref(true)
+const stats = ref({ totalPlans: 0, travelDays: 0, completed: 0 })
+
+// 스토어에서 로그인된 유저 정보 가져오기 (vuex 구조에 따라 수정 필요)
+const userId = computed(() => store?.state?.auth?.user?.id || 18) // 로그인 안되어있으면 1번(테스트용)
+const userName = computed(() => store?.state?.auth?.user?.name || 'Traveler')
+
+// 데이터 가져오기 함수
+const fetchPlans = async () => {
+  try {
+    loading.value = true
+    const targetId = userId.value
+    console.log("Fetching plans for user:", targetId)
+    // 백엔드 API 호출: 유저의 모든 Plan 조회
+    const response = await api.getEndedPlanByUserId(targetId)
+    const allPlans = response.data
+    console.log(allPlans);
+    // 1. 종료된 여행(isEnded === true)만 필터링
+    const completedPlans = allPlans.filter(p => p.isEnded === true)
+
+    // 2. 데이터 가공 (UI에 맞게 포맷팅)
+    plans.value = completedPlans.map(p => ({
+      ...p,
+      formattedDate: `${p.startDate} ~ ${p.endDate}`,
+      formattedBudget: Number(p.budget).toLocaleString() + ' KRW'
+    }))
+
+    // 3. 통계 업데이트 (선택 사항)
+    stats.value = {
+      totalPlans: allPlans.length,
+      completed: completedPlans.length,
+      travelDays: calculateTotalDays(completedPlans)
+    }
+
+  } catch (error) {
+    console.error("여행 계획을 불러오는데 실패했습니다:", error)
+  } finally {
+    loading.value = false
   }
-])
+}
 
-const activeId = ref(1)
+// 여행 일수 합계 계산 도우미 함수
+const calculateTotalDays = (plansList) => {
+  return plansList.reduce((acc, cur) => {
+    const start = new Date(cur.startDate)
+    const end = new Date(cur.endDate)
+    const diff = (end - start) / (1000 * 60 * 60 * 24) + 1
+    return acc + diff
+  }, 0)
+}
+
+// ✅ 페이지 이동 함수
+// PlanCard에서 emit된 id와 title을 인자로 받습니다.
+const goToReview = (id, title) => {
+  console.log(`Navigating to review creation for Plan ID: ${id}, Title: ${title}`);
+  
+  router.push({
+    name: 'CreateTravelReview', // router.js에 정의된 라우트 이름 확인 필요 (PhotoUploadPage로 연결된 라우트)
+    params: { planId: id },
+    query: { title: title },
+  })
+}
+
+onMounted(() => {
+  fetchPlans()
+})
 
 // store에서 프로필 이미지 가져오기 (없으면 asset의 기본값)
 const profileImage = computed(() => {
