@@ -16,8 +16,7 @@ import { useTravelStore } from '@/store/travelStore'
 import OAuthCallback from '@/views/auth/OAuthCallback.vue'
 
 const routes = [
-  // OAuth 콜백 (하위 라우트보다 앞에)
-  { path: '/login/oauth2/code/google', component: OAuthCallback },
+  
   
   // 기본 라우트
   { path: '/', component: CreatePlan },
@@ -25,6 +24,9 @@ const routes = [
   { path: '/supporter', component: Supporter },
   { path: '/mypage', component: MyProfile },
   { path: '/planner/hotel', component: Hotel },
+
+  // OAuth 콜백 (별도 경로)
+  { path: '/oauth/callback', component: OAuthCallback },
   
   // 하위 모듈 라우트 확장
   ...planner,
