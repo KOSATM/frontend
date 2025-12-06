@@ -65,12 +65,12 @@ const onDrop = (e) => {
   reader.readAsDataURL(f)
 }
 
-// go to type selection, pass preview in history state
+// go to type selection, pass preview via query parameter
 const goToType = () => {
   if (!imagePreview.value) return
   router.push({
     name: 'ImageType',
-    state: { preview: imagePreview.value, from: 'New' }
+    query: { preview: imagePreview.value, from: 'New' }
   })
 }
 
@@ -154,7 +154,7 @@ const onHeaderBack = () => {
 }
 
 .upload-gradient {
-  height: 160px;
+  height: 300px;
   border-radius: 12px;
   background: #3A5797;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);

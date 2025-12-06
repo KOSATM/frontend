@@ -7,12 +7,12 @@
     </template>
 
     <div class="selected-place card p-3 mb-3 d-flex align-items-center">
-      <img :src="item.thumb" class="thumb me-3" />
+      <img :src="item?.imageUrl || '/sample/placeholder1.jpg'" class="thumb me-3" />
       <div>
-        <div class="fw-medium">{{ item.name }}</div>
-        <div class="small text-muted">{{ item.desc }}</div>
+        <div class="fw-medium">{{ item?.placeName || 'Unknown Place' }}</div>
+        <div class="small text-muted">{{ item?.location || '' }}</div>
       </div>
-      <div class="ms-auto small text-muted">{{ item.distance }}</div>
+      <div class="ms-auto small text-muted">{{ item?.description || '' }}</div>
     </div>
 
     <ul class="list-unstyled">
@@ -69,76 +69,119 @@
 
   <div class="d-flex mt-3">
     <router-link class="btn btn-link" :to="{ name: 'AiRecommend' }">Back</router-link>
-    <button class="btn btn-primary ms-auto" :disabled="!selectedOption" @click="confirm">
-      Confirm
+    <button class="btn btn-primary ms-auto" :disabled="!selectedOption || isSaving" @click="confirm">
+      {{ isSaving ? 'Saving...' : 'Confirm' }}
     </button>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useImageSearchStore } from '@/store/imageSearchStore'
+import imageSearchApi from '@/api/imageSearchApi'
 import StepHeader from '@/components/common/StepHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 
 const route = useRoute()
 const router = useRouter()
+const imageSearchStore = useImageSearchStore()
 
 const onStepBack = () => {
-  // item.id가 유효할 때만 params로 이동, 아니면 안전하게 이전 페이지로 이동
-  if (item && item.id) {
-    router.push({ name: 'SupporterImageAIRecommend', params: { itemId: item.id } }).catch(() => { })
-  } else {
-    router.back()
+  router.push({ name: 'AiRecommend' }).catch(() => { })
+}
+
+// 스토어에서 선택된 장소 가져오기 (computed로 변경하여 반응형으로 만들기)
+const item = computed(() => {
+  const selected = imageSearchStore.getSelectedPlace
+  return selected || {
+    id: 0,
+    placeName: 'Unknown Place',
+    description: '',
+    location: '',
+    imageUrl: '/sample/placeholder1.jpg'
   }
-}
+})
 
-// item passed from previous route.state (fallback to query or sample)
-const item = route?.state?.item || {
-  id: route?.query?.itemId || 0,
-  name: route?.query?.itemName || 'Unknown Place',
-  desc: '',
-  distance: '',
-  thumb: '/sample/placeholder1.jpg'
-}
-
-// UI selection state (like Recommend view)
+// UI selection state
 const selectedOption = ref(null)
+const isSaving = ref(false)
 
 const selectOption = (k) => {
   selectedOption.value = selectedOption.value === k ? null : k
 }
 
-// Confirm: navigate based on selection (only when user confirms)
-const confirm = () => {
+// DB에 저장 (save, add, replace 선택 시) - 모든 후보지 저장
+const saveToDatabase = async (action) => {
+  try {
+    isSaving.value = true
+    
+    // 모든 후보지 저장
+    const allCandidates = imageSearchStore.getCandidates
+    const selectedPlace = imageSearchStore.getSelectedPlace
+    
+    const dataToSave = {
+      selectedPlace: selectedPlace,
+      candidates: allCandidates, // 모든 후보지 3개
+      uploadedImage: imageSearchStore.getUploadedImage,
+      selectedType: imageSearchStore.getSelectedType,
+      action: action // save, add, replace
+    }
+    
+    console.log('DB에 저장할 데이터 (모든 후보지):', dataToSave)
+    
+    // imageSearchApi.savePlaceCandidates() 호출 - 모든 후보지 저장
+    const response = await imageSearchApi.savePlaceCandidates(dataToSave)
+    
+    console.log('저장 성공:', response)
+    return true
+    
+  } catch (error) {
+    console.error('DB 저장 오류:', error)
+    alert('저장에 실패했습니다.')
+    return false
+  } finally {
+    isSaving.value = false
+  }
+}
+
+// Confirm: 선택에 따라 처리
+const confirm = async () => {
   if (!selectedOption.value) return
 
-  if (selectedOption.value === 'add' || selectedOption.value === 'replace') {
-    // attempt to go to EditPlan; if route name isn't registered, fall back to ChoicePlan
-    router.push({
-      name: 'planedit',
-      state: { item, mode: selectedOption.value },
-      query: { mode: selectedOption.value, itemId: item?.id ?? '', itemName: item?.name ?? '' }
-    }).catch(() => {
-      // fallback for environments where EditPlan route is not defined
-      router.push({
-        name: 'ChoicePlan',
-        state: { item, mode: selectedOption.value },
-        query: { mode: selectedOption.value, itemId: item?.id ?? '', itemName: item?.name ?? '' }
-      }).catch(() => { /* swallow to avoid unhandled */ })
-    })
-    return
-  }
-
-  // Not Interested -> go back to New Search (no save)
+  // Not Interested -> 저장하지 않고 돌아가기
   if (selectedOption.value === 'not_interested') {
     router.push({ name: 'New' }).catch(() => { })
     return
   }
 
-  // save only -> go to history (placeholder)
+  // save, add, replace -> DB에 저장
+  const saved = await saveToDatabase(selectedOption.value)
+  
+  if (!saved) {
+    return // 저장 실패 시 진행하지 않음
+  }
+
+  // 저장 성공 후 페이지 이동
+  if (selectedOption.value === 'add' || selectedOption.value === 'replace') {
+    // 편집 페이지로 이동
+    router.push({
+      name: 'planedit',
+      state: { item: item.value, mode: selectedOption.value },
+      query: { mode: selectedOption.value, itemId: item.value?.id ?? '', itemName: item.value?.placeName ?? '' }
+    }).catch(() => {
+      router.push({
+        name: 'ChoicePlan',
+        state: { item: item.value, mode: selectedOption.value },
+        query: { mode: selectedOption.value, itemId: item.value?.id ?? '', itemName: item.value?.placeName ?? '' }
+      }).catch(() => { })
+    })
+    return
+  }
+
+  // save only -> 히스토리 페이지로 이동
   if (selectedOption.value === 'save') {
-    router.push({ name: 'History' })
+    router.push({ name: 'History' }).catch(() => { })
   }
 }
 </script>

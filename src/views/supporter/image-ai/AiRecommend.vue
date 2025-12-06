@@ -8,42 +8,51 @@
         Search</router-link>
     </template>
 
-    <h5 class="mb-3">Recommended Destinations</h5>
-    <div class="results-list">
-      <div v-for="(r, i) in results" :key="i" class="result-card card mb-3 p-3"
-        :class="{ selected: selectedIndex === i }" @click="select(i)" @keyup.enter.space.prevent="select(i)"
-        role="button" tabindex="0" :aria-pressed="selectedIndex === i">
-        <div class="d-flex align-items-center">
-          <div class="thumb-wrap me-3 position-relative">
-            <div class="thumb-bg rounded">
-              <img :src="r.thumb" alt="thumb" class="thumb rounded" />
-            </div>
-            <div class="match-badge rounded-pill">{{ r.match }}%</div>
-          </div>
-
-          <div class="flex-fill">
-            <div class="d-flex justify-content-between align-items-start">
-              <div>
-                <div class="fw-semibold fs-6">{{ r.name }}</div>
-                <div class="small text-muted mt-1">{{ r.desc }}</div>
-              </div>
-              <div class="text-end small text-muted d-none d-md-block">
-                <div><i class="bi bi-geo-alt me-1"></i>{{ r.distance }}</div>
-                <div class="mt-1 text-purple">Match: {{ r.match }}%</div>
-              </div>
-            </div>
-
-            <div class="d-flex align-items-center mt-3 small text-muted d-md-none">
-              <i class="bi bi-geo-alt me-1"></i>{{ r.distance }}
-              <span class="ms-3 text-purple">Match: {{ r.match }}%</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- visual selection indicator (right side) -->
-        <div v-if="selectedIndex === i" class="select-check" aria-hidden="true">✓</div>
+    <div v-if="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
       </div>
+      <p class="mt-3 text-muted">AI가 분석 중입니다...</p>
     </div>
+
+    <template v-else>
+      <h5 class="mb-3">Recommended Destinations</h5>
+      <div class="results-list">
+        <div v-for="(r, i) in results" :key="i" class="result-card card mb-3 p-3"
+          :class="{ selected: selectedIndex === i }" @click="select(i)" @keyup.enter.space.prevent="select(i)"
+          role="button" tabindex="0" :aria-pressed="selectedIndex === i">
+          <div class="d-flex align-items-center">
+            <div class="thumb-wrap me-3 position-relative">
+              <div class="thumb-bg rounded">
+                <img :src="r.imageUrl || '/sample/placeholder.jpg'" alt="thumb" class="thumb rounded" />
+              </div>
+              <div class="match-badge rounded-pill">{{ Math.round((r.confidence || 0) * 100) }}%</div>
+            </div>
+
+            <div class="flex-fill">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <div class="fw-semibold fs-6">{{ r.placeName }}</div>
+                  <div class="small text-muted mt-1">{{ r.description || r.association }}</div>
+                </div>
+                <div class="text-end small text-muted d-none d-md-block">
+                  <div><i class="bi bi-geo-alt me-1"></i>{{ r.location }}</div>
+                  <div class="mt-1 text-purple">신뢰도: {{ Math.round((r.confidence || 0) * 100) }}%</div>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center mt-3 small text-muted d-md-none">
+                <i class="bi bi-geo-alt me-1"></i>{{ r.location }}
+                <span class="ms-3 text-purple">신뢰도: {{ Math.round((r.confidence || 0) * 100) }}%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- visual selection indicator (right side) -->
+          <div v-if="selectedIndex === i" class="select-check" aria-hidden="true">✓</div>
+        </div>
+      </div>
+    </template>
   </BaseSection>
 
     <div class="d-flex mt-2">
@@ -56,51 +65,141 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useSupporterStore } from '@/store/supporterStore'
+import { useImageSearchStore } from '@/store/imageSearchStore'
+import imageSearchApi from '@/api/imageSearchApi'
 import StepHeader from '@/components/common/StepHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 
 const router = useRouter()
+const route = useRoute()
+const supporterStore = useSupporterStore()
+const imageSearchStore = useImageSearchStore()
 const selectedIndex = ref(null)
+const results = ref([])
+const isLoading = ref(true)
 
-const results = [
-  {
-    id: 1,
-    name: 'Gyeongbokgung Palace',
-    desc: 'Traditional Korean architecture with beautiful gardens',
-    match: 95,
-    distance: '2.5km',
-    thumb: '/sample/placeholder1.jpg'
-  },
-  {
-    id: 2,
-    name: 'Bukchon Hanok Village',
-    desc: 'Historic Korean traditional village',
-    match: 88,
-    distance: '3.2km',
-    thumb: '/sample/placeholder2.jpg'
-  },
-  {
-    id: 3,
-    name: 'N Seoul Tower',
-    desc: 'Iconic tower with panoramic city views',
-    match: 82,
-    distance: '4.1km',
-    thumb: '/sample/placeholder3.jpg'
+// Base64 문자열을 File 객체로 변환
+function base64ToFile(base64String, fileName) {
+  const arr = base64String.split(',')
+  const mime = arr[0].match(/:(.*?);/)[1]
+  const bstr = atob(arr[1])
+  const n = bstr.length
+  const u8arr = new Uint8Array(n)
+  for (let i = 0; i < n; i++) {
+    u8arr[i] = bstr.charCodeAt(i)
   }
-]
+  return new File([u8arr], fileName, { type: mime })
+}
+
+// 페이지 로드 시 백엔드 API 호출
+onMounted(async () => {
+  try {
+    const preview = route.query?.preview
+    const type = route.query?.type
+    const userAddress = supporterStore.getUserAddress
+
+    if (!preview || !type) {
+      console.error('필수 파라미터가 없습니다.')
+      isLoading.value = false
+      return
+    }
+
+    console.log('선택된 사진 타입:', type)
+    console.log('사용자 주소:', userAddress || 'Seoul, South Korea')
+
+    // Base64 문자열을 File 객체로 변환
+    const imageFile = base64ToFile(preview, 'uploaded-image.jpg')
+
+    // 백엔드 API 호출 (imageSearchApi가 FormData 처리)
+    try {
+      const response = await imageSearchApi.recommendPlacesByImage(
+        type, 
+        imageFile, 
+        userAddress || 'Seoul, South Korea'
+      )
+
+      console.log('백엔드 API 응답:', response)
+
+      // API 응답 데이터를 results에 저장
+      // 백엔드 응답이 { success, status, data, error } 형식이므로 data 배열을 추출
+      if (response.success && response.data && Array.isArray(response.data)) {
+        results.value = response.data
+        // 스토어에도 저장 (다음 페이지에서 사용)
+        imageSearchStore.setSearchResult(preview, type, response.data)
+      } else if (Array.isArray(response)) {
+        // 혹은 바로 배열인 경우
+        results.value = response
+        imageSearchStore.setSearchResult(preview, type, response)
+      } else {
+        results.value = []
+      }
+
+    } catch (apiError) {
+      console.error('백엔드 API 호출 오류:', apiError)
+      console.error('API 상세 오류:', apiError.response?.status, apiError.response?.data)
+      
+      // 테스트용 더미 데이터 (백엔드가 준비될 때까지)
+      console.warn('더미 데이터를 사용합니다.')
+      results.value = [
+        {
+          placeName: 'Gyeongbokgung Palace',
+          description: 'Traditional Korean architecture with beautiful gardens',
+          confidence: 0.95,
+          address: '서울시 종로구 삼청로 37',
+          type: 'poi',
+          imageUrl: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="200"%3E%3Crect fill="%23ddd" width="300" height="200"/%3E%3Ctext x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%23999" font-size="14"%3EGyeongbokgung Palace%3C/text%3E%3C/svg%3E'
+        },
+        {
+          placeName: 'Bukchon Hanok Village',
+          description: 'Historic Korean traditional village',
+          confidence: 0.88,
+          address: '서울시 종로구 계동길',
+          type: 'poi',
+          imageUrl: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="200"%3E%3Crect fill="%23ddd" width="300" height="200"/%3E%3Ctext x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%23999" font-size="14"%3EBukchon Hanok Village%3C/text%3E%3C/svg%3E'
+        },
+        {
+          placeName: 'N Seoul Tower',
+          description: 'Iconic tower with panoramic city views',
+          confidence: 0.82,
+          address: '서울시 중구 장충동2가 산1-6',
+          type: 'poi',
+          imageUrl: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="200"%3E%3Crect fill="%23ddd" width="300" height="200"/%3E%3Ctext x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%23999" font-size="14"%3EN Seoul Tower%3C/text%3E%3C/svg%3E'
+        }
+      ]
+    }
+
+  } catch (error) {
+    console.error('백엔드 API 호출 오류:', error)
+    alert('추천 데이터를 가져오는데 실패했습니다.')
+  } finally {
+    isLoading.value = false
+  }
+})
 
 const select = (i) => {
   selectedIndex.value = i === selectedIndex.value ? null : i
+  
+  // 선택된 장소를 스토어에 저장
+  if (selectedIndex.value !== null) {
+    const selectedItem = results.value[selectedIndex.value]
+    imageSearchStore.setSelectedPlace(selectedItem)
+    console.log('선택된 장소:', selectedItem)
+  } else {
+    // 선택 해제 시
+    imageSearchStore.setSelectedPlace(null)
+  }
 }
 
 const addPlan = () => {
   if (selectedIndex.value === null) return
-  const item = results[selectedIndex.value]
+  
+  // 선택된 장소는 이미 스토어에 저장됨 (select 함수에서 저장)
+  // 다음 페이지로 이동
   router.push({
-    name: 'SelectPlan',
-    state: { item }
+    name: 'SelectPlan'
   })
 }
 </script>
