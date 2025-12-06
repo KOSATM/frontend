@@ -194,7 +194,7 @@ const sendMessage = async () => {
     chatMessages.value.push({
       id: Date.now() + 1,
       type: "ai",
-      content: aiText,
+      content: aiText.data.mainResponse.message,
       timestamp: new Date(),
     });
     isLoading.value = false;
