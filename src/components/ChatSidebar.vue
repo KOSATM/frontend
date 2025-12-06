@@ -314,6 +314,7 @@ watch(
   border: 1px solid #e9ecef;
   border-radius: 18px 18px 18px 4px;
   max-width: 85%;
+  white-space: pre-line;   /* \n 을 실제 줄바꿈으로 렌더링 */
 }
 
 .user-message {
