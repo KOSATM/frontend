@@ -11,42 +11,44 @@
     </div> -->
 
     <div class="form-content bg-white rounded-4 p-4">
-
-      <!-- Budget Display -->
-      <!-- <div class="budget-section mb-4">
-
-        <h2 class="text-secondary mb-3">Recommended Hotels for Your Stay</h2>
-        <p class="text-muted">
-          based on your {{ travelDays }}-day plan with ₩{{ budget.toLocaleString() }} budget
-        </p>
-        <div class="d-flex justify-content-between align-items-center budget-details p-3 bg-light rounded-pill">
-          <span>Budget per night</span>
-          <span class="fs-5 fw-bold text-primary">₩{{ (budget / travelDays).toLocaleString() }}</span>
+      <!-- 로딩 상태 -->
+      <div v-if="isLoading" class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
+        <div class="text-center">
+          <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="text-muted">호텔 추천 정보를 불러오는 중입니다...</p>
         </div>
-      </div> -->
-
-      <!-- Accommodation Budget Propertion -->
-      <div class="mb-3">
-        <BaseSection icon="bi-percent" title="Accommodation Budget Propertion">
-          <input type="range" id="range4" class="form-range" min="0" max="100" v-model="rangeValue" />
-          <output :for="'range4'" aria-hidden="true">{{ rangeValue }}% (₩{{ budget * rangeValue / 100 / travelDays
-            }})</output>
-        </BaseSection>
       </div>
 
-      <!-- Filter Section -->
-      <div class="filter-section mb-4">
-        <!-- Accommodation Type -->
-        <BaseSection icon="bi-building" title="Accommodation Type">
-          <select v-model="filters.accommodationType" class="form-select rounded-pill">
-            <option value="all">All Types</option>
-            <option value="hotel">Hotel</option>
-            <option value="guesthouse">Guesthouse</option>
-            <option value="hanok">Hanok Style</option>
-            <option value="other">Other</option>
-          </select>
-        </BaseSection>
-        <!-- <div class="mb-3">
+      <!-- 에러 상태 -->
+      <div v-else-if="error && hotels.length === 0" class="alert alert-warning" role="alert">
+        {{ error }}
+      </div>
+
+      <!-- 정상 콘텐츠 -->
+      <div v-else>
+        <!-- Accommodation Budget Propertion -->
+        <div class="mb-3">
+          <BaseSection icon="bi-percent" title="Accommodation Budget Propertion">
+            <input type="range" id="range4" class="form-range" min="0" max="100" v-model="rangeValue" />
+            <output :for="'range4'" aria-hidden="true">{{ rangeValue }}% (₩{{ Math.floor(budget * rangeValue / 100 / travelDays).toLocaleString() }})</output>
+          </BaseSection>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section mb-4">
+          <!-- Accommodation Type -->
+          <BaseSection icon="bi-building" title="Accommodation Type">
+            <select v-model="filters.accommodationType" class="form-select rounded-pill">
+              <option value="all">All Types</option>
+              <option value="hotel">Hotel</option>
+              <option value="guesthouse">Guesthouse</option>
+              <option value="hanok">Hanok Style</option>
+              <option value="other">Other</option>
+            </select>
+          </BaseSection>
+          <!-- <div class="mb-3">
           <label class="form-label d-flex align-items-center">
             <i class="bi bi-building me-2"></i>
             Accommodation Type
@@ -60,14 +62,14 @@
           </select>
         </div> -->
 
-        <!-- Number of Guests -->
-        <BaseSection icon="bi-people" title="Number of Guests">
-          <div class="input-group">
-            <input type="number" v-model="filters.guests" class="form-control rounded-pill" min="1" max="10" />
-            <span class="ms-2">Guests</span>
-          </div>
-        </BaseSection>
-        <!-- <div class="mb-3">
+          <!-- Number of Guests -->
+          <BaseSection icon="bi-people" title="Number of Guests">
+            <div class="input-group">
+              <input type="number" v-model="filters.guests" class="form-control rounded-pill" min="1" max="10" />
+              <span class="ms-2">Guests</span>
+            </div>
+          </BaseSection>
+          <!-- <div class="mb-3">
           <label class="form-label d-flex align-items-center">
             <i class="bi bi-people me-2"></i>
             Number of Guests
@@ -77,60 +79,72 @@
             <span class="ms-2">Guests</span>
           </div>
         </div> -->
-      </div>
+        </div>
 
-      <!-- Hotel List -->
-      <div class="hotel-list mb-4">
-        
-        <!-- Hotel Cards -->
-        <BaseSection icon="bi-buildings" title="Recommended Hotels" :subtitle="`Showing ${ filteredHotels.length} hotels for ${filters.guests} guests`">
-        <div class="row g-4">
-            <!-- <p class="text-muted mb-3">
-              Showing {{ filteredHotels.length }} hotels for {{ filters.guests }} guests
-            </p> -->
-            <div v-for="hotel in filteredHotels" :key="hotel.id" class="col-12">
-              <div :class="['card hotel-card', { 'selected': selectedHotel?.id === hotel.id }]"
-                @click="selectHotel(hotel)">
-                <div class="row g-0">
-                  <div class="col-md-4">
-                    <img :src="hotel.image" class="img-fluid rounded-start h-100" :alt="hotel.name"
-                      style="object-fit: cover;" />
-                  </div>
-                  <div class="col-md-8">
-                    <div class="card-body">
-                      <div class="d-flex justify-content-between align-items-start">
-                        <h5 class="card-title text-secondary mb-2">{{ hotel.name }}</h5>
-                        <span class="badge bg-primary">Best Price!</span>
-                      </div>
-                      <p class="card-text text-muted small mb-2">
-                        <i class="bi bi-geo-alt"></i>
-                        {{ hotel.location }}
-                      </p>
-                      <div class="hotel-features mb-3">
-                        <span class="badge bg-light text-secondary me-2" v-if="hotel.freeWifi">
-                          <i class="bi bi-wifi me-1"></i> Free WiFi
-                        </span>
-                        <span class="badge bg-light text-secondary me-2" v-if="hotel.breakfast">
-                          <i class="bi bi-cup-hot me-1"></i> Breakfast
-                        </span>
-                        <span class="badge bg-light text-secondary me-2" v-if="hotel.pool">
-                          <i class="bi bi-water me-1"></i> Pool
-                        </span>
-                        <span class="badge bg-light text-secondary" v-if="hotel.spa">
-                          <i class="bi bi-heart-pulse me-1"></i> Spa
-                        </span>
-                      </div>
-                      <div class="d-flex justify-content-between align-items-end">
-                        <div class="rating">
-                          <i class="bi bi-star-fill text-warning"></i>
-                          <span class="ms-1">{{ hotel.rating }}</span>
-                          <span class="text-muted">({{ hotel.reviews }} reviews)</span>
-                        </div>
-                        <div class="price text-end">
-                          <div class="fs-5 fw-bold text-primary">
-                            ₩{{ hotel.price.toLocaleString() }}
+        <!-- Hotel List -->
+        <div class="hotel-list mb-4">
+          <BaseSection icon="bi-buildings" title="Recommended Hotels" :subtitle="`Showing ${ filteredHotels.length} hotels for ${filters.guests} guests`">
+            <div v-if="isLoading" class="text-center py-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+            <div v-else-if="error" class="alert alert-warning" role="alert">
+              {{ error }}
+            </div>
+            <div v-else class="row g-4">
+              <!-- Hotel Cards -->
+              <div v-for="hotel in filteredHotels" :key="hotel.id" class="col-12">
+                <div :class="['card hotel-card', { 'selected': selectedHotel?.id === hotel.id }]"
+                  @click="selectHotel(hotel)">
+                  <div class="row g-0">
+                    <div class="col-md-4">
+                      <img :src="hotel.image" class="img-fluid rounded-start h-100" :alt="hotel.name"
+                        style="object-fit: cover;" />
+                    </div>
+                    <div class="col-md-8">
+                      <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                          <div>
+                            <h5 class="card-title text-secondary mb-2">{{ hotel.name }}</h5>
+                            <small class="text-muted d-block mb-2">{{ hotel.roomType }}</small>
                           </div>
-                          <small class="text-muted">per night</small>
+                          <span class="badge bg-primary">Rank #{{ hotel.rank }}</span>
+                        </div>
+                        <p class="card-text text-muted small mb-2">
+                          <i class="bi bi-geo-alt"></i>
+                          {{ hotel.location }}
+                        </p>
+                        <div class="hotel-info mb-2 small text-muted">
+                          <div><i class="bi bi-calendar-check"></i> {{ hotel.checkInDate }} ~ {{ hotel.checkOutDate }}</div>
+                          <div><i class="bi bi-moon"></i> {{ hotel.nights }} | <i class="bi bi-people"></i> {{ hotel.guests }}</div>
+                        </div>
+                        <div class="hotel-features mb-3">
+                          <span class="badge bg-light text-secondary me-2" v-if="hotel.facilities?.WiFi">
+                            <i class="bi bi-wifi me-1"></i> {{ hotel.facilities.WiFi }}
+                          </span>
+                          <span class="badge bg-light text-secondary me-2" v-if="hotel.breakfast">
+                            <i class="bi bi-cup-hot me-1"></i> Breakfast
+                          </span>
+                          <span class="badge bg-light text-secondary me-2" v-if="hotel.facilities?.['24시간프론트']">
+                            <i class="bi bi-clock me-1"></i> {{ hotel.facilities['24시간프론트'] }}
+                          </span>
+                          <span class="badge bg-light text-secondary" v-if="hotel.facilities?.['지하철']">
+                            <i class="bi bi-train-lightrail me-1"></i> {{ hotel.facilities['지하철'] }}
+                          </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-end">
+                          <div class="rating">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <span class="ms-1">{{ hotel.rating }}</span>
+                            <span class="text-muted">({{ hotel.reviews }} reviews)</span>
+                          </div>
+                          <div class="price text-end">
+                            <div class="fs-5 fw-bold text-primary">
+                              ₩{{ hotel.price.toLocaleString() }}
+                            </div>
+                            <small class="text-muted">per night</small>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -138,185 +152,108 @@
                 </div>
               </div>
             </div>
-            
-          </div>
-        </BaseSection>
-      </div>
+          </BaseSection>
+        </div>
 
-      <!-- Confirm Button -->
-      <div class="text-center">
-        <!-- <RouterLink class="btn btn-primary btn-lg px-5" :disabled="!selectedHotel" @click="confirmSelection" to="/planner/payment">
+        <!-- Confirm Button -->
+        <div class="text-center">
+          <!-- <RouterLink class="btn btn-primary btn-lg px-5" :disabled="!selectedHotel" @click="confirmSelection" to="/planner/payment">
           Make a Payment
         </RouterLink> -->
-        <BaseButton :disabled="!selectedHotel" @click="confirmSelection()" variant="primary" class="w-100 py-2">Next:
-          Make a Payment</BaseButton>
+          <BaseButton :disabled="!selectedHotel" @click="confirmSelection()" variant="primary" class="w-100 py-2">Next:
+            Make a Payment</BaseButton>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import hotelIllust from '@/assets/img/hotel-logo.png';
 import BaseButton from '@/components/common/BaseButton.vue';
 import { useTravelStore } from '@/store/travelStore';
+import { useAuthStore } from '@/store/authStore';
+import hotelApi from '@/api/hotelApi';
 import BaseSection from '@/components/common/BaseSection.vue';
 
 const router = useRouter();
 const travelStore = useTravelStore();
+const authStore = useAuthStore();
 
 const rangeValue = ref(50);
-const budget = ref(300000); // This should come from TravelPlanForm
-const travelDays = ref(3);  // This should come from TravelPlanForm
+const budget = ref(1000000);  // 100만원으로 변경
+const travelDays = ref(3);
 const filters = ref({
   accommodationType: 'all',
   guests: 2
 });
 const selectedHotel = ref(null);
+const hotels = ref([]);
+const isLoading = ref(false);
+const error = ref(null);
 
-const hotels = ref([
-  {
-    id: 1,
-    name: 'Four Seasons Hotel Seoul',
-    location: 'Gwanghwamun, Jongno-gu',
-    price: 315000,
-    rating: 4.8,
-    reviews: 234,
-    image: hotelIllust,
-    type: 'hotel',
-    freeWifi: true,
-    breakfast: true,
-    pool: true,
-    spa: true
-  },
-  {
-    id: 2,
-    name: 'The Shilla Seoul',
-    location: 'Jung-gu, Central Seoul',
-    price: 285000,
-    rating: 4.7,
-    reviews: 189,
-    image: hotelIllust,
-    type: 'hotel',
-    freeWifi: true,
-    breakfast: true,
-    pool: true,
-    spa: true
-  },
-  {
-    id: 3,
-    name: 'Lotte World Hotel',
-    location: 'Songpa-gu, Jamsil',
-    price: 320000,
-    rating: 4.6,
-    reviews: 156,
-    image: hotelIllust,
-    type: 'hotel',
-    freeWifi: true,
-    breakfast: true,
-    pool: true,
-    spa: false
-  },
-  {
-    id: 4,
-    name: 'Seoul Plaza Hotel',
-    location: 'Jung-gu, City Hall',
-    price: 195000,
-    rating: 4.3,
-    reviews: 98,
-    image: hotelIllust,
-    type: 'hotel',
-    freeWifi: true,
-    breakfast: false,
-    pool: false,
-    spa: false
-  },
-  {
-    id: 5,
-    name: 'Korea House Guesthouse',
-    location: 'Jongno-gu, Bukchon',
-    price: 95000,
-    rating: 4.5,
-    reviews: 287,
-    image: hotelIllust,
-    type: 'guesthouse',
-    freeWifi: true,
-    breakfast: true,
-    pool: false,
-    spa: false
-  },
-  {
-    id: 6,
-    name: 'Myeongdong Tourist Hotel',
-    location: 'Jung-gu, Myeongdong',
-    price: 165000,
-    rating: 4.2,
-    reviews: 142,
-    image: hotelIllust,
-    type: 'hotel',
-    freeWifi: true,
-    breakfast: false,
-    pool: false,
-    spa: true
-  },
-  {
-    id: 7,
-    name: 'Gangnam Station Residence',
-    location: 'Gangnam-gu, Apgujeong',
-    price: 250000,
-    rating: 4.4,
-    reviews: 178,
-    image: hotelIllust,
-    type: 'guesthouse',
-    freeWifi: true,
-    breakfast: true,
-    pool: true,
-    spa: false
-  },
-  {
-    id: 8,
-    name: 'Insadong Hanok Stay',
-    location: 'Jongno-gu, Insadong',
-    price: 135000,
-    rating: 4.7,
-    reviews: 223,
-    image: hotelIllust,
-    type: 'hanok',
-    freeWifi: true,
-    breakfast: true,
-    pool: false,
-    spa: true
-  },
-  {
-    id: 9,
-    name: 'Gangbuk Boutique Hotel',
-    location: 'Seongbuk-gu, Gireum',
-    price: 175000,
-    rating: 4.3,
-    reviews: 89,
-    image: hotelIllust,
-    type: 'hotel',
-    freeWifi: true,
-    breakfast: true,
-    pool: false,
-    spa: true
-  },
-  {
-    id: 10,
-    name: 'Itaewon Global House',
-    location: 'Yongsan-gu, Itaewon',
-    price: 120000,
-    rating: 4.6,
-    reviews: 211,
-    image: hotelIllust,
-    type: 'other',
-    freeWifi: true,
-    breakfast: false,
-    pool: false,
-    spa: false
+// 마운트 시 API 호출
+onMounted(async () => {
+  authStore.initializeAuth();
+  
+  isLoading.value = true;
+  
+  try {
+    const userId = authStore.userId;
+    console.log('1️⃣ userId:', userId);
+    
+    if (userId) {
+      console.log('2️⃣ API 호출 시작');
+      const response = await hotelApi.recommendHotel(userId);
+      console.log('3️⃣ 응답:', response);
+      
+      if (response?.data?.data?.hotelSummaryList?.length > 0) {
+        console.log('4️⃣ 호텔 데이터 있음');
+        hotels.value = response.data.data.hotelSummaryList.map((hotel) => ({
+          id: hotel.hotelId || hotel.hotelName,
+          name: hotel.hotelName,
+          location: hotel.neighborhood,
+          price: Math.ceil(hotel.pricing.roomPrice),
+          totalPrice: hotel.pricing.totalPrice,
+          rating: 4.5,
+          reviews: 100,
+          image: hotelIllust,
+          type: 'hotel',
+          checkInDate: hotel.checkInDate,
+          checkOutDate: hotel.checkOutDate,
+          nights: hotel.nights,
+          roomType: hotel.roomTypeName,
+          guests: hotel.guests,
+          rank: hotel.rank,
+          facilities: hotel.facilities || {},
+          freeWifi: hotel.facilities?.['WiFi'] === '있음',
+          breakfast: true,
+          pool: false,
+          spa: false
+        }));
+      } else {
+        console.log('5️⃣ 기본값 로드');
+        loadDefaultHotels();
+      }
+    } else {
+      console.log('6️⃣ userId 없어서 기본값 로드');
+      loadDefaultHotels();
+    }
+  } catch (err) {
+    console.error('❌ 에러:', err.message);
+    loadDefaultHotels();
+  } finally {
+    isLoading.value = false;
   }
-]);
+});
+
+const loadDefaultHotels = () => {
+  // API 호출 실패 시 빈 배열로 설정
+  hotels.value = [];
+  error.value = '호텔 정보를 불러올 수 없습니다. 나중에 다시 시도해주세요.';
+};
 
 const filteredHotels = computed(() => {
   return hotels.value.filter(hotel => {
@@ -325,7 +262,6 @@ const filteredHotels = computed(() => {
       hotel.price > budget.value * rangeValue.value / 100) {
       return false;
     }
-    // Add more filters as needed
     return true;
   });
 });

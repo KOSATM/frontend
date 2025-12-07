@@ -168,13 +168,13 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
+import { useAuthStore } from '@/store/authStore'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 
 const router = useRouter()
-const store = useStore()
+const authStore = useAuthStore()
 
 // Core 사용자 데이터
 const profileData = reactive({
@@ -256,13 +256,18 @@ const goToEditProfile = () => {
 // 프로필 이미지 computed
 // store에서 프로필 이미지 가져오기 (없으면 asset의 기본값)
 const profileImage = computed(() => {
-  const stored = store?.getters?.getProfileImage
-  if (stored) return stored
-  return new URL('../../assets/img/profile-logo.png', import.meta.url).href
+  return authStore.userProfileImage || new URL('../../assets/img/profile-logo.png', import.meta.url).href
 })
 
 // 컴포넌트 마운트 시 로컬 스토리지에서 데이터 로드
 onMounted(() => {
+  authStore.loadStoredUser()
+  
+  if (authStore.user) {
+    profileData.name = authStore.user.name || 'User'
+    profileData.email = authStore.user.email || ''
+  }
+
   try {
     const savedProfile = localStorage.getItem('userProfile')
     if (savedProfile) {
