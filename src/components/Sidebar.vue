@@ -37,6 +37,7 @@ const menuItems = [
   { name: 'planner', label: 'Planner', icon: 'bi bi-map-fill', route: '/planner' },
   { name: 'supporter', label: 'Supporter', icon: 'bi bi-people', route: '/supporter' },
   { name: 'travelgram', label: 'Travelgram', icon: 'bi bi bi-instagram', route: '/travelgram' },
+  { name: 'hotelrecommend', label: 'Hotel Recommend', icon: 'bi bi-building', route: '/planner/hotel/recommendation' },
   { name: 'mypage', label: 'MyPage', icon: 'bi bi-person-circle', route: '/mypage' },
 ]
 
@@ -111,7 +112,9 @@ function closeSidebar() {
 
 function onSelect(name) {
   const target = menuItems.find(item => item.name === name)
-  if (target) router.push(target.route)
+  if (target) {
+    router.push(target.route)
+  }
   closeSidebar()
 }
 </script>

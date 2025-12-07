@@ -6,6 +6,7 @@ import Hotel from '@/views/planner/hotel/Recommendation.vue'
 import CreatePlan from '@/views/planner/CreatePlan.vue'
 import Travelgram from '@/views/travelgram/index.vue'
 import MyProfile from '@/views/mypage/MyProfile.vue'
+import OAuthCallback from '@/views/auth/OAuthCallback.vue'
 
 // 하위 모듈 라우트
 import travelgram from './travelgram'
@@ -13,7 +14,6 @@ import planner from './planner'
 import supporter from './supporter'
 import mypage from './mypage'
 import { useTravelStore } from '@/store/travelStore'
-import OAuthCallback from '@/views/auth/OAuthCallback.vue'
 
 const routes = [
   
@@ -24,10 +24,15 @@ const routes = [
   { path: '/supporter', component: Supporter },
   { path: '/mypage', component: MyProfile },
   { path: '/planner/hotel', component: Hotel },
-
-  // OAuth 콜백 (별도 경로)
   { path: '/oauth/callback', component: OAuthCallback },
   
+  // 호텔 추천 경로
+  { 
+    path: '/planner/hotel/recommendation', 
+    name: 'hotelRecommendation', 
+    component: Hotel 
+  },
+
   // 하위 모듈 라우트 확장
   ...planner,
   ...supporter,
