@@ -1126,7 +1126,7 @@ const closeCompleteModal = () => {
 
 /* 상세 모달 */
 const openDetailsModal = (dayIndex, actIndex) => {
-  const act = days.value[dayIndex].activities[actIndex];
+  const act = days.value[dayIndex].places[actIndex];
   const details = act.details || buildFallbackDetails(act);
   detailsModal.value = {
     open: true,
