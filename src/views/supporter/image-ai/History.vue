@@ -7,10 +7,20 @@
     <template #actions>
       <router-link class="btn btn-sm btn-primary" :to="{ name: 'New' }">+ New Search</router-link>
     </template>
-    <div class="history-list">
+    
+    <div v-if="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    
+    <div v-else class="history-list">
       <div v-for="(h, i) in history" :key="i" class="history-item card p-3 mb-3">
         <div class="d-flex">
-          <img :src="h.thumb" class="thumb me-3" />
+          <img v-if="h.thumb" :src="h.thumb" class="thumb me-3" />
+          <div v-else class="thumb me-3 bg-secondary d-flex align-items-center justify-content-center text-white">
+            <i class="bi bi-image"></i>
+          </div>
           <div class="flex-fill">
             <div class="d-flex justify-content-between">
               <div>
@@ -26,7 +36,12 @@
             <div class="mt-3">
               <div class="small text-muted mb-1">AI Recommendations ({{ h.recommendations.length }})</div>
               <div class="d-flex gap-2">
-                <img v-for="(r, idx) in h.recommendations" :key="idx" :src="r.thumb" class="rec-thumb" />
+                <template v-for="(r, idx) in h.recommendations" :key="idx">
+                  <img v-if="r.thumb" :src="r.thumb" class="rec-thumb" :title="r.name" />
+                  <div v-else class="rec-thumb bg-secondary d-flex align-items-center justify-content-center text-white" :title="r.name">
+                    <i class="bi bi-image"></i>
+                  </div>
+                </template>
               </div>
             </div>
           </div>
@@ -77,7 +92,10 @@
 
         <!-- Item Info -->
         <div class="selected-place card p-3 mb-3 d-flex align-items-center">
-          <img :src="changeStatusItem.thumb" class="thumb me-3" />
+          <img v-if="changeStatusItem.thumb" :src="changeStatusItem.thumb" class="thumb me-3" />
+          <div v-else class="thumb me-3 bg-secondary d-flex align-items-center justify-content-center text-white">
+            <i class="bi bi-image"></i>
+          </div>
           <div>
             <div class="fw-medium">{{ changeStatusItem.title }}</div>
             <div class="small text-muted">{{ changeStatusItem.note }}</div>
@@ -124,11 +142,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import ActivityDetailsModal from '@/components/planner/ActivityDetailsModal.vue'
+import imageSearchApi from '@/api/imageSearchApi'
 
 const router = useRouter()
 
@@ -136,6 +155,114 @@ const router = useRouter()
 const selectedHistory = ref(null)
 const changeStatusItem = ref(null)
 const changeStatusSelection = ref(null)
+
+// 히스토리 데이터
+const history = ref([])
+const isLoading = ref(false)
+
+// ActionType 한글 변환
+const getStatusText = (actionType) => {
+  const statusMap = {
+    'SAVE_ONLY': 'Saved only',
+    'ADD_PLAN': 'Added',
+    'REPLACED_PLAN': 'Replaced'
+  }
+  return statusMap[actionType] || actionType
+}
+
+// 히스토리 데이터 로드
+const loadHistory = async () => {
+  try {
+    isLoading.value = true
+    
+    // 임시로 userId 17 사용
+    const userId = 17
+    
+    console.log('📋 히스토리 로드 - userId:', userId)
+    
+    // API 호출
+    const response = await imageSearchApi.getSessionsByUserId(userId)
+    console.log('📋 받은 세션 데이터:', response)
+    console.log('📋 데이터 타입:', typeof response, Array.isArray(response))
+    
+    // 응답이 래핑되어 있는 경우 data 추출
+    const sessions = response.data ? response.data : (Array.isArray(response) ? response : [])
+    
+    console.log('📋 추출된 세션 배열:', sessions, '개수:', sessions.length)
+    
+    if (sessions.length === 0) {
+      console.log('📋 세션 데이터가 없습니다')
+      history.value = []
+      return
+    }
+    
+    // 데이터 변환
+    history.value = sessions.map(session => {
+      // 선택된 후보지 찾기 (isSelected === true)
+      const selectedCandidate = session.candidates.find(c => c.isSelected)
+      const selectedPlace = selectedCandidate?.place
+      
+      // 이미지 URL 우선순위: internalThumbnailUrl > internalOriginalUrl > externalImageUrl
+      const getImageUrl = (place) => {
+        return place?.internalThumbnailUrl || place?.internalOriginalUrl || place?.externalImageUrl || ''
+      }
+      
+      // 선택되지 않은 후보지들 (나머지 추천 목록)
+      const otherCandidates = session.candidates.filter(c => !c.isSelected)
+      
+      return {
+        sessionId: session.sessionId,
+        date: new Date(session.createdAt).toLocaleDateString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        }).replace(/\. /g, '.').replace('.', ''),
+        title: selectedPlace?.name || 'Unknown Place',
+        note: selectedPlace?.address || '',
+        status: getStatusText(session.actionType),
+        thumb: getImageUrl(selectedPlace),
+        area: selectedPlace?.address || '',
+        address: selectedPlace?.address || '',
+        hours: '',
+        cost: 0,
+        desc: selectedPlace?.description || '',
+        imageQuery: selectedPlace?.name || '',
+        candidates: session.candidates,
+        selectedCandidate: selectedCandidate,
+        // ActivityDetailsModal용 gallery 배열 (internalOriginalUrl 우선)
+        gallery: [
+          selectedPlace?.internalOriginalUrl || selectedPlace?.internalThumbnailUrl || selectedPlace?.externalImageUrl || ''
+        ].filter(url => url),
+        recommendations: otherCandidates.map(c => ({
+          candidateId: c.candidateId,
+          thumb: getImageUrl(c.place),
+          name: c.place?.name || '',
+          isSelected: c.isSelected
+        }))
+      }
+    })
+    
+    console.log('✅ 변환된 히스토리:', history.value)
+    
+    // 각 히스토리의 recommendations 확인
+    history.value.forEach((h, idx) => {
+      console.log(`세션 ${idx + 1} - 대표: ${h.title}, 추천 개수: ${h.recommendations.length}`)
+      h.recommendations.forEach((r, ridx) => {
+        console.log(`  추천 ${ridx + 1}: ${r.name}, 이미지: ${r.thumb ? '있음' : '없음'}`)
+      })
+    })
+    
+  } catch (error) {
+    console.error('❌ 히스토리 로드 실패:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// 컴포넌트 마운트 시 데이터 로드
+onMounted(() => {
+  loadHistory()
+})
 
 // 상세 보기 모달 열기
 const openModal = (item) => {
@@ -149,87 +276,42 @@ const openChangeStatusModal = (item) => {
 }
 
 // Change Status 확인
-const confirmChangeStatus = () => {
+const confirmChangeStatus = async () => {
   if (!changeStatusSelection.value || !changeStatusItem.value) return
 
   const item = changeStatusItem.value
   const mode = changeStatusSelection.value
 
-  // planedit으로 이동 (SelectPlan과 동일한 로직)
-  router.push({
-    name: 'planedit',
-    state: { 
-      item: {
-        id: Math.random(), // 고유 ID 생성
-        name: item.title,
-        desc: item.note || '',
-        distance: '',
-        thumb: item.thumb
-      },
-      mode: mode
-    },
-    query: { 
-      mode: mode, 
-      itemId: Math.random(), 
-      itemName: item.title 
+  try {
+    // 선택된 후보지의 candidateId 가져오기 (대표 장소)
+    if (!item.selectedCandidate) {
+      console.error('선택된 후보지가 없습니다')
+      alert('선택된 장소를 찾을 수 없습니다.')
+      return
     }
-  }).catch(() => {
-    // fallback
-    router.push({
-      name: 'ChoicePlan',
-      state: { 
-        item: {
-          id: Math.random(),
-          name: item.title,
-          desc: item.note || '',
-          distance: '',
-          thumb: item.thumb
-        },
-        mode: mode
-      },
-      query: { mode: mode }
-    }).catch(() => { })
-  })
-
-  changeStatusItem.value = null
-}
-
-const history = [
-  {
-    date: '2025.11.06',
-    title: 'Food Photo',
-    note: '→ Recommended: Jongro Kim\'s Samgyeopsal',
-    status: 'Replaced',
-    thumb: '/sample/food-main.jpg',
-    area: 'Seoul, South Korea',
-    address: 'Jongro-gu, Seoul',
-    hours: '10:00 AM - 11:00 PM',
-    cost: 15,
-    desc: 'A popular Korean BBQ restaurant known for its high-quality samgyeopsal and friendly service.',
-    imageQuery: 'Jongro Kims Samgyeopsal Seoul',
-    recommendations: [
-      { thumb: '/sample/rec1.jpg' },
-      { thumb: '/sample/rec2.jpg' }
-    ]
-  },
-  {
-    date: '2025.11.05',
-    title: 'Food Photo',
-    note: '',
-    status: 'Saved only',
-    thumb: '/sample/food-main.jpg',
-    area: 'Seoul, South Korea',
-    address: 'Gangnam-gu, Seoul',
-    hours: '11:00 AM - 10:00 PM',
-    cost: 20,
-    desc: 'A trendy Korean restaurant offering traditional and modern fusion dishes.',
-    imageQuery: 'Korean restaurant Gangnam Seoul',
-    recommendations: [
-      { thumb: '/sample/rec1.jpg' },
-      { thumb: '/sample/rec2.jpg' }
-    ]
+    
+    const candidateId = item.selectedCandidate.candidateId
+    
+    // ActionType 업데이트
+    console.log('🔄 ActionType 업데이트:', candidateId, mode)
+    await imageSearchApi.updateActionType(candidateId, mode)
+    
+    console.log('✅ ActionType 업데이트 성공')
+    
+    // 히스토리 새로고침
+    await loadHistory()
+    
+    // 모달 닫기
+    changeStatusItem.value = null
+    changeStatusSelection.value = null
+    
+    alert('상태가 변경되었습니다.')
+    
+  } catch (error) {
+    console.error('❌ ActionType 업데이트 실패:', error)
+    alert('상태 변경에 실패했습니다.')
   }
-]
+}
 </script>
 
 <style scoped>

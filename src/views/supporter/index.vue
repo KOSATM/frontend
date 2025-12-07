@@ -35,12 +35,14 @@
           :fitBoundsMode="true"
         />
         <!-- Restroom 탭 지도 -->
-        <NaverMap 
+        <NaverMap
           v-if="currentTab === 'restroom'"
-          :markers="restroomMarkers"
-          :initialCenter="{ lat: 37.365, lng: 127.105 }"
-          :initialZoom="15"
+          ref="restroomMapRef"
+          :markers="toiletMarkers"
+          :initialCenter="mapCenter"
+          :initialZoom="16"
           :fitBoundsMode="false"
+          @bounds-changed="onBoundsChanged"
         />
       </div>
     </div>
@@ -109,21 +111,32 @@
             <div class="ai-badge"><i class="bi bi-people-fill"></i></div>
           </template>
 
-          <div class="list-group">
-            <a v-for="(r, i) in restrooms" :key="i" href="#"
-              class="list-group-item list-group-item-action mb-2 d-flex align-items-center rounded border-0 shadow-sm">
+          <div v-if="isLoadingRestrooms" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">주변 화장실 검색 중...</p>
+          </div>
+
+          <div v-else class="list-group">
+            <a v-for="(r, i) in filteredRestrooms" :key="i" href="#"
+              class="list-group-item list-group-item-action mb-2 d-flex align-items-center rounded border-0 shadow-sm"
+              @click.prevent="focusOnRestroom(r)">
               <div class="me-3 icon-box d-flex align-items-center justify-content-center">
                 <i class="bi bi-people-fill text-primary fs-4"></i>
               </div>
               <div class="flex-fill">
-                <div class="fw-medium">{{ r.name }}</div>
+                <div class="fw-medium">{{ r.toiletName || '공중화장실' }}</div>
                 <div class="small text-muted">
-                  <i class="bi bi-geo-alt me-1"></i> {{ r.distance }} &nbsp; • &nbsp;
-                  <i class="bi bi-clock me-1"></i> {{ r.hours }}
+                  <i class="bi bi-geo-alt me-1"></i> {{ r.address || r.roadAddress || '주소 정보 없음' }}
                 </div>
               </div>
               <div class="ms-3 text-muted"><i class="bi bi-chevron-right"></i></div>
             </a>
+
+            <div v-if="filteredRestrooms.length === 0" class="text-center py-4 text-muted">
+              주변에 등록된 화장실이 없습니다
+            </div>
           </div>
         </BaseSection>
       </div>
@@ -132,38 +145,255 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/components/common/PageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import WeatherCard from '@/components/supporter/WeatherCard.vue'
 import NaverMap from '@/components/supporter/NaverMap.vue'
+import ToiletApi from '@/api/ToiletApi'
+import imageSearchApi from '@/api/imageSearchApi'
 
 const router = useRouter()
 
 // Map-related state
 const currentTab = ref('image')
 
-// 히스토리 마커 (Image 탭)
-const historyMarkers = ref([
-  { lat: 37.3595704, lng: 127.105399, title: '강남역' },
-  { lat: 37.4979, lng: 127.0276, title: '서울역' },
-  { lat: 37.5665, lng: 126.9780, title: '경복궁' },
-  { lat: 37.5502, lng: 126.9754, title: '덕수궁' }
-])
+// 히스토리 마커 (Image 탭) - 백엔드에서 로드
+const historyMarkers = ref([])
+const isLoadingHistory = ref(false)
 
-// 화장실 마커 (Restroom 탭)
-const restroomMarkers = ref([
-  { lat: 37.3595704, lng: 127.105399, title: 'Gangnam Station' },
-  { lat: 37.3610, lng: 127.1070, title: 'COEX Mall' },
-  { lat: 37.3680, lng: 127.1120, title: 'Bongeunsa Temple' }
-])
+// Restroom 탭 관련
+const restroomMapRef = ref(null)
+const mapCenter = ref({ lat: 37.5665, lng: 126.9780 })
+const userLocation = ref(null)
+const toiletMarkers = ref([])
+const nearestRestrooms = ref([])
+const isLoadingRestrooms = ref(false)
 
-const restrooms = ref([
-  { name: 'Gangnam Station Public Restroom', distance: '80m away', hours: '24/7' },
-  { name: 'COEX Mall Restroom (B1F)', distance: '350m away', hours: '10:00 - 22:00' },
-  { name: 'Bongeunsa Temple Restroom', distance: '520m away', hours: '05:00 - 21:00' },
-])
+// null 필터링된 화장실 목록
+const filteredRestrooms = computed(() => {
+  return nearestRestrooms.value.filter(r => r != null)
+})
+
+// 사용자 위치 가져오기
+const getUserLocation = () => {
+  return new Promise((resolve, reject) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          }
+          resolve(location)
+        },
+        (error) => {
+          console.error('Geolocation 오류:', error)
+          reject(error)
+        }
+      )
+    } else {
+      reject(new Error('Geolocation not supported'))
+    }
+  })
+}
+
+// Image History 로드 (대표 후보지만)
+const loadImageHistory = async () => {
+  try {
+    isLoadingHistory.value = true
+    
+    // 하드코딩된 userId 사용 (테스트용)
+    const userId = 17
+    
+    console.log('🖼️ 이미지 히스토리 로드 중... userId:', userId)
+    
+    const response = await imageSearchApi.getSessionsByUserId(userId)
+    console.log('✅ API 응답:', response)
+    
+    // response.data가 배열인지 확인
+    const sessions = Array.isArray(response) ? response : (response.data || [])
+    console.log('✅ 세션 데이터:', sessions)
+    
+    // 각 세션의 선택된 후보지(대표 후보지)만 추출
+    const markersMap = new Map() // 중복 제거를 위한 Map (lat,lng를 key로)
+    
+    sessions.forEach(session => {
+      const candidates = session.candidates || []
+      const selectedCandidate = candidates.find(c => c.isSelected === true)
+      
+      if (selectedCandidate && selectedCandidate.place) {
+        const place = selectedCandidate.place
+        
+        if (place.lat && place.lng) {
+          const key = `${place.lat},${place.lng}`
+          
+          // 중복되지 않은 경우에만 추가
+          if (!markersMap.has(key)) {
+            markersMap.set(key, {
+              lat: place.lat,
+              lng: place.lng,
+              title: place.name || '추천 장소',
+              info: `
+                <div style="padding: 10px; min-width: 200px;">
+                  <strong>${place.name || '추천 장소'}</strong>
+                  <div style="margin-top: 8px; font-size: 12px; color: #666;">
+                    ${place.address || '주소 정보 없음'}
+                  </div>
+                  <div style="margin-top: 6px; font-size: 11px; color: #999;">
+                    순위: ${selectedCandidate.rank || '-'}
+                  </div>
+                </div>
+              `
+            })
+          }
+        }
+      }
+    })
+    
+    historyMarkers.value = Array.from(markersMap.values())
+    console.log('🎯 히스토리 마커 개수:', historyMarkers.value.length)
+    
+  } catch (error) {
+    console.error('❌ 히스토리 로드 실패:', error)
+    historyMarkers.value = []
+  } finally {
+    isLoadingHistory.value = false
+  }
+}
+
+// 가까운 화장실 3개 가져오기
+const loadNearestRestrooms = async () => {
+  try {
+    isLoadingRestrooms.value = true
+    
+    let location = userLocation.value
+    if (!location) {
+      try {
+        location = await getUserLocation()
+        userLocation.value = location
+        mapCenter.value = location
+      } catch (error) {
+        console.warn('사용자 위치를 가져올 수 없습니다. 기본 위치 사용')
+        location = mapCenter.value
+      }
+    }
+    
+    console.log('🚻 가까운 화장실 검색 - 위치:', location)
+    
+    const toilets = await ToiletApi.getNearestToilets(location.lat, location.lng, 3)
+    
+    console.log('✅ 가까운 화장실:', toilets)
+    nearestRestrooms.value = Array.isArray(toilets) ? toilets.filter(t => t != null) : []
+    
+  } catch (error) {
+    console.error('❌ 가까운 화장실 로드 실패:', error)
+    nearestRestrooms.value = []
+  } finally {
+    isLoadingRestrooms.value = false
+  }
+}
+
+// 지도 범위 내 화장실 가져오기
+const loadToiletsInBounds = async (bounds) => {
+  try {
+    if (!bounds) return
+    
+    console.log('🗺️ 지도 범위 내 화장실 검색:', bounds)
+    
+    const toilets = await ToiletApi.getToiletsInBounds(bounds)
+    
+    console.log('✅ 범위 내 화장실 개수:', toilets?.length)
+    
+    toiletMarkers.value = Array.isArray(toilets) 
+      ? toilets
+          .filter(toilet => toilet != null && (toilet.latitude || toilet.lat) && (toilet.longitude || toilet.lng))
+          .map(toilet => ({
+            lat: toilet.latitude || toilet.lat,
+            lng: toilet.longitude || toilet.lng,
+            title: toilet.toiletName || toilet.name || '공중화장실',
+            info: `
+              <div style="padding: 10px; min-width: 200px;">
+                <strong>${toilet.toiletName || toilet.name || '공중화장실'}</strong>
+                <div style="margin-top: 8px; font-size: 12px; color: #666;">
+                  ${toilet.address || toilet.roadAddress || '주소 정보 없음'}
+                </div>
+              </div>
+            `
+          }))
+      : []
+    
+    console.log('🎯 변환된 마커 개수:', toiletMarkers.value.length)
+    
+  } catch (error) {
+    console.error('❌ 범위 내 화장실 로드 실패:', error)
+    toiletMarkers.value = []
+  }
+}
+
+// 지도 범위 변경 이벤트 핸들러
+const onBoundsChanged = (bounds) => {
+  console.log('🟡 onBoundsChanged 호출됨:', bounds)
+  loadToiletsInBounds(bounds)
+}
+
+// 특정 화장실에 포커스
+const focusOnRestroom = (restroom) => {
+  if (restroomMapRef.value && restroomMapRef.value.map) {
+    const map = restroomMapRef.value.map
+    const lat = restroom.latitude || restroom.lat
+    const lng = restroom.longitude || restroom.lng
+    const location = new window.naver.maps.LatLng(lat, lng)
+    map.setCenter(location)
+    map.setZoom(18)
+  }
+}
+
+// Restroom 탭으로 전환 시 데이터 로드
+watch(currentTab, async (newTab) => {
+  if (newTab === 'restroom') {
+    console.log('🟢 Restroom 탭 활성화 - 데이터 로드 시작')
+    
+    // 가까운 화장실 로드
+    if (nearestRestrooms.value.length === 0) {
+      await loadNearestRestrooms()
+    }
+    
+    // 지도가 초기화될 때까지 대기 후 bounds 이벤트 트리거
+    setTimeout(() => {
+      if (restroomMapRef.value && restroomMapRef.value.map) {
+        const map = restroomMapRef.value.map
+        const bounds = map.getBounds()
+        
+        if (bounds) {
+          const ne = bounds.getNE()
+          const sw = bounds.getSW()
+          
+          onBoundsChanged({
+            northEastLat: ne.lat(),
+            northEastLng: ne.lng(),
+            southWestLat: sw.lat(),
+            southWestLng: sw.lng()
+          })
+        }
+      }
+    }, 1000)
+  } else if (newTab === 'image') {
+    console.log('🟢 Image 탭 활성화 - 히스토리 로드')
+    
+    // 히스토리 로드
+    if (historyMarkers.value.length === 0) {
+      await loadImageHistory()
+    }
+  }
+})
+
+// 컴포넌트 마운트 시 Image 탭 히스토리 로드
+onMounted(async () => {
+  console.log('🟢 Supporter 페이지 마운트')
+  await loadImageHistory()
+})
 
 // image upload handling (for image-ui content)
 const imagePreview = ref(null)

@@ -16,7 +16,7 @@
 <script setup>
 import store from '@/store'
 import { useSupporterStore } from '@/store/supporterStore'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useStore } from 'vuex'
 
 const isMapLoading = ref(true)
@@ -24,6 +24,7 @@ const map = ref(null)
 const infowindow = ref(null)
 const userLocation = ref(null)
 const userAddress = ref('') //사용자 주소를 저장할 ref
+const markerObjects = ref([]) // 생성된 마커 객체들을 저장
 
 const props = defineProps({
     //지도에 표시할 마커 배열 (lat, lng, title, info 포함)
@@ -39,10 +40,10 @@ const props = defineProps({
         type: Object,
         default: () => ({ lat: 37.3595704, lng: 127.105399 })
     },
-    //지도 초기 줌 레벨 (기본값: 10)
+    //지도 초기 줌 레벨 (기본값: 16 - 신규 맵 타일 기본값)
     initialZoom: {
         type: Number,
-        default: 10
+        default: 16
     },
     //true: 모든 마커가 보이도록 자동 조정 / false: 초기 설정 유지(사용자 위치 중심)
     fitBoundsMode: {
@@ -50,6 +51,8 @@ const props = defineProps({
         default: false
     }
 })
+
+const emit = defineEmits(['bounds-changed'])
 
 // Naver Maps API를 Promise로 로드
 const loadNaverMaps = () => {
@@ -84,6 +87,14 @@ onMounted(async () => {
     }
 })
 
+// props.markers 변경 감지
+watch(() => props.markers, (newMarkers) => {
+    console.log('🔄 markers props 변경 감지:', newMarkers.length)
+    if (map.value) {
+        addMarkers()
+    }
+}, { deep: true })
+
 function initializeMap() {
     const mapOptions = {
         center: new window.naver.maps.LatLng(props.initialCenter.lat, props.initialCenter.lng),
@@ -95,16 +106,56 @@ function initializeMap() {
     // InfoWindow 생성
     infowindow.value = new window.naver.maps.InfoWindow()
 
-    // Geolocation 요청 먼저 (fitBounds 전에)
-    requestGeolocation()
+    // init 이벤트 대기 후 모든 작업 수행
+    window.naver.maps.Event.once(map.value, 'init', () => {
+        console.log('✅ Naver Maps 초기화 완료')
+        
+        //지도 bounds 변경 이벤트 리스너 추가
+        window.naver.maps.Event.addListener(map.value, 'bounds_changed', () => {
+            const bounds = map.value.getBounds()
+            const ne = bounds.getNE() // 북동쪽
+            const sw = bounds.getSW() // 남서쪽
+            
+            emit('bounds-changed', {
+                northEastLat: ne.lat(),
+                northEastLng: ne.lng(),
+                southWestLat: sw.lat(),
+                southWestLng: sw.lng()
+            })
+        })
 
-    // Marker 추가 (fitBounds가 필요하면 여기서 실행)
-    addMarkers()
+        // Geolocation 요청
+        requestGeolocation()
+
+        // Marker 추가
+        addMarkers()
+
+        // 초기 bounds 이벤트 수동 발생
+        setTimeout(() => {
+            const bounds = map.value.getBounds()
+            if (bounds) {
+                const ne = bounds.getNE()
+                const sw = bounds.getSW()
+                emit('bounds-changed', {
+                    northEastLat: ne.lat(),
+                    northEastLng: ne.lng(),
+                    southWestLat: sw.lat(),
+                    southWestLng: sw.lng()
+                })
+            }
+        }, 500)
+    })
 
     isMapLoading.value = false
 }
 
 function addMarkers() {
+    // 기존 마커 모두 제거
+    markerObjects.value.forEach(marker => marker.setMap(null))
+    markerObjects.value = []
+    
+    console.log('🗺️ addMarkers 호출 - 마커 개수:', props.markers.length)
+    
     // fitBoundsMode가 true면 모든 마커가 보이도록 조정
     if (props.fitBoundsMode && props.markers.length > 1) {
         const bounds = new window.naver.maps.LatLngBounds()
@@ -118,6 +169,8 @@ function addMarkers() {
                 map: map.value,
                 title: marker.title
             })
+            
+            markerObjects.value.push(markerObj)
 
             window.naver.maps.Event.addListener(markerObj, 'click', async function() {
                 let content = marker.info
@@ -130,9 +183,13 @@ function addMarkers() {
         })
         
         // 모든 마커가 보이도록 지도 범위 조정
-        if (!bounds.isEmpty()) {
-            map.value.fitBounds(bounds)
-            map.value.setZoom(map.value.getZoom() - 1)
+        if (props.markers.length > 0) {
+            try {
+                map.value.fitBounds(bounds)
+                map.value.setZoom(map.value.getZoom() - 1)
+            } catch (e) {
+                console.warn('fitBounds 실패:', e)
+            }
         }
     } else {
         // fitBoundsMode가 false면 기본 방식
@@ -142,6 +199,8 @@ function addMarkers() {
                 map: map.value,
                 title: marker.title
             })
+            
+            markerObjects.value.push(markerObj)
 
             window.naver.maps.Event.addListener(markerObj, 'click', async function() {
                 let content = marker.info
@@ -153,6 +212,8 @@ function addMarkers() {
             })
         })
     }
+    
+    console.log('✅ 마커 생성 완료 - 총', markerObjects.value.length, '개')
 }
 
 // Reverse Geocoding API 호출 (백엔드)
@@ -370,7 +431,19 @@ function onSuccessGeolocation(position) {
     }, function(status, response) {
         if (status !== window.naver.maps.Service.Status.OK) {
             console.error('Reverse Geocode 오류:', status)
+            // 에러 발생 시 기본 주소 설정
+            const store = useSupporterStore()
+            store.setUserAddress({ jibunAddress: '주소를 가져올 수 없습니다' })
+            return
         }
+        
+        if (!response || !response.v2) {
+            console.error('Reverse Geocode 응답 오류: response.v2가 없습니다')
+            const store = useSupporterStore()
+            store.setUserAddress({ jibunAddress: '주소를 가져올 수 없습니다' })
+            return
+        }
+        
         var result = response.v2, // 검색 결과의 컨테이너
         address = result.address; //검색 결과로 만든 주소
         const store = useSupporterStore()
@@ -432,6 +505,7 @@ function showInfoWindow(content, location) {
 
 // 현재 위치로 이동 버튼 추가
 function addMyLocationButton(location) {
+    console.log('✅ CustomControl 생성 시작')
     // SVG 나침반 아이콘 (사진과 동일한 십자 나침반)
     const compassSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #333;">
         <circle cx="12" cy="12" r="10"></circle>
@@ -450,6 +524,7 @@ function addMyLocationButton(location) {
     })
 
     customControl.setMap(map.value)
+    console.log('✅ CustomControl 생성 완료')
 
     // 버튼 스타일 개선
     const buttonElement = customControl.getElement()
