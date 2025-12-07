@@ -4,11 +4,11 @@
             :class="isOpen ? 'bg-primary text-white' : 'bg-white'" role="button" @click="$emit('toggleDay', day.id)">
             <div>
                 <div class="small fw-semibold" :class="!isOpen ? 'text-primary' : ''">
-                    Day {{ day.id }}
+                    Day {{ day.day.dayIndex }}
                 </div>
-                <h6 class="mb-0 title">{{ day.title }}</h6>
+                <h6 class="mb-0 title">{{ day.day.title }}</h6>
                 <div class="small" :class="!isOpen ? 'text-muted' : 'text-white-50'">
-                    {{ day.date }}
+                    {{ day.day.planDate }}
                 </div>
             </div>
             <div class="text-end">
@@ -50,7 +50,7 @@ const props = defineProps({
 
 defineEmits(["toggleDay", "openDetails", "toggleComplete", "openReplace"]);
 
-const isOpen = computed(() => props.openDayId === props.day.id);
+const isOpen = computed(() => props.openDayId === props.day.day.id);
 </script>
 
 <style scoped>

@@ -1,6 +1,6 @@
 <template>
   <div
-    v-for="(act, aIdx) in day.activities"
+    v-for="(act, aIdx) in day.places"
     :key="aIdx"
     :class="[
       'list-group-item d-flex justify-content-between align-items-center activity-row',
@@ -19,11 +19,11 @@
         </div>
         <div class="d-flex align-items-center gap-2 small text-muted sub">
           <span class="soft-chip">
-            <span class="chip-emoji">⏰</span> {{ act.time }}
+            <span class="chip-emoji">⏰</span> {{ toAmPmTime(act.startAt) }}
           </span>
-          <span v-if="hasCost(act.cost)" class="soft-chip">
+          <span v-if="hasCost(act.expectedCost)" class="soft-chip">
             <span class="chip-emoji">💰</span>
-            {{ formatCost(act.cost) }}
+            {{ formatCost(act.expectedCost) }}
           </span>
           <span v-if="act.spent != null" class="soft-chip">
             <span class="chip-emoji">💵</span> Spent
@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   day: Object,
   dayIndex: Number,
   activityRowClass: Function,
@@ -66,7 +66,24 @@ defineProps({
   formatCost: Function,
 });
 
+console.log("ActivityList", props.day.places);
+
 defineEmits(["openDetails", "toggleComplete", "openReplace"]);
+
+function toAmPmTime(dateString) {
+  const date = new Date(dateString);
+
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12; // 0일 때 12로
+
+  const pad = (n) => String(n).padStart(2, "0");
+
+  return `${ampm} ${pad(hours)}:${pad(minutes)}`;
+}
+
 </script>
 
 <style scoped>
