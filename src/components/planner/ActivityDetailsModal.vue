@@ -108,12 +108,12 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import defaultImg1 from "@/assets/planner/activity-default-1.jpg";
 import defaultImg2 from "@/assets/planner/activity-default-2.jpg";
 import defaultImg3 from "@/assets/planner/activity-default-3.jpg";
 
-defineProps({
+const props = defineProps({
   open: { type: Boolean, default: false },
   data: { type: Object, default: null },
   spendInput: { type: Number, default: null },
@@ -121,8 +121,17 @@ defineProps({
 
 defineEmits(["close", "save-spent", "open-replace", "update:spend-input"]);
 
-// ✅ 무조건 이 세 장만 사용 (data.gallery는 안 씀)
-const localGallery = ref([defaultImg1, defaultImg2, defaultImg3]);
+// 이미지 갤러리: data.gallery가 있으면 사용, 없으면 기본 이미지
+const localGallery = computed(() => {
+  const defaultImages = [defaultImg1, defaultImg2, defaultImg3];
+  
+  // gallery 배열이 있으면 사용 (History에서 전달)
+  if (props.data?.gallery && Array.isArray(props.data.gallery) && props.data.gallery.length > 0) {
+    return props.data.gallery;
+  }
+  
+  return defaultImages;
+});
 
 const hasCost = (cost) => {
   return cost === 0 || (typeof cost === "number" && !Number.isNaN(cost));
