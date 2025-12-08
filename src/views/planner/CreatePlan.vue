@@ -213,7 +213,7 @@ const generateAIResponse = async (text) => {
 
 <style scoped lang="scss">
 // 공용 스타일 임포트
-@import '@/assets/styles/theme';
+@use '@/assets/styles/theme' as *;
 
 .planner-create {
   min-height: 100vh;
