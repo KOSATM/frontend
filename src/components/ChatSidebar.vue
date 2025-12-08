@@ -128,8 +128,12 @@ import chatApi from "@/api/chatApi";
 import { useChatStore } from "@/store/chatStore";
 import { ref, nextTick, onMounted, watch } from "vue";
 import { useAuthStore } from "@/store/authStore";
+import { useRoute, useRouter } from "vue-router";
 
 const authStore = useAuthStore();
+const chatStore = useChatStore();
+const router = useRouter();
+const route = useRoute();
 
 const currentMessage = ref("");
 const chatMessages = ref([]);
@@ -137,122 +141,97 @@ const messagesContainer = ref(null);
 const textareaRef = ref(null);
 const isLoading = ref(false);
 
-const chatStore = useChatStore();
-
-// 텍스트 영역 자동 높이 조절
+// textarea 자동 리사이즈
 const autoResize = () => {
   if (textareaRef.value) {
-    textareaRef.value.style.height = 'auto';
-    textareaRef.value.style.height = Math.min(textareaRef.value.scrollHeight, 150) + 'px';
+    textareaRef.value.style.height = "auto";
+    textareaRef.value.style.height =
+      Math.min(textareaRef.value.scrollHeight, 150) + "px";
   }
 };
 
-const demoResponses = {
-  early:
-    "Nice! We can start around 8:00 AM at Gyeongbokgung and catch the guard-changing ceremony.",
-  vegetarian:
-    "You can try “Sanchon” in Insadong for temple food, or “Plant” in Hongdae for vegan dishes.",
-  shopping:
-    "Myeongdong → Hongdae → Seongsu is a good route for shopping and cafes.",
-  budget:
-    "You can use a 1-day transportation pass and a palace combo ticket to save money.",
-  default:
-    "Tell me a bit more about what you want, and I’ll organize the plan for you 🙂",
-};
-
+// 메시지 전송
 const sendMessage = async () => {
   if (!currentMessage.value.trim() || isLoading.value) return;
 
-  const userMessage = {
+  //  유저 메시지 추가
+  chatMessages.value.push({
     id: Date.now(),
     type: "user",
     content: currentMessage.value,
     timestamp: new Date(),
+  });
+
+   const request = {
+    userId: authStore.userId,
+    message: currentMessage.value,
+    currentUrl: route.fullPath
   };
-
-  console.log(userMessage);
-
-  const request = {
-    userId: 1,
-    message: currentMessage.value
-  }
-
-  chatMessages.value.push(userMessage);
-
-  const toProcess = currentMessage.value;
   currentMessage.value = "";
-  
-  // 텍스트 영역 높이 초기화
-  if (textareaRef.value) {
-    textareaRef.value.style.height = 'auto';
-  }
-  
   isLoading.value = true;
 
+  if (textareaRef.value) textareaRef.value.style.height = "auto";
   await nextTick();
   scrollToBottom();
 
   setTimeout(async () => {
-    const aiText = await generateAIResponse(toProcess);
+    const res = await generateAIResponse(request);
+
+    //  AI 메시지 출력
     chatMessages.value.push({
       id: Date.now() + 1,
       type: "ai",
-      content: aiText.data.mainResponse.message,
+      content: res.data.mainResponse.message,
       timestamp: new Date(),
     });
+
+    //    여기서 payload 추출
+    if (res.data.mainResponse.requirePageMove) {
+      const payload = res.data.mainResponse.data;
+      console.info(JSON.stringify(payload)+"++++++++++++++++++");
+      //  store에 저장 → PlannerList에서 watch 중
+      chatStore.setLivePlan(payload);
+
+      //  페이지 이동
+      router.push(res.data.mainResponse.targetUrl);
+    }
+
     isLoading.value = false;
     await nextTick();
     scrollToBottom();
-  }, 900);
+  }, 500);
 };
 
-const sendQuickMessage = (text) => {
-  currentMessage.value = text;
-  sendMessage();
+// AI 응답 생성
+const generateAIResponse = async (request) => {
+  return await chatApi.chat(request);
 };
 
-const generateAIResponse = async (text) => {
-  const low = text.toLowerCase();
-  if (low.includes("early")) return demoResponses.early;
-  if (low.includes("vegetarian")) return demoResponses.vegetarian;
-  if (low.includes("shopping")) return demoResponses.shopping;
-  if (low.includes("budget") || low.includes("reduce"))
-    return demoResponses.budget;
-  const res = await chatApi.chat(text, authStore.userId);
-  console.log(res);
-  return res;
-};
-
+// 스크롤 하단 고정
 const scrollToBottom = () => {
   if (messagesContainer.value) {
-    messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+    messagesContainer.value.scrollTop =
+      messagesContainer.value.scrollHeight;
   }
 };
 
-const formatTime = (date) => {
-  return date.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-};
-
-onMounted(async () => {
-  scrollToBottom();
-  authStore.initializeAuth();
-});
-
+// 외부에서 메시지 주입 (선택)
 watch(
   () => chatStore.messageToSend,
   (msg) => {
     if (msg) {
-      console.log("Sending message:", msg);
       currentMessage.value = msg;
       sendMessage();
     }
   }
-)
+);
+
+onMounted(() => {
+  authStore.initializeAuth();
+  scrollToBottom();
+});
 </script>
+
 
 <style scoped>
 /* 전역 또는 레이아웃에 한 번 선언(선택) */
