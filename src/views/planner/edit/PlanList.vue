@@ -989,6 +989,26 @@ const renderPlan = async () => {
   days.value = days.value.sort((a, b) => new Date(a.day.planDate) - new Date(b.day.planDate))
   console.log(plan.value);
   console.log(days.value);
+
+  // 현재 여행 여부를 판단하고 store에 정보 저장
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = ('0' + (today.getMonth() + 1)).slice(-2);
+  const day = ('0' + today.getDate()).slice(-2);
+  const dateString = year + '-' + month + '-' + day;
+
+  const startDate = plan.value.startDate;
+  const endDate = plan.value.endDate;
+
+  if (today >= new Date(startDate) && today <= new Date(endDate)) {
+    travelStore.isTraveling = true;
+  } else {
+    travelStore.isTraveling = false;
+  }
+
+  const diffTime = today - new Date(startDate);
+  const diffDays = diffTime / (1000 * 60 * 60 * 24)
+  travelStore.setPlanInfo(plan.value.id, Math.min(7, Math.max(0, Math.ceil(diffDays))), dateString);
 }
 
 /* 공통 유틸 */
