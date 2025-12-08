@@ -42,8 +42,7 @@
           'ai-message': message.type === 'ai',
         }">
           <div class="message-bubble">
-            <p class="mb-0" style="font-family: 'Kyobo2024', sans-serif">
-              {{ message.content }}
+            <p class="mb-0" style="font-family: 'Kyobo2024', sans-serif" v-html="formatMessage(message.content)">
             </p>
             <div v-if="message.type === 'ai' && message.loading" class="typing-indicator mt-2">
               <span></span><span></span><span></span>
@@ -98,24 +97,15 @@
 
 <script setup>
 import { ref, nextTick, onMounted } from "vue";
+import axios from "@/api/axios";
 
 const currentMessage = ref("");
 const chatMessages = ref([]);
 const messagesContainer = ref(null);
 const isLoading = ref(false);
 
-const demoResponses = {
-  early:
-    "Nice! We can start around 8:00 AM at Gyeongbokgung and catch the guard-changing ceremony.",
-  vegetarian:
-    "You can try “Sanchon” in Insadong for temple food, or “Plant” in Hongdae for vegan dishes.",
-  shopping:
-    "Myeongdong → Hongdae → Seongsu is a good route for shopping and cafes.",
-  budget:
-    "You can use a 1-day transportation pass and a palace combo ticket to save money.",
-  default:
-    "Tell me a bit more about what you want, and I’ll organize the plan for you 🙂",
-};
+// 사용자 ID (실제로는 로그인한 사용자 정보에서 가져와야 함)
+const userId = ref(1);
 
 const sendMessage = async () => {
   if (!currentMessage.value.trim() || isLoading.value) return;
@@ -128,25 +118,44 @@ const sendMessage = async () => {
   };
   chatMessages.value.push(userMessage);
 
-  const toProcess = currentMessage.value;
+  const messageToSend = currentMessage.value;
   currentMessage.value = "";
   isLoading.value = true;
 
   await nextTick();
   scrollToBottom();
 
-  setTimeout(async () => {
-    const aiText = generateAIResponse(toProcess);
+  try {
+    // 백엔드 API 호출
+    const response = await axios.post("/api/chat", {
+      message: messageToSend,
+      userId: userId.value,
+    });
+
+    // 응답 처리
+    const data = response.data;
+    const responseText =
+      data.response || data.message || "응답을 받지 못했습니다.";
+
     chatMessages.value.push({
       id: Date.now() + 1,
       type: "ai",
-      content: aiText,
+      content: responseText,
       timestamp: new Date(),
     });
+  } catch (error) {
+    console.error("Chat error:", error);
+    chatMessages.value.push({
+      id: Date.now() + 1,
+      type: "ai",
+      content: `❌ Error: ${error.message || "메시지 전송에 실패했습니다."}`,
+      timestamp: new Date(),
+    });
+  } finally {
     isLoading.value = false;
     await nextTick();
     scrollToBottom();
-  }, 900);
+  }
 };
 
 const sendQuickMessage = (text) => {
@@ -154,14 +163,22 @@ const sendQuickMessage = (text) => {
   sendMessage();
 };
 
-const generateAIResponse = (text) => {
-  const low = text.toLowerCase();
-  if (low.includes("early")) return demoResponses.early;
-  if (low.includes("vegetarian")) return demoResponses.vegetarian;
-  if (low.includes("shopping")) return demoResponses.shopping;
-  if (low.includes("budget") || low.includes("reduce"))
-    return demoResponses.budget;
-  return demoResponses.default;
+const formatMessage = (content) => {
+  if (!content) return "";
+
+  // 줄바꿈 처리
+  let formatted = content.replace(/\n/g, "<br>");
+
+  // **굵게** 처리
+  formatted = formatted.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+  // 이모지 강조
+  formatted = formatted.replace(
+    /([\u{1F300}-\u{1F9FF}])/gu,
+    '<span style="font-size: 1.2em;">$1</span>'
+  );
+
+  return formatted;
 };
 
 const scrollToBottom = () => {
