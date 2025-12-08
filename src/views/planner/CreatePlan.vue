@@ -38,80 +38,70 @@
         <!-- 카드 그리드 -->
         <div class="row g-3 mb-3">
           <!-- Accommodation -->
-          <RecommendationCard imageSrc="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500"
-            alt="Accommodation" cardLabel="Accommodation" />
+           <div class="col-6">
+             <RecommendationCard 
+              imageSrc="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500"
+              alt="Accommodation" cardLabel="Accommodation" 
+              @click="openModal('accommodation')"
+            />
+           </div>
 
           <!-- Restaurants -->
           <div class="col-6">
-            <div class="recommendation-card" @click="navigateTo('restaurants')">
-              <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500" alt="Restaurants" />
-              <div class="card-overlay">
-                <div class="card-icon bg-white rounded-circle p-2">
-                  <i class="bi bi-cup-hot text-warning"></i>
-                </div>
-                <span class="card-label text-white fw-semibold">Restaurants</span>
-              </div>
-            </div>
+             <RecommendationCard 
+               imageSrc="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500" 
+               alt="Restaurants" cardLabel="Restaurants"
+               @click="openModal('restaurants')" 
+             />
           </div>
 
           <!-- Attractions -->
           <div class="col-6">
-            <div class="recommendation-card" @click="navigateTo('attractions')">
-              <img src="https://images.unsplash.com/photo-1553603227-2358aabe821e?w=500" alt="Attractions" />
-              <div class="card-overlay">
-                <div class="card-icon bg-white rounded-circle p-2">
-                  <i class="bi bi-compass text-success"></i>
-                </div>
-                <span class="card-label text-white fw-semibold">Attractions</span>
-              </div>
-            </div>
+             <RecommendationCard 
+               imageSrc="https://images.unsplash.com/photo-1553603227-2358aabe821e?w=500"
+               alt="Attractions" cardLabel="Attractions"
+               @click="openModal('attractions')" 
+             />
           </div>
-
           <!-- Photo Spots -->
           <div class="col-6">
-            <div class="recommendation-card" @click="navigateTo('photospots')">
-              <img src="https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=500" alt="Photo Spots" />
-              <div class="card-overlay">
-                <div class="card-icon bg-white rounded-circle p-2">
-                  <i class="bi bi-camera text-danger"></i>
-                </div>
-                <span class="card-label text-white fw-semibold">Photo Spots</span>
-              </div>
-            </div>
+             <RecommendationCard 
+               imageSrc="https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=500" 
+               alt="Photospots" cardLabel="Photospots"
+               @click="openModal('photospots')" 
+             />
           </div>
-
           <!-- Festivals -->
           <div class="col-6">
-            <div class="recommendation-card" @click="navigateTo('festivals')">
-              <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500" alt="Festivals" />
-              <div class="card-overlay">
-                <div class="card-icon bg-white rounded-circle p-2">
-                  <i class="bi bi-music-note text-info"></i>
-                </div>
-                <span class="card-label text-white fw-semibold">Festivals</span>
-              </div>
-            </div>
+             <RecommendationCard 
+               imageSrc="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500"
+               alt="Festivals" cardLabel="Festivals"
+               @click="openModal('festivals')" 
+             />
           </div>
-
           <!-- Experiences -->
           <div class="col-6">
-            <div class="recommendation-card" @click="navigateTo('experiences')">
-              <img src="https://images.unsplash.com/photo-1528543606781-2f6e6857f318?w=500" alt="Experiences" />
-              <div class="card-overlay">
-                <div class="card-icon bg-white rounded-circle p-2">
-                  <i class="bi bi-calendar-event text-warning"></i>
-                </div>
-                <span class="card-label text-white fw-semibold">Experiences</span>
-              </div>
-            </div>
+             <RecommendationCard 
+               imageSrc="https://images.unsplash.com/photo-1528543606781-2f6e6857f318?w=500"
+               alt="Experiences" cardLabel="Experiences"
+               @click="openModal('experiences')" 
+             />
           </div>
         </div>
       </div>
-
+      <!-- BlogListModal -->
+      <BlogListModal 
+      :isOpen="isModalOpen"
+      :isLoading="isLoading"
+      :items="blogItems"
+      :keyword="currentKeyword"
+      @close="isModalOpen = false"
+    />
       <!-- Travel Tip -->
       <TipBox name="Travel Tip" description="Enter your budget and AI will create a customized itinerary considering accommodation, transportation, and
             meals." />
-    </div>
+    
+          </div>
   </div>
 </template>
 
@@ -124,11 +114,11 @@ import { RouterLink } from "vue-router";
 import { onMounted, ref } from 'vue'
 import { useTravelStore } from '@/store/travelStore'
 import router from "@/router";
-import ChatSidebar from "@/components/ChatSidebar.vue";
 import { useChatStore } from "@/store/chatStore";
 import chatApi from "@/api/chatApi";
 import { useAuthStore } from "@/store/authStore";
 import plannerApi from "@/api/plannerApi";
+import BlogListModal from "@/components/planner/BlogListModal.vue";
 
 const authStore = useAuthStore();
 const travelStore = useTravelStore()
@@ -141,6 +131,45 @@ const chatMessages = ref([]);
 const messagesContainer = ref(null);
 const textareaRef = ref(null);
 const isLoading = ref(false);
+
+// 모달 관련 상태
+const isModalOpen = ref(false);
+const blogItems = ref([]);
+const currentKeyword = ref('');
+
+// 키워드 매핑
+const keywordMap = {
+  accommodation: '서울 감성 숙소',
+  restaurants: '서울 맛집 내돈내산',
+  attractions: '서울 가볼만한곳',
+  photospots: '서울 사진 명소',
+  festivals: '서울 축제',
+  experiences: '서울 이색 체험'
+};
+
+
+// 모달 열기 및 검색 실행
+const openModal = async (category) => {
+  const keyword = keywordMap[category] || '서울 여행';
+  currentKeyword.value = keyword;
+  
+  isModalOpen.value = true;
+  isLoading.value = true;
+  blogItems.value = []; // 기존 리스트 초기화
+
+  try {
+    const res = await plannerApi.getBlogList(keyword);
+    // 네이버 API 응답 구조: res.data.items
+    if (res.data && res.data.items) {
+      blogItems.value = res.data.items;
+    }
+  } catch (error) {
+    console.error("검색 실패:", error);
+    // 필요 시 에러 처리
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 function next() {
   travelStore.increaseStep();
