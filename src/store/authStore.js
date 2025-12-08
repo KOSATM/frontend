@@ -1,61 +1,46 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 
 export const useAuthStore = defineStore('auth', () => {
   // State
-  const user = ref(null);
-  const isAuthenticated = ref(false);
+  const user = ref(null)
+  const isAuthenticated = ref(false)
 
   // Getters
-  const isLoggedIn = computed(() => isAuthenticated.value);
-  const userName = computed(() => user.value?.name);
-  const userEmail = computed(() => user.value?.email);
-  const userProfileImage = computed(() => user.value?.profileImage);
-  const userId = computed(() => user.value?.id);
+  const isLoggedIn = computed(() => isAuthenticated.value)
+  const userName = computed(() => user.value?.name)
+  const userEmail = computed(() => user.value?.email)
+  const userProfileImage = computed(() => user.value?.picture)
+  const userId = computed(() => user.value?.id)
 
   // Actions
   const setOAuthUser = (oauthData) => {
-    user.value = {
-      id: oauthData.id,
-      name: oauthData.name,
-      email: oauthData.email,
-      profileImage: oauthData.picture
-    };
-    isAuthenticated.value = true;
-    localStorage.setItem('user', JSON.stringify(user.value));
-  };
+    user.value = oauthData
+    isAuthenticated.value = true
+    localStorage.setItem('user', JSON.stringify(user.value))
+  }
 
   const logout = () => {
-    user.value = null;
-    isAuthenticated.value = false;
-    localStorage.removeItem('user');
-  };
-
-  const loadStoredUser = () => {
-    const stored = localStorage.getItem('user');
-    if (stored) {
-      user.value = JSON.parse(stored);
-      isAuthenticated.value = true;
-    }
-  };
+    user.value = null
+    isAuthenticated.value = false
+    localStorage.removeItem('jwtToken')
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('user')
+  }
 
   const initializeAuth = () => {
-    const userStr = localStorage.getItem('user');
+    const userStr = localStorage.getItem('user')
     if (userStr) {
       try {
-        const userData = JSON.parse(userStr);
-        user.value = {
-          id: userData.id,
-          name: userData.name,
-          email: userData.email,
-          profileImage: userData.picture
-        };
-        isAuthenticated.value = true;
+        user.value = JSON.parse(userStr)
+        isAuthenticated.value = true
+        console.log('✅ Auth initialized:', user.value)
       } catch (e) {
-        console.error('Failed to parse user:', e);
+        console.error('❌ Failed to parse user:', e)
+        isAuthenticated.value = false
       }
     }
-  };
+  }
 
   return {
     // State
@@ -72,7 +57,6 @@ export const useAuthStore = defineStore('auth', () => {
     // Actions
     setOAuthUser,
     logout,
-    loadStoredUser,
     initializeAuth
-  };
-});
+  }
+})
