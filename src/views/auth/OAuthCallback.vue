@@ -87,7 +87,7 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
   color: white;
   font-size: 18px;
   gap: 20px;

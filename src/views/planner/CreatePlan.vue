@@ -3,19 +3,15 @@
     <!-- 플래너 탭 -->
     <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
 
-    <!-- 메인 컨텐츠 -->  
+    <!-- 메인 컨텐츠 -->
     <div class="content-wrapper px-4 py-4">
 
       <!-- AI 프롬프트 입력 섹션 -->
       <div class="prompt-section mb-5">
         <div class="prompt-card">
           <div class="prompt-input-wrapper">
-            <textarea
-              class="prompt-input form-control"
-              placeholder="Leave a comment here"
-              v-model="promptInput"
-              rows="4"
-            ></textarea>
+            <textarea class="prompt-input form-control" placeholder="Leave a comment here" v-model="promptInput"
+              rows="4"></textarea>
 
             <!-- Button sits inside the textarea wrapper, overlapping the bottom-left -->
             <button class="btn-generate" @click="generateItinerary" :disabled="!promptInput.trim() || isLoading">
@@ -183,12 +179,12 @@ const sendMessage = async () => {
 
   const toProcess = currentMessage.value;
   currentMessage.value = "";
-  
+
   // 텍스트 영역 높이 초기화
   if (textareaRef.value) {
     textareaRef.value.style.height = 'auto';
   }
-  
+
   isLoading.value = true;
 
   setTimeout(async () => {
@@ -212,10 +208,12 @@ const generateAIResponse = async (text) => {
 };
 
 onMounted(async () => {
-  const res = await plannerApi.getActivePlan(authStore.userId);
-  console.log(res);
-  if (res.data.success === true) {
-    router.push("/planner/edit");
+  if (authStore.userId != null) {
+    const res = await plannerApi.getActivePlan(authStore.userId);
+    console.log(res);
+    if (res.data.success === true) {
+      router.push("/planner/edit");
+    }
   }
 });
 </script>
@@ -259,17 +257,17 @@ onMounted(async () => {
   align-items: center;
   font-size: 0.95rem;
   color: $secondary;
-  
+
   i {
     font-size: 1.2rem;
     color: $primary;
   }
-  
+
   span:nth-child(2) {
     color: $secondary;
     font-family: 'Siganpyo', sans-serif;
   }
-  
+
   span:nth-child(3) {
     font-size: 0.9rem;
     color: #999;
@@ -283,7 +281,8 @@ onMounted(async () => {
   .prompt-input {
     width: 100%;
     /* add right/bottom padding so the button doesn't overlap the textarea content or border */
-    padding: 1rem 7.5rem 3rem 1rem; /* top right bottom left */
+    padding: 1rem 7.5rem 3rem 1rem;
+    /* top right bottom left */
     border: 1px solid #ddd;
     border-radius: 0.75rem;
     font-size: 0.95rem;
@@ -430,8 +429,8 @@ onMounted(async () => {
 /* 그리드 간격 조정 */
 .row.g-3 {
   margin: 0 -0.75rem;
-  
-  > .col-6 {
+
+  >.col-6 {
     padding: 0 0.75rem;
     margin-bottom: 1rem;
   }
@@ -444,28 +443,28 @@ onMounted(async () => {
     margin: 4rem auto 2rem;
     border-radius: 0.75rem;
   }
-  
+
   .recommendation-card {
     height: 120px;
-    
+
     .card-icon {
       width: 28px;
       height: 28px;
-      
+
       i {
         font-size: 14px;
       }
     }
-    
+
     .card-label {
       font-size: 12px;
     }
-    
+
     .card-overlay {
       padding: 8px;
     }
   }
-  
+
   .recommended-section h5 {
     font-size: 1.1rem;
   }
