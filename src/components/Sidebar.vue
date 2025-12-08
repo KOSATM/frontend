@@ -34,7 +34,7 @@ const router = useRouter()
 const route = useRoute()
 
 const menuItems = [
-  { name: 'planner', label: 'Planner', icon: 'bi bi-map-fill', route: '/planner' },
+  { name: 'planner', label: 'Planner', icon: 'bi bi-map-fill', route: '/planner/edit' },
   { name: 'supporter', label: 'Supporter', icon: 'bi bi-people', route: '/supporter' },
   { name: 'travelgram', label: 'Travelgram', icon: 'bi bi bi-instagram', route: '/travelgram' },
   { name: 'hotelrecommend', label: 'Hotel Recommend', icon: 'bi bi-building', route: '/planner/hotel/recommendation' },
