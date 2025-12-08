@@ -5,6 +5,8 @@ export const useAuthStore = defineStore('auth', () => {
   // State
   const user = ref(null)
   const isAuthenticated = ref(false)
+  //초기화 상태 추적
+  const isLoading = ref(true)
 
   // Getters
   const isLoggedIn = computed(() => isAuthenticated.value)
@@ -29,16 +31,16 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const initializeAuth = () => {
-    const userStr = localStorage.getItem('user')
-    if (userStr) {
-      try {
-        user.value = JSON.parse(userStr)
-        isAuthenticated.value = true
-        console.log('✅ Auth initialized:', user.value)
-      } catch (e) {
-        console.error('❌ Failed to parse user:', e)
-        isAuthenticated.value = false
+    try {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        user.value = JSON.parse(userStr);
+        isAuthenticated.value = true;
       }
+    } catch (e) {
+      console.error('❌ Auth 초기화 실패:', e);
+    } finally {
+      isLoading.value = false; //초기화 완료
     }
   }
 
@@ -46,6 +48,7 @@ export const useAuthStore = defineStore('auth', () => {
     // State
     user,
     isAuthenticated,
+    isLoading,
 
     // Getters
     isLoggedIn,

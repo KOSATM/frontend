@@ -39,8 +39,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Checklist from "./components/supporter/Checklist.vue";
 import WeatherCard from "./components/supporter/WeatherCard.vue";
+import { useAuthStore } from "./store/authStore";
 
 const isSidebarOpen = ref(false);
+const authStore = useAuthStore();
+
 watch(isSidebarOpen, (v) => {
   document.body.style.overflow = v ? "hidden" : "";
 });
@@ -55,7 +58,14 @@ const mainClass = computed(() => {
   return classes;
 });
 
-// ✅ OAuth 콜백 처리
+// 앱 시작 시 authStore 초기화 (localStorage에서 로드)
+onMounted(() => {
+  console.log('App 초기화 - authStore 로드 시작');
+  authStore.initializeAuth();
+  console.log('authStore 초기화 완료 - userId:', authStore.userId);
+}, { once: true });
+
+// OAuth 콜백 처리 - localStorage + authStore 동시 업데이트
 onMounted(() => {
   const params = new URLSearchParams(window.location.search);
   const token = params.get("token");
@@ -71,19 +81,21 @@ onMounted(() => {
       timestamp: new Date().toISOString()
     }, null, 2));
 
-    // 토큰 저장
+    // JWT 토큰 저장 (API 인증용)
     localStorage.setItem("jwtToken", token);
     localStorage.setItem("accessToken", token);
-    localStorage.setItem("userId", userId);
-    localStorage.setItem("email", email);
+    
+    // 사용자 데이터
     const userData = {
       id: userId,
       email,
       name: email.split("@")[0],
     };
-    localStorage.setItem("user", JSON.stringify(userData));
+    console.log("localStorage 저장 완료:", userData);
 
-    console.log("✅ 저장된 데이터:", JSON.stringify(userData, null, 2));
+    // authStore에도 동시 저장
+    authStore.setOAuthUser(userData);
+    console.log("authStore 업데이트 완료 - userId:", authStore.userId);
 
     // 홈으로 리다이렉트
     setTimeout(() => {

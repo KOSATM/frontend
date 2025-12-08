@@ -218,7 +218,20 @@ const generateAIResponse = async (text) => {
   if (low.includes("shopping")) return demoResponses.shopping;
   if (low.includes("budget") || low.includes("reduce"))
     return demoResponses.budget;
-  const res = await chatApi.chat(text, authStore.userId);
+  
+  // userId 유효성 체크
+  if (!authStore.userId) {
+    console.warn('⚠️ authStore.userId가 없습니다. 초기화 중...')
+    authStore.initializeAuth()
+  }
+  
+  const userId = authStore.userId
+  if (!userId) {
+    console.error('❌ userId를 찾을 수 없습니다')
+    return { role: 'assistant', message: '로그인이 필요합니다.' }
+  }
+  
+  const res = await chatApi.chat(text, userId);
   console.log(res);
   return res;
 };

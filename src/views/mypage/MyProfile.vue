@@ -261,7 +261,7 @@ const profileImage = computed(() => {
 
 // 컴포넌트 마운트 시 로컬 스토리지에서 데이터 로드
 onMounted(() => {
-  authStore.loadStoredUser()
+  authStore.initializeAuth()
   
   if (authStore.user) {
     profileData.name = authStore.user.name || 'User'

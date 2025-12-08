@@ -144,12 +144,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/store/authStore'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import ActivityDetailsModal from '@/components/planner/ActivityDetailsModal.vue'
 import imageSearchApi from '@/api/imageSearchApi'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 // 모달 상태
 const selectedHistory = ref(null)
@@ -175,8 +177,15 @@ const loadHistory = async () => {
   try {
     isLoading.value = true
     
-    // 임시로 userId 17 사용
-    const userId = 17
+    // authStore에서 userId 가져오기
+    const userId = authStore.userId
+    
+    if (!userId) {
+      console.error('❌ userId를 찾을 수 없습니다. 로그인이 필요합니다.')
+      alert('사용자 정보를 불러올 수 없습니다. 다시 로그인해주세요.')
+      isLoading.value = false
+      return
+    }
     
     console.log('📋 히스토리 로드 - userId:', userId)
     

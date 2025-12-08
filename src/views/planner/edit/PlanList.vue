@@ -982,13 +982,25 @@ const endplan = () => {
 };
 
 const renderPlan = async () => {
-  const res = await plannerApi.getActivePlan(authStore.userId);
-  console.log(res.data);
-  plan.value = res.data.data.plan;
-  days.value = res.data.data.days;
+  // authStore 초기화 확인
+  if (!authStore.userId) {
+    console.warn('⚠️ authStore.userId가 없습니다. 초기화 중...')
+    authStore.initializeAuth()
+  }
+  
+  const userId = authStore.userId
+  if (!userId) {
+    console.error('❌ userId를 찾을 수 없습니다. 로그인이 필요합니다.')
+    return
+  }
+  
+  const res = await plannerApi.getActivePlan(userId)
+  console.log(res.data)
+  plan.value = res.data.data.plan
+  days.value = res.data.data.days
   days.value = days.value.sort((a, b) => new Date(a.day.planDate) - new Date(b.day.planDate))
-  console.log(plan.value);
-  console.log(days.value);
+  console.log(plan.value)
+  console.log(days.value)
 }
 
 /* 공통 유틸 */
