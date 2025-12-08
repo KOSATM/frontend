@@ -1,8 +1,8 @@
 <template>
   <div class="travelgram-page">
     <PageHeader title="Travelgram" subtitle="Your past travel adventures" icon="bi-instagram" />
-    <ProfileSummary :name="displayName" bio="Travel Enthusiast" initials="userInitials" :totalplans="stats.totalPlans" :travelDays="stats.travelDays"
-      :completed="stats.completed" />
+    <ProfileSummary :name="displayName" bio="Travel Enthusiast" initials="userInitials" :totalplans="stats.totalPlans"
+      :travelDays="stats.travelDays" :completed="stats.completed" />
     <h4 class="my-3">
       <i class="bi bi-instagram me-2 text-primary"></i> Completed Travel Plans
     </h4>
@@ -15,12 +15,12 @@
     </div>
 
     <div v-else-if="plans.length === 0" class="text-center py-5 text-muted">
-      <p>완료된 여행 기록이 없습니다.</p>
+      <p>There is not Ended Plan</p>
     </div>
 
     <div v-else class="plan-list">
-      <planCard v-for="plan in plans" :key="plan.id" :planId="plan.id" :planTitle="plan.title || '제목 없는 여행'"
-        :location="'Seoul, Korea'" :date="plan.formattedDate" :budget="plan.formattedBudget" :status="'Done'"
+      <planCard v-for="plan in plans" :key="plan.id" :planId="plan.id" :planTitle="plan.title"
+        :location="'Seoul, Korea'" :date="plan.formattedDate" :budget="plan.formattedBudget" :planStatus="'Done'"
         @click="goToReview(plan.id, plan.title)" />
     </div>
   </div>
@@ -30,7 +30,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import {useAuthStore} from '@/store/authStore'
+import { useAuthStore } from '@/store/authStore'
 import api from '@/api/travelgramApi'
 import { storeToRefs } from 'pinia'
 import planCard from '@/components/common/PlanCard.vue';
@@ -66,14 +66,14 @@ const fetchPlans = async () => {
     if (!userId.value) {
       console.warn("User ID not found, attempting to load from storage...");
       authStore.initializeAuth(); // Ensure auth is loaded
-      if(!userId.value) return; // Stop if still no user
+      if (!userId.value) return; // Stop if still no user
     }
 
     const targetId = userId.value
     console.log("Fetching plans for user:", targetId)
-    
+
     // 백엔드 API 호출
-    const response = await api.getEndedPlanByUserId(targetId)
+    const response = await api.getAllPlanByUserId(targetId)
     const allPlans = response.data
 
     // 1. 종료된 여행(isEnded === true)만 필터링
@@ -112,16 +112,43 @@ const calculateTotalDays = (plansList) => {
 
 // ✅ 페이지 이동 함수
 // PlanCard에서 emit된 id와 title을 인자로 받습니다.
-const goToReview = (id, title) => {
+const goToReview = async (id, title) => {
   console.log(`Navigating to review creation for Plan ID: ${id}, Title: ${title}`);
-  
-  router.push({
-    name: 'CreateTravelReview', // router.js에 정의된 라우트 이름 확인 필요 (PhotoUploadPage로 연결된 라우트)
-    params: { planId: id },
-    query: { title: title },
-  })
-}
 
+  let targetTitle = title;
+
+  // 1. 제목이 없거나 비어있는 경우 체크
+  if (!targetTitle || targetTitle.trim() === '') {
+    try {
+      // 로딩 인디케이터를 띄우고 싶다면 여기서 loading state 조작 가능
+
+      console.log("제목이 없어 AI 생성을 요청합니다...");
+      const response = await api.getPlanTitle(id); // 백엔드 호출
+
+      // 2. 받아온 새 제목 할당
+      targetTitle = response.data;
+      console.log("새로 생성된 제목:", targetTitle);
+
+      
+      // 현재 화면의 리스트에도 새 제목을 즉시 반영하여 UI 업데이트
+      const planItem = plans.value.find(p => p.id === id);
+      if (planItem) {
+        planItem.title = targetTitle;
+      }
+
+    } catch (error) {
+      console.error("제목 생성 실패:", error);
+      targetTitle = "My Trip"; // 실패 시 기본값 설정
+    }
+    // 3. 제목을 쿼리로 넘기며 페이지 이동
+    // (이미 리스트가 업데이트되었으므로 뒤로가기로 돌아와도 제목이 유지됩니다)
+    router.push({
+      name: 'CreateTravelReview',
+      params: { planId: id },
+      query: { title: targetTitle },
+    })
+  }
+}
 onMounted(() => {
   fetchPlans()
 })
