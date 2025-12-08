@@ -205,6 +205,9 @@ import BaseButton from "@/components/common/BaseButton.vue";
 import ActivityList from "@/components/planner/ActivityList.vue";
 import DayCard from "@/components/planner/DayCard.vue";
 import plannerApi from "@/api/plannerApi";
+import { useAuthStore } from "@/store/authStore";
+
+const authStore = useAuthStore();
 
 // 간단한 더미 갤러리 (photo1/2/3)
 const defaultGallery = [
@@ -979,7 +982,7 @@ const endplan = () => {
 };
 
 const renderPlan = async () => {
-  const res = await plannerApi.getActivePlan(16);
+  const res = await plannerApi.getActivePlan(authStore.userId);
   console.log(res.data);
   plan.value = res.data.data.plan;
   days.value = res.data.data.days;
@@ -1309,6 +1312,7 @@ const heroMeta = computed(() => {
 });
 
 onMounted(async () => {
+  authStore.initializeAuth();
   await renderPlan()
 })
 </script>
