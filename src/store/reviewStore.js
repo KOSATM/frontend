@@ -67,8 +67,8 @@ export const useReviewStore = defineStore('review', {
       // 화면 표시를 위해 문자열 배열이나 객체 배열 그대로 저장
       this.selectedHashtags = option.hashtags
     },
-    setHashtags(list) {
-      this.selectedHashtags = list
+    setHashtags(tags) {
+      this.selectedHashtags = tags
     },
     nextStep() {
       this.step++
