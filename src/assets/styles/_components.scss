@@ -85,20 +85,33 @@
     margin-right: 1rem;
   }
 
+/* 텍스트 정보 영역 */
   .plan-info {
     flex: 1;
+    overflow: hidden; /* 긴 텍스트 처리용 */
 
     .plan-title {
       font-weight: 600;
-      color: $secondary; // 네이비
+      color: $secondary; // 기본 색상 (네이비)
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      /* ✅ [수정됨] .no-title 클래스가 붙었을 때 스타일 오버라이딩 */
+      &.no-title {
+        color: #999;       /* 회색 */
+        font-style: italic; /* 기울임 */
+        font-weight: 400;   /* 얇게 */
+      }
     }
 
     .plan-meta {
       font-size: 0.85rem;
       color: #666;
+      line-height: 1.4;
     }
   }
-
   .badge {
     background-color: #3ac569;
     font-size: 0.75rem;
