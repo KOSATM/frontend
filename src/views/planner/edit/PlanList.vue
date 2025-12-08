@@ -1,8 +1,6 @@
 <!-- src/views/planner/PlannerList.vue -->
 <template>
-  <section
-    class="planner-right card shadow-sm rounded-4 h-100 d-flex flex-column"
-  >
+  <section class="planner-right card shadow-sm rounded-4 h-100 d-flex flex-column">
     <!-- 상단 요약 -->
     <div class="p-4 pb-3 border-bottom">
       <!-- <StepHeader v-if="!travelStore.$state.isTraveling" :step="'2/4'" :title="'Check and Adjust Draft'" @back="goBack"/> -->
@@ -10,10 +8,8 @@
       <StepHeader v-if="!travelStore.$state.isTraveling" :step="'2/4'" :title="'Check and Adjust Draft'"
         @back="goBack" /> -->
       <div class="d-flex gap-3 align-items-center mb-3">
-        <div
-          class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
-          style="width: 46px; height: 46px"
-        >
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
           📅
         </div>
         <div>
@@ -44,12 +40,8 @@
     <!-- ▶ Start Day Hero / Current Activity -->
     <div v-if="travelStore.$state.isTraveling" class="p-4 pt-3">
       <!-- 시작 전: Day 시작 화면 (클릭 가능) -->
-      <div
-        v-if="showNextDayHero"
-        class="gradient-hero hero-clickable rounded-4 p-4 position-relative"
-        :class="heroMeta.theme"
-        @click="startDay(heroDay?.day.id || 1)"
-      >
+      <div v-if="showNextDayHero" class="gradient-hero hero-clickable rounded-4 p-4 position-relative"
+        :class="heroMeta.theme" @click="startDay(heroDay?.id || 1)">
         <div class="text-center hero-text">
           <h5 class="mb-1 title">Start Day {{ heroDay?.id || 1 }}</h5>
 
@@ -67,11 +59,8 @@
       </div>
 
       <!-- 진행 중: 현재 액티비티 카드 -->
-      <div
-        v-else-if="run.started && currentDay && currentActivity"
-        class="card border-0 shadow-sm rounded-4 mb-3 gradient-hero text-white"
-        :class="heroMeta.theme"
-      >
+      <div v-else-if="run.started && currentDay && currentActivity"
+        class="card border-0 shadow-sm rounded-4 mb-3 gradient-hero text-white" :class="heroMeta.theme">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <div class="sub">
@@ -84,11 +73,7 @@
           </div>
 
           <!-- 클릭 시 완료 모달 열기 -->
-          <div
-            class="run-panel rounded-4 px-3 py-3 mb-3"
-            role="button"
-            @click.stop="openCompleteForCurrent"
-          >
+          <div class="run-panel rounded-4 px-3 py-3 mb-3" role="button" @click.stop="openCompleteForCurrent">
             <h6 class="mb-1 title">
               {{ currentActivity?.title || "—" }}
             </h6>
@@ -100,24 +85,13 @@
             </div>
           </div>
 
-          <div
-            class="d-flex justify-content-between align-items-center mb-1 sub"
-          >
+          <div class="d-flex justify-content-between align-items-center mb-1 sub">
             <span>Day {{ currentDay?.id }} Progress</span>
             <span>{{ Math.round(dayProgress) }}%</span>
           </div>
-          <div
-            class="progress-hero"
-            role="progressbar"
-            :aria-valuenow="Math.round(dayProgress)"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            @click.stop="openCompleteForCurrent"
-          >
-            <div
-              class="progress-fill"
-              :style="{ width: dayProgress + '%' }"
-            ></div>
+          <div class="progress-hero" role="progressbar" :aria-valuenow="Math.round(dayProgress)" aria-valuemin="0"
+            aria-valuemax="100" @click.stop="openCompleteForCurrent">
+            <div class="progress-fill" :style="{ width: dayProgress + '%' }"></div>
           </div>
         </div>
       </div>
@@ -126,71 +100,34 @@
     <!-- 본문 리스트 -->
     <div class="planner-scroll flex-grow-1 overflow-auto p-4 pt-3">
       <div class="d-flex flex-column gap-3">
-        <DayCard
-          v-for="(day, dIdx) in days"
-          :key="day.id"
-          :day="day"
-          :dayIndex="dIdx"
-          :openDayId="openDayId"
-          :activityRowClass="activityRowClass"
-          :getIconForType="getIconForType"
-          :hasCost="hasCost"
-          :formatCost="formatCost"
-          @toggleDay="toggleDay(day.day.id)"
-          @openDetails="openDetailsModal"
-          @toggleComplete="toggleComplete"
-          @openReplace="openReplaceModal"
-        />
+        <DayCard v-for="(day, dIdx) in days" :key="day.id" :day="day" :dayIndex="dIdx" :openDayId="openDayId"
+          :activityRowClass="activityRowClass" :getIconForType="getIconForType" :hasCost="hasCost"
+          :formatCost="formatCost" @toggleDay="toggleDay(day.day.id)" @openDetails="openDetailsModal"
+          @toggleComplete="toggleComplete" @openReplace="openReplaceModal" />
       </div>
     </div>
 
     <!-- CTA -->
     <div class="p-4 pt-0 border-top bg-white">
-      <BaseButton
-        v-if="!travelStore.$state.isTraveling"
-        @click="next()"
-        variant="primary"
-        class="w-100 py-2"
-        >Next: Select Accommodation</BaseButton
-      >
-      <BaseButton v-else @click="endplan()" variant="success" class="w-100 py-2"
-        >FORCE to End plan</BaseButton
-      >
+      <BaseButton v-if="!travelStore.$state.isTraveling" @click="next()" variant="primary" class="w-100 py-2">Next:
+        Select Accommodation</BaseButton>
+      <BaseButton v-else @click="endplan()" variant="success" class="w-100 py-2">FORCE to End plan</BaseButton>
     </div>
   </section>
 
   <!-- 모달 컴포넌트들 -->
-  <ReplaceModal
-    :open="replaceModal.open"
-    :target="replaceModal.target"
-    :alternatives="replaceModal.alternatives"
-    @close="closeReplaceModal"
-    @preview-alt="previewAlt"
-    @apply-replacement="applyReplacement"
-    @delete-anyway="deleteAnyway"
-  />
+  <ReplaceModal :open="replaceModal.open" :target="replaceModal.target" :alternatives="replaceModal.alternatives"
+    @close="closeReplaceModal" @preview-alt="previewAlt" @apply-replacement="applyReplacement"
+    @delete-anyway="deleteAnyway" />
 
-  <ActivityDetailsModal
-    :open="detailsModal.open"
-    :data="detailsModal.data"
-    :spend-input="detailsModal.spendInput"
-    @update:spend-input="detailsModal.spendInput = $event"
-    @close="closeDetailsModal"
-    @save-spent="saveSpent"
-    @open-replace="openReplaceFromDetails"
-  />
+  <ActivityDetailsModal :open="detailsModal.open" :data="detailsModal.data" :spend-input="detailsModal.spendInput"
+    @update:spend-input="detailsModal.spendInput = $event" @close="closeDetailsModal" @save-spent="saveSpent"
+    @open-replace="openReplaceFromDetails" />
 
-  <ActivityCompleteModal
-    :open="completeModal.open"
-    :title="completeModal.title"
-    :spend-input="completeModal.spendInput"
-    :comment="completeModal.comment"
-    :quick-stats="currentQuickStats"
-    @update:spend-input="completeModal.spendInput = $event"
-    @update:comment="completeModal.comment = $event"
-    @close="closeCompleteModal"
-    @confirm="completeCurrentActivity"
-  />
+  <ActivityCompleteModal :open="completeModal.open" :title="completeModal.title" :spend-input="completeModal.spendInput"
+    :comment="completeModal.comment" :quick-stats="currentQuickStats"
+    @update:spend-input="completeModal.spendInput = $event" @update:comment="completeModal.comment = $event"
+    @close="closeCompleteModal" @confirm="completeCurrentActivity" />
 </template>
 
 <script setup>
@@ -206,6 +143,11 @@ import ActivityList from "@/components/planner/ActivityList.vue";
 import DayCard from "@/components/planner/DayCard.vue";
 import plannerApi from "@/api/plannerApi";
 import { useAuthStore } from "@/store/authStore";
+import { watch } from "vue";
+import { useChatStore } from "@/store/chatStore";
+
+
+
 
 const authStore = useAuthStore();
 
@@ -218,6 +160,7 @@ const defaultGallery = [
 
 const router = useRouter();
 const travelStore = useTravelStore();
+const chatStore = useChatStore();
 
 const openDayId = ref(1); // 화면에서 펼쳐진 Day
 const run = ref({
@@ -1338,6 +1281,52 @@ const heroMeta = computed(() => {
   return HERO_THEMES[randomIndex];
 });
 
+
+watch(
+  () => chatStore.livePlanFromChat,
+  (payload) => {
+    if (!payload) return;
+
+    // ✅ plan 정보 갱신
+    plan.value = {
+      id: payload.planId,
+      startDate: payload.startDate,
+      endDate: payload.endDate,
+      title: "AI Generated Plan",
+    };
+
+    days.value = payload.days.map((d) => ({
+      day: {
+        id: d.dayIndex,
+        dayIndex: d.dayIndex,
+        planDate: d.date,
+        title: `Day ${d.dayIndex}`,
+      },
+      places: d.schedules.map((s) => ({
+        title: s.title,
+        startAt: s.startAt,
+        endAt: s.endAt,
+        expectedCost: s.expectedCost,
+        completed: false,
+        spent: null,
+        type: s.type ?? "default",
+        icon: null,
+        placeName: s.placeName,
+        address: s.address,
+      })),
+      dailyCost: d.schedules.reduce(
+        (sum, s) => sum + (s.expectedCost ?? 0),
+        0
+      ),
+    }));
+
+    // ✅ Day 1 자동 오픈 같은 UX도 가능
+    openDayId.value = days.value[0]?.day.id ?? 1;
+  },
+  { deep: true }
+);
+
+
 onMounted(async () => {
   authStore.initializeAuth();
   await renderPlan();
@@ -1371,7 +1360,8 @@ onMounted(async () => {
 .hero-text h5,
 .hero-text .sub,
 .hero-stats {
-  color: #fff !important; /* 기본적으로 글씨는 흰색 */
+  color: #fff !important;
+  /* 기본적으로 글씨는 흰색 */
 }
 
 /* -------------------------------
@@ -1385,6 +1375,7 @@ onMounted(async () => {
   background: linear-gradient(135deg, #ffd7a3 0%, #ffc48c 45%, #ffb07a 100%);
   box-shadow: 0 4px 12px rgba(255, 180, 120, 0.22);
 }
+
 .hero--morning.hero-clickable:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 28px rgba(255, 200, 160, 0.35),
@@ -1399,6 +1390,7 @@ onMounted(async () => {
   background: linear-gradient(135deg, #88b8ff 0%, #6ea2ff 45%, #568bff 100%);
   box-shadow: 0 4px 12px rgba(120, 150, 255, 0.22);
 }
+
 .hero--day.hero-clickable:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 28px rgba(140, 170, 255, 0.35),
@@ -1413,6 +1405,7 @@ onMounted(async () => {
   background: linear-gradient(135deg, #ffb36b 0%, #ff944d 45%, #ff7a3c 100%);
   box-shadow: 0 4px 12px rgba(255, 140, 90, 0.22);
 }
+
 .hero--sunset.hero-clickable:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 28px rgba(255, 140, 90, 0.35),

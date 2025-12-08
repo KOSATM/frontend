@@ -1,7 +1,7 @@
 import api from './axios'
 
-async function chat(msg, userId) {
-  const res = await api.get('/test', { params: { msg, userId } })
+async function chat(request) {
+  const res = await api.post('/chat', request )
   return res.data;
 }
 
