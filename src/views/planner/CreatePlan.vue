@@ -18,7 +18,8 @@
             ></textarea>
 
             <!-- Button sits inside the textarea wrapper, overlapping the bottom-left -->
-            <button class="btn-generate" @click="generateItinerary" :disabled="!promptInput.trim()">
+            <button class="btn-generate" @click="generateItinerary" :disabled="!promptInput.trim() || isLoading">
+              <span v-if="isLoading" class="spinner-border spinner-border-sm" role="status"></span>
               Start
               <i class="bi bi-play-fill"></i>
             </button>
@@ -129,69 +130,84 @@ import { useTravelStore } from '@/store/travelStore'
 import router from "@/router";
 import ChatSidebar from "@/components/ChatSidebar.vue";
 import { useChatStore } from "@/store/chatStore";
+import chatApi from "@/api/chatApi";
+import { useAuthStore } from "@/store/authStore";
 
+const authStore = useAuthStore();
 const travelStore = useTravelStore()
 const chatStore = useChatStore();
 
 const promptInput = ref('')
+
+const currentMessage = ref("");
+const chatMessages = ref([]);
+const messagesContainer = ref(null);
+const textareaRef = ref(null);
+const isLoading = ref(false);
 
 function next() {
   travelStore.increaseStep();
   router.push("/planner/edit");
 }
 
-function generateItinerary() {
+async function generateItinerary() {
   if (promptInput.value.trim()) {
     console.log('Generating itinerary with prompt:', promptInput.value)
     // AI 기반 일정 생성 로직이 여기에 추가됨
     // 예: router.push('/planner/form')
-    chatStore.sendMessage(promptInput.value);
-    next()
+    currentMessage.value = promptInput.value;
+    await sendMessage();
+    // next()
   }
 }
 
 const sendMessage = async () => {
-  if (promptInput.value.trim() || ChatSidebar.isLoading.value) return;
+  if (!currentMessage.value.trim() || isLoading.value) return;
 
   const userMessage = {
     id: Date.now(),
     type: "user",
-    content: promptInput.value,
+    content: currentMessage.value,
     timestamp: new Date(),
   };
 
+  console.log(userMessage);
+
   const request = {
     userId: 1,
-    message: promptInput.value
+    message: currentMessage.value
   }
 
-  ChatSidebar.chatMessages.value.push(userMessage);
+  chatMessages.value.push(userMessage);
 
-  const toProcess = promptInput.value;
-  promptInput.value = "";
+  const toProcess = currentMessage.value;
+  currentMessage.value = "";
   
   // 텍스트 영역 높이 초기화
-  if (ChatSidebar.textareaRef.value) {
-    ChatSidebar.textareaRef.value.style.height = 'auto';
+  if (textareaRef.value) {
+    textareaRef.value.style.height = 'auto';
   }
   
-  ChatSidebar.isLoading.value = true;
-
-  // await ChatSidebar.nextTick();
-  // ChatSidebar.scrollToBottom();
+  isLoading.value = true;
 
   setTimeout(async () => {
-    const aiText = await ChatSidebar.generateAIResponse(toProcess);
-    ChatSidebar.chatMessages.value.push({
+    const aiText = await generateAIResponse(toProcess);
+    chatMessages.value.push({
       id: Date.now() + 1,
       type: "ai",
-      content: aiText,
+      content: aiText.data.mainResponse.message,
       timestamp: new Date(),
     });
-    ChatSidebar.isLoading.value = false;
-    // await nextTick();
-    // scrollToBottom();
+    isLoading.value = false;
+    router.push("/planner/edit");
   }, 900);
+};
+
+const generateAIResponse = async (text) => {
+  const low = text.toLowerCase();
+  const res = await chatApi.chat(text, authStore.userId);
+  console.log(res);
+  return res;
 };
 </script>
 
