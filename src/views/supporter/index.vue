@@ -221,10 +221,16 @@ const loadImageHistory = async () => {
     
     sessions.forEach(session => {
       const candidates = session.candidates || []
+      console.log(`📌 세션 ${session.sessionId} - 후보지 ${candidates.length}개`)
+      candidates.forEach((c, idx) => {
+        console.log(`  [${idx}] id:${c.candidateId}, isSelected:${c.isSelected}, place:${c.place?.name}, lat:${c.place?.lat}, lng:${c.place?.lng}`)
+      })
+      
       const selectedCandidate = candidates.find(c => c.isSelected === true)
       
       if (selectedCandidate && selectedCandidate.place) {
         const place = selectedCandidate.place
+        console.log(`✅ 세션 ${session.sessionId} - 선택됨: ${place.name} (lat:${place.lat}, lng:${place.lng})`)
         
         if (place.lat && place.lng) {
           const key = `${place.lat},${place.lng}`
@@ -248,7 +254,11 @@ const loadImageHistory = async () => {
               `
             })
           }
+        } else {
+          console.warn(`⚠️ 세션 ${session.sessionId} - 좌표 없음: ${place.name}`)
         }
+      } else {
+        console.warn(`⚠️ 세션 ${session.sessionId}: isSelected인 후보지 없음`)
       }
     })
     
