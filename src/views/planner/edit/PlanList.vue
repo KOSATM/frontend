@@ -48,7 +48,7 @@
         v-if="showNextDayHero"
         class="gradient-hero hero-clickable rounded-4 p-4 position-relative"
         :class="heroMeta.theme"
-        @click="startDay(heroDay?.id || 1)"
+        @click="startDay(heroDay?.day.id || 1)"
       >
         <div class="text-center hero-text">
           <h5 class="mb-1 title">Start Day {{ heroDay?.id || 1 }}</h5>
@@ -59,7 +59,7 @@
           <hr class="hero-sep" />
 
           <div class="hero-stats">
-            {{ heroDay?.activities.length || 0 }} activities
+            {{ heroDay?.places.length || 0 }} places
             <span class="dot">•</span>
             {{ formatCurrency(dayEstimatedCost(heroDay)) }}
           </div>
@@ -242,7 +242,7 @@ const days = ref(null);
 //     title: "Arrival & Gangnam Exploration",
 //     date: "Nov 6, 2025",
 //     dailyCost: 80,
-//     activities: [
+//     places: [
 //       {
 //         title: "Welcome Lunch (Gangnam)",
 //         time: "12:30 PM",
@@ -364,7 +364,7 @@ const days = ref(null);
 //     title: "Palace & Hanbok Experience",
 //     date: "Nov 7, 2025",
 //     dailyCost: 62,
-//     activities: [
+//     places: [
 //       {
 //         title: "Breakfast at Local Cafe",
 //         time: "8:30 AM",
@@ -486,7 +486,7 @@ const days = ref(null);
 //     title: "Hongdae & Nightlife",
 //     date: "Nov 8, 2025",
 //     dailyCost: 70,
-//     activities: [
+//     places: [
 //       {
 //         title: "Brunch in Hongdae",
 //         time: "11:00 AM",
@@ -570,7 +570,7 @@ const days = ref(null);
 //     title: "Namsan & Myeongdong",
 //     date: "Nov 9, 2025",
 //     dailyCost: 65,
-//     activities: [
+//     places: [
 //       {
 //         title: "Cable Car to Namsan Tower",
 //         time: "10:00 AM",
@@ -635,7 +635,7 @@ const days = ref(null);
 //     title: "Han River Chill Day",
 //     date: "Nov 10, 2025",
 //     dailyCost: 40,
-//     activities: [
+//     places: [
 //       {
 //         title: "Lazy Morning",
 //         time: "10:00 AM",
@@ -700,7 +700,7 @@ const days = ref(null);
 //     title: "Gangwon Day plan",
 //     date: "Nov 11, 2025",
 //     dailyCost: 120,
-//     activities: [
+//     places: [
 //       {
 //         title: "Train to Gangneung",
 //         time: "8:00 AM",
@@ -765,7 +765,7 @@ const days = ref(null);
 //     title: "Last-minute Shopping & Departure",
 //     date: "Nov 12, 2025",
 //     dailyCost: 90,
-//     activities: [
+//     places: [
 //       {
 //         title: "Packing & Checkout",
 //         time: "10:00 AM",
@@ -858,7 +858,7 @@ const completeModal = ref({
 // ✅ 실제 진행 중인 Day만 추적 (openDayId와 무관)
 const currentDay = computed(() => {
   if (run.value.started && run.value.dayId != null) {
-    return days.value.find((d) => d.id === run.value.dayId) || null;
+    return days.value.find((d) => d.day.id === run.value.dayId) || null;
   }
   return null; // 진행 중이 아니면 null
 });
@@ -872,12 +872,12 @@ const currentDayIndex = computed(() => {
 
 const currentActivityIndex = computed(() => {
   if (!currentDay.value) return 0;
-  const idx = currentDay.value.activities.findIndex((a) => !a.completed);
-  return idx === -1 ? currentDay.value.activities.length - 1 : idx;
+  const idx = currentDay.value.places.findIndex((a) => !a.completed);
+  return idx === -1 ? currentDay.value.places.length - 1 : idx;
 });
 
 const currentActivity = computed(() => {
-  return currentDay.value?.activities?.[currentActivityIndex.value] || null;
+  return currentDay.value?.places?.[currentActivityIndex.value] || null;
 });
 
 const dayProgress = computed(() => {
@@ -924,7 +924,7 @@ const currentQuickStats = computed(() => {
 const heroDay = computed(() => {
   // 다음 시작할 Day (미완료 액티비티가 있는 첫 번째 Day)
   return (
-    days.value.find((d) => d.activities.some((a) => !a.completed)) ||
+    days.value.find((d) => d.places.some((a) => new Date(a.endAt) > new Date())) ||
     days.value[0]
   );
 });
@@ -938,7 +938,7 @@ const showNextDayHero = computed(() => {
 
   // 진행 중인 Day의 모든 액티비티가 완료되었을 때
   if (run.value.started && currentDay.value) {
-    const allCompleted = currentDay.value.activities.every((a) => a.completed);
+    const allCompleted = currentDay.value.places.every((a) => a.completed);
     return allCompleted;
   }
 
@@ -947,13 +947,13 @@ const showNextDayHero = computed(() => {
 
 // Cost calculation functions
 const dayEstimatedCost = (day) => {
-  if (!day?.activities) return 0;
-  return day.activities.reduce((sum, a) => sum + (a.cost || 0), 0);
+  if (!day?.places) return 0;
+  return day.places.reduce((sum, a) => sum + (a.cost || 0), 0);
 };
 
 const dayActualCost = (day) => {
-  if (!day?.activities) return 0;
-  return day.activities.reduce((sum, a) => {
+  if (!day?.places) return 0;
+  return day.places.reduce((sum, a) => {
     const spent = typeof a.spent === "number" ? a.spent : 0;
     return sum + spent;
   }, 0);
@@ -1069,9 +1069,9 @@ const formatTime = (mins) => {
 };
 
 const progressOf = (day) => {
-  if (!day?.activities?.length) return 0;
-  const total = day.activities.length;
-  const done = day.activities.filter((a) => a.completed).length;
+  if (!day?.places?.length) return 0;
+  const total = day.places.length;
+  const done = day.places.filter((a) => a.completed).length;
   return Math.min(100, Math.max(0, (done / total) * 100));
 };
 
@@ -1106,7 +1106,7 @@ const activityRowClass = (dayIndex, actIndex) => {
 const toggleComplete = (dayIndex, actIndex) => {
   const day = days.value[dayIndex];
   if (!day) return;
-  const act = day.activities[actIndex];
+  const act = day.places[actIndex];
   if (!act) return;
 
   if (act.completed) {
@@ -1118,8 +1118,13 @@ const toggleComplete = (dayIndex, actIndex) => {
 
 /* 시작/진행 */
 const startDay = (dayId) => {
+  console.log("heroDay", heroDay)
+  console.log("run", run.value);
   if (run.value.started) return;
-  const day = days.value.find((d) => d.id === dayId);
+  const day = days.value.find((d) => d.day.id === dayId);
+  console.log("days", days);
+  console.log("day", day);
+  console.log("dayId", dayId);
   if (!day) return;
   openDayId.value = dayId;
   run.value.started = true;
@@ -1181,7 +1186,7 @@ const buildFallbackDetails = (act) => {
 const completeActivity = (dayIndex, actIndex, spendInput, comment) => {
   const day = days.value[dayIndex];
   if (!day) return;
-  const act = day.activities[actIndex];
+  const act = day.places[actIndex];
   if (!act) return;
 
   if (spendInput != null && spendInput >= 0) {
@@ -1193,13 +1198,15 @@ const completeActivity = (dayIndex, actIndex, spendInput, comment) => {
   act.completed = true;
 
   // 해당 Day 모두 끝났으면 Hero 화면 표시 (다음 Day 시작 대기)
-  const stillLeft = day.activities.some((a) => !a.completed);
-  if (!stillLeft && run.value.dayId === day.id) {
+  const stillLeft = day.places.some((a) => new Date(a.endAt) > new Date());
+  console.log("stillLeft", stillLeft);
+  if (!stillLeft && run.value.dayId === day.day.id) {
     // ✅ Day 완료 시 Hero 화면이 표시되도록 상태만 초기화
-    const nextDay = days.value.find((d) => d.id > day.id);
+    const nextDay = days.value.find((d) => d.day.id > day.day.id);
+    console.log("nextDay", nextDay)
     if (nextDay) {
       // 다음 Day 카드 열기 (Hero 화면 표시됨)
-      openDayId.value = nextDay.id;
+      openDayId.value = nextDay.day.id;
       // run 상태 초기화 (Hero 화면에서 다시 시작 버튼 클릭 대기)
       run.value.started = false;
       run.value.startedAt = null;
@@ -1238,7 +1245,7 @@ const openReplaceFromDetails = () => {
 
 /* 교체/삭제 모달 */
 const openReplaceModal = (dayIndex, actIndex) => {
-  const target = days.value[dayIndex].activities[actIndex];
+  const target = days.value[dayIndex].places[actIndex];
   replaceModal.value = {
     open: true,
     dayIndex,
@@ -1278,7 +1285,7 @@ const previewAlt = (alt) => {
 const applyReplacement = (alt) => {
   const { dayIndex: d, actIndex: a } = replaceModal.value;
   if (d == null || a == null) return;
-  days.value[d].activities.splice(a, 1, {
+  days.value[d].places.splice(a, 1, {
     ...alt,
     completed: false,
     spent: null,
@@ -1296,7 +1303,7 @@ const deleteAnyway = () => {
 };
 
 const deleteActivity = (dayIndex, actIndex) => {
-  const acts = days.value[dayIndex].activities;
+  const acts = days.value[dayIndex].places;
   acts.splice(actIndex, 1);
   const SHIFT = 30;
   for (let i = actIndex; i < acts.length; i++) {
@@ -1333,7 +1340,8 @@ const heroMeta = computed(() => {
 
 onMounted(async () => {
   authStore.initializeAuth();
-  await renderPlan()
+  await renderPlan();
+  console.log("run", run.value);
 })
 </script>
 
