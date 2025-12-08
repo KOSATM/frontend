@@ -132,17 +132,16 @@ const addCustomTag = () => {
 const goBack = () => router.back()
 
 const goNext = async() => {
-  // 1. 최종 선택된 태그 객체들 필터링
-  try{
-    // 예: [{id: 1, name: '여행'}, {id: null, name: '맛집'}]
+  try {
+    // 1. 최종 선택된 태그 객체들 필터링
+    // 예: [{id: 1, name: '여행'}, {id: null, name: '직접추가한태그'}]
     const finalTags = displayTags.value.filter(tag => selectedSet.value.has(tag.name));
     
-    // 2. 백엔드 DTO(List<String> names)에 맞게 '이름'만 추출해서 문자열 배열로 변환
-    // 예: ['여행', '맛집']
+    // 2. 백엔드 DTO용 이름 배열 추출
+    // 예: ['여행', '직접추가한태그']
     const tagNames = finalTags.map(tag => tag.name);
 
-    // 3. Store에서 hashtagGroupId 가져오기
-    // (이전 단계나 초기 로딩 시 Store에 저장되어 있어야 합니다)
+    // 3. Store에서 groupId 가져오기
     const groupId = reviewStore.hashtagGroupId; 
 
     if (!groupId) {
@@ -150,17 +149,24 @@ const goNext = async() => {
         return;
     }
 
-    // ✅ 4. Payload(DTO) 구성
+    // ✨ [핵심 수정] Store 상태를 먼저 업데이트합니다! ✨
+    // (Pinia Store 구조에 따라 메서드명은 다를 수 있습니다. 직접 할당 혹은 액션 호출)
+    reviewStore.selectedHashtags = finalTags; 
+    // 또는: reviewStore.setSelectedHashtags(finalTags);
+
+    // 4. Payload 구성
     const payload = {
-      hashtagGroupId: groupId, // 백엔드 필드명: hashtagGroupId
-      names: tagNames          // 백엔드 필드명: names
+      hashtagGroupId: groupId,
+      names: tagNames
     };
 
-    // 5. API 호출 (경로와 payload 전달)
+    // 5. API 호출 (DB 저장)
     await api.createHashtags(payload);
+    
+    // 6. 다음 단계 진행
     reviewStore.nextStep();
+    router.push({ name: 'EditPage' });
 
-    router.push({ name: 'EditPage' }); // 다음 페이지 이름 확인 필요
   }catch(error){
     console.error("해시태그 저장 중 오류 발생: ", error);
     alert("해시태그 저장에 실패했습니다.");
