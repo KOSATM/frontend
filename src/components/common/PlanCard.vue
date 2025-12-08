@@ -1,5 +1,5 @@
 <template>
-  <div class="plan-card" @click="goToReview">
+  <div class="plan-card" @click="handleClick">
 
     <!-- 본문 -->
     <div class="plan-info">

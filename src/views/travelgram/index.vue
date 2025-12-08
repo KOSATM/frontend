@@ -140,6 +140,7 @@ const goToReview = async (id, title) => {
       console.error("제목 생성 실패:", error);
       targetTitle = "My Trip"; // 실패 시 기본값 설정
     }
+  }
     // 3. 제목을 쿼리로 넘기며 페이지 이동
     // (이미 리스트가 업데이트되었으므로 뒤로가기로 돌아와도 제목이 유지됩니다)
     router.push({
@@ -148,7 +149,6 @@ const goToReview = async (id, title) => {
       query: { title: targetTitle },
     })
   }
-}
 onMounted(() => {
   fetchPlans()
 })
