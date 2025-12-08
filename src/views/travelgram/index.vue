@@ -1,8 +1,8 @@
 <template>
   <div class="travelgram-page">
     <PageHeader title="Travelgram" subtitle="Your past travel adventures" icon="bi-instagram" />
-    <ProfileSummary name="Jessica Han" bio="Travel Enthusiast" initials="JH" :totalplans="12" :travelDays="28"
-      :completed="3" />
+    <ProfileSummary :name="displayName" bio="Travel Enthusiast" initials="userInitials" :totalplans="stats.totalPlans" :travelDays="stats.travelDays"
+      :completed="stats.completed" />
     <h4 class="my-3">
       <i class="bi bi-instagram me-2 text-primary"></i> Completed Travel Plans
     </h4>
@@ -30,7 +30,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
+import {useAuthStore} from '@/store/authStore'
 import api from '@/api/travelgramApi'
+import { storeToRefs } from 'pinia'
 import planCard from '@/components/common/PlanCard.vue';
 import ProfileSummary from "@/components/travelgram/ProfileSummary.vue";
 import PageHeader from '@/components/common/PageHeader.vue';
@@ -43,20 +45,37 @@ const plans = ref([])
 const loading = ref(true)
 const stats = ref({ totalPlans: 0, travelDays: 0, completed: 0 })
 
-// 스토어에서 로그인된 유저 정보 가져오기 (vuex 구조에 따라 수정 필요)
-const userId = computed(() => store?.state?.auth?.user?.id || 18) // 로그인 안되어있으면 1번(테스트용)
-const userName = computed(() => store?.state?.auth?.user?.name || 'Traveler')
+const authStore = useAuthStore()
+// 스토어에서 로그인된 유저 정보 가져오기 (vuex 구조에 따라 수정 필요
+// 3. Extract using storeToRefs (maintains Reactivity and .value access)
+const { userId, userName } = storeToRefs(authStore)
 
+const displayName = computed(() => userName.value || 'Traveler')
+
+// (선택사항) 이름에서 이니셜 추출 (예: "Jessica Han" -> "JH")
+const userInitials = computed(() => {
+  const name = displayName.value;
+  if (!name) return 'ME';
+  return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+})
 // 데이터 가져오기 함수
 const fetchPlans = async () => {
   try {
     loading.value = true
+    // Safety check: Ensure userId exists before making the API call
+    if (!userId.value) {
+      console.warn("User ID not found, attempting to load from storage...");
+      authStore.initializeAuth(); // Ensure auth is loaded
+      if(!userId.value) return; // Stop if still no user
+    }
+
     const targetId = userId.value
     console.log("Fetching plans for user:", targetId)
-    // 백엔드 API 호출: 유저의 모든 Plan 조회
+    
+    // 백엔드 API 호출
     const response = await api.getEndedPlanByUserId(targetId)
     const allPlans = response.data
-    console.log(allPlans);
+
     // 1. 종료된 여행(isEnded === true)만 필터링
     const completedPlans = allPlans.filter(p => p.isEnded === true)
 
