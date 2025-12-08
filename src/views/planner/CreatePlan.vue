@@ -42,6 +42,7 @@
              <RecommendationCard 
               imageSrc="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500"
               alt="Accommodation" cardLabel="Accommodation" 
+              icon="bi-house-heart"
               @click="openModal('accommodation')"
             />
            </div>
@@ -51,6 +52,7 @@
              <RecommendationCard 
                imageSrc="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500" 
                alt="Restaurants" cardLabel="Restaurants"
+               icon="bi-cup-hot"
                @click="openModal('restaurants')" 
              />
           </div>
@@ -60,6 +62,7 @@
              <RecommendationCard 
                imageSrc="https://images.unsplash.com/photo-1553603227-2358aabe821e?w=500"
                alt="Attractions" cardLabel="Attractions"
+               icon = "bi-compass"
                @click="openModal('attractions')" 
              />
           </div>
@@ -68,6 +71,7 @@
              <RecommendationCard 
                imageSrc="https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=500" 
                alt="Photospots" cardLabel="Photospots"
+               icon = "bi-camera"
                @click="openModal('photospots')" 
              />
           </div>
@@ -76,6 +80,7 @@
              <RecommendationCard 
                imageSrc="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500"
                alt="Festivals" cardLabel="Festivals"
+               icon = "bi-music-note"
                @click="openModal('festivals')" 
              />
           </div>
@@ -84,6 +89,7 @@
              <RecommendationCard 
                imageSrc="https://images.unsplash.com/photo-1528543606781-2f6e6857f318?w=500"
                alt="Experiences" cardLabel="Experiences"
+               icon = "bi-calendar-event"
                @click="openModal('experiences')" 
              />
           </div>
