@@ -127,6 +127,9 @@
 import chatApi from "@/api/chatApi";
 import { useChatStore } from "@/store/chatStore";
 import { ref, nextTick, onMounted, watch } from "vue";
+import { useAuthStore } from "@/store/authStore";
+
+const authStore = useAuthStore();
 
 const currentMessage = ref("");
 const chatMessages = ref([]);
@@ -215,7 +218,7 @@ const generateAIResponse = async (text) => {
   if (low.includes("shopping")) return demoResponses.shopping;
   if (low.includes("budget") || low.includes("reduce"))
     return demoResponses.budget;
-  const res = await chatApi.chat(text);
+  const res = await chatApi.chat(text, authStore.userId);
   console.log(res);
   return res;
 };
@@ -234,8 +237,9 @@ const formatTime = (date) => {
   });
 };
 
-onMounted(() => {
+onMounted(async () => {
   scrollToBottom();
+  authStore.initializeAuth();
 });
 
 watch(
