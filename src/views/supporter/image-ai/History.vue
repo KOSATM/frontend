@@ -148,8 +148,10 @@ import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import ActivityDetailsModal from '@/components/planner/ActivityDetailsModal.vue'
 import imageSearchApi from '@/api/imageSearchApi'
+import { useAuthStore } from '@/store/authStore'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
 // 모달 상태
 const selectedHistory = ref(null)
@@ -176,8 +178,7 @@ const loadHistory = async () => {
     isLoading.value = true
     
     // 임시로 userId 17 사용
-    const userId = 17
-    
+    const userId = authStore.userId;
     console.log('📋 히스토리 로드 - userId:', userId)
     
     // API 호출

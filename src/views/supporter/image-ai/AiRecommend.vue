@@ -36,13 +36,13 @@
                   <div class="small text-muted mt-1">{{ r.description || r.association }}</div>
                 </div>
                 <div class="text-end small text-muted d-none d-md-block">
-                  <div><i class="bi bi-geo-alt me-1"></i>{{ r.location }}</div>
+                  <div><i class="bi bi-geo-alt me-1"></i>{{ r.address }}</div>
                   <div class="mt-1 text-purple">신뢰도: {{ Math.round((r.confidence || 0) * 100) }}%</div>
                 </div>
               </div>
 
               <div class="d-flex align-items-center mt-3 small text-muted d-md-none">
-                <i class="bi bi-geo-alt me-1"></i>{{ r.location }}
+                <i class="bi bi-geo-alt me-1"></i>{{ r.address }}
                 <span class="ms-3 text-purple">신뢰도: {{ Math.round((r.confidence || 0) * 100) }}%</span>
               </div>
             </div>
