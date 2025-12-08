@@ -85,10 +85,12 @@ import { useImageSearchStore } from '@/store/imageSearchStore'
 import imageSearchApi from '@/api/imageSearchApi'
 import StepHeader from '@/components/common/StepHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
+import { useAuthStore } from '@/store/authStore'
 
 const route = useRoute()
 const router = useRouter()
 const imageSearchStore = useImageSearchStore()
+const authStore = useAuthStore()
 
 const onStepBack = () => {
   router.push({ name: 'AiRecommend' }).catch(() => { })
@@ -119,25 +121,9 @@ const saveToDatabase = async (action) => {
   try {
     isSaving.value = true
     
-    // localStorage에서 userId 가져오기
-    const userStr = localStorage.getItem('user')
-    let userId = null
-    
-    if (userStr) {
-      try {
-        const user = JSON.parse(userStr)
-        userId = user.id
-        console.log('👤 사용자 정보:', user)
-        console.log('👤 사용자 ID:', userId)
-      } catch (e) {
-        console.error('❌ 사용자 정보 파싱 실패:', e)
-      }
-    }
-    
-    // 로그인하지 않은 경우 임시 ID 사용
+    const userId = authStore.userId;
     if (!userId) {
-      console.warn('⚠️ 사용자 ID가 없습니다. 임시 ID 사용')
-      userId = 17 // 임시 하드코딩
+      throw new Error('User not logged in')
     }
     
     // 모든 후보지 저장
