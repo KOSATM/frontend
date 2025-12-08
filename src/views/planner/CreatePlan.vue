@@ -125,13 +125,14 @@ import PageHeader from "@/components/common/PageHeader.vue";
 import TipBox from "@/components/common/TipBox.vue";
 import RecommendationCard from "@/components/planner/RecommendationCard.vue";
 import { RouterLink } from "vue-router";
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useTravelStore } from '@/store/travelStore'
 import router from "@/router";
 import ChatSidebar from "@/components/ChatSidebar.vue";
 import { useChatStore } from "@/store/chatStore";
 import chatApi from "@/api/chatApi";
 import { useAuthStore } from "@/store/authStore";
+import plannerApi from "@/api/plannerApi";
 
 const authStore = useAuthStore();
 const travelStore = useTravelStore()
@@ -209,6 +210,14 @@ const generateAIResponse = async (text) => {
   console.log(res);
   return res;
 };
+
+onMounted(async () => {
+  const res = await plannerApi.getActivePlan(authStore.userId);
+  console.log(res);
+  if (res.data.success === true) {
+    router.push("/planner/edit");
+  }
+});
 </script>
 
 <style scoped lang="scss">
