@@ -98,14 +98,16 @@
 <script setup>
 import { ref, nextTick, onMounted } from "vue";
 import axios from "@/api/axios";
+import {useAuthStore} from '@/store/authStore'
 
 const currentMessage = ref("");
 const chatMessages = ref([]);
 const messagesContainer = ref(null);
 const isLoading = ref(false);
 
+const authStore = useAuthStore();
 // 사용자 ID (실제로는 로그인한 사용자 정보에서 가져와야 함)
-const userId = ref(1);
+const userId = authStore.userId;
 
 const sendMessage = async () => {
   if (!currentMessage.value.trim() || isLoading.value) return;

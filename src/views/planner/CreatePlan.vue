@@ -170,11 +170,6 @@ const sendMessage = async () => {
 
   console.log(userMessage);
 
-  const request = {
-    userId: 1,
-    message: currentMessage.value
-  }
-
   chatMessages.value.push(userMessage);
 
   const toProcess = currentMessage.value;
@@ -211,9 +206,9 @@ onMounted(async () => {
   if (authStore.userId != null) {
     const res = await plannerApi.getActivePlan(authStore.userId);
     console.log(res);
-    if (res.data.success === true) {
-      router.push("/planner/edit");
-    }
+     if (res.data.success === true) {
+       router.push("/planner/edit");
+     }
   }
 });
 </script>
