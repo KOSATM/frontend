@@ -13,7 +13,6 @@
 
 <!-- 컴포넌트의 초기화 또는 이벤트 처리 -->
 <script setup>
-import { defineProps } from 'vue';
 
 defineProps({
   imageSrc: {
