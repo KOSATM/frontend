@@ -38,76 +38,47 @@
         <!-- 카드 그리드 -->
         <div class="row g-3 mb-3">
           <!-- Accommodation -->
-           <div class="col-6">
-             <RecommendationCard 
-              imageSrc="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500"
-              alt="Accommodation" cardLabel="Accommodation" 
-              icon="bi-house-heart"
-              @click="openModal('accommodation')"
-            />
-           </div>
+          <div class="col-6">
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500"
+              alt="Accommodation" cardLabel="Accommodation" icon="bi-house-heart" @click="openModal('accommodation')" />
+          </div>
 
           <!-- Restaurants -->
           <div class="col-6">
-             <RecommendationCard 
-               imageSrc="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500" 
-               alt="Restaurants" cardLabel="Restaurants"
-               icon="bi-cup-hot"
-               @click="openModal('restaurants')" 
-             />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500"
+              alt="Restaurants" cardLabel="Restaurants" icon="bi-cup-hot" @click="openModal('restaurants')" />
           </div>
 
           <!-- Attractions -->
           <div class="col-6">
-             <RecommendationCard 
-               imageSrc="https://images.unsplash.com/photo-1553603227-2358aabe821e?w=500"
-               alt="Attractions" cardLabel="Attractions"
-               icon = "bi-compass"
-               @click="openModal('attractions')" 
-             />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1553603227-2358aabe821e?w=500"
+              alt="Attractions" cardLabel="Attractions" icon="bi-compass" @click="openModal('attractions')" />
           </div>
           <!-- Photo Spots -->
           <div class="col-6">
-             <RecommendationCard 
-               imageSrc="https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=500" 
-               alt="Photospots" cardLabel="Photospots"
-               icon = "bi-camera"
-               @click="openModal('photospots')" 
-             />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=500"
+              alt="Photospots" cardLabel="Photospots" icon="bi-camera" @click="openModal('photospots')" />
           </div>
           <!-- Festivals -->
           <div class="col-6">
-             <RecommendationCard 
-               imageSrc="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500"
-               alt="Festivals" cardLabel="Festivals"
-               icon = "bi-music-note"
-               @click="openModal('festivals')" 
-             />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500"
+              alt="Festivals" cardLabel="Festivals" icon="bi-music-note" @click="openModal('festivals')" />
           </div>
           <!-- Experiences -->
           <div class="col-6">
-             <RecommendationCard 
-               imageSrc="https://images.unsplash.com/photo-1528543606781-2f6e6857f318?w=500"
-               alt="Experiences" cardLabel="Experiences"
-               icon = "bi-calendar-event"
-               @click="openModal('experiences')" 
-             />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1528543606781-2f6e6857f318?w=500"
+              alt="Experiences" cardLabel="Experiences" icon="bi-calendar-event" @click="openModal('experiences')" />
           </div>
         </div>
       </div>
       <!-- BlogListModal -->
-      <BlogListModal 
-      :isOpen="isModalOpen"
-      :isLoading="isLoading"
-      :items="blogItems"
-      :keyword="currentKeyword"
-      @close="isModalOpen = false"
-    />
+      <BlogListModal :isOpen="isModalOpen" :isLoading="isLoading" :items="blogItems" :keyword="currentKeyword"
+        @close="isModalOpen = false" />
       <!-- Travel Tip -->
       <TipBox name="Travel Tip" description="Enter your budget and AI will create a customized itinerary considering accommodation, transportation, and
             meals." />
-    
-          </div>
+
+    </div>
   </div>
 </template>
 
@@ -158,20 +129,23 @@ const keywordMap = {
 const openModal = async (category) => {
   const keyword = keywordMap[category] || '서울 여행';
   currentKeyword.value = keyword;
-  
+
   isModalOpen.value = true;
   isLoading.value = true;
   blogItems.value = []; // 기존 리스트 초기화
 
   try {
+    // 1. API 호출
     const res = await plannerApi.getBlogList(keyword);
-    // 네이버 API 응답 구조: res.data.items
-    if (res.data && res.data.items) {
-      blogItems.value = res.data.items;
+
+    console.log("서버 응답 데이터:", res); // 브라우저 콘솔(F12)에서 구조 확인 가능
+
+    if (res.data) {
+       blogItems.value = res.data;
     }
+
   } catch (error) {
     console.error("검색 실패:", error);
-    // 필요 시 에러 처리
   } finally {
     isLoading.value = false;
   }
