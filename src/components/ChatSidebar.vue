@@ -36,9 +36,11 @@
           'ai-message': message.type === 'ai',
         }">
           <div class="message-bubble">
-            <p class="mb-0" style="font-family: 'Kyobo2024', sans-serif">
-              {{ message.content }}
-            </p>
+            <div class="mb-0" style="font-family: 'Kyobo2024', sans-serif">
+              <!-- {{ message.content }} -->
+              <div class="markdown-body" v-html="message.content"
+              ></div>
+            </div>
             <div v-if="message.type === 'ai' && message.loading" class="typing-indicator mt-2">
               <span></span><span></span><span></span>
             </div>
@@ -129,6 +131,7 @@ import { useChatStore } from "@/store/chatStore";
 import { ref, nextTick, onMounted, watch } from "vue";
 import { useAuthStore } from "@/store/authStore";
 import { useRoute, useRouter } from "vue-router";
+import { marked } from "marked";
 
 const authStore = useAuthStore();
 const chatStore = useChatStore();
@@ -181,7 +184,7 @@ const sendMessage = async () => {
     chatMessages.value.push({
       id: Date.now() + 1,
       type: "ai",
-      content: res.data.mainResponse.message,
+      content: markdownToHTML(res.data.mainResponse.message),
       timestamp: new Date(),
     });
 
@@ -214,6 +217,12 @@ const scrollToBottom = () => {
       messagesContainer.value.scrollHeight;
   }
 };
+
+// 마크다운 문서 HTML 형식으로 변환
+const markdownToHTML = (message) => {
+  let htmlContent = marked.parse(message);
+  return htmlContent;
+}
 
 // 외부에서 메시지 주입 (선택)
 watch(
@@ -331,6 +340,35 @@ onMounted(() => {
 .user-message .message-time {
   text-align: right;
 }
+.markdown-body,
+.markdown-body * {
+  margin: 0 !important;
+  margin-left: 0.5rem !important;
+  margin-bottom: 3px !important;
+  padding: 0 !important;
+  line-height: 1.2;
+  font-size: 15px;
+}
+
+.message-bubble {
+  white-space: normal !important;  /* pre-line OFF */
+  overflow: hidden;                /* margin collapsing 방지 */
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 1.2rem !important; /* 최소한의 indent */
+  margin-bottom: 5px !important;
+}
+
+.markdown-body ol li {
+  margin-bottom: 100px !important;
+}
+
+.markdown-body li {
+  margin: 2px 0 !important; /* 좁게 관리 */
+}
+
 
 /* 타이핑 인디케이터 */
 .typing-indicator {
