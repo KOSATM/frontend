@@ -1,25 +1,38 @@
 <!-- 컴포넌트의 UI -->
 <template>
-    <div class="col-6">
-        <div class="recommendation-card" @click="navigateTo('accommodation')">
+        <div class="recommendation-card" @click="handleCardClick">
             <img :src=imageSrc :alt=alt />
             <div class="card-overlay">
                 <div class="card-icon bg-white rounded-circle p-2">
-                    <i class="bi bi-building text-primary"></i>
+                    <i :class="['bi', icon || 'bi-building', 'text-primary']"></i>
                 </div>
                 <span class="card-label text-white fw-semibold">{{ cardLabel }}</span>
             </div>
         </div>
-    </div>
 </template>
 
 <!-- 컴포넌트의 초기화 또는 이벤트 처리 -->
 <script setup>
-const props = defineProps({
-  imageSrc: String,
-  alt: String,
-  cardLabel: String
-})
+import { defineProps } from 'vue';
+
+defineProps({
+  imageSrc: {
+    type: String,
+    required: true
+  },
+  alt: {
+    type: String,
+    default: 'Image'
+  },
+  cardLabel: {
+    type: String,
+    required: true
+  },
+  icon: {
+    type: String,
+    default: 'bi-building'
+  }
+});
 </script>
 
 <!-- 컴포넌트 스타일 정의 -->
