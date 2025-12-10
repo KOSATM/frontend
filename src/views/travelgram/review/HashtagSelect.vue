@@ -1,15 +1,15 @@
 <template>
   <div class="hashtag-page">
-    <PageHeader title="Travelgram" subtitle="Add hashtags to reach more people" icon="bi-instagram" />
-    <StepHeader title="Edit Hashtags" :subtitle="reviewStore.planTitle" step="4/6" @back="goBack" />
+    <PageHeader title="Travelgram" subtitle="더 많은 사람에게 닿을 수 있도록 해시태그를 함께 추가해주세요." icon="bi-instagram" />
+    <StepHeader title="해시태그 편집" :subtitle="reviewStore.planTitle" step="4/6" @back="goBack" />
 
     <section class="hashtag-section">
       <h6 class="guide-title">
         <i class="bi bi-hash text-primary me-2"></i>
-        Manage Hashtags
+        해시태그 관리
       </h6>
       <p class="guide-subtitle">
-        Tap tags to select or deselect. You can also add your own!
+        태그를 탭하여 빼거나 추가할 수 있습니다. 당신만의 커스텀 해시태그도 추가할 수 있습니다.
       </p>
 
       <div class="input-area">

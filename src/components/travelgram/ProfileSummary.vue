@@ -13,15 +13,15 @@
     <div class="profile-stats d-flex justify-content-center text-center">
       <div class="stat-item">
         <h6>{{ totalplans }}</h6>
-        <p>Total plans</p>
+        <p>총 여행</p>
       </div>
       <div class="stat-item">
         <h6>{{ travelDays }}</h6>
-        <p>Travel Days</p>
+        <p>여행 일수</p>
       </div>
       <div class="stat-item">
         <h6>{{ completed }}</h6>
-        <p>Completed</p>
+        <p>완료된 여행</p>
       </div>
     </div>
   </div>

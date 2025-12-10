@@ -1,7 +1,7 @@
 <template>
   <PageHeader
     title="Travelgram"
-    subtitle="Your past travel adventures"
+    subtitle="당신의 지난 여행 기록들"
     icon="bi-instagram"
   />
   <div class="complete-page">
@@ -10,10 +10,10 @@
         🎉
       </div>
 
-      <h2>Review Published Successfully!</h2>
+      <h2>인스타그램에 후기가 성공적으로 업로드 되었습니다!</h2>
       <p class="message">
-        Your travel post has been shared on Instagram.<br />
-        Hope your memories inspire others to travel!
+        당신의 여행 후기가 인스타그램에 공유되었습니다.<br />
+        당신의 추억이 다른 사람들의 여행에 영감을 주기를 바랍니다!
       </p>
 
       <div class="share-box">

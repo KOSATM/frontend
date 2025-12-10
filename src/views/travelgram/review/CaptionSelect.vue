@@ -1,20 +1,20 @@
 <template>
   <div class="review-caption-select">
-    <PageHeader title="Travelgram" subtitle="Your past travel adventures" icon="bi-instagram" />
-    <StepHeader title="Create Travel Review" :subtitle="reviewStore.planTitle" step="3/6" @back="goBack" />
+    <PageHeader title="Travelgram" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
+    <StepHeader title="여행 후기 작성" :subtitle="reviewStore.planTitle" step="3/6" @back="goBack" />
 
     <section class="caption-section">
       <h6 class="section-title">
         <i class="bi bi-stars text-primary me-2"></i>
-        AI Generated Captions
+        AI가 생성한 후기
       </h6>
       <p class="section-subtitle">
-        Select a caption style for your post
+        스타일을 선택해주세요.
       </p>
 
       <div v-if="isLoading" class="loading-container">
         <div class="spinner-border text-primary" role="status"></div>
-        <p>AI is writing your travel diary... 🤖✏️</p>
+        <p>AI가 당신의 여행 후기를 작성하고 있어요... 🤖✏️</p>
       </div>
 
       <div v-else class="caption-list">

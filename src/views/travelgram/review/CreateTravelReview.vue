@@ -1,8 +1,8 @@
 <template>
   <div class="photo-upload-page">
-    <PageHeader title="Travelgram" subtitle="Your past travel adventures" icon="bi-instagram" />
+    <PageHeader title="Travelgram" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
     <!-- 🔸 상단 헤더 -->
-    <StepHeader title="Create Travel Review" :subtitle="reviewStore.planTitle" step="1/6" @back="goBack" />
+    <StepHeader title="여행 후기 작성" :subtitle="reviewStore.planTitle" step="1/6" @back="goBack" />
 
     <!-- 여행 정보 카드 -->
     <div class="plan-info-card" v-if="currentplanInfo">
@@ -89,18 +89,18 @@
 
 
     <h6 class="upload-title mb-1">
-      <i class="bi bi-image me-1 text-secondary"></i> Upload Photos
+      <i class="bi bi-image me-1 text-secondary"></i> 사진 업로드
     </h6>
     <p class="upload-subtitle">
-      Upload up to 10 photos from your plan ({{ uploadedImages.length }}/10)
+      10개까지 사진을 올릴 수 있습니다. ({{ uploadedImages.length }}/10)
     </p>
     <section class="upload-section">
 
       <!-- 🖼️ 업로드 박스 -->
       <div v-if="isReady" class="upload-box" @click="triggerFileInput">
         <i class="bi bi-cloud-arrow-up fs-2 text-secondary mb-2"></i>
-        <p class="text-secondary mb-0">Click to upload photos</p>
-        <small class="text-muted">JPG, PNG up to 10MB each</small>
+        <p class="text-secondary mb-0">클릭해서 사진을 업로드하세요.</p>
+        <small class="text-muted">사진 크기는 각 10MB까지 가능하며, JPG,PNG만 올려주세요.</small>
         <input type="file" multiple accept="image/*" ref="fileInput" @change="handleFileUpload" hidden />
       </div>
 
@@ -118,8 +118,8 @@
 <div v-if="isAnalyzing" class="alert alert-info mt-3 d-flex align-items-center">
       <div class="spinner-border spinner-border-sm me-2" role="status"></div>
       <div>
-        <strong>AI Analyzing Photos...</strong>
-        <span class="small ms-1">Please wait for the summary generation to complete.</span>
+        <strong>AI가 사진을 분석하고 있어요...</strong>
+        <span class="small ms-1">사진 요약이 종료될 때까지 기다려주세요.</span>
       </div>
     </div>
   <!-- 🟦 하단 버튼 -->
@@ -129,7 +129,7 @@
         :disabled="!canProceed" 
         @click="nextStep"
       >
-        <span v-if="isAnalyzing">Analyzing...</span>
+        <span v-if="isAnalyzing">분석 중...</span>
         <span v-else>Next Step</span>
       </button>
     </div>

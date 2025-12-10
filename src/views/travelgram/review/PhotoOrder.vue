@@ -2,12 +2,12 @@
   <div class="photo-order-page">
     <PageHeader
         title="Travelgram"
-        subtitle="Your past travel adventures"
+        subtitle="당신의 지난 여행 기록들"
         icon="bi-instagram"
       />
     <!-- 🔸 상단 헤더 -->
     <StepHeader
-      title="Create Travel Review"
+      title="여행 후기 작성"
       :subtitle="reviewStore.planTitle"
       step="2/6"
       @back="goBack"
@@ -16,10 +16,11 @@
     <div class="photo-order-container">
 
       <TipBox
-      name="Main Photo Guide"
-      description="The main photo cannot be deleted or rearranged.
-      Tap any photo to set it as the main photo — it will always be fixed at the top of the list.
-      All other photos can be freely deleted or reordered."
+      name="대표 사진 안내"
+      description="대표 사진은 삭제되거나 순서를 바꿀 수 없습니다.
+      기존 대표 사진이 아닌 사진 항목을 선택해 대표 사진으로 만들 수 있습니다.
+      대표 사진은 항상 맨 위로 고정됩니다.
+      다른 사진들은 자유롭게 삭제하거나 순서를 바꿀 수 있습니다."
   />
   <transition-group
   name="photo-move"
@@ -63,15 +64,15 @@
   <button class="btn-back" @click="goBack">Back</button>
   <button class="btn-next" @click="nextStep" :disabled="!mainPhotoId || isLoading">
         <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-        {{ isLoading ? 'Analyzing...' : 'Next Step' }}
+        {{ isLoading ? 'AI가 열심히 분석 중 입니다...' : 'Next Step' }}
       </button>
     </div>
 
     <div v-if="isLoading" class="loading-overlay">
       <div class="loading-content">
         <div class="spinner-border text-primary mb-3" role="status"></div>
-        <h5>Analyzing your photos...</h5>
-        <p>Detecting mood & creating summary</p>
+        <h5>사진 요약을 모아서 분석 중 입니다.</h5>
+        <p>여행의 분위기를 감지하고 있습니다...</p>
       </div>
     </div>
 </div>

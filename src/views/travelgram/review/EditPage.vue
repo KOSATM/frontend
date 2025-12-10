@@ -1,29 +1,29 @@
 <template>
     <PageHeader
       title="Travelgram"
-      subtitle="Your past travel adventures"
+      subtitle="당신의 지난 여행 기록들"
       icon="bi-instagram"
     />
   <div class="review-edit-page">
-    <StepHeader title="Create Travel Review" :subtitle="reviewStore.planTitle" step="5/6" @back="goBack" />
+    <StepHeader title="여행 후기 편집" :subtitle="reviewStore.planTitle" step="5/6" @back="goBack" />
 
     <section class="review-section">
       <h6 class="section-title">
         <i class="bi bi-pencil-square me-2 text-primary"></i>
-        Review & Edit
+        후기 & 편집
       </h6>
 
       <!-- 📸 Photos -->
       <div class="photo-section">
         <div class="photo-header d-flex justify-content-between align-items-center">
-          <p class="photo-count">Photos ({{ photos.length }})</p>
+          <p class="photo-count">사진 ({{ photos.length }})</p>
         </div>
         <!-- ✅ 사진 컨테이너 (네비게이션 포함) -->
         <div class="photo-container">
           <div class="photo-carousel">
             <div v-for="(photo, index) in photos" :key="photo.id" class="photo-item">
               <img :src="photo.url" alt="photo" />
-              <div v-if="photo.id === reviewStore.mainPhotoId" class="main-badge">🌟 Main Photo</div>
+              <div v-if="photo.id === reviewStore.mainPhotoId" class="main-badge">🌟 대표 사진</div>
               <div class="photo-index">{{ index + 1 }}/{{ photos.length }}</div>
             </div>
           </div>
@@ -40,21 +40,21 @@
       <!-- ✍️ Caption -->
       <div class="caption-section mt-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
-          <h6>Caption</h6>
+          <h6>내용</h6>
         </div>
         <textarea v-model="caption" rows="4" class="caption-box" maxlength="2200"></textarea>
-        <p class="char-count">{{ caption.length }} characters</p>
+        <p class="char-count">{{ caption.length }} 글자</p>
       </div>
 
       <!-- 🏷️ Hashtags -->
       <div class="hashtag-section mt-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
-          <h6>Hashtags</h6>
+          <h6>해시태그</h6>
         </div>
         <div class="hashtag-box">
           <span v-for="(tag,index) in selectedHashtags" :key="index" class="tag">#{{ tag.name}}</span>
         </div>
-        <p class="tag-count">{{ selectedHashtags.length }} hashtag(s)</p>
+        <p class="tag-count">{{ selectedHashtags.length }} 개</p>
       </div>
     </section>
 

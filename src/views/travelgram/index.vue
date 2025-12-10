@@ -1,16 +1,16 @@
 <template>
   <div class="travelgram-page">
-    <PageHeader title="Travelgram" subtitle="Your past travel adventures" icon="bi-instagram" />
-    <ProfileSummary :name="displayName" bio="Travel Enthusiast" initials="userInitials" :totalplans="stats.totalPlans"
+    <PageHeader title="Travelgram" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
+    <ProfileSummary :name="displayName" bio="여행 애호가" initials="userInitials" :totalplans="stats.totalPlans"
       :travelDays="stats.travelDays" :completed="stats.completed" />
     <h4 class="my-3">
-      <i class="bi bi-instagram me-2 text-primary"></i> Completed Travel Plans
+      <i class="bi bi-instagram me-2 text-primary"></i> 완료된 여행 일정
     </h4>
 
 
     <div v-if="loading" class="text-center py-5">
       <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">로딩 중...</span>
       </div>
     </div>
 
