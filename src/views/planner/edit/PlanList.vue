@@ -8,8 +8,7 @@
       <StepHeader v-if="!travelStore.$state.isTraveling" :step="'2/4'" :title="'Check and Adjust Draft'"
         @back="goBack" /> -->
       <div class="d-flex gap-3 align-items-center mb-3">
-        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
-          style="width: 46px; height: 46px">
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center" style="width: 46px; height: 46px">
           📅
         </div>
         <div>
@@ -40,8 +39,7 @@
     <!-- ▶ Start Day Hero / Current Activity -->
     <div v-if="travelStore.$state.isTraveling" class="p-4 pt-3">
       <!-- 시작 전: Day 시작 화면 (클릭 가능) -->
-      <div v-if="showNextDayHero" class="gradient-hero hero-clickable rounded-4 p-4 position-relative"
-        :class="heroMeta.theme" @click="startDay(heroDay?.id || 1)">
+      <div v-if="showNextDayHero" class="gradient-hero hero-clickable rounded-4 p-4 position-relative" :class="heroMeta.theme" @click="startDay(heroDay?.id || 1)">
         <div class="text-center hero-text">
           <h5 class="mb-1 title">Start Day {{ heroDay?.id || 1 }}</h5>
 
@@ -59,8 +57,7 @@
       </div>
 
       <!-- 진행 중: 현재 액티비티 카드 -->
-      <div v-else-if="run.started && currentDay && currentActivity"
-        class="card border-0 shadow-sm rounded-4 mb-3 gradient-hero text-white" :class="heroMeta.theme">
+      <div v-else-if="run.started && currentDay && currentActivity" class="card border-0 shadow-sm rounded-4 mb-3 gradient-hero text-white" :class="heroMeta.theme">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <div class="sub">
@@ -89,8 +86,7 @@
             <span>Day {{ currentDay?.id }} Progress</span>
             <span>{{ Math.round(dayProgress) }}%</span>
           </div>
-          <div class="progress-hero" role="progressbar" :aria-valuenow="Math.round(dayProgress)" aria-valuemin="0"
-            aria-valuemax="100" @click.stop="openCompleteForCurrent">
+          <div class="progress-hero" role="progressbar" :aria-valuenow="Math.round(dayProgress)" aria-valuemin="0" aria-valuemax="100" @click.stop="openCompleteForCurrent">
             <div class="progress-fill" :style="{ width: dayProgress + '%' }"></div>
           </div>
         </div>
@@ -100,10 +96,8 @@
     <!-- 본문 리스트 -->
     <div class="planner-scroll flex-grow-1 overflow-auto p-4 pt-3">
       <div class="d-flex flex-column gap-3">
-        <DayCard v-for="(day, dIdx) in days" :key="day.id" :day="day" :dayIndex="dIdx" :openDayId="openDayId"
-          :activityRowClass="activityRowClass" :getIconForType="getIconForType" :hasCost="hasCost"
-          :formatCost="formatCost" @toggleDay="toggleDay(day.day.id)" @openDetails="openDetailsModal"
-          @toggleComplete="toggleComplete" @openReplace="openReplaceModal" />
+        <DayCard v-for="(day, dIdx) in days" :key="day.id" :day="day" :dayIndex="dIdx" :openDayId="openDayId" :activityRowClass="activityRowClass" :getIconForType="getIconForType" :hasCost="hasCost"
+          :formatCost="formatCost" @toggleDay="toggleDay(day.day.id)" @openDetails="openDetailsModal" @toggleComplete="toggleComplete" @openReplace="openReplaceModal" />
       </div>
     </div>
 
@@ -116,18 +110,14 @@
   </section>
 
   <!-- 모달 컴포넌트들 -->
-  <ReplaceModal :open="replaceModal.open" :target="replaceModal.target" :alternatives="replaceModal.alternatives"
-    @close="closeReplaceModal" @preview-alt="previewAlt" @apply-replacement="applyReplacement"
-    @delete-anyway="deleteAnyway" />
+  <ReplaceModal :open="replaceModal.open" :target="replaceModal.target" :alternatives="replaceModal.alternatives" @close="closeReplaceModal" @preview-alt="previewAlt"
+    @apply-replacement="applyReplacement" @delete-anyway="deleteAnyway" />
 
-  <ActivityDetailsModal :open="detailsModal.open" :data="detailsModal.data" :spend-input="detailsModal.spendInput"
-    @update:spend-input="detailsModal.spendInput = $event" @close="closeDetailsModal" @save-spent="saveSpent"
-    @open-replace="openReplaceFromDetails" />
+  <ActivityDetailsModal :open="detailsModal.open" :data="detailsModal.data" :spend-input="detailsModal.spendInput" @update:spend-input="detailsModal.spendInput = $event" @close="closeDetailsModal"
+    @save-spent="saveSpent" @open-replace="openReplaceFromDetails" />
 
-  <ActivityCompleteModal :open="completeModal.open" :title="completeModal.title" :spend-input="completeModal.spendInput"
-    :comment="completeModal.comment" :quick-stats="currentQuickStats"
-    @update:spend-input="completeModal.spendInput = $event" @update:comment="completeModal.comment = $event"
-    @close="closeCompleteModal" @confirm="completeCurrentActivity" />
+  <ActivityCompleteModal :open="completeModal.open" :title="completeModal.title" :spend-input="completeModal.spendInput" :comment="completeModal.comment" :quick-stats="currentQuickStats"
+    @update:spend-input="completeModal.spendInput = $event" @update:comment="completeModal.comment = $event" @close="closeCompleteModal" @confirm="completeCurrentActivity" />
 </template>
 
 <script setup>
@@ -925,33 +915,39 @@ const endplan = () => {
 };
 
 const renderPlan = async () => {
-  const res = await plannerApi.getActivePlan(authStore.userId);
-  console.log(res.data);
-  plan.value = res.data.data.plan;
-  days.value = res.data.data.days;
-  days.value = days.value.sort((a, b) => new Date(a.day.planDate) - new Date(b.day.planDate))
-  console.log(plan.value);
-  console.log(days.value);
+  try {
+    const res = await plannerApi.getActivePlan(authStore.userId);
+    console.log(res.data);
+    plan.value = res.data.data.plan;
+    days.value = res.data.data.days;
+    days.value = days.value.sort((a, b) => new Date(a.day.planDate) - new Date(b.day.planDate))
+    console.log(plan.value);
+    console.log(days.value);
 
-  // 현재 여행 여부를 판단하고 store에 정보 저장
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = ('0' + (today.getMonth() + 1)).slice(-2);
-  const day = ('0' + today.getDate()).slice(-2);
-  const dateString = year + '-' + month + '-' + day;
+    // 현재 여행 여부를 판단하고 store에 정보 저장
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = ('0' + (today.getMonth() + 1)).slice(-2);
+    const day = ('0' + today.getDate()).slice(-2);
+    const dateString = year + '-' + month + '-' + day;
 
-  const startDate = plan.value.startDate;
-  const endDate = plan.value.endDate;
+    const startDate = plan.value.startDate;
+    const endDate = plan.value.endDate;
 
-  if (today >= new Date(startDate) && today <= new Date(endDate)) {
-    travelStore.isTraveling = true;
-  } else {
-    travelStore.isTraveling = false;
+    if (today >= new Date(startDate) && today <= new Date(endDate)) {
+      travelStore.isTraveling = true;
+    } else {
+      travelStore.isTraveling = false;
+    }
+
+    const diffTime = today - new Date(startDate);
+    const diffDays = diffTime / (1000 * 60 * 60 * 24)
+    travelStore.setPlanInfo(plan.value.id, Math.min(7, Math.max(0, Math.ceil(diffDays))), dateString);
+  } catch (error) {
+    console.log(error);
+    router.push("/");
   }
 
-  const diffTime = today - new Date(startDate);
-  const diffDays = diffTime / (1000 * 60 * 60 * 24)
-  travelStore.setPlanInfo(plan.value.id, Math.min(7, Math.max(0, Math.ceil(diffDays))), dateString);
 }
 
 /* 공통 유틸 */
