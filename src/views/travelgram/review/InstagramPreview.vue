@@ -1,16 +1,16 @@
 <template>
   <div class="preview-page">
-    <PageHeader title="Travelgram" subtitle="Your past travel adventures" icon="bi-instagram" />
+    <PageHeader title="Travelgram" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
     <!-- 상단 헤더 -->
-    <StepHeader title="Create Travel Review" :subtitle="reviewStore.planTitle" step="6/6" @back="goBack" />
+    <StepHeader title="여행 후기 작성" :subtitle="reviewStore.planTitle" step="6/6" @back="goBack" />
 
     <!-- 📸 인스타그램 프리뷰 섹션 -->
     <section class="preview-section">
       <h6 class="section-title">
-        <i class="bi bi-instagram text-danger me-2"></i> Instagram Preview
+        <i class="bi bi-instagram text-danger me-2"></i> 인스타그램 미리보기
       </h6>
       <p class="section-subtitle">
-        Preview how your post will look on Instagram
+        당신의 게시물이 인스타그램에 어떻게 보일지 미리보기로 확인해보세요.
       </p>
 
       <!-- 인스타 카드 -->
