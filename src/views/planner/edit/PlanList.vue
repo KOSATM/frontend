@@ -1183,34 +1183,57 @@ const openReplaceFromDetails = () => {
 };
 
 /* 교체/삭제 모달 */
-const openReplaceModal = (dayIndex, actIndex) => {
+const openReplaceModal = async (dayIndex, actIndex) => {
+  console.group("openReplaceModal")
+  console.log("days", days.value);
   const target = days.value[dayIndex].places[actIndex];
+  console.log("target", target);
+  const res = await plannerApi.getSuggestPlaces(authStore.userId, target);
+  console.log("res", res)
+  const candidates = res.data.data.data;
+  console.log("candidates", candidates);
+  
+  const suggestionSet = new Set();
+  while (suggestionSet.size < 3) {
+    const idx = Math.floor(Math.random() * candidates.length);
+    suggestionSet.add(candidates[idx]);
+  }
+  const shuffled = [...suggestionSet];
+
+  const suggestions = []
+  shuffled.forEach((item) => {
+    suggestions.push({title: item.title, description: item.description})
+  })
+
+
   replaceModal.value = {
     open: true,
     dayIndex,
     actIndex,
     target,
-    alternatives: [
-      {
-        title: "Cafe Onion Anguk",
-        time: target.time,
-        type: "cafe",
-        cost: 8,
-      },
-      {
-        title: "Seoul Wave Coffee",
-        time: target.time,
-        type: "cafe",
-        cost: 10,
-      },
-      {
-        title: "Ikseon Hanok Cafe",
-        time: target.time,
-        type: "dessert",
-        cost: 9,
-      },
-    ],
+    alternatives: shuffled
+    // alternatives: [
+    //   {
+    //     title: "Cafe Onion Anguk",
+    //     time: target.time,
+    //     type: "cafe",
+    //     cost: 8,
+    //   },
+    //   {
+    //     title: "Seoul Wave Coffee",
+    //     time: target.time,
+    //     type: "cafe",
+    //     cost: 10,
+    //   },
+    //   {
+    //     title: "Ikseon Hanok Cafe",
+    //     time: target.time,
+    //     type: "dessert",
+    //     cost: 9,
+    //   },
+    // ],
   };
+  console.groupEnd();
 };
 
 const closeReplaceModal = () => {
