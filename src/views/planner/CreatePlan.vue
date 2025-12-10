@@ -10,8 +10,7 @@
       <div class="prompt-section mb-5">
         <div class="prompt-card">
           <div class="prompt-input-wrapper">
-            <textarea class="prompt-input form-control" placeholder="Leave a comment here" v-model="promptInput"
-              rows="4"></textarea>
+            <textarea class="prompt-input form-control" placeholder="Leave a comment here" v-model="promptInput" rows="4"></textarea>
 
             <!-- Button sits inside the textarea wrapper, overlapping the bottom-left -->
             <button class="btn-generate" @click="generateItinerary" :disabled="!promptInput.trim() || isLoading">
@@ -39,41 +38,40 @@
         <div class="row g-3 mb-3">
           <!-- Accommodation -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500"
-              alt="Accommodation" cardLabel="Accommodation" icon="bi-house-heart" @click="openModal('accommodation')" />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500" alt="Accommodation" cardLabel="Accommodation" icon="bi-house-heart"
+              @click="openModal('accommodation')" />
           </div>
 
           <!-- Restaurants -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500"
-              alt="Restaurants" cardLabel="Restaurants" icon="bi-cup-hot" @click="openModal('restaurants')" />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500" alt="Restaurants" cardLabel="Restaurants" icon="bi-cup-hot"
+              @click="openModal('restaurants')" />
           </div>
 
           <!-- Attractions -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1553603227-2358aabe821e?w=500"
-              alt="Attractions" cardLabel="Attractions" icon="bi-compass" @click="openModal('attractions')" />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1553603227-2358aabe821e?w=500" alt="Attractions" cardLabel="Attractions" icon="bi-compass"
+              @click="openModal('attractions')" />
           </div>
           <!-- Photo Spots -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=500"
-              alt="Photospots" cardLabel="Photospots" icon="bi-camera" @click="openModal('photospots')" />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=500" alt="Photospots" cardLabel="Photospots" icon="bi-camera"
+              @click="openModal('photospots')" />
           </div>
           <!-- Festivals -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500"
-              alt="Festivals" cardLabel="Festivals" icon="bi-music-note" @click="openModal('festivals')" />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500" alt="Festivals" cardLabel="Festivals" icon="bi-music-note"
+              @click="openModal('festivals')" />
           </div>
           <!-- Experiences -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1528543606781-2f6e6857f318?w=500"
-              alt="Experiences" cardLabel="Experiences" icon="bi-calendar-event" @click="openModal('experiences')" />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1528543606781-2f6e6857f318?w=500" alt="Experiences" cardLabel="Experiences" icon="bi-calendar-event"
+              @click="openModal('experiences')" />
           </div>
         </div>
       </div>
       <!-- BlogListModal -->
-      <BlogListModal :isOpen="isModalOpen" :isLoading="isLoading" :items="blogItems" :keyword="currentKeyword"
-        @close="isModalOpen = false" />
+      <BlogListModal :isOpen="isModalOpen" :isLoading="isLoading" :items="blogItems" :keyword="currentKeyword" @close="isModalOpen = false" />
       <!-- Travel Tip -->
       <TipBox name="Travel Tip" description="Enter your budget and AI will create a customized itinerary considering accommodation, transportation, and
             meals." />
@@ -87,7 +85,7 @@ import BaseButton from "@/components/common/BaseButton.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
 import TipBox from "@/components/common/TipBox.vue";
 import RecommendationCard from "@/components/planner/RecommendationCard.vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRoute } from "vue-router";
 import { onMounted, ref } from 'vue'
 import { useTravelStore } from '@/store/travelStore'
 import router from "@/router";
@@ -100,6 +98,8 @@ import BlogListModal from "@/components/planner/BlogListModal.vue";
 const authStore = useAuthStore();
 const travelStore = useTravelStore()
 const chatStore = useChatStore();
+
+const route = useRoute();
 
 const promptInput = ref('')
 
@@ -141,7 +141,7 @@ const openModal = async (category) => {
     console.log("서버 응답 데이터:", res); // 브라우저 콘솔(F12)에서 구조 확인 가능
 
     if (res.data) {
-       blogItems.value = res.data;
+      blogItems.value = res.data;
     }
 
   } catch (error) {
@@ -206,19 +206,25 @@ const sendMessage = async () => {
 
 const generateAIResponse = async (text) => {
   const low = text.toLowerCase();
-  const res = await chatApi.chat(text, authStore.userId);
+  const res = await chatApi.chat({message: text, userId: authStore.userId, currentUrl: route.path});
   console.log(res);
   return res;
 };
 
 onMounted(async () => {
-  if (authStore.userId != null) {
-    const res = await plannerApi.getActivePlan(authStore.userId);
-    console.log(res);
-     if (res.data.success === true) {
-       router.push("/planner/edit");
-     }
+  try {
+    if (authStore.userId != null) {
+      const res = await plannerApi.getActivePlan(authStore.userId);
+      if (res != null) {
+        if (res.data.success === true) {
+          router.push("/planner/edit");
+        }
+      }
+    }
+  } catch (error) {
+    console.log(error)
   }
+
 });
 </script>
 
