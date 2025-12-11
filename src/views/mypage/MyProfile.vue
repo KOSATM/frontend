@@ -119,12 +119,14 @@
     </BaseSection>
 
     <div class="d-flex gap-3 mt-5">
-      <BaseButton variant="secondary" class="flex-fill" @click="goBack">
-        <i class="bi bi-arrow-left me-2"></i> Back
-      </BaseButton>
-      <BaseButton class="flex-fill" @click="goToEditProfile">
-        <i class="bi bi-pencil me-2"></i> Edit Profile
-      </BaseButton>
+       <NavigationButtons
+  back-text="Back"
+  next-text="Edit Profile"
+  :is-next-disabled="isLoading"
+  @back="goBack"
+  @next="goToEditProfile"
+>
+</NavigationButtons>
     </div>
   </div>
 </template>
@@ -133,10 +135,10 @@
 import { reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/authStore'
-import BaseButton from '@/components/common/BaseButton.vue'
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import PageHeader from "@/components/common/PageHeader.vue";
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const router = useRouter()
 const authStore = useAuthStore()

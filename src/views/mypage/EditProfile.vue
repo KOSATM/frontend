@@ -110,14 +110,19 @@
     </BaseSection>
 
     <div class="d-flex gap-3 mt-5 pb-5">
-      <BaseButton variant="secondary" class="flex-fill" @click="goBack">
-        Cancel
-      </BaseButton>
-      <BaseButton class="flex-fill" @click="saveProfile" :disabled="isLoading">
-        <i class="bi bi-check-lg me-2" v-if="!isLoading"></i>
-        <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-        {{ isLoading ? 'Saving...' : 'Save Changes' }}
-      </BaseButton>
+
+ <NavigationButtons
+  back-text="Cancel"
+  :is-next-disabled="isLoading"
+  @back="goBack"
+  @next="saveProfile"
+>
+  <template #next-content>
+    <i class="bi bi-check-lg me-2" v-if="!isLoading"></i>
+    <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+    {{ isLoading ? 'Saving...' : 'Save Changes' }}
+  </template>
+</NavigationButtons>
     </div>
   </div>
 </template>
@@ -125,10 +130,11 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import BaseButton from '@/components/common/BaseButton.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import PageHeader from "@/components/common/PageHeader.vue";
 import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+
 
 const router = useRouter()
 const isLoading = ref(false)
