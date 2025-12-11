@@ -52,7 +52,7 @@ defineProps({
 }
 
 .header-title {
-  color: #333;
+  color: #1B3B6F;
   letter-spacing: -0.5px;
 }
 

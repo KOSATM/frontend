@@ -36,7 +36,7 @@ defineProps({
 }
 
 .page-title {
-  color: #333; /* 기본 텍스트 컬러 통일 */
+  color: #1B3B6F; /* 기본 텍스트 컬러 통일 */
   letter-spacing: -0.5px;
 }
 
