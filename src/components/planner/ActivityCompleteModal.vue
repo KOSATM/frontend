@@ -206,10 +206,5 @@ const onInput = (e) => {
   border-color: #111827;
 }
 
-.title {
-  font-family: "Siganpyo", sans-serif;
-}
-.sub {
-  font-family: "Kyobo2024", sans-serif;
-}
+
 </style>

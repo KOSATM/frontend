@@ -282,7 +282,7 @@ const goBack = () => {
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .hotel-card {
   cursor: pointer;
   transition: all 0.3s ease;

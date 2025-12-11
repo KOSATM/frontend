@@ -1,4 +1,4 @@
-<!-- src/views/planner/PlannerList.vue -->
+<!-- src/views/planner/PlanList.vue -->
 <template>
   <section class="planner-right card shadow-sm rounded-4 h-100 d-flex flex-column">
     <!-- 상단 요약 -->
