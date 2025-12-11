@@ -80,11 +80,14 @@
       </div>
     </section>
 
-    <!-- 🔥 여기! navigation-buttons는 컨테이너 안의 최하단에 있어야 한다 -->
-    <div class="navigation-buttons">
-      <button class="btn-back" @click="goBack">Back</button>
-      <button class="btn-next" @click="publish">Publish</button>
-    </div>
+        <NavigationButtons
+      backText="Back"
+      :isNextDisabled="!canProceed"
+      @back="goBack"
+      nextText="Publish"
+      @next="publish"
+    >
+    </NavigationButtons>
   </div>
 </template>
 
@@ -94,6 +97,7 @@ import { useRouter } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
 import StepHeader from '@/components/common/StepHeader.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 // 기본 유저정보
 const user = ref({

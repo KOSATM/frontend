@@ -60,7 +60,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
 import api from '@/api/travelgramApi'
@@ -71,8 +71,12 @@ import NavigationButtons from '@/components/common/button/NavigationButtons.vue'
 const router = useRouter()
 const reviewStore = useReviewStore()
 
-const isLoading = ref(false)
+const isLoading = ref(false) // 초기 데이터 로딩용
+const isAnalyzing = ref(false) // 👈 2. 버튼 로딩 표시용 (Next 클릭 시)
 const selectedIndex = ref(null)
+
+// 👈 3. 다음 단계 진행 가능 여부 (선택된 항목이 있으면 true)
+const canProceed = computed(() => selectedIndex.value !== null)
 
 // 화면 진입 시 API 호출
 onMounted(async () => {
@@ -114,15 +118,24 @@ const getLabelClass = (code) => {
 const goBack = () => router.back()
 const goNext = async() => {
   if (selectedIndex.value === null) return
-
-  // 1. 선택된 옵션 객체 가져오기
-  const selectedOption = reviewStore.generatedOptions[selectedIndex.value]
-  // 2. Store Action 호출 -> caption과 hashtags 상태 업데이트
-  reviewStore.selectStyleOption(selectedOption)
-  await api.selectStyle(reviewStore.reviewPostId,reviewStore.reviewStyleId)
-  // 3. 다음 페이지(해시태그 선택)로 이동
-  reviewStore.nextStep()
-  router.push({ name: 'HashtagSelect' })
+  isAnalyzing.value = true
+  try {
+    const selectedOption = reviewStore.generatedOptions[selectedIndex.value]
+    
+    reviewStore.selectStyleOption(selectedOption)
+    
+    // 스타일 선택 API 호출
+    await api.selectStyle(reviewStore.reviewPostId, reviewStore.reviewStyleId)
+    
+    reviewStore.nextStep()
+    router.push({ name: 'HashtagSelect' })
+  } catch (error) {
+    console.error("Style selection failed:", error);
+    alert("오류가 발생했습니다.");
+  } finally {
+    // 👈 5. 로딩 종료
+    isAnalyzing.value = false
+  }
 }
 </script>
 
