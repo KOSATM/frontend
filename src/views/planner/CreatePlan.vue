@@ -87,7 +87,7 @@ import BaseButton from "@/components/common/BaseButton.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
 import TipBox from "@/components/common/TipBox.vue";
 import RecommendationCard from "@/components/planner/RecommendationCard.vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRoute } from "vue-router";
 import { onMounted, ref } from 'vue'
 import { useTravelStore } from '@/store/travelStore'
 import router from "@/router";
@@ -100,6 +100,8 @@ import BlogListModal from "@/components/planner/BlogListModal.vue";
 const authStore = useAuthStore();
 const travelStore = useTravelStore()
 const chatStore = useChatStore();
+
+const route = useRoute();
 
 const promptInput = ref('')
 
@@ -141,7 +143,7 @@ const openModal = async (category) => {
     console.log("서버 응답 데이터:", res); // 브라우저 콘솔(F12)에서 구조 확인 가능
 
     if (res.data) {
-       blogItems.value = res.data;
+      blogItems.value = res.data;
     }
 
   } catch (error) {
@@ -206,19 +208,25 @@ const sendMessage = async () => {
 
 const generateAIResponse = async (text) => {
   const low = text.toLowerCase();
-  const res = await chatApi.chat(text, authStore.userId);
+  const res = await chatApi.chat({message: text, userId: authStore.userId, currentUrl: route.path});
   console.log(res);
   return res;
 };
 
 onMounted(async () => {
-  if (authStore.userId != null) {
-    const res = await plannerApi.getActivePlan(authStore.userId);
-    console.log(res);
-     if (res.data.success === true) {
-       router.push("/planner/edit");
-     }
+  try {
+    if (authStore.userId != null) {
+      const res = await plannerApi.getActivePlan(authStore.userId);
+      if (res != null) {
+        if (res.data.success === true) {
+          router.push("/planner/edit");
+        }
+      }
+    }
+  } catch (error) {
+    console.log(error)
   }
+
 });
 </script>
 
