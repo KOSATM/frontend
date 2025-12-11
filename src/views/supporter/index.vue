@@ -1,6 +1,8 @@
 <template>
-  <div class="planner-container py-3 px-3">
+  <div class="supporter-page">
     <PageHeader title="Supporter" subtitle="Real-time travel support and updates" icon="bi-chat-dots" />
+    <BackButtonPageHeader title="서포터 홈" subtitle="위치 기반으로 당신의 여행을 도와드립니다." @back="goBack"/>
+
     <!-- Weather component -->
     <div class="m-4">
       <!-- <WeatherCard /> -->
@@ -149,11 +151,12 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/components/common/PageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
-import WeatherCard from '@/components/supporter/WeatherCard.vue'
 import NaverMap from '@/components/supporter/NaverMap.vue'
 import ToiletApi from '@/api/ToiletApi'
 import imageSearchApi from '@/api/imageSearchApi'
 import {useAuthStore} from '@/store/authStore'
+import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
+
 
 const router = useRouter()
 const authStore= useAuthStore()
@@ -452,107 +455,13 @@ const goToImageAIHistory = () => {
 </script>
 
 <style scoped>
-.planner-container {
-  color: var(--foreground);
+.supporter-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  text-align: center;
+  padding: 2rem 1.25rem;
 }
 
-/* Weather card */
-.weather-splan {
-  margin-bottom: 16px;
-}
-
-.weather-card {
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.weather-top {
-  background: #2f79b8;
-  padding: 18px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.weather-top .weather-icon {
-  width: 64px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-}
-
-.weather-top .temp-value {
-  font-size: 36px;
-  font-weight: 700;
-}
-
-.weather-top .temp-unit {
-  font-size: 18px;
-  margin-bottom: 6px;
-}
-
-.weather-top .desc {
-  font-size: 14px;
-  opacity: 0.95;
-}
-
-.weather-top .location {
-  font-size: 12px;
-  opacity: 0.85;
-}
-
-.weather-bottom {
-  display: flex;
-  background: #fff;
-}
-
-.weather-bottom .stat {
-  padding: 12px 16px;
-}
-
-.weather-bottom .stat .stat-icon {
-  font-size: 18px;
-  color: #4b5563;
-}
-
-.weather-bottom .stat .stat-value {
-  font-size: 16px;
-  margin-top: 4px;
-}
-
-.weather-bottom .stat-label {
-  font-size: 12px;
-  color: #6b7280;
-  margin-top: 4px;
-}
-
-.weather-bottom .border-start {
-  border-left: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.weather-bottom .border-end {
-  border-right: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.weather-splan .card {
-  padding: 10px;
-}
-
-.weather-top {
-  background: #3A5797;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  padding: 16px;
-}
-
-.weather-icon {
-  /* icon size and positioning */
-  font-size: 2.5rem;
-  line-height: 1;
-}
 
 .temp-value {
   font-size: 2.5rem;
