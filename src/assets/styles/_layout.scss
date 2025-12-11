@@ -3,30 +3,100 @@
 // =========================================================
 // 🖥️ Web Standard Layout (Web First, Mobile Responsive)
 // =========================================================
+// src/assets/styles/_layout.scss
+
+// =========================================================
+// 🏗️ App Global Layout System
+// =========================================================
+
+// src/assets/styles/_layout.scss
+
+// =========================================================
+// 📱 Mobile App-like Layout (Card Style)
+// =========================================================
+
+// 배경 (카드 바깥 영역)
+body {
+  background-color: #f5f7fa; // 카드가 돋보이도록 옅은 회색 배경
+  margin: 0;
+}
 
 // 1. 전체 레이아웃 래퍼 (App Container)
-// 화면 중앙에 모바일 앱처럼 뜨도록 설정
 .layout-container {
-  max-width: 1200px;        // App.vue의 container-fms 설정값
+  max-width: 1200px;        // 전체 폭 제한
   width: 100%;
-  margin: 0 auto;          // 중앙 정렬
-  min-height: 100vh;       // 전체 높이 확보
+  margin: 0 auto;           // 중앙 정렬
+  min-height: 100vh;        // 최소 높이
   display: flex;
   flex-direction: column;
-  background-color: #fff;  // 배경색
-
-  // 그림자 및 외관 설정 (PC 화면에서 앱처럼 보이게)
+  background-color: #fff;   // 카드 내부 흰색
+  position: relative;
+  
+  // PC 화면: 둥근 모서리와 그림자로 '앱' 느낌 강조
   @include media-breakpoint-up(md) {
-    margin-top: 6rem;
+    min-height: calc(100vh - 8rem); // 상하 여백 뺀 높이
+    margin-top: 4rem;
     margin-bottom: 4rem;
-    border-radius: 1.25rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    overflow: hidden; // 둥근 모서리 밖으로 컨텐츠 튀어나감 방지
   }
 }
 
-// 2. 메인 컨텐츠 영역
+// 2. 헤더와 푸터 사이의 바디 영역 (가로 배치용 Flex 컨테이너)
+.app-body-row {
+  display: flex;
+  flex: 1; // 남은 높이 모두 차지
+  width: 100%;
+  position: relative;
+  overflow: hidden; // 내부 스크롤 제어
+}
+
+// 3. 사이드바 (좌/우 공통)
+.sidebar-area {
+  width: 300px; // 고정 너비 (1200px 중 300px 차지)
+  background: #fff;
+  overflow-y: auto; // 사이드바 내부 스크롤
+  z-index: 10;
+  
+  // 좌측 사이드바 (채팅)
+  &.left {
+    border-right: 1px solid #eee;
+  }
+
+  // 우측 사이드바 (서포터)
+  &.right {
+    border-left: 1px solid #eee;
+    background-color: #fdfdfd; // 메인과 구분되게 아주 연한 배경 추천
+  }
+
+  // 모바일/태블릿에서는 숨김 (공간 부족)
+  @include media-breakpoint-down(lg) {
+    display: none; 
+  }
+}
+
+// 4. 메인 컨텐츠 영역
 .main-content {
-  flex: 1;                 // Footer를 하단으로 밀어냄
-  padding: 2rem 1.5rem;    // 내부 여백
-  text-align: left;
+  flex: 1; // 사이드바 공간 빼고 나머지 꽉 채움
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; // 메인 컨텐츠 내부 스크롤
+  position: relative;
+  
+  // 내부 패딩
+  padding: 0; 
+  
+  // 라우터 뷰가 들어갈 실제 컨테이너
+  .page-container {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+// 5. 우측 사이드바 내부 컴포넌트 스타일
+.checklist-wrapper {
+  margin-top: 1.5rem;
 }
