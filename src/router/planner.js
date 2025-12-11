@@ -5,6 +5,7 @@ import Chat from "@/views/planner/edit/Chat.vue";
 import PlanList from "@/views/planner/edit/PlanList.vue";
 import Payment from "@/views/planner/hotel/Payment.vue";
 import BookingComplete from "@/views/planner/BookingComplete.vue";
+import PlannerSummary from "@/components/planner/PlannerSummary.vue";
 
 const planner = [
   {
@@ -26,6 +27,12 @@ const planner = [
     meta: {
       title: "플랜 편집"
     },
+  },
+  {
+    path: "/planner/summary",
+    name: "plansummary",
+    component: PlannerSummary,
+    meta: { title: "플랜 요약" },
   },
   {
     path: "/planner/itinerary",

@@ -3,12 +3,9 @@
 
     <!-- 상단 계획 요약 -->
     <div class="p-4 pb-3 border-bottom d-flex justify-content-between align-items-center">
-
       <div class="d-flex gap-3 align-items-center">
-        <div
-          class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
-          style="width: 46px; height: 46px"
-        >
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
           📅
         </div>
 
@@ -20,14 +17,9 @@
         </div>
       </div>
 
-      <!-- 일정이 있을 때만 편집 버튼 표시 -->
-      <button
-        v-if="currentDayPlaces.length > 0"
-        class="btn btn-outline-secondary btn-sm"
-        @click="toggleEditMode">
-        {{ editMode ? "완료" : "편집" }}
+      <button v-if="currentDayPlaces.length > 0" class="btn btn-outline-secondary btn-sm" @click="toggleEditMode">
+        {{ editMode ? "일정 보기" : "편집" }}
       </button>
-
     </div>
 
     <!-- 본문 -->
@@ -36,13 +28,8 @@
 
         <!-- Day Tabs -->
         <div class="inner-day-tab-wrapper">
-          <button
-            v-for="(day, idx) in days"
-            :key="idx"
-            class="btn btn-outline-primary btn-day-tab"
-            :class="{ active: selectedDayIndex === idx }"
-            @click="selectedDayIndex = idx"
-          >
+          <button v-for="(day, idx) in days" :key="idx" class="btn btn-outline-primary btn-day-tab"
+            :class="{ active: selectedDayIndex === idx }" @click="selectedDayIndex = idx">
             Day {{ idx + 1 }}
           </button>
         </div>
@@ -53,44 +40,40 @@
         </div>
 
         <!-- 최상단 추가 버튼 -->
-        <div
-          v-if="editMode && currentDayPlaces.length > 0"
-          class="add-place-btn place-content"
-          @click="addPlace(0)"
-        >
-          + 장소 추가
+        <div v-if="editMode && currentDayPlaces.length > 0" class="place-row" style="margin-bottom: 16px;">
+          <div class="place-number-circle invisible"></div>
+
+          <div class="place-content">
+            <div class="add-place-btn" @click="addPlace(0)">
+              + 장소 추가
+            </div>
+          </div>
         </div>
 
         <!-- 일정 렌더링 -->
-        <div
-          v-for="(place, idx) in currentDayPlaces"
-          :key="idx"
-          class="section-block"
-        >
+        <div v-for="(place, idx) in currentDayPlaces" :key="idx" class="section-block">
 
-          <!-- 문구 있는 타입 -->
+          <!-- 문구 타입 -->
           <div v-if="typeLabel(place.details?.type)" class="place-block with-label">
 
             <div class="place-number-wrapper">
               <div class="place-number-circle" :class="typeColor(place.details?.type)">
                 {{ idx + 1 }}
               </div>
-              <span class="place-label">{{ typeLabel(place.details?.type) }}</span>
+
+              <!-- Day1 → 여행의 시작 표시 -->
+              <span class="place-label">
+                {{ idx === 0 ? typeLabel("START") : typeLabel(place.details?.type) }}
+              </span>
             </div>
 
             <div class="place-row">
 
-              <div
-                v-if="idx !== currentDayPlaces.length - 1"
-                class="timeline-line label-line"
-              ></div>
+              <div v-if="idx !== currentDayPlaces.length - 1" class="timeline-line label-line"></div>
 
               <div class="place-content">
 
-                <!-- 카드 -->
-                <div class="place-card shadow-sm rounded-3 p-3 flex-fill"
-                     @click="openModal(place)">
-
+                <div class="place-card shadow-sm rounded-3 p-3 flex-fill" @click="openModal(place)">
                   <button v-if="editMode" class="delete-btn" @click.stop="deletePlace(idx)">✕</button>
 
                   <div class="d-flex gap-3">
@@ -113,10 +96,7 @@
                   </div>
                 </div>
 
-                <!-- 카드 아래 추가 버튼 -->
-                <div v-if="editMode"
-                     class="add-place-btn"
-                     @click="addPlace(idx + 1)">
+                <div v-if="editMode" class="add-place-btn" @click="addPlace(idx + 1)">
                   + 장소 추가
                 </div>
 
@@ -133,22 +113,12 @@
                 {{ idx + 1 }}
               </div>
 
-              <div
-                v-if="idx !== currentDayPlaces.length - 1"
-                class="timeline-line"
-              ></div>
+              <div v-if="idx !== currentDayPlaces.length - 1" class="timeline-line"></div>
 
               <div class="place-content">
 
-                <div class="place-card shadow-sm rounded-3 p-3 flex-fill"
-                     @click="openModal(place)">
-
-                  <button
-                    v-if="editMode"
-                    class="delete-btn"
-                    @click.stop="deletePlace(idx)">
-                    ✕
-                  </button>
+                <div class="place-card shadow-sm rounded-3 p-3 flex-fill" @click="openModal(place)">
+                  <button v-if="editMode" class="delete-btn" @click.stop="deletePlace(idx)">✕</button>
 
                   <div class="d-flex gap-3">
                     <div class="thumb">
@@ -162,7 +132,7 @@
                         {{ categoryMap[place.details?.type] || "장소" }}
                       </div>
 
-                      <hr class="place-divider"/>
+                      <hr class="place-divider" />
 
                       <div class="place-recommend text-primary small">
                         추천 {{ place.details?.desc || "상세 설명 없음" }}
@@ -184,33 +154,13 @@
       </div>
     </div>
 
-    <!-- CTA -->
-    <div class="p-4 pt-0 border-top bg-white">
-      <BaseButton
-        v-if="!travelStore.$state.isTraveling"
-        @click="next()"
-        variant="primary"
-        class="w-100 py-2"
-      >
-        Next: Select Accommodation
-      </BaseButton>
-
-      <BaseButton
-        v-else
-        @click="endplan()"
-        variant="success"
-        class="w-100 py-2"
-      >
-        FORCE to End plan
-      </BaseButton>
+    <!-- 변경된 CTA -->
+    <div class="navigation-buttons">
+      <button class="btn-back" @click="goBack">Back</button>
+      <button class="btn-next" @click="goNext">Next Step</button>
     </div>
 
-    <!-- 모달 -->
-    <ActivityDetailsModal
-      :open="modalOpen"
-      :data="modalData"
-      @close="modalOpen = false"
-    />
+    <ActivityDetailsModal :open="modalOpen" :data="modalData" @close="modalOpen = false" />
 
   </section>
 </template>
@@ -286,6 +236,7 @@ const typeColor = (type) => {
 
 const typeLabel = (type) => {
   switch (type) {
+    case "START" : return "여행의 시작";
     case "FOOD": return "식사 장소 추천";
     case "SHOPPING": return "쇼핑 추천";
     case "CAFE": return "카페 추천";
@@ -328,8 +279,8 @@ onMounted(async () => {
   await renderPlan();
 });
 
-const next = () => router.push("/planner/hotel");
-const endplan = () => router.push("/planner");
+const goNext = () => router.push("/planner/summary");
+const goBack = () => router.back();
 </script>
 <style scoped>
 :deep(.highlight) {
@@ -361,6 +312,7 @@ const endplan = () => router.push("/planner");
   border: 2px solid #ff9800;
   color: #ff9800;
 }
+
 .btn-day-tab.active {
   background: #ff9800;
   color: white;
@@ -386,11 +338,30 @@ const endplan = () => router.push("/planner");
   flex-shrink: 0;
 }
 
-.color-purple { background: #ede9ff; color: #7a49ff; }
-.color-red    { background: #ffe5e5; color: #ff6b6b; }
-.color-blue   { background: #e5f0ff; color: #4fa3ff; }
-.color-green  { background: #e5ffeb; color: #3ac569; }
-.color-gray   { background: #efefef; color: #666; }
+.color-purple {
+  background: #ede9ff;
+  color: #7a49ff;
+}
+
+.color-red {
+  background: #ffe5e5;
+  color: #ff6b6b;
+}
+
+.color-blue {
+  background: #e5f0ff;
+  color: #4fa3ff;
+}
+
+.color-green {
+  background: #e5ffeb;
+  color: #3ac569;
+}
+
+.color-gray {
+  background: #efefef;
+  color: #666;
+}
 
 /* timeline */
 .place-row {
@@ -438,6 +409,7 @@ const endplan = () => router.push("/planner");
   border-radius: 8px;
   overflow: hidden;
 }
+
 .thumb img {
   width: 100%;
   height: 100%;
@@ -488,7 +460,44 @@ const endplan = () => router.push("/planner");
   color: #555;
   text-align: center;
 }
+
 .add-place-btn:hover {
   background: #eee;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.navigation-buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding: 1rem;
+}
+
+.btn-back,
+.btn-next {
+  flex: 1;
+  height: 48px;
+  border-radius: 1rem;
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.btn-back {
+  background-color: #fff;
+  color: #1b3b6f;
+  border: 2px solid #1b3b6f;
+}
+
+.btn-next {
+  background-color: #1b3b6f;
+  color: #fff;
+}
+
+.btn-next:disabled {
+  background-color: #ccc;
 }
 </style>
