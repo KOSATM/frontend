@@ -4,8 +4,8 @@
     <SideBar :isOpen="isSidebarOpen" @close="isSidebarOpen = false" />
 
     <div class="app-layout">
-      <!-- 좌측 채팅 1 -->
-      <div class="sidebar-left">
+      <!-- 좌측 채팅 1 planner 페이지에서만 표시 -->
+      <div v-if ="route.path.includes('planner')" class="sidebar-left">
         <ChatSidebar />
       </div>
 

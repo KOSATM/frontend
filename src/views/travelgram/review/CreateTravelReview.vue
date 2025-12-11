@@ -88,9 +88,9 @@
 
 
 
-    <h6 class="upload-title mb-1">
+    <h5 class="upload-title mb-1">
       <i class="bi bi-image me-1 text-secondary"></i> 사진 업로드
-    </h6>
+    </h5>
     <p class="upload-subtitle">
       10개까지 사진을 올릴 수 있습니다. ({{ uploadedImages.length }}/10)
     </p>

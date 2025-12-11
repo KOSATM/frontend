@@ -268,7 +268,6 @@ try {
   font-size: 0.9rem;
   line-height: 1.5;
   resize: none;
-  font-family: 'Kyobo2024', sans-serif;
 }
 
 .hashtag-box {

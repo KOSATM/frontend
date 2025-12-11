@@ -1,295 +1,32 @@
-// ===============================
-// 📱 Responsive Layout (Mobile UI First)
-// ===============================
+// src/assets/styles/_layout.scss
 
-.navbar-fms {
-  background-color: #ffffff; /* ✅ 기본 흰색 */
-  transition: background 0.4s ease, box-shadow 0.4s ease;
-  backdrop-filter: blur(8px);
-  padding: 0 1.25rem;
-  height: 64px; /* ⬆ 기존 42px → 64px로 변경 */
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* ✅ 좌우 끝 정렬 */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  font-weight: 600; /* ✅ 글자 두께 강화 */
+// =========================================================
+// 🖥️ Web Standard Layout (Web First, Mobile Responsive)
+// =========================================================
 
-  .navbar-brand {
-    display: flex;
-    align-items: center; /* ✅ 로고 세로 중앙정렬 */
-    justify-content: center;
-    height: 100%;
-
-    img {
-      height: 50px;
-      object-fit: contain;
-      filter: none; /* 기본: 컬러 유지 */
-      transition: filter 0.4s ease;
-    }
-  }
-
-  .btn i {
-    color: #ff8c00;
-    font-size: 2rem;
-    transition: color 0.4s ease;
-  }
-
-  /* 🟠 스크롤 시 상태 */
-  &.scrolled {
-    background-color: #ff8c00;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-
-    .navbar-brand img {
-      filter: brightness(0) invert(1);
-    }
-
-    .btn i {
-      color: #ffffff;
-    }
-  }
-
-  .navbar-toggler {
-    border: none;
-
-    &:focus {
-      outline: none;
-      box-shadow: none;
-    }
-
-    .navbar-toggler-icon {
-      background-image: none;
-      position: relative;
-      width: 24px;
-      height: 2px;
-      background-color: #fff;
-      transition: all 0.3s;
-
-      &::before,
-      &::after {
-        content: "";
-        position: absolute;
-        width: 24px;
-        height: 2px;
-        background-color: #fff;
-        left: 0;
-        transition: all 0.3s;
-      }
-
-      &::before {
-        top: -8px;
-      }
-
-      &::after {
-        top: 8px;
-      }
-    }
-  }
-
-  .nav-link {
-    color: #1b3b6f !important;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    transition: background 0.3s ease, color 0.3s ease;
-
-    &:hover {
-      background-color: rgba(255, 140, 0, 0.1);
-    }
-
-    &.active {
-      background-color: #ff8c00;
-      color: #fff !important;
-    }
-  }
-} /* ✅ ← 이 중괄호가 누락되어 있었음 */
-
-// ===============================
-// 🧱 Container
-// ===============================
-
-/* 1) 기본 컨테이너: 일반 페이지용 */
-.container-fms {
-  max-width: 1200px;
+// 1. 전체 레이아웃 래퍼 (App Container)
+// 화면 중앙에 모바일 앱처럼 뜨도록 설정
+.layout-container {
+  max-width: 1200px;        // App.vue의 container-fms 설정값
   width: 100%;
-  margin: 6rem auto 4rem;
-  background-color: #fff;
-  border-radius: 1.25rem;
-  padding: 2rem 1.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
-
-/* 2) planner 전용: 폭을 넓게 */
-.container-wide {
-  max-width: 1300px;
-  width: 100%;
-  margin: 6rem auto 1.5rem; /* 위아래 살짝만 */
-  background: transparent;
-  box-shadow: none;
-  padding: 0;
-}
-
-/* 3) planner 전용: 좌/우 2단 분할 */
-.container-split {
-  display: grid;
-  grid-template-columns: 360px 1fr; /* 왼쪽 폭 여기서 조절 */
-  gap: 1.5rem;
-  /* ⭐ 헤더, 푸터 사이를 꽉 채우도록 */
-  min-height: calc(100vh - 6rem - 2rem); /* 헤더 6rem, 아래 여백 2rem 정도 가정 */
-  align-items: stretch; /* 세로 늘어나게 */
-}
-
-/* 반응형: 좁아지면 한 줄로 */
-@media (max-width: 992px) {
-  .container-wide {
-    margin-top: 5rem;
-  }
-  .container-split {
-    grid-template-columns: 1fr;
-    min-height: auto;
-  }
-}
-
-// ===============================
-// 🦶 Footer
-// ===============================
-.footer-fms {
-  background-color: #1b3b6f; /* 진한 남색 */
-  color: #fff;
-  padding: 2.5rem 1rem;
-  text-align: center;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
-}
-
-.footer-container {
-  max-width: 900px;
-  margin: 0 auto;
+  margin: 0 auto;          // 중앙 정렬
+  min-height: 100vh;       // 전체 높이 확보
   display: flex;
   flex-direction: column;
-  align-items: center;
-}
+  background-color: #fff;  // 배경색
 
-.footer-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 1rem;
-}
-
-.footer-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #fff;
-  letter-spacing: 0.5px;
-}
-
-.footer-links {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1.25rem;
-  margin-bottom: 1.25rem;
-}
-
-.footer-link {
-  color: #ffb347; /* 오렌지 포인트 */
-  font-weight: 500;
-  text-decoration: none;
-  transition: color 0.3s ease, text-decoration 0.3s ease;
-
-  &:hover {
-    color: #ffa733;
-    text-decoration: underline;
+  // 그림자 및 외관 설정 (PC 화면에서 앱처럼 보이게)
+  @include media-breakpoint-up(md) {
+    margin-top: 6rem;
+    margin-bottom: 4rem;
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   }
 }
 
-.footer-divider {
-  width: 80%;
-  height: 1px;
-  background-color: rgba(255, 255, 255, 0.15);
-  margin: 1rem 0;
-}
-
-.footer-text {
-  font-size: 0.85rem;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-/* ===============================
-   📱 Mobile Responsive Additions
-   (핵심 요소만 반응형 조정)
-=============================== */
-@media (max-width: 576px) {
-  /* 🔸 Navbar */
-  .navbar-fms {
-    height: 56px;
-    padding: 0 0.75rem;
-
-    .navbar-brand img {
-      height: 40px;
-    }
-
-    .btn i {
-      font-size: 1.8rem;
-    }
-  }
-
-  /* 🔸 Container */
-  .container-fms {
-    margin: 4rem auto 2rem;
-    padding: 1.25rem 1rem;
-    border-radius: 0.75rem;
-  }
-
-  /* 🔸 plan Card */
-  .plan-card {
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
-    padding: 1rem;
-
-    img {
-      width: 100%;
-      height: 160px;
-      margin: 0 0 0.75rem 0;
-    }
-
-    .plan-info {
-      width: 100%;
-    }
-
-    .icon-chevron {
-      display: none;
-    }
-  }
-
-  /* 🔸 Footer */
-  .footer-fms {
-    padding: 2rem 1rem;
-
-    .footer-title {
-      font-size: 1rem;
-    }
-
-    .footer-link {
-      font-size: 0.9rem;
-    }
-
-    .footer-text {
-      font-size: 0.8rem;
-    }
-  }
-  /* 🔸 UserSettings */
-  .user-settings {
-    padding: 2rem 1rem;
-  }
-  .settings-info h6 {
-    font-size: 0.9rem;
-  }
-  .settings-info p {
-    font-size: 0.75rem;
-  }
-  .btn-logout {
-    font-size: 0.9rem;
-  }
+// 2. 메인 컨텐츠 영역
+.main-content {
+  flex: 1;                 // Footer를 하단으로 밀어냄
+  padding: 2rem 1.5rem;    // 내부 여백
+  text-align: left;
 }

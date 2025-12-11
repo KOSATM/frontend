@@ -1,60 +1,67 @@
-<!-- 컴포넌트의 UI -->
 <template>
-    <div class="backbtnpage-header d-flex justify-content-between align-items-center mb-3">
-        <div class="d-flex align-items-center">
-            <i v-if="showBack" class="bi bi-arrow-left-short back-icon" @click="onBackClick"></i>
-            <div>
-                <h6 class="backbtnpage-title mb-0">{{ title }}</h6>
-                <small class="backbtnpage-subtitle text-muted">{{ subtitle }}</small>
-            </div>
+  <div class="sub-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-3">
+        <i 
+          class="bi bi-arrow-left-short back-icon fs-2" 
+          @click="$emit('back')"
+          role="button"
+        ></i>
+        
+        <div class="d-flex flex-column">
+          <h5 class="header-title m-0 fw-bold">{{ title }}</h5>
+          <p v-if="subtitle" class="header-subtitle text-muted m-0 mt-1">
+            {{ subtitle }}
+          </p>
         </div>
+      </div>
+      
+      <slot name="right-action">
+        <h6 v-if="step" class="step-indicator text-muted m-0">
+           Step {{ step }}
+        </h6>
+      </slot>
+    </div>
+    
     </div>
 </template>
 
-<!-- 컴포넌트의 초기화 또는 이벤트 처리 -->
 <script setup>
-import { useRouter } from 'vue-router'
-
-const props = defineProps({
-    showBack: { type: Boolean, default: true },
-    title: { type: String, required: true },
-    subtitle: { type: String, default: '' }
+defineProps({
+  title: { type: String, default: 'Detail View' },
+  subtitle: { type: String, default: '' },
+  step: { type: [String, Number], default: '' }, // step이 있으면 표시, 없으면 숨김
 })
-
-const emit = defineEmits(['back'])
-const router = useRouter()
-
-const onBackClick = () => {
-    emit('back')
-    router.go(-1)
-}
 </script>
 
-<!-- 컴포넌트 스타일 정의 -->
 <style scoped>
-.backbtnpage-header {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    padding-bottom: 0.75rem;
+/* StepHeader와 동일한 스타일 공유 */
+.sub-header {
+  padding: 0 0.5rem;
 }
 
 .back-icon {
-    font-size: 1.6rem;
-    cursor: pointer;
-    color: #ff8c00;
-    margin-right: 0.5rem;
-    transition: transform 0.2s;
+  color: #ff8c00;
+  transition: transform 0.2s ease, color 0.2s ease;
+  margin-left: -0.5rem; 
 }
 
 .back-icon:hover {
-    transform: translateX(-2px);
+  transform: translateX(-4px);
+  color: #e07b00;
 }
 
-.backbtnpage-title {
-    font-weight: 700;
-    color: #1b3b6f;
+.header-title {
+  color: #333;
+  letter-spacing: -0.5px;
 }
 
-.backbtnpage-subtitle {
-    font-size: 0.9rem;
+.header-subtitle {
+  font-size: 0.85rem;
+}
+
+.step-indicator {
+  font-family: 'memoment', sans-serif;
+  opacity: 0.6;
 }
 </style>

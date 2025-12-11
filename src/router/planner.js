@@ -7,8 +7,9 @@ import Payment from "@/views/planner/hotel/Payment.vue";
 import BookingComplete from "@/views/planner/BookingComplete.vue";
 
 const planner = [
+
   {
-    path: "/planner/create",
+    path: "/planner",
     name: "plannercreate",
     component: CreatePlan,
     meta: { title: "새 플랜 생성" },

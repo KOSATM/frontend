@@ -7,10 +7,10 @@
         ✈
       </div>
       <div>
-        <h6 class="mb-0" style="font-family: 'Siganpyo', sans-serif">
+        <h6 class="mb-0">
           Seoul Journey
         </h6>
-        <small class="text-muted" style="font-family: 'Kyobo2024', sans-serif">AI Travel Assistant</small>
+        <small class="text-muted">AI Travel Assistant</small>
       </div>
       <div class="ms-auto">
         <span class="badge bg-success-soft text-success small">Online</span>
@@ -23,10 +23,10 @@
         <!-- Initial AI Message -->
         <div class="message ai-message mb-3">
           <div class="message-bubble">
-            <p class="mb-1" style="font-family: 'Kyobo2024', sans-serif">
+            <p class="mb-1">
               Hello! I'm your AI assistant for planning your Seoul plan. 🇰🇷
             </p>
-            <p class="mb-0" style="font-family: 'Kyobo2024', sans-serif">
+            <p class="mb-0" >
               Ask me about itinerary changes, food recommendations, or new
               activities!
             </p>
@@ -42,7 +42,7 @@
           'ai-message': message.type === 'ai',
         }">
           <div class="message-bubble">
-            <p class="mb-0" style="font-family: 'Kyobo2024', sans-serif" v-html="formatMessage(message.content)">
+            <p class="mb-0" v-html="formatMessage(message.content)">
             </p>
             <div v-if="message.type === 'ai' && message.loading" class="typing-indicator mt-2">
               <span></span><span></span><span></span>
@@ -57,16 +57,16 @@
 
     <!-- Quick Actions -->
     <div class="quick-actions mb-3">
-      <p class="small text-muted mb-2" style="font-family: 'Kyobo2024', sans-serif">
+      <p class="small text-muted mb-2">
         💡 Quick questions:
       </p>
       <div class="d-flex gap-2 flex-wrap">
         <button @click="sendQuickMessage('I want to start early')" class="btn btn-sm btn-outline-warning rounded-pill"
-          style="font-family: 'Siganpyo', sans-serif">
+          >
           Start early
         </button>
         <button @click="sendQuickMessage('Do you have vegetarian options?')"
-          class="btn btn-sm btn-outline-warning rounded-pill" style="font-family: 'Siganpyo', sans-serif">
+          class="btn btn-sm btn-outline-warning rounded-pill">
           Vegetarian
         </button>
         <button @click="sendQuickMessage('Recommend me shopping areas')"
@@ -220,25 +220,7 @@ onMounted(() => {
   overflow: hidden;
 }
 
-/* 폰트 스타일 */
-.planner-chat h1,
-.planner-chat h2,
-.planner-chat h3,
-.planner-chat h4,
-.planner-chat h5,
-.planner-chat h6 {
-  font-family: "Siganpyo", sans-serif;
-}
 
-.planner-chat p,
-.planner-chat .small,
-.planner-chat .message-bubble {
-  font-family: "Kyobo2024", sans-serif;
-}
-
-.planner-chat .btn {
-  font-family: "Siganpyo", sans-serif;
-}
 
 .chat-messages {
   overflow-y: auto;

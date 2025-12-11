@@ -48,7 +48,6 @@ const goToEditProfile = () => {
   padding: 2rem 1.5rem 3rem;
   border-top: 1px solid rgba(27, 59, 111, 0.08);
   border-radius: 0 0 1rem 1rem;
-  font-family: 'Poppins', 'Noto Sans KR', sans-serif;
   text-align: left; /* ✅ 전체 왼쪽 정렬 */
 }
 

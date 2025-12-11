@@ -1,9 +1,7 @@
 <template>
-  <!-- 사이드바 (data-bs-* 속성 전부 제거) -->
   <div class="offcanvas offcanvas-end" id="sidebar" tabindex="-1">
     <div class="offcanvas-header border-bottom">
-      <h5 class="offcanvas-title fw-semibold">Menu</h5>
-      <!-- X 버튼도 JS에서 직접 닫기 -->
+      <h4 class="offcanvas-title fw-semibold">메뉴</h4>
       <button type="button" class="btn-close text-reset" @click="closeSidebar" aria-label="Close"></button>
     </div>
 
@@ -12,12 +10,13 @@
         v-for="item in menuItems"
         :key="item.name"
         :to="item.route"
-        class="d-flex align-items-center gap-2 px-3 py-2 rounded nav-item"
+        class="d-flex align-items-center gap-3 px-3 py-3 rounded nav-item text-decoration-none"
         :class="{ active: activeMenu === item.name }"
         @click="onSelect(item.name)"
       >
-        <i :class="item.icon"></i>
-        <span>{{ item.label }}</span>
+        <i :class="[item.icon, 'fs-3']"></i> 
+        
+        <h5 class="m-0 fw-bold">{{ item.label }}</h5>
       </router-link>
     </div>
   </div>
@@ -34,11 +33,10 @@ const router = useRouter()
 const route = useRoute()
 
 const menuItems = [
-  { name: 'planner', label: 'Planner', icon: 'bi bi-map-fill', route: '/planner/edit' },
-  { name: 'supporter', label: 'Supporter', icon: 'bi bi-people', route: '/supporter' },
-  { name: 'travelgram', label: 'Travelgram', icon: 'bi bi bi-instagram', route: '/travelgram' },
-  { name: 'hotelrecommend', label: 'Hotel Recommend', icon: 'bi bi-building', route: '/planner/hotel/recommendation' },
-  { name: 'mypage', label: 'MyPage', icon: 'bi bi-person-circle', route: '/mypage' },
+  { name: 'planner', label: '플래너', icon: 'bi bi-map-fill', route: '/planner/edit' },
+  { name: 'supporter', label: '서포터', icon: 'bi bi-people', route: '/supporter' },
+  { name: 'travelgram', label: '트래벌그램', icon: 'bi bi bi-instagram', route: '/travelgram' },
+  { name: 'mypage', label: '마이페이지', icon: 'bi bi-person-circle', route: '/mypage' },
 ]
 
 // 현재 라우트에 따라 활성 메뉴 결정 (메인 페이지에서는 null)

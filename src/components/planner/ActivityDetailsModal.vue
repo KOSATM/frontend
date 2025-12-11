@@ -312,10 +312,7 @@ const googleImageUrl = (q) => {
   cursor: pointer;
 }
 
-/* 폰트 */
-.title {
-  font-family: "Siganpyo", sans-serif;
-}
+
 
 /* 반응형 */
 @media (max-width: 900px) {
