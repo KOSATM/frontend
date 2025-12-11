@@ -153,9 +153,10 @@ import WeatherCard from '@/components/supporter/WeatherCard.vue'
 import NaverMap from '@/components/supporter/NaverMap.vue'
 import ToiletApi from '@/api/ToiletApi'
 import imageSearchApi from '@/api/imageSearchApi'
+import {useAuthStore} from '@/store/authStore'
 
 const router = useRouter()
-
+const authStore= useAuthStore()
 // Map-related state
 const currentTab = ref('image')
 
@@ -204,8 +205,7 @@ const loadImageHistory = async () => {
   try {
     isLoadingHistory.value = true
     
-    // 하드코딩된 userId 사용 (테스트용)
-    const userId = 17
+    const userId = authStore.userId;
     
     console.log('🖼️ 이미지 히스토리 로드 중... userId:', userId)
     
