@@ -118,7 +118,19 @@ onUnmounted(() => clearInterval(timer))
 </script>
 
 <style scoped>
-.wc-root { border-radius: 10px; overflow: hidden; color: #fff; box-shadow: 0 10px 30px rgba(14,30,60,0.12); }
+.wc-root { 
+  /* 너비를 100%로 설정하여 사이드바 패딩 안쪽을 가득 채움 */
+  width: 100%; 
+  box-sizing: border-box; /* 패딩 포함 너비 계산 */
+  
+  border-radius: 16px; /* 모서리 둥글기 통일 (Checklist와 비슷하게) */
+  overflow: hidden; 
+  color: #fff; 
+  box-shadow: 0 4px 15px rgba(14,30,60,0.08); /* 그림자 부드럽게 조정 */
+  
+  /* 마진은 layout.scss의 gap으로 제어하므로 여기선 제거하거나 최소화 */
+  margin-bottom: 0; 
+}
 .wc-top { display:flex; gap:12px; align-items:center; padding:18px; }
 .wc-icon { width:110px; display:flex; align-items:center; justify-content:center; }
 .wc-icon i { font-size:48px; color:rgba(255,255,255,0.95); }
