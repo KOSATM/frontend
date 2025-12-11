@@ -20,8 +20,7 @@
 
         <aside v-if="showRightSidebar" class="sidebar-area right">
           <WeatherCard />
-          <div class="p-3"> <Checklist />
-          </div>
+          <Checklist />
         </aside>
         
       </div>
@@ -67,7 +66,7 @@ onMounted(() => {
 });
 </script>
 
-<style lang="scss">
+<style scoped>
 /* App.vue 내에서 직접 import 하거나 
   vite.config.js에서 전역으로 설정
 */
