@@ -45,24 +45,28 @@
         </div>
       </div>
     </section>
-
-    <!-- 하단 버튼 -->
-    <div class="navigation-buttons">
-      <button class="btn-back" @click="goBack">Back</button>
-      <button class="btn-next" @click="goNext" :disabled="selectedIndex === null">
-        Next Step
-      </button>
-    </div>
+    <NavigationButtons
+      backText="Back"
+      :isNextDisabled="!canProceed"
+      @back="goBack"
+      @next="goNext"
+    >
+      <template #next-content>
+        <span v-if="isAnalyzing">분석 중...</span>
+        <span v-else>Next Step</span>
+      </template>
+    </NavigationButtons>
   </div>
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
 import api from '@/api/travelgramApi'
 import StepHeader from '@/components/common/StepHeader.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const router = useRouter()
 const reviewStore = useReviewStore()
@@ -225,39 +229,5 @@ const goNext = async() => {
   right: 1rem;
   color: #ff8c00;
   font-size: 1.3rem;
-}
-
-/* 하단 버튼 영역 */
-.navigation-buttons {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 2rem;
-}
-
-.btn-back,
-.btn-next {
-  flex: 1;
-  height: 48px;
-  border-radius: 1rem;
-  border: none;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.btn-back {
-  background-color: #fff;
-  color: #1b3b6f;
-  border: 2px solid #1b3b6f;
-  margin-right: 0.75rem;
-}
-
-.btn-next {
-  background-color: #1b3b6f;
-  color: #fff;
-}
-
-.btn-next:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
 }
 </style>

@@ -1,6 +1,8 @@
 <template>
   <div class="travelgram-page">
     <PageHeader title="Travelgram" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
+    <BackButtonPageHeader title="Select one card to review your travel" subtitle="종료된 여행 카드를 선택해서 리뷰를 작성해보세요." @back="goBack"/>
+    
     <ProfileSummary :name="displayName" bio="여행 애호가" initials="userInitials" :totalplans="stats.totalPlans"
       :travelDays="stats.travelDays" :completed="stats.completed" />
     <h4 class="my-3">
@@ -36,6 +38,8 @@ import { storeToRefs } from 'pinia'
 import planCard from '@/components/common/PlanCard.vue';
 import ProfileSummary from "@/components/travelgram/ProfileSummary.vue";
 import PageHeader from '@/components/common/PageHeader.vue';
+import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
+
 
 const store = useStore()
 const router = useRouter()
@@ -159,6 +163,7 @@ const profileImage = computed(() => {
   if (stored) return stored
   return new URL('../../assets/img/profile-logo.png', import.meta.url).href
 })
+const goBack = () => router.back()
 </script>
 
 <style scoped>

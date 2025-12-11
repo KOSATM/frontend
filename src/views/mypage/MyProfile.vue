@@ -1,7 +1,7 @@
 <template>
   <div class="mypage-page">
     <PageHeader title="MyPage" subtitle="나의 여행 정보" icon="bi-person" />
-    <BackButtonPageHeader title="My Profile" subtitle="당신의 여행 프로필을 확인해보세요." />
+    <BackButtonPageHeader title="My Profile" subtitle="당신의 여행 프로필을 확인해보세요." @back="goBack"/>
 
     <div class="text-center mb-5">
       <div class="position-relative d-inline-block">
@@ -180,7 +180,7 @@ const getCurrencyLabel = (code) => {
   return currencies[code] || code
 }
 
-const goBack = () => router.go(-1)
+const goBack = () => router.back()
 const goToEditProfile = () => router.push('/mypage/edit')
 
 const profileImage = computed(() => {
