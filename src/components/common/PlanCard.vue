@@ -90,10 +90,11 @@ const handleClick = () => {
       font-weight: 600;
       color: #1B3B6F;
       margin-bottom: 0.25rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-
+      word-break: keep-all; /* 단어 단위로 줄바꿈 */
+      line-height: 1.4;     /* 줄간격 확보 */
+      /* white-space: nowrap; */
+      /* overflow: hidden; */
+      /* text-overflow: ellipsis; */
       /* ✅ [수정됨] .no-title 클래스가 붙었을 때 스타일 오버라이딩 */
       &.no-title {
         color: #999;       /* 회색 */

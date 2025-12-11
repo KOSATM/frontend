@@ -163,7 +163,8 @@ const profileImage = computed(() => {
 
 <style scoped>
 .travelgram-page {
-  background-color: #fffaf3;
+  /* 배경색이나 패딩은 유지 */
+  background-color: #fffaf3; 
   min-height: 100vh;
   padding: 2rem 1.25rem;
 }
@@ -178,7 +179,12 @@ const profileImage = computed(() => {
   font-weight: 600;
 }
 
+/* ✅ 핵심 수정 부분: 리스트형 배치 */
 .plan-list {
+  display: flex;
+  flex-direction: column; /* 위에서 아래로 쌓이게 설정 */
+  gap: 1.5rem;            /* 카드 사이의 간격 */
   margin-bottom: 2rem;
+  width: 100%;            /* 리스트 전체 너비 100% */
 }
 </style>
