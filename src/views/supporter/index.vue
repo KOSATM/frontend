@@ -3,21 +3,13 @@
     <PageHeader title="Supporter" subtitle="Real-time travel support and updates" icon="bi-chat-dots" />
     <BackButtonPageHeader title="서포터 홈" subtitle="위치 기반으로 당신의 여행을 도와드립니다." @back="goBack"/>
 
-    <!-- Weather component -->
-    <div class="m-4">
-      <!-- <WeatherCard /> -->
-    </div>
-
-    <!-- MAP wrapper: full width at top -->
     <div class="map-wrapper-full mb-4">
       <div class="map-top-row d-flex align-items-start justify-content-between mb-2">
         <nav class="browser-tabs" role="tablist" aria-label="Map tabs">
-          <button role="tab" :aria-selected="currentTab === 'image'"
-            :class="['tab-btn', { active: currentTab === 'image' }]" @click="currentTab = 'image'">
+          <button role="tab" :class="['tab-btn', { active: currentTab === 'image' }]" @click="currentTab = 'image'">
             Image-based Travel AI
           </button>
-          <button role="tab" :aria-selected="currentTab === 'restroom'"
-            :class="['tab-btn', { active: currentTab === 'restroom' }]" @click="currentTab = 'restroom'">
+          <button role="tab" :class="['tab-btn', { active: currentTab === 'restroom' }]" @click="currentTab = 'restroom'">
             Restrooms
           </button>
         </nav>
@@ -28,7 +20,6 @@
       </div>
 
       <div class="card map-container shadow-sm border-0 p-0 position-relative">
-        <!-- Image 탭 지도 -->
         <NaverMap
           v-if="currentTab === 'image'"
           :markers="historyMarkers"
@@ -36,7 +27,6 @@
           :initialZoom="11"
           :fitBoundsMode="true"
         />
-        <!-- Restroom 탭 지도 -->
         <NaverMap
           v-if="currentTab === 'restroom'"
           ref="restroomMapRef"
@@ -49,12 +39,7 @@
       </div>
     </div>
 
-    <div class="row gx-4">
-      <!-- LEFT COLUMN: weather + checklist -->
-
-      <!-- Image UI (default) -->
-      <div v-show="currentTab === 'image'">
-
+    <div v-show="currentTab === 'image'">
         <BaseSection title="Image-based Travel AI" subtitle="Upload photo → Get recommendations">
           <template #icon>
             <div class="ai-badge"><i class="bi bi-camera-fill"></i></div>
@@ -106,7 +91,6 @@
         </BaseSection>
       </div>
 
-      <!-- Restrooms UI -->
       <div v-show="currentTab === 'restroom'">
         <BaseSection title="Nearby Public Restrooms" subtitle="Find nearby public restrooms">
           <template #icon>
@@ -142,7 +126,7 @@
           </div>
         </BaseSection>
       </div>
-    </div>
+    
   </div>
 </template>
 
@@ -458,26 +442,9 @@ const goToImageAIHistory = () => {
 .supporter-page {
   background-color: #fffaf3;
   min-height: 100vh;
-  text-align: center;
-  padding: 2rem 1.25rem;
+  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
 }
 
-
-.temp-value {
-  font-size: 2.5rem;
-  line-height: 1;
-  margin-right: 4px;
-}
-
-.desc {
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-.location {
-  font-size: 0.8rem;
-  opacity: 0.8;
-}
 
 /* two-column spacing handled by Bootstrap .row/.col */
 
