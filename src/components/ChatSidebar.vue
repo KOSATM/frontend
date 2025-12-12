@@ -178,7 +178,8 @@ const sendMessage = async () => {
   scrollToBottom();
 
   setTimeout(async () => {
-    const res = await generateAIResponse(request);
+    const res = await chatApi.chat(request);
+    const mainResponse = res.data.mainResponse;
 
     //  AI 메시지 출력
     chatMessages.value.push({
@@ -191,10 +192,10 @@ const sendMessage = async () => {
     //    여기서 payload 추출
     if (res.data.mainResponse.requirePageMove) {
       const payload = res.data.mainResponse.data;
-      console.info(JSON.stringify(payload)+"++++++++++++++++++");
+      
       //  store에 저장 → PlannerList에서 watch 중
       chatStore.setLivePlan(payload);
-
+      await nextTick();
       //  페이지 이동
       router.push(res.data.mainResponse.targetUrl);
     }
@@ -205,10 +206,6 @@ const sendMessage = async () => {
   }, 500);
 };
 
-// AI 응답 생성
-const generateAIResponse = async (request) => {
-  return await chatApi.chat(request);
-};
 
 // 스크롤 하단 고정
 const scrollToBottom = () => {

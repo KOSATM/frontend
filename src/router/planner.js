@@ -6,6 +6,7 @@ import PlanList from "@/views/planner/edit/PlanList.vue";
 import Payment from "@/views/planner/hotel/Payment.vue";
 import BookingComplete from "@/views/planner/BookingComplete.vue";
 import PlannerSummary from "@/components/planner/PlannerSummary.vue";
+import PlannerTest from "@/components/planner/PlannerTest.vue";
 
 const planner = [
   {
@@ -68,6 +69,12 @@ const planner = [
     component: BookingComplete,
     meta: { title: "예약 완료" },
   },
+  {
+    path: "/planner/test",
+    name: "plannertest",
+    component: PlannerTest,
+    meta: { title: "플래너 테스트" },
+  }
 ];
 
 export default planner;

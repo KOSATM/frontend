@@ -6,7 +6,7 @@
         <!-- X 버튼 -->
         <button class="close-btn" @click="$emit('close')">✕</button>
 
-        <!-- 🔥 상단 메인 이미지 -->
+        <!--  상단 메인 이미지 -->
         <div class="main-image-wrapper">
           <img :src="localGallery[0]" alt="thumbnail" class="main-image" />
         </div>
@@ -16,7 +16,7 @@
           {{ data?.title || "Untitled Activity" }}
         </h3>
 
-        <!-- 🔥 위치 정보 info-block -->
+        <!--  위치 정보 info-block -->
         <div class="info-block mb-3">
 
           <!-- Location Section -->
@@ -59,13 +59,8 @@
         <!-- 지도 -->
         <h4 class="map-title">📍 Location on Map</h4>
         <div class="map-wrapper">
-          <iframe
-            :src="mapSrc(data)"
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-          ></iframe>
+          <iframe :src="mapSrc(data)" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
-
       </div>
     </div>
   </teleport>
@@ -75,16 +70,28 @@
 import { computed } from "vue";
 import defaultImg1 from "@/assets/planner/activity-default-1.jpg";
 
+const emits = defineEmits(["close"]);
+
 const props = defineProps({
   open: { type: Boolean, default: false },
   data: { type: Object, default: null },
 });
 
+
 /* 첫 번째 이미지만 사용 */
 const localGallery = computed(() => {
-  if (props.data?.gallery?.length > 0) {
-    return props.data.gallery;
-  }
+  const d = props.data;
+
+  //  data가 완전히 null이면 기본 이미지
+  if (!d) return [defaultImg1];
+
+  //  gallery 자체가 없으면 기본 이미지
+  if (!d.gallery) return [defaultImg1];
+
+  //  gallery 배열이 비어있지 않으면 사용
+  if (d.gallery.length > 0) return d.gallery;
+
+  //  모든 조건에서 기본 이미지
   return [defaultImg1];
 });
 
@@ -243,6 +250,7 @@ const mapSrc = (data) => {
     opacity: 0;
     transform: scale(0.97);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
