@@ -98,11 +98,11 @@
 
 <script setup>
 import chatApi from "@/api/chatApi";
-import { useChatStore } from "@/store/chatStore";
-import { ref, nextTick, onMounted, watch } from "vue";
 import { useAuthStore } from "@/store/authStore";
-import { useRoute, useRouter } from "vue-router";
+import { useChatStore } from "@/store/chatStore";
 import { marked } from "marked";
+import { nextTick, onMounted, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 // Store & Router
 const authStore = useAuthStore();
@@ -130,9 +130,11 @@ const sendQuickMessage = (msg) => {
   sendMessage();
 };
 
+// 메시지 전송
 const sendMessage = async () => {
   if (!currentMessage.value.trim() || isLoading.value) return;
 
+  //  유저 메시지 추가
   chatMessages.value.push({
     id: Date.now(),
     type: "user",
@@ -145,39 +147,38 @@ const sendMessage = async () => {
     message: currentMessage.value,
     currentUrl: route.fullPath
   };
-  
   currentMessage.value = "";
   isLoading.value = true;
+
   if (textareaRef.value) textareaRef.value.style.height = "auto";
-  
   await nextTick();
   scrollToBottom();
 
-  try {
-    // 실제 API 호출 로직 (Mock setTimeout 대신 사용 시)
-    // const res = await chatApi.chat(request);
-    
-    // Test용 Mock Delay
-    setTimeout(async () => {
-      // Mock Response Structure
-      const mockHtml = marked.parse("Sure! Here is a plan update for **Seoul**.");
-      
-      chatMessages.value.push({
-        id: Date.now() + 1,
-        type: "ai",
-        content: mockHtml, // 실제로는 res.data.mainResponse.message
-        timestamp: new Date(),
-      });
-      
-      isLoading.value = false;
-      await nextTick();
-      scrollToBottom();
-    }, 1000);
+  setTimeout(async () => {
+    const res = await chatApi.chat(request);
+    const mainResponse = res.data.mainResponse;
 
-  } catch (error) {
-    console.error(error);
+    chatMessages.value.push({
+      id: Date.now() + 1,
+      type: "ai",
+      content: markdownToHTML(mainResponse.message),
+      timestamp: new Date(),
+    });
+
+    if (mainResponse?.data) {
+      console.log("🔥 서버에서 받은 플랜 payload:", mainResponse.data);
+      chatStore.setLivePlan(mainResponse.data);
+    }
+
+    if (mainResponse.requirePageMove && mainResponse.targetUrl) {
+      router.push(mainResponse.targetUrl);
+    }
+
     isLoading.value = false;
-  }
+    await nextTick();
+    scrollToBottom();
+  }, 500);
+
 };
 
 const scrollToBottom = () => {
@@ -193,6 +194,13 @@ watch(() => chatStore.messageToSend, (msg) => {
     sendMessage();
   }
 });
+
+// 마크다운 문서 HTML 형식으로 변환
+const markdownToHTML = (message) => {
+  let htmlContent = marked.parse(message);
+  return htmlContent;
+}
+
 
 onMounted(() => {
   authStore.initializeAuth();
