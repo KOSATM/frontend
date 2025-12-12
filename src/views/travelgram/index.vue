@@ -6,7 +6,7 @@
     <ProfileSummary :profileName="displayName" bio="여행 애호가" initials="userInitials" :totalplans="stats.totalPlans"
       :travelDays="stats.travelDays" :completed="stats.completed" />
     <h4 class="my-3">
-      <i class="bi bi-instagram me-2 text-primary"></i> 완료된 여행 일정
+      <i class="bi bi-compass me-2 text-primary"></i> 완료된 여행 일정
     </h4>
 
 
