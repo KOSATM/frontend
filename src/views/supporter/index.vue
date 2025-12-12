@@ -94,7 +94,7 @@
       <div v-show="currentTab === 'restroom'">
         <BaseSection title="근처 공중 화장실" subtitle="근처에 있는 공중 화장실을 찾아보세요.">
           <template #icon>
-            <div class="ai-badge"><i class="bi bi-people-fill"></i></div>
+            <div class="ai-badge"><i class="bi bi-person-standing"></i></div>
           </template>
 
           <div v-if="isLoadingRestrooms" class="text-center py-4">
@@ -109,7 +109,7 @@
               class="list-group-item list-group-item-action mb-2 d-flex align-items-center rounded border-0 shadow-sm"
               @click.prevent="focusOnRestroom(r)">
               <div class="me-3 icon-box d-flex align-items-center justify-content-center">
-                <i class="bi bi-people-fill text-primary fs-4"></i>
+                <i class="bi bi-person-standing text-primary fs-4"></i>
               </div>
               <div class="flex-fill">
                 <div class="fw-medium">{{ r.toiletName || '공중화장실' }}</div>
