@@ -3,6 +3,8 @@ import CreatePlan from "@/views/planner/CreatePlan.vue";
 import PlanList from "@/views/planner/edit/PlanList.vue";
 import Payment from "@/views/planner/hotel/Payment.vue";
 import BookingComplete from "@/views/planner/BookingComplete.vue";
+import PlannerSummary from "@/components/planner/PlannerSummary.vue";
+import PlannerTest from "@/components/planner/PlannerTest.vue";
 
 const planner = [
 
@@ -27,6 +29,26 @@ const planner = [
     },
   },
   {
+    path: "/planner/summary",
+    name: "plansummary",
+    component: PlannerSummary,
+    meta: { title: "플랜 요약" },
+  },
+  {
+    path: "/planner/itinerary",
+    name: "itinerary",
+    components: {
+      default: EditPlan,
+      left: Chat,
+      right: PlanList,
+    },
+    meta: {
+      layout: "wide",
+      split: true,
+      title: "일정 확인",
+    },
+  },
+  {
     path: "/planner/hotel",
     name: "hotel",
     component: Hotel,
@@ -46,6 +68,12 @@ const planner = [
     component: BookingComplete,
     meta: { title: "예약 완료" },
   },
+  {
+    path: "/planner/test",
+    name: "plannertest",
+    component: PlannerTest,
+    meta: { title: "플래너 테스트" },
+  }
 ];
 
 export default planner;

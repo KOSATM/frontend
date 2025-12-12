@@ -1,329 +1,259 @@
-<!-- src/components/planner/ActivityDetailsModal.vue -->
 <template>
   <teleport to="body">
     <div v-if="open" class="modal-backdrop" @click="$emit('close')">
-      <div class="modal-card modal-wide" @click.stop>
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="mb-0 title">Activity Details</h5>
-          <button
-            class="btn btn-sm btn-light rounded-circle"
-            @click="$emit('close')"
-          >
-            ✕
-          </button>
+      <div class="modal-card" @click.stop>
+
+        <!-- X 버튼 -->
+        <button class="close-btn" @click="$emit('close')">✕</button>
+
+        <!--  상단 메인 이미지 -->
+        <div class="main-image-wrapper">
+          <img :src="localGallery[0]" alt="thumbnail" class="main-image" />
         </div>
 
         <!-- 제목 -->
-        <h6 class="mb-2 title">
+        <h3 class="activity-title">
           {{ data?.title || "Untitled Activity" }}
-        </h6>
+        </h3>
 
-        <!-- 상단 정보 카드 -->
-        <div class="info-card mb-3">
-          <div class="row small">
-            <div class="col-12 mb-2">
-              <div class="label-row">
-                <span>📍 Location</span>
-              </div>
-              <div class="value-row">
-                {{ data?.area || "Seoul" }}<br />
-                <span class="text-muted">{{ data?.address }}</span>
-              </div>
+        <!--  위치 정보 info-block -->
+        <div class="info-block mb-3">
+
+          <!-- Location Section -->
+          <div>
+            <div class="info-header">
+              <span class="info-header-icon">📌</span>
+              <span class="info-header-label">Location</span>
             </div>
-            <div class="col-md-6 col-12 mb-2">
-              <div class="label-row">⏰ Hours</div>
-              <div class="value-row">
-                {{ data?.hours || "Check locally" }}
+
+            <div class="info-indent">
+              <div class="info-main">
+                {{ data?.area || "Seoul" }}
               </div>
-            </div>
-            <div class="col-md-6 col-12 mb-2">
-              <div class="label-row">💰 Estimated Cost</div>
-              <div class="value-row">
-                {{
-                  hasCost(data?.cost) ? formatCost(data?.cost) : "Free / N/A"
-                }}
+
+              <div class="info-sub">
+                {{ data?.address || "No address provided" }}
               </div>
             </div>
           </div>
+
+          <!-- 구분선 -->
+          <div class="info-divider"></div>
+
+          <!-- Description Section -->
+          <div>
+            <div class="info-header mt-2">
+              <span class="info-header-icon">📌</span>
+              <span class="info-header-label">Description</span>
+            </div>
+
+            <div class="info-indent">
+              <p class="info-desc">
+                {{ data?.desc || "No description provided yet." }}
+              </p>
+            </div>
+          </div>
+
         </div>
 
-        <!-- 메인 그리드: 왼쪽 사진, 오른쪽 맵 -->
-        <div class="grid">
-          <!-- 📸 로컬 이미지 3장 스크롤 -->
-          <div class="left">
-            <div class="image-wrapper">
-              <div class="image-splan">
-                <div
-                  v-for="(url, i) in localGallery"
-                  :key="'local-' + i"
-                  class="image-item"
-                >
-                  <img :src="url" :alt="`Default photo ${i + 1}`" />
-                </div>
-              </div>
-
-              <!-- 점 인디케이터 -->
-              <div class="carousel-dots">
-                <span
-                  v-for="n in localGallery.length"
-                  :key="'dot-' + n"
-                  class="dot"
-                ></span>
-              </div>
-            </div>
-
-            <!-- 🔍 구글 이미지 검색 링크 (옵션) -->
-            <div v-if="data?.imageQuery" class="img-search-link-wrapper mt-1">
-              <a
-                :href="googleImageUrl(data.imageQuery)"
-                target="_blank"
-                rel="noreferrer"
-                class="img-search-link"
-              >
-                🔍 More photos on Google Images
-              </a>
-            </div>
-          </div>
-
-          <!-- 🗺️ 지도 -->
-          <div class="right">
-            <div class="map ratio">
-              <iframe
-                :src="mapSrc(data)"
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-              ></iframe>
-            </div>
-          </div>
+        <!-- 지도 -->
+        <h4 class="map-title">📍 Location on Map</h4>
+        <div class="map-wrapper">
+          <iframe :src="mapSrc(data)" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
-
-        <!-- 맨 아래 설명 -->
-        <p class="desc mt-3">
-          {{ data?.desc || "No description provided yet." }}
-        </p>
       </div>
     </div>
   </teleport>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import defaultImg1 from "@/assets/planner/activity-default-1.jpg";
-import defaultImg2 from "@/assets/planner/activity-default-2.jpg";
-import defaultImg3 from "@/assets/planner/activity-default-3.jpg";
+
+const emits = defineEmits(["close"]);
 
 const props = defineProps({
   open: { type: Boolean, default: false },
   data: { type: Object, default: null },
-  spendInput: { type: Number, default: null },
 });
 
-defineEmits(["close", "save-spent", "open-replace", "update:spend-input"]);
 
-// 이미지 갤러리: data.gallery가 있으면 사용, 없으면 기본 이미지
+/* 첫 번째 이미지만 사용 */
 const localGallery = computed(() => {
-  const defaultImages = [defaultImg1, defaultImg2, defaultImg3];
-  
-  // gallery 배열이 있으면 사용 (History에서 전달)
-  if (props.data?.gallery && Array.isArray(props.data.gallery) && props.data.gallery.length > 0) {
-    return props.data.gallery;
-  }
-  
-  return defaultImages;
+  const d = props.data;
+
+  //  data가 완전히 null이면 기본 이미지
+  if (!d) return [defaultImg1];
+
+  //  gallery 자체가 없으면 기본 이미지
+  if (!d.gallery) return [defaultImg1];
+
+  //  gallery 배열이 비어있지 않으면 사용
+  if (d.gallery.length > 0) return d.gallery;
+
+  //  모든 조건에서 기본 이미지
+  return [defaultImg1];
 });
-
-const hasCost = (cost) => {
-  return cost === 0 || (typeof cost === "number" && !Number.isNaN(cost));
-};
-
-const formatCost = (cost) => {
-  if (cost === 0) return "Free";
-  if (typeof cost === "number") return `$${cost}`;
-  return "";
-};
 
 const mapSrc = (data) => {
   const q = encodeURIComponent(data?.address || data?.title || "Seoul");
   return `https://www.google.com/maps?q=${q}&output=embed`;
 };
-
-const googleImageUrl = (q) => {
-  return `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(
-    q || "Seoul travel"
-  )}`;
-};
 </script>
 
 <style scoped>
+/* 전체 화면 흐림 overlay */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
-  align-items: flex-start;
   justify-content: center;
-  padding: 6vh 14px;
-  z-index: 10000;
+  align-items: center;
+  padding: 20px;
+  z-index: 2000;
 }
+
+/* 메인 카드 */
 .modal-card {
-  width: min(980px, 95vw);
-  max-height: 88vh;
-  overflow-y: auto;
+  width: min(480px, 95vw);
   background: #fff;
-  border-radius: 16px;
-  padding: 20px 18px 18px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
-  animation: pop 0.18s ease;
-}
-.modal-wide {
-  width: min(1080px, 95vw);
-}
-@keyframes pop {
-  from {
-    transform: translateY(-6px);
-    opacity: 0.9;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* 상단 정보 카드 */
-.info-card {
   border-radius: 14px;
-  background: #f3f4ff;
-  padding: 14px 16px;
-}
-.label-row {
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-.value-row {
-  font-size: 13px;
-}
-
-/* 메인 레이아웃 */
-.grid {
-  display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 16px;
-  margin-top: 6px;
-}
-
-/* ✅ 로컬 이미지 3장 영역 */
-.image-wrapper {
-  border-radius: 16px;
-  background: #020617;
-  padding: 10px 10px 12px;
-  min-height: 280px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.2s ease-out;
   display: flex;
   flex-direction: column;
 }
-.image-splan {
-  display: flex;
-  overflow-x: auto;
-  gap: 10px;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
-}
-.image-splan::-webkit-scrollbar {
-  height: 6px;
-}
-.image-splan::-webkit-scrollbar-track {
-  background: transparent;
-}
-.image-splan::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.8);
-  border-radius: 999px;
-}
-.image-item {
-  flex: 0 0 100%; /* 한 번에 한 장씩 */
-  scroll-snap-align: center;
-  border-radius: 12px;
-  overflow: hidden;
-  background: #111827;
-}
-.image-item img {
-  width: 100%;
-  height: 260px;
-  object-fit: cover;
-  display: block;
-}
 
-/* 점 인디케이터 */
-.carousel-dots {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-  margin-top: 6px;
-}
-.carousel-dots .dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(148, 163, 184, 0.9);
-}
-
-/* 이미지 검색 링크 */
-.img-search-link-wrapper {
-  text-align: right;
-}
-.img-search-link {
-  font-size: 11px;
-  color: #2563eb;
-  text-decoration: none;
-}
-.img-search-link:hover {
-  text-decoration: underline;
-}
-
-/* 🗺️ 지도 */
-.map.ratio {
-  position: relative;
-  padding-top: 70%;
-  border-radius: 14px;
-  overflow: hidden;
-  background: #e5e7eb;
-}
-.map iframe {
+/* X 버튼 */
+.close-btn {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
-/* 설명 (맨 아래 전체 폭) */
-.desc {
-  font-size: 14px;
-  color: #4b5563;
-  margin: 6px 2px 0;
-  line-height: 1.5;
-}
-
-/* 버튼 (헤더 닫기용) */
-.btn {
-  padding: 8px 10px;
-  border-radius: 999px;
-  border: 1px solid #e5e7eb;
-  background: #fff;
+  top: 14px;
+  right: 14px;
+  border: none;
+  background: #ffffffd0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 16px;
   cursor: pointer;
 }
 
+/* 🎨 상단 이미지 */
+.main-image-wrapper {
+  width: 100%;
+  max-height: 260px;
+  overflow: hidden;
+}
 
+.main-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
 
-/* 반응형 */
-@media (max-width: 900px) {
-  .grid {
-    grid-template-columns: 1fr;
+/* 제목 */
+.activity-title {
+  font-size: 20px;
+  font-weight: 700;
+  padding: 18px 20px 10px;
+  color: #1e293b;
+}
+
+/* info-block */
+.info-block {
+  background: #f5f7ff;
+  margin: 0 20px;
+  border-radius: 14px;
+  padding: 14px 18px 10px;
+}
+
+/* 제목 줄: 아이콘 + 텍스트 */
+.info-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.info-header-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.info-header-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+/* 들여쓰기 영역 */
+.info-indent {
+  margin-left: 25px;
+}
+
+/* 지역 / 주소 / 설명 정렬 */
+.info-main {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 2px;
+}
+
+.info-sub {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.info-desc {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+/* hr 느낌의 얇은 구분선 */
+.info-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 8px 0;
+}
+
+/* 지도 */
+.map-title {
+  font-size: 15px;
+  font-weight: 700;
+  padding: 10px 20px 6px;
+  color: #1e293b;
+}
+
+.map-wrapper {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  border-radius: 0 0 14px 14px;
+  background: #e5e7eb;
+}
+
+.map-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
   }
-  .image-item img {
-    height: 220px;
-  }
-  .map.ratio {
-    padding-top: 60%;
+
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 </style>
