@@ -36,7 +36,7 @@ import { ref, watch, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import AppHeader from "./components/AppHeader.vue";
 import AppFooter from "./components/AppFooter.vue";
-import SideBar from "./components/Sidebar.vue"; 
+import SideBar from "./components/Menubar.vue"; 
 import ChatSidebar from "./components/ChatSidebar.vue";
 import Checklist from "./components/supporter/Checklist.vue";
 import WeatherCard from "./components/supporter/WeatherCard.vue";
