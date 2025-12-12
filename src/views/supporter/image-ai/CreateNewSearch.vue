@@ -1,14 +1,20 @@
 <template>
   <!-- top banner with back button + title/subtitle -->
-  <StepHeader title="Image-based Travel AI" subtitle="Find destinations from your photos" step="1/4"
+  <div class="supporter-page">
+
+  <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
+  <StepHeader title="이미지 기반 여행 AI" subtitle="당신의 사진으로 여행 장소를 찾아보아요!" step="1/4"
     @back="onHeaderBack" />
-  <BaseSection icon="bi-camera" title="Image-based Travel AI" subtitle="Upload photo → Get recommendations">
+  <BaseSection title="이미지 기반 여행 AI" subtitle="사진을 올리면 관련된 장소를 추천해드립니다.">
+    <template #icon>
+      <div class="ai-badge"><i class="bi bi-camera-fill"></i></div>
+    </template>
     <div class="mb-3">
-      <div class="small"><strong>How it works:</strong></div>
+      <div class="a"><strong>어떻게 동작하나요?</strong></div>
       <ol class="small text-muted mb-0 ps-3">
-        <li>Upload your travel photo</li>
-        <li>AI analyzes the image</li>
-        <li>Get similar destination recommendations</li>
+        <li>여행 중 궁금한 점을 사진으로 올려보세요.</li>
+        <li>AI가 이미지를 분석합니다.</li>
+        <li>사진과 관련된 장소 추천을 받아보세요.</li>
       </ol>
     </div>
 
@@ -21,7 +27,7 @@
           </template>
           <template v-else>
             <i class="bi bi-camera fs-1"></i>
-            <div class="mt-2">Tap to Upload & Discover</div>
+            <div class="mt-2">클릭 시 업로드</div>
           </template>
         </div>
       </div>
@@ -33,14 +39,16 @@
       <input id="imageInput" type="file" accept="image/*" class="d-none" @change="onFileChange" />
       <!-- 버튼은 '다음(타입 선택)' 역할. 사진 없으면 비활성화 -->
       <button class="btn btn-primary" :disabled="!imagePreview" @click.prevent="goToType">
-        <i class="bi bi-arrow-right-circle me-2"></i> Specify Photo Type
+        <i class="bi bi-arrow-right-circle me-2"></i> 사진에서 알고 싶은 점을 구체적으로 선택해주세요.
       </button>
     </div>
   </section>
+   </div>
 </template>
 
 <script setup>
 import StepHeader from '@/components/common/StepHeader.vue'
+import PageHeader from '@/components/common/PageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -125,6 +133,24 @@ const onHeaderBack = () => {
 </script>
 
 <style scoped>
+.supporter-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+}
+
+/* BaseSection small tweaks */
+.ai-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: #3A5797;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
 .page-banner {
   background: transparent;
   align-items: center;

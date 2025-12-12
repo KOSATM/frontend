@@ -1,13 +1,13 @@
 <template>
   <div class="supporter-page">
-    <PageHeader title="Supporter" subtitle="Real-time travel support and updates" icon="bi-chat-dots" />
-    <BackButtonPageHeader title="서포터 홈" subtitle="위치 기반으로 당신의 여행을 도와드립니다." @back="goBack"/>
+    <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
+    <BackButtonPageHeader title="메인 페이지" subtitle="위치 기반으로 당신의 여행을 도와드립니다." @back="goBack"/>
 
     <div class="map-wrapper-full mb-4">
       <div class="map-top-row d-flex align-items-start justify-content-between mb-2">
         <nav class="browser-tabs" role="tablist" aria-label="Map tabs">
           <button role="tab" :class="['tab-btn', { active: currentTab === 'image' }]" @click="currentTab = 'image'">
-            Image-based Travel AI
+            이미지 기반 여행 AI
           </button>
           <button role="tab" :class="['tab-btn', { active: currentTab === 'restroom' }]" @click="currentTab = 'restroom'">
             Restrooms
@@ -40,18 +40,18 @@
     </div>
 
     <div v-show="currentTab === 'image'">
-        <BaseSection title="Image-based Travel AI" subtitle="Upload photo → Get recommendations">
+        <BaseSection title="이미지 기반 여행 AI" subtitle="사진을 올리면 관련된 장소를 추천해드립니다.">
           <template #icon>
             <div class="ai-badge"><i class="bi bi-camera-fill"></i></div>
           </template>
 
           <div class="image-ui-row d-flex gap-3 align-items-start">
             <div class="col how-works">
-              <div class="small"><strong>How it works:</strong></div>
+              <div class="a"><strong>어떻게 동작하나요?</strong></div>
               <ol class="small text-muted mb-0 ps-3">
-                <li>Upload your travel photo</li>
-                <li>AI analyzes the image</li>
-                <li>Get similar destination recommendations</li>
+                <li>여행 중 궁금한 점을 사진으로 올려보세요.</li>
+                <li>AI가 이미지를 분석합니다.</li>
+                <li>사진과 관련된 장소 추천을 받아보세요.</li>
               </ol>
             </div>
 
@@ -92,14 +92,14 @@
       </div>
 
       <div v-show="currentTab === 'restroom'">
-        <BaseSection title="Nearby Public Restrooms" subtitle="Find nearby public restrooms">
+        <BaseSection title="근처 공중 화장실" subtitle="근처에 있는 공중 화장실을 찾아보세요.">
           <template #icon>
             <div class="ai-badge"><i class="bi bi-people-fill"></i></div>
           </template>
 
           <div v-if="isLoadingRestrooms" class="text-center py-4">
             <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
+              <span class="visually-hidden">로딩 중...</span>
             </div>
             <p class="mt-2 text-muted">주변 화장실 검색 중...</p>
           </div>

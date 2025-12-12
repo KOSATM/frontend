@@ -1,5 +1,5 @@
 <template>
-  <BaseSection title="Today's Checklist" icon="bi-journal-text" bgColor="#fff9d6">
+  <BaseSection title="오늘의 체크리스트" icon="bi-journal-text" bgColor="#fff9d6">
 
     <div class="progress-wrapper mb-3">
       <div class="progress progress-bar-row m-3" :class="{ 'progress-complete': isComplete }">
@@ -21,7 +21,7 @@
           <div class="circle-check" :class="{ checked: item.done }"></div>
         </div>
         <div class="flex-fill">
-          <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex justify-content-between align-items-start">
             <span class="item-title" :class="{ checkedTitle: item.done }">{{ item.title }}</span>
             <div class="text-muted small">{{ item.hint || '' }}</div>
           </div>
@@ -46,12 +46,12 @@ travelStore.dayIndex = 3
 
 // 기본 체크리스트 (dayIndex가 없을 때)
 const defaultChecklist = [
-  { title: 'Camera battery fully charged?', done: false, highlight: true },
-  { title: "Today's weather: Rainy / Bring umbrella 🌂", done: false, highlight: true },
-  { title: 'Portable charger packed', done: false, highlight: false },
-  { title: "Today's tip: OO Park - morning visit recommended", done: false, highlight: true },
-  { title: 'Check transportation card balance', done: false, highlight: false },
-  { title: 'Sunscreen & sunglasses', done: false, highlight: false },
+  { title: '카메라 충전은 완료되었나요?', done: false, highlight: true },
+  { title: "오늘의 날씨: 비 / 우산을 챙겨주세요. 🌂", done: false, highlight: true },
+  { title: '보조배터리를 챙겨주세요.', done: false, highlight: false },
+  { title: "오늘의 팁: ㅇㅇ공원 - 아침 방문을 추천드립니다.", done: false, highlight: true },
+  { title: '교통카드 잔액을 확인해주세요.', done: false, highlight: false },
+  { title: '선크림 & 선글라스', done: false, highlight: false },
 ]
 
 // DB에서 체크리스트 불러오기
@@ -147,8 +147,20 @@ onMounted(() => {
   align-items: center;
   gap: 0px;
   padding: 10px;
-}
 
+  /* --- 줄바꿈을 위한 핵심 코드 --- */
+  word-break: keep-all;  /* 한글 단어 중간이 끊기지 않고 단어 단위로 줄바꿈 */
+  word-wrap: break-word; /* 아주 긴 영문이나 숫자는 강제로 줄바꿈 */
+  white-space: normal;   /* 텍스트가 영역을 넘어가면 줄바꿈 허용 */
+  line-height: 1.4;      /* 여러 줄일 때 가독성을 위해 줄 간격 확보 */
+  display: block;        /* span 태그가 공간을 차지하도록 설정 */
+  margin-right: 8px;     /* 힌트 텍스트와의 간격 확보 */
+}
+.checklist-item .text-muted.small {
+  flex-shrink: 0;       /* 제목이 길어져도 힌트 영역이 찌그러지지 않음 */
+  white-space: nowrap;  /* 힌트 텍스트는 줄바꿈 되지 않게 설정 */
+  margin-left: auto;    /* 오른쪽 끝으로 확실하게 밀어줌 */
+}
 .checklist-item.checked-item {
   opacity: .55;
   transform: scale(.995);
@@ -157,7 +169,7 @@ onMounted(() => {
 }
 
 .item-title {
-  font-size: 13px;
+  font-size: 20px;
   color: #222;
 }
 
