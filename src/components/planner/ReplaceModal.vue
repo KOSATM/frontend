@@ -55,9 +55,9 @@
         </div>
 
         <div class="d-flex justify-content-between mt-3">
-          <button class="btn btn-light" @click="$emit('close')">Cancel</button>
+          <button class="btn btn-light" @click="$emit('close')">취소</button>
           <button class="btn btn-danger" @click="$emit('delete-anyway')">
-            Delete anyway
+            삭제
           </button>
         </div>
       </div>

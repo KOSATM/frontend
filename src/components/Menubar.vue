@@ -1,7 +1,7 @@
 <template>
   <div class="offcanvas offcanvas-end" id="sidebar" tabindex="-1">
     <div class="offcanvas-header border-bottom">
-      <h4 class="offcanvas-title fw-semibold">메뉴</h4>
+      <h5 class="offcanvas-title fw-semibold">메뉴</h5>
       <button type="button" class="btn-close text-reset" @click="closeSidebar" aria-label="Close"></button>
     </div>
 
@@ -121,7 +121,7 @@ function onSelect(name) {
 .nav-item {
   color: #1b3b6f;
   text-decoration: none;
-  font-weight: 500;
+  /* font-weight: 500; */
   transition: all 0.2s ease;
 }
 .nav-item:hover {

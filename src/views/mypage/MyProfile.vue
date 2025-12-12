@@ -1,7 +1,7 @@
 <template>
   <div class="mypage-page">
     <PageHeader title="MyPage" subtitle="나의 여행 정보" icon="bi-person" />
-    <BackButtonPageHeader title="My Profile" subtitle="당신의 여행 프로필을 확인해보세요." @back="goBack"/>
+    <!-- <BackButtonPageHeader title="My Profile" subtitle="당신의 여행 프로필을 확인해보세요." @back="goBack"/> -->
 
     <div class="text-center mb-5">
       <div class="position-relative d-inline-block">
@@ -135,9 +135,9 @@
 import { reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/authStore'
-import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
+// import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
-import PageHeader from "@/components/common/PageHeader.vue";
+import PageHeader from "@/components/common/header/PageHeader.vue";
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const router = useRouter()

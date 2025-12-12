@@ -83,8 +83,8 @@
 </template>
 
 <script setup>
-import BaseButton from "@/components/common/BaseButton.vue";
-import PageHeader from "@/components/common/PageHeader.vue";
+import BaseButton from "@/components/common/button/BaseButton.vue";
+import PageHeader from "@/components/common/header/PageHeader.vue";
 import TipBox from "@/components/common/TipBox.vue";
 import RecommendationCard from "@/components/planner/RecommendationCard.vue";
 import { RouterLink, useRoute } from "vue-router";

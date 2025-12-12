@@ -33,6 +33,12 @@ defineProps({
   padding: 1.5rem 1.5rem;
   border-bottom: 1px solid rgba(27, 59, 111, 0.08);
   margin-bottom: 2rem; /* 하단 콘텐츠와의 여백 */
+
+  /* ✅ 높이를 WeatherCard와 맞춤 (예: 180px) */
+  height: 120px;
+  border-radius: 16px; /* 둥근 모서리도 맞추고 싶다면 추가 */
+  display: flex;       /* 내부 정렬을 위해 */
+  flex-direction: column;
 }
 
 .page-title {
@@ -41,7 +47,7 @@ defineProps({
 }
 
 .page-subtitle {
-  font-size: 0.9rem;
+  font-size: 1.25rem;
   line-height: 1.4;
 }
 </style>

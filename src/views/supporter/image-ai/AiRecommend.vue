@@ -1,10 +1,12 @@
 <template>
+  <div class="supporter-page">
+  <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
   <StepHeader title="Image-based Travel AI" subtitle="AI Analysis Complete" step="3/4"
     @back="router.push({ name: 'ImageType' })" />
   <BaseSection icon="bi bi-images" title="AI Analysis Complete"
     :subtitle="`Found ${results.length} similar destinations`">
     <template #actions>
-      <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'New' }">New
+      <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'CreateNewSearch' }">New
         Search</router-link>
     </template>
 
@@ -56,12 +58,12 @@
   </BaseSection>
 
     <div class="d-flex mt-2">
-      <router-link class="btn btn-link" :to="{ name: 'ImageType' }">Back</router-link>
+      <router-link class="btn btn-link" :to="{ name: 'ImageType' }">뒤로가기</router-link>
       <button class="btn btn-primary ms-auto" :disabled="selectedIndex === null" @click="addPlan">
         Add Plan
       </button>
     </div>
-
+  </div>
 </template>
 
 <script setup>
@@ -70,8 +72,9 @@ import { useRouter, useRoute } from 'vue-router'
 import { useSupporterStore } from '@/store/supporterStore'
 import { useImageSearchStore } from '@/store/imageSearchStore'
 import imageSearchApi from '@/api/imageSearchApi'
-import StepHeader from '@/components/common/StepHeader.vue'
+import StepHeader from '@/components/common/header/StepHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
+import PageHeader from '@/components/common/header/PageHeader.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -205,6 +208,12 @@ const addPlan = () => {
 </script>
 
 <style scoped>
+.supporter-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+}
+
 .results-card {
   background: #fff9ff;
   border-radius: 12px;

@@ -1,6 +1,6 @@
 <template>
   <section>
-    <h5 class="mb-3"><i class="bi bi-people-fill me-2"></i>Nearby Public Restrooms</h5>
+    <h5 class="mb-3"><i class="bi bi-people-fill me-2"></i>근처 공중 화장실</h5>
 
     <!-- NaverMap 컴포넌트 사용 -->
     <NaverMap
@@ -15,7 +15,7 @@
     <div class="list-group mt-3">
       <div v-if="isLoadingRestrooms" class="text-center py-4">
         <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
+          <span class="visually-hidden">로딩 중...</span>
         </div>
         <p class="mt-2 text-muted">주변 화장실 검색 중...</p>
       </div>
@@ -37,7 +37,7 @@
         </a>
         
         <div v-if="filteredRestrooms.length === 0" class="text-center py-4 text-muted">
-          주변에 등록된 화장실이 없습니다
+          주변에 등록된 화장실이 없습니다.
         </div>
       </template>
     </div>

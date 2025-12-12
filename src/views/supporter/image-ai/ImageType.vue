@@ -1,9 +1,10 @@
 <template>
+<div class="supporter-page">
+  <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
+  <StepHeader title="이미지 기반 여행 AI" subtitle="당신의 사진으로 여행 장소를 찾아보아요!" step="2/4"
+    @back="router.push({ name: 'CreateNewSearch' })" />
 
-  <StepHeader title="Image-based Travel AI" subtitle="Find destinations from your photos" step="2/4"
-    @back="router.push({ name: 'New' })" />
-
-  <BaseSection icon="bi-camera" title="What type of photo is this?">
+  <BaseSection icon="bi-camera" title="이 사진에서 알고 싶은 정보는 무엇인가요?">
     <div class="preview-wrap mb-3" v-if="preview">
       <img :src="preview" alt="uploaded preview" class="preview-img" />
     </div>
@@ -14,8 +15,8 @@
         @keyup.enter.space.prevent="setType('landscape')" aria-pressed="false">
         <div class="option-icon gradient-1 me-3"><i class="bi bi-image-fill"></i></div>
         <div class="flex-fill">
-          <div class="fw-medium">Landscape / Places</div>
-          <div class="small text-muted">Parks, temples, towers, streets</div>
+          <div class="fw-medium">풍경 / 광장</div>
+          <div class="small text-muted">공원, 절, 전망대, 거리</div>
         </div>
         <div class="check-mark" v-if="selectedType === 'landscape'">✓</div>
       </li>
@@ -26,8 +27,8 @@
         aria-pressed="false">
         <div class="option-icon gradient-2 me-3"><i class="bi bi-cup-straw"></i></div>
         <div class="flex-fill">
-          <div class="fw-medium">Food / Restaurants</div>
-          <div class="small text-muted">Korean BBQ, street food, cafes</div>
+          <div class="fw-medium">음식 / 레스토랑</div>
+          <div class="small text-muted">삼겹살, 길거리 음식, 카페</div>
         </div>
         <div class="check-mark" v-if="selectedType === 'food'">✓</div>
       </li>
@@ -38,8 +39,8 @@
         @keyup.enter.space.prevent="setType('activities')" aria-pressed="false">
         <div class="option-icon gradient-3 me-3"><i class="bi bi-person-fill"></i></div>
         <div class="flex-fill">
-          <div class="fw-medium">Activities / Experiences</div>
-          <div class="small text-muted">Photo spots, cultural experiences</div>
+          <div class="fw-medium">활동 / 경험</div>
+          <div class="small text-muted">사진 명소, 문화 체험</div>
         </div>
         <div class="check-mark" v-if="selectedType === 'activities'">✓</div>
       </li>
@@ -47,18 +48,21 @@
   </BaseSection>
 
     <div class="d-flex mt-2">
-      <router-link class="btn btn-link" :to="{ name: 'New' }">Back</router-link>
+      <router-link class="btn btn-link" :to="{ name: 'CreateNewSearch' }">뒤로가기</router-link>
       <button class="btn btn-primary ms-auto" :disabled="!selectedType" @click="goNext">
         Next
       </button>
     </div>
+</div>
+
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import StepHeader from '@/components/common/StepHeader.vue'
+import StepHeader from '@/components/common/header/StepHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
+import PageHeader from '@/components/common/header/PageHeader.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -87,6 +91,13 @@ const goNext = async () => {
 </script>
 
 <style scoped>
+
+.supporter-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+}
+
 .preview-wrap {
   background: #F5F7FA;
   padding: 14px;

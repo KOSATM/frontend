@@ -1,8 +1,11 @@
 <template>
-  <PageHeader title="Choose Plan" subtitle="Select an itinerary to add / replace" />
+  <div class="supporter-page">
+  <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
+
+  <PageHeader title="여정 선택" subtitle="장소를 추가하거나 대체하기 위해 여정을 선택하세요." />
 
   <div class="card p-4 mt-3">
-    <h5 class="mb-3">Existing Plans</h5>
+    <h5 class="mb-3">존재하는 여정</h5>
 
     <div class="plans-accordion">
       <div v-for="(day, dIdx) in plansDays" :key="day.id"
@@ -99,18 +102,19 @@
     <div v-if="toast.visible" class="action-toast">{{ toast.message }}</div>
 
     <div class="d-flex mt-3">
-      <router-link class="btn btn-link" :to="{ name: 'New' }">Back</router-link>
+      <router-link class="btn btn-link" :to="{ name: 'CreateNewSearch' }">뒤로가기</router-link>
       <button class="btn btn-primary ms-auto" :disabled="!hasChanges" @click="done">
         Apply / Done
       </button>
     </div>
+  </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import PageHeader from '@/components/common/PageHeader.vue'
+import PageHeader from '@/components/common/header/PageHeader.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -198,7 +202,7 @@ const addToItinerary = (dIdx, iIdx) => {
     showToast(`"${item.name}" 은(는) 이미 추가되어 있습니다`)
     return
   }
-  const newId = `${item.id || 'new'}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+  const newId = `${item.id || 'CreateNewSearch'}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
   const newItem = {
     id: newId,
     title: item.name || 'New Place',
@@ -324,6 +328,12 @@ const done = () => {
 </script>
 
 <style scoped>
+.supporter-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+}
+
 .card {
   border-radius: 12px;
   position: relative;

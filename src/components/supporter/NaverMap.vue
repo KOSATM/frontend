@@ -4,7 +4,7 @@
         <!-- 로딩 중 표시 -->
         <div v-if="isMapLoading" class="map-loading">
             <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">로딩 중...</span>
             </div>
             <p class="mt-3">지도 로딩 중...</p>
         </div>

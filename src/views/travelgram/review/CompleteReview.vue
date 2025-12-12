@@ -40,7 +40,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import PageHeader from '@/components/common/PageHeader.vue'
+import PageHeader from '@/components/common/header/PageHeader.vue'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const router = useRouter()

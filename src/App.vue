@@ -36,18 +36,18 @@ import { ref, watch, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import AppHeader from "./components/AppHeader.vue";
 import AppFooter from "./components/AppFooter.vue";
-import SideBar from "./components/Sidebar.vue"; 
+import SideBar from "./components/Menubar.vue"; 
 import ChatSidebar from "./components/ChatSidebar.vue";
 import Checklist from "./components/supporter/Checklist.vue";
 import WeatherCard from "./components/supporter/WeatherCard.vue";
-
+import {useAuthStore} from "@/store/authStore"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-// import "@/assets/styles/_layout.scss"; // 전역 설정 안되어있으면 주석 해제
 
 const route = useRoute();
+const authStore = useAuthStore();
 const isSidebarOpen = ref(false);
-
+authStore.initializeAuth();
 watch(isSidebarOpen, (v) => {
   document.body.style.overflow = v ? "hidden" : "";
 });

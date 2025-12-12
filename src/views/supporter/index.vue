@@ -1,16 +1,16 @@
 <template>
   <div class="supporter-page">
-    <PageHeader title="Supporter" subtitle="Real-time travel support and updates" icon="bi-chat-dots" />
-    <BackButtonPageHeader title="서포터 홈" subtitle="위치 기반으로 당신의 여행을 도와드립니다." @back="goBack"/>
+    <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
+    <!-- <BackButtonPageHeader title="메인 페이지" subtitle="위치 기반으로 당신의 여행을 도와드립니다." @back="goBack"/> -->
 
     <div class="map-wrapper-full mb-4">
       <div class="map-top-row d-flex align-items-start justify-content-between mb-2">
         <nav class="browser-tabs" role="tablist" aria-label="Map tabs">
           <button role="tab" :class="['tab-btn', { active: currentTab === 'image' }]" @click="currentTab = 'image'">
-            Image-based Travel AI
+            이미지 기반 여행 AI
           </button>
           <button role="tab" :class="['tab-btn', { active: currentTab === 'restroom' }]" @click="currentTab = 'restroom'">
-            Restrooms
+            공중 화장실
           </button>
         </nav>
 
@@ -40,18 +40,18 @@
     </div>
 
     <div v-show="currentTab === 'image'">
-        <BaseSection title="Image-based Travel AI" subtitle="Upload photo → Get recommendations">
+        <BaseSection title="이미지 기반 여행 AI" subtitle="사진을 올리면 관련된 장소를 추천해드립니다.">
           <template #icon>
             <div class="ai-badge"><i class="bi bi-camera-fill"></i></div>
           </template>
 
           <div class="image-ui-row d-flex gap-3 align-items-start">
             <div class="col how-works">
-              <div class="small"><strong>How it works:</strong></div>
+              <div class="a"><strong>어떻게 동작하나요?</strong></div>
               <ol class="small text-muted mb-0 ps-3">
-                <li>Upload your travel photo</li>
-                <li>AI analyzes the image</li>
-                <li>Get similar destination recommendations</li>
+                <li>여행 중 궁금한 점을 사진으로 올려보세요.</li>
+                <li>AI가 이미지를 분석합니다.</li>
+                <li>사진과 관련된 장소 추천을 받아보세요.</li>
               </ol>
             </div>
 
@@ -65,7 +65,7 @@
                     </template>
                     <template v-else>
                       <i class="bi bi-camera fs-1"></i>
-                      <div class="mt-2 label-text">Upload</div>
+                      <div class="mt-2 label-text">업로드</div>
                     </template>
                   </div>
                 </div>
@@ -77,7 +77,7 @@
                 <div class="upload-gradient d-flex align-items-center justify-content-center h-100 w-100">
                   <div class="text-center text-white-50">
                     <i class="bi bi-clock-history fs-1"></i>
-                    <div class="mt-2 label-text">History</div>
+                    <div class="mt-2 label-text">히스토리</div>
                   </div>
                 </div>
               </label>
@@ -92,14 +92,14 @@
       </div>
 
       <div v-show="currentTab === 'restroom'">
-        <BaseSection title="Nearby Public Restrooms" subtitle="Find nearby public restrooms">
+        <BaseSection title="근처 공중 화장실" subtitle="근처에 있는 공중 화장실을 찾아보세요.">
           <template #icon>
-            <div class="ai-badge"><i class="bi bi-people-fill"></i></div>
+            <div class="ai-badge"><i class="bi bi-person-standing"></i></div>
           </template>
 
           <div v-if="isLoadingRestrooms" class="text-center py-4">
             <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
+              <span class="visually-hidden">로딩 중...</span>
             </div>
             <p class="mt-2 text-muted">주변 화장실 검색 중...</p>
           </div>
@@ -109,7 +109,7 @@
               class="list-group-item list-group-item-action mb-2 d-flex align-items-center rounded border-0 shadow-sm"
               @click.prevent="focusOnRestroom(r)">
               <div class="me-3 icon-box d-flex align-items-center justify-content-center">
-                <i class="bi bi-people-fill text-primary fs-4"></i>
+                <i class="bi bi-person-standing text-primary fs-4"></i>
               </div>
               <div class="flex-fill">
                 <div class="fw-medium">{{ r.toiletName || '공중화장실' }}</div>
@@ -126,20 +126,20 @@
           </div>
         </BaseSection>
       </div>
-    
+
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import PageHeader from '@/components/common/PageHeader.vue'
+import PageHeader from '@/components/common/header/PageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import NaverMap from '@/components/supporter/NaverMap.vue'
 import ToiletApi from '@/api/ToiletApi'
 import imageSearchApi from '@/api/imageSearchApi'
 import {useAuthStore} from '@/store/authStore'
-import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
+// import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 
 
 const router = useRouter()
@@ -193,7 +193,10 @@ const loadImageHistory = async () => {
     isLoadingHistory.value = true
     
     const userId = authStore.userId;
-    
+    if(!userId){
+      console.warn('❌ 사용자 ID가 없습니다. (비로그인 상태 또는 초기화 실패)');
+      historyMarkers.value = [];
+    }
     console.log('🖼️ 이미지 히스토리 로드 중... userId:', userId)
     
     const response = await imageSearchApi.getSessionsByUserId(userId)
@@ -420,7 +423,7 @@ const goToImageAI = () => {
 }
 // navigator to open new Image AI page
 const goToImageAINew = () => {
-  router.push({ name: 'New' })
+  router.push({ name: 'CreateNewSearch' })
     .then(() => {
       // ensure we are at page top after navigation
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
@@ -487,7 +490,7 @@ const goToImageAIHistory = () => {
   background: #fff;
   border: 1px solid rgba(2, 6, 23, 0.06);
   padding: 6px 12px;
-  font-size: 0.9rem;
+  font-size: 0.85em;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 6px;

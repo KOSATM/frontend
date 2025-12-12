@@ -219,7 +219,7 @@
     <!-- Action Buttons -->
     <div class="d-flex gap-3 justify-content-center">
       <button class="btn btn-outline-secondary btn-lg px-5" @click="goBack">
-        Back
+        뒤로가기
       </button>
       <!-- <button
         class="btn btn-primary btn-lg px-5"
@@ -236,7 +236,7 @@
         <span v-if="!isProcessing">Pay ₩{{ totalAmount.toLocaleString() }}</span>
         <span v-else>
           <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          Processing...
+          처리 중...
         </span>
       </BaseButton>
     </div>
@@ -246,13 +246,12 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import PageHeader from '@/components/common/PageHeader.vue';
+import PageHeader from '@/components/common/header/PageHeader.vue';
 import hotelIllust from '@/assets/img/hotel-logo.png';
-import StepHeader from '@/components/common/StepHeader.vue';
-import BaseButton from '@/components/common/BaseButton.vue';
+import StepHeader from '@/components/common/header/StepHeader.vue';
+import BaseButton from '@/components/common/button/BaseButton.vue';
 import { useTravelStore } from '@/store/travelStore';
 import BaseSection from '@/components/common/BaseSection.vue';
-import BaseSelection from '@/components/common/BaseSelection.vue';
 
 const router = useRouter();
 const travelStore = useTravelStore();

@@ -123,12 +123,12 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import PageHeader from "@/components/common/PageHeader.vue";
+import PageHeader from "@/components/common/header/PageHeader.vue";
 import ReplaceModal from "@/components/planner/ReplaceModal.vue";
 import ActivityDetailsModal from "@/components/planner/ActivityDetailsModal.vue";
 import ActivityCompleteModal from "@/components/planner/ActivityCompleteModal.vue";
 import { useTravelStore } from "@/store/travelStore";
-import BaseButton from "@/components/common/BaseButton.vue";
+import BaseButton from "@/components/common/button/BaseButton.vue";
 import ActivityList from "@/components/planner/ActivityList.vue";
 import DayCard from "@/components/planner/DayCard.vue";
 import plannerApi from "@/api/plannerApi";

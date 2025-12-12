@@ -57,7 +57,7 @@ defineProps({
 }
 
 .header-subtitle {
-  font-size: 0.85rem;
+  font-size: 1.15rem;
 }
 
 .step-indicator {

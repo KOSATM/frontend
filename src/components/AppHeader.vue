@@ -140,54 +140,30 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
     transition: color 0.4s ease;
   }
 
-  /* 🟠 스크롤 시 상태 */
+  /* 🟠 스크롤 시 상태 (여기를 수정하세요) */
   &.scrolled {
     background-color: #ff8c00;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 
+    /* 기존: 로고 색상 반전 */
     .navbar-brand img {
       filter: brightness(0) invert(1);
     }
 
+    /* 기존: 햄버거 버튼 색상 변경 */
     .btn i {
       color: #ffffff;
     }
-  }
 
-  .navbar-toggler {
-    border: none;
-
-    &:focus {
-      outline: none;
-      box-shadow: none;
+    /* ✅ 추가됨: 유저 이름(user-info)을 흰색으로 변경 */
+    .user-info {
+      color: #ffffff;
     }
-
-    .navbar-toggler-icon {
-      background-image: none;
-      position: relative;
-      width: 24px;
-      height: 2px;
-      background-color: #fff;
-      transition: all 0.3s;
-
-      &::before,
-      &::after {
-        content: "";
-        position: absolute;
-        width: 24px;
-        height: 2px;
-        background-color: #fff;
-        left: 0;
-        transition: all 0.3s;
-      }
-
-      &::before {
-        top: -8px;
-      }
-
-      &::after {
-        top: 8px;
-      }
+    
+    /* (선택사항) 로그아웃 버튼도 배경에 맞게 스타일 변경이 필요하다면 추가 */
+    .logout-btn {
+      background-color: #ffffff;
+      color: #ff8c00;
     }
   }
 }
@@ -269,15 +245,16 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
 
 .user-info {
   font-weight: 600;
-  font-size: 13px;
+  font-size: 1.25rem;
   white-space: nowrap;
   color: #ff8c00;
 }
 
 /* 로그아웃 버튼 */
 .logout-btn {
-  font-size: 12px;
-  padding: 6px 14px;
+  font-size: 1.15rem;
+  padding : 0 10px;
+  /* padding: 6px 10px; */
   border-radius: 4px;
   border: 1px solid white;
   color: white;

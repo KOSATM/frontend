@@ -1,26 +1,36 @@
 <!-- 컴포넌트의 UI -->
 <template>
-    <div class="upload-section mb-4" :style="{ backgroundColor: bgColor }">
+  <div class="upload-section mb-4" :style="{ backgroundColor: bgColor }">
     <div class="upload-header d-flex justify-content-between align-items-center mb-3">
-      <!-- 🔹 왼쪽: 아이콘 + 제목/부제목 -->
-      <div class="upload-header-text">
-        <h5 class="upload-title mb-1">
-          <i :class="icon + ' me-1 text-primary'"></i>
-          {{ title }}
-        </h5>
-        <template v-if="$slots.subtitle">
-        <slot name="subtitle"></slot>
-      </template>
-      <p v-else class="upload-subtitle mb-0">{{ subtitle }}</p>
+      
+      <div class="d-flex align-items-center gap-3">
+        
+        <div class="header-icon flex-shrink-0">
+          <slot name="icon">
+            <i v-if="icon" :class="icon + ' text-primary fs-4'"></i>
+          </slot>
+        </div>
+
+        <div class="header-text-group">
+          <h5 class="upload-title mb-0">
+            {{ title }}
+          </h5>
+          
+          <div class="upload-subtitle mt-1">
+            <template v-if="$slots.subtitle">
+              <slot name="subtitle"></slot>
+            </template>
+            <span v-else>{{ subtitle }}</span>
+          </div>
+        </div>
+
       </div>
 
-      <!-- 🔸 오른쪽: 액션 슬롯 (조건부) -->
-      <div v-if="$slots.actions" class="upload-header-actions">
+      <div v-if="$slots.actions" class="upload-header-actions ms-3">
         <slot name="actions"></slot>
       </div>
     </div>
 
-    <!-- 컨텐츠 영역 -->
     <div class="upload-content">
       <slot></slot>
     </div>
@@ -48,26 +58,30 @@ defineProps({
 }
 
 .upload-header {
+  /* 전체 헤더 정렬 */
   display: flex;
   justify-content: space-between;
-  align-items: center;
-}
-
-.upload-header-text {
-  display: flex;
-  flex-direction: column;
+  align-items: center; /* 수직 중앙 정렬 */
 }
 
 .upload-title {
   font-weight: 700;
+  font-size: 1.25rem;
   color: #1b3b6f;
-  margin: 0;
+  line-height: 1.2; /* 행간 조절 */
 }
 
 .upload-subtitle {
   color: #6c757d;
-  font-size: 0.9rem;
-  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* 아이콘이 텍스트보다 커도 텍스트가 찌그러지지 않게 */
+.header-text-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .upload-header-actions {

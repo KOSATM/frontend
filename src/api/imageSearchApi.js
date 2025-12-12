@@ -68,7 +68,7 @@ async function savePlaceCandidates(userId, dataToSave) {
     console.log('모든 후보지:', allCandidates)
     
     // 모든 후보지를 PlaceCandidateRequest 형식으로 변환 (위경도는 0으로 설정)
-    const candidatesToSave = allCandidates.map((candidate, index) => {
+    const candidatesToSave = await Promise.all(allCandidates.map(async(candidate, index) => {
         // actionType을 백엔드 enum 형식에 맞게 변환
         let backendActionType = 'SAVE_ONLY'
         if (actionType === 'add') {
@@ -90,7 +90,7 @@ async function savePlaceCandidates(userId, dataToSave) {
             rank: index + 1, // 1, 2, 3
             actionType: backendActionType // SAVE_ONLY, ADD_PLAN, REPLACED_PLAN
         }
-    })
+    }));
     
     console.log('저장할 모든 후보자 데이터 (위경도 포함):', candidatesToSave)
     console.log('userId:', userId)

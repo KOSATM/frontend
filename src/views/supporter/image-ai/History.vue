@@ -1,16 +1,17 @@
 // filepath: c:\kosa-course\userProject\ATM\projects\frontend\src\views\supporter\image-ai\History.vue
 
 <template>
-  <BackButtonPageHeader title="Image-based Travel AI" subtitle="Find destinations from your photos" />
+  <div class = "supporter-page">
+  <BackButtonPageHeader title="이미지 기반 여행 AI" subtitle="당신의 사진으로 여행 장소를 찾아보아요!" />
 
-  <BaseSection icon="bi-clock-history" title="AI Recommendation History">
+  <BaseSection icon="bi-clock-history" title="AI가 추천한 히스토리">
     <template #actions>
-      <router-link class="btn btn-sm btn-primary" :to="{ name: 'New' }">+ New Search</router-link>
+      <router-link class="btn btn-sm btn-primary" :to="{ name: 'CreateNewSearch' }">+ 새로운 검색</router-link>
     </template>
     
     <div v-if="isLoading" class="text-center py-5">
       <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">로딩 중...</span>
       </div>
     </div>
     
@@ -34,7 +35,7 @@
             </div>
 
             <div class="mt-3">
-              <div class="small text-muted mb-1">AI Recommendations ({{ h.recommendations.length }})</div>
+              <div class="small text-muted mb-1">AI 추천 ({{ h.recommendations.length }})</div>
               <div class="d-flex gap-2">
                 <template v-for="(r, idx) in h.recommendations" :key="idx">
                   <img v-if="r.thumb" :src="r.thumb" class="rec-thumb" :title="r.name" />
@@ -50,19 +51,19 @@
         <!-- Hover Overlay -->
         <div class="hover-overlay">
           <div class="overlay-actions">
-            <button class="action-btn detail-btn" @click="openModal(h)" title="View Details">
-              <i class="bi bi-eye"></i> Detail
+            <button class="action-btn detail-btn" @click="openModal(h)" title="세부사항을 확인해보세요.">
+              <i class="bi bi-eye"></i> 세부 사항
             </button>
             <!-- Change Status 버튼: Saved only 상태일 때만 표시 -->
-            <button v-if="h.status === 'Saved only'" class="action-btn change-btn" @click="openChangeStatusModal(h)" title="Change Status">
-              <i class="bi bi-arrow-repeat"></i> Change Status
+            <button v-if="h.status === 'Saved only'" class="action-btn change-btn" @click="openChangeStatusModal(h)" title="상태 변경">
+              <i class="bi bi-arrow-repeat"></i> 상태 변경
             </button>
           </div>
         </div>
       </div>
 
       <div v-if="history.length === 0" class="text-center text-muted py-5">
-        No AI history yet. Try "+ New Search" or upload a photo from Supporter main.
+        AI 히스토리가 존재하지 않습니다. "새로운 검색" 버튼을 클릭하거나 서포터 홈에서 사진 업로드를 해보세요.
       </div>
     </div>
   </BaseSection>
@@ -81,7 +82,7 @@
       <div class="modal-card" @click.stop>
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="mb-0">Change Status</h5>
+          <h5 class="mb-0">상태 변경</h5>
           <button
             class="btn btn-sm btn-light rounded-circle"
             @click="changeStatusItem = null"
@@ -109,8 +110,8 @@
             @click="changeStatusSelection = 'add'" role="button" tabindex="0">
             <div class="icon add me-3">＋</div>
             <div class="flex-fill">
-              <div class="fw-medium">Add to Itinerary</div>
-              <div class="small text-muted">Add this place to your travel schedule</div>
+              <div class="fw-medium">장소 추가</div>
+              <div class="small text-muted">당신의 여행 일정에 이 장소를 추가해보세요.</div>
             </div>
             <div v-if="changeStatusSelection === 'add'" class="select-check" aria-hidden="true">✓</div>
           </li>
@@ -120,8 +121,8 @@
             @click="changeStatusSelection = 'replace'" role="button" tabindex="0">
             <div class="icon replace me-3">↺</div>
             <div class="flex-fill">
-              <div class="fw-medium">Replace Existing</div>
-              <div class="small text-muted">Replace an existing schedule item</div>
+              <div class="fw-medium">장소 대체</div>
+              <div class="small text-muted">일정에 존재하는 장소를 대체해보세요.</div>
             </div>
             <div v-if="changeStatusSelection === 'replace'" class="select-check" aria-hidden="true">✓</div>
           </li>
@@ -130,21 +131,23 @@
         <!-- Buttons -->
         <div class="d-flex mt-4 gap-2">
           <button class="btn btn-outline-secondary flex-grow-1" @click="changeStatusItem = null">
-            Cancel
+            취소
           </button>
           <button class="btn btn-primary flex-grow-1" :disabled="!changeStatusSelection" @click="confirmChangeStatus">
-            Confirm
+            확인
           </button>
         </div>
       </div>
     </div>
   </teleport>
+  </div>
+
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
+import BackButtonPageHeader from '@/components/common/header/BackButtonPageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import ActivityDetailsModal from '@/components/planner/ActivityDetailsModal.vue'
 import imageSearchApi from '@/api/imageSearchApi'
@@ -177,7 +180,6 @@ const loadHistory = async () => {
   try {
     isLoading.value = true
     
-    // 임시로 userId 17 사용
     const userId = authStore.userId;
     console.log('📋 히스토리 로드 - userId:', userId)
     
@@ -316,6 +318,12 @@ const confirmChangeStatus = async () => {
 </script>
 
 <style scoped>
+.supporter-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+}
+
 .history-card {
   background: #FFD9A6;
   border-radius: 12px;

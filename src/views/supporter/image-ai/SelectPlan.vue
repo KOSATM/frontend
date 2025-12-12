@@ -1,9 +1,11 @@
 <template>
-  <StepHeader title="Image-based Travel AI" subtitle="Use AI recommendation" step="4/4" @back="onStepBack" />
+  <div class="supporter-page">
+  <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
+  <StepHeader title="이미지 기반 여행 AI" subtitle="AI 추천을 사용해보세요." step="4/4" @back="onStepBack" />
 
-  <BaseSection icon="bi-list-check" title="How would you like to use this?" subtitle="Completion Rate">
+  <BaseSection icon="bi-list-check" title="AI 추천을 어떻게 사용하고 싶으신가요?" subtitle="Completion Rate">
     <template #actions>
-      <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'New' }">New Search</router-link>
+      <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'CreateNewSearch' }">새로운 검색</router-link>
     </template>
 
     <div class="selected-place card p-3 mb-3 d-flex align-items-center">
@@ -61,8 +63,8 @@
         :aria-pressed="selectedOption === 'not_interested'">
         <div class="icon no me-3">✕</div>
         <div class="flex-fill">
-          <div class="fw-medium">Not Interested</div>
-          <div class="small text-muted">Do nothing and return to search</div>
+          <div class="fw-medium">관심 없음</div>
+          <div class="small text-muted">아무것도 하지 않고 검색으로 돌아갑니다.</div>
         </div>
 
         <div v-if="selectedOption === 'not_interested'" class="select-check" aria-hidden="true">✓</div>
@@ -71,23 +73,24 @@
   </BaseSection>
 
   <div class="d-flex mt-3">
-    <router-link class="btn btn-link" :to="{ name: 'AiRecommend' }">Back</router-link>
+    <router-link class="btn btn-link" :to="{ name: 'AiRecommend' }">뒤로가기</router-link>
     <button class="btn btn-primary ms-auto" :disabled="!selectedOption || isSaving" @click="confirm">
       {{ isSaving ? 'Saving...' : 'Confirm' }}
     </button>
+  </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useImageSearchStore } from '@/store/imageSearchStore'
 import imageSearchApi from '@/api/imageSearchApi'
-import StepHeader from '@/components/common/StepHeader.vue'
+import PageHeader from '@/components/common/header/PageHeader.vue'
+import StepHeader from '@/components/common/header/StepHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import { useAuthStore } from '@/store/authStore'
 
-const route = useRoute()
 const router = useRouter()
 const imageSearchStore = useImageSearchStore()
 const authStore = useAuthStore()
@@ -123,7 +126,7 @@ const saveToDatabase = async (action) => {
     
     const userId = authStore.userId;
     if (!userId) {
-      throw new Error('User not logged in')
+      throw new Error('유저가 로그인하지 않았습니다.')
     }
     
     // 모든 후보지 저장
@@ -161,7 +164,7 @@ const confirm = async () => {
 
   // Not Interested -> 저장하지 않고 돌아가기
   if (selectedOption.value === 'not_interested') {
-    router.push({ name: 'New' }).catch(() => { })
+    router.push({ name:'CreateNewSearch' }).catch(() => { })
     return
   }
 
@@ -194,9 +197,16 @@ const confirm = async () => {
     router.push({ name: 'History' }).catch(() => { })
   }
 }
+
 </script>
 
 <style scoped>
+.supporter-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+}
+
 .history-card {
   background: #FFD9A6;
   border-radius: 12px;

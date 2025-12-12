@@ -2,7 +2,7 @@
   <div class="mypage-page">
 
     <PageHeader title="MyPage" subtitle="나의 여행 정보" icon="bi-person" />
-    <BackButtonPageHeader title="Edit Profile" subtitle="나의 정보를 수정해보세요." @back="goBack"/>
+    <!-- <BackButtonPageHeader title="Edit Profile" subtitle="나의 정보를 수정해보세요." @back="goBack"/> -->
 
     <div class="text-center mb-5">
       <div class="position-relative d-inline-block mb-3">
@@ -112,7 +112,7 @@
     <div class="d-flex gap-3 mt-5 pb-5">
 
  <NavigationButtons
-  back-text="Cancel"
+  back-text="취소"
   :is-next-disabled="isLoading"
   @back="goBack"
   @next="saveProfile"
@@ -131,8 +131,8 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseSection from '@/components/common/BaseSection.vue'
-import PageHeader from "@/components/common/PageHeader.vue";
-import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
+import PageHeader from "@/components/common/header/PageHeader.vue";
+// import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 

@@ -7,7 +7,7 @@
       <div class="wc-right">
         <div class="wc-temp">{{ weather.temperature }}<span class="wc-deg">°C</span></div>
         <div class="wc-desc">{{ weather.desc }}</div>
-        <div class="wc-loc">Seoul, KR</div>
+        <div class="wc-loc">대한민국, 서울</div>
       </div>
     </div>
   </div>
@@ -25,15 +25,33 @@ const weather = ref(null)
 
 const weatherCodeToText = (code) => {
   const map = {
-    0: 'Clear', 1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Overcast',
-    45: 'Fog', 48: 'Depositing rime fog', 51: 'Light drizzle', 53: 'Moderate drizzle',
-    55: 'Dense drizzle', 56: 'Light freezing drizzle', 57: 'Dense freezing drizzle',
-    61: 'Slight rain', 63: 'Moderate rain', 65: 'Heavy rain', 66: 'Light freezing rain',
-    67: 'Heavy freezing rain', 71: 'Slight snow', 73: 'Moderate snow', 75: 'Heavy snow',
-    80: 'Rain showers', 81: 'Moderate rain showers', 82: 'Violent rain showers',
-    95: 'Thunderstorm', 96: 'Thunderstorm with slight hail', 99: 'Thunderstorm with heavy hail'
+    0: '맑음',
+    1: '대체로 맑음',
+    2: '구름 많음',
+    3: '흐림',
+    45: '안개',
+    48: '착빙성 안개', // 안개가 얼어붙는 현상
+    51: '가벼운 이슬비',
+    53: '중간 이슬비',
+    55: '짙은 이슬비',
+    56: '가벼운 어는 이슬비',
+    57: '짙은 어는 이슬비',
+    61: '약한 비',
+    63: '중간 비',
+    65: '강한 비',
+    66: '가벼운 어는 비',
+    67: '강한 어는 비',
+    71: '약한 눈',
+    73: '중간 눈',
+    75: '강한 눈',
+    80: '소나기',
+    81: '다소 강한 소나기',
+    82: '폭우성 소나기',
+    95: '뇌우',
+    96: '뇌우 (약한 우박)',
+    99: '뇌우 (강한 우박)'
   }
-  return map[code] || 'Unknown'
+  return map[code] || '알 수 없음'
 }
 
 async function fetchOpenMeteo() {
@@ -122,7 +140,6 @@ onUnmounted(() => clearInterval(timer))
   /* 너비를 100%로 설정하여 사이드바 패딩 안쪽을 가득 채움 */
   width: 100%; 
   box-sizing: border-box; /* 패딩 포함 너비 계산 */
-  
   border-radius: 16px; /* 모서리 둥글기 통일 (Checklist와 비슷하게) */
   overflow: hidden; 
   color: #fff; 
@@ -131,19 +148,78 @@ onUnmounted(() => clearInterval(timer))
   /* 마진은 layout.scss의 gap으로 제어하므로 여기선 제거하거나 최소화 */
   margin-bottom: 0; 
 }
-.wc-top { display:flex; gap:12px; align-items:center; padding:18px; }
-.wc-icon { width:110px; display:flex; align-items:center; justify-content:center; }
-.wc-icon i { font-size:48px; color:rgba(255,255,255,0.95); }
-.wc-right { flex:1; text-align:right; padding-right:8px; }
-.wc-temp { font-size:34px; font-weight:700; line-height:1; }
-.wc-deg { font-size:16px; margin-left:4px; }
-.wc-desc { font-size:18px; font-weight:700; margin-top:6px; color:rgba(255,255,255,0.95); }
-.wc-loc { font-size:12px; opacity:0.9; margin-top:6px; color:rgba(255,255,255,0.9); }
-.wc-bottom { display:flex; background:#fff; color:#2b79b0; padding:12px 10px; align-items:center; }
-.wc-stat { flex:1; text-align:center; }
-.wc-divider { border-left:1px solid rgba(0,0,0,0.06); border-right:1px solid rgba(0,0,0,0.06); }
-.wc-stat-icon i { font-size:20px; color:#2b79b0; }
-.wc-stat-value { font-weight:600; margin-top:6px; color:#1f2937; }
-.wc-stat-label { font-size:12px; color:#6b7280; margin-top:4px; }
-@media (max-width:767px){ .wc-icon i { font-size:40px; } .wc-temp { font-size:24px; } .wc-desc { font-size:16px; } }
+.wc-root { 
+  width: 100%; 
+  box-sizing: border-box;
+  border-radius: 16px; 
+  overflow: hidden; 
+  color: #fff; 
+  box-shadow: 0 4px 15px rgba(14,30,60,0.08);
+  
+  /* ✅ PageHeader와 동일한 높이 설정 */
+  height: 150px; 
+  display: flex;          /* 높이 꽉 채우기 위해 */
+  align-items: center;    /* 수직 중앙 정렬 */
+}
+
+.wc-top { 
+  display: flex; 
+  gap: 12px; 
+  align-items: center; 
+  padding: 0 24px;       /* 좌우 패딩만 줌 */
+  width: 100%;           /* 가로 꽉 채움 */
+  justify-content: space-between;
+}
+
+.wc-icon { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+}
+
+/* ✅ 아이콘 크기 조정 (높이 180px에 맞게) */
+.wc-icon i { 
+  font-size: 5rem;       /* 기존 6rem -> 5rem으로 약간 축소 */
+  color: rgba(255,255,255,0.95); 
+  line-height: 1;        /* 아이콘 높이 튐 방지 */
+}
+
+.wc-right { 
+  text-align: right; 
+}
+
+.wc-temp { 
+  font-size: 2.8rem;     /* 3rem -> 2.8rem 조정 */
+  font-weight: 700; 
+  line-height: 1; 
+}
+
+.wc-deg { 
+  font-size: 1.5rem; 
+  margin-left: 4px; 
+  vertical-align: top;
+  margin-top: 8px;
+  display: inline-block;
+}
+
+.wc-desc { 
+  font-size: 1.5rem; 
+  font-weight: 700; 
+  margin-top: 8px; 
+  color: rgba(255,255,255,0.95); 
+}
+
+.wc-loc { 
+  font-size: 1.25rem; 
+  opacity: 0.9; 
+  margin-top: 4px; 
+  color: rgba(255,255,255,0.9); 
+}
+
+/* 모바일 대응 */
+@media (max-width:767px){ 
+  .wc-root { height: auto; padding: 1.5rem 0; }
+  .wc-icon i { font-size: 3.5rem; } 
+  .wc-temp { font-size: 2.5rem; } 
+}
 </style>
