@@ -1,24 +1,36 @@
 <template>
-  <div class="step-header mb-3">
-    <!-- 🔙 상단 영역 -->
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <div class="d-flex align-items-center">
-        <i class="bi bi-arrow-left-short back-icon" @click="$emit('back')"></i>
-        <div>
-          <h6 class="step-title mb-0">{{ title }}</h6>
-          <small class="step-subtitle text-muted">{{ subtitle }}</small>
+  <div class="sub-header mb-4">
+    <div class="d-flex justify-content-between align-items-end mb-3">
+      <div class="d-flex align-items-center gap-3">
+        <i 
+          class="bi bi-arrow-left-short back-icon fs-2" 
+          @click="$emit('back')"
+          role="button"
+        ></i>
+        
+        <div class="d-flex flex-column">
+          <h5 class="header-title m-0 fw-bold">{{ title }}</h5>
+          <p v-if="subtitle" class="header-subtitle text-muted m-0 mt-1">
+            {{ subtitle }}
+          </p>
         </div>
       </div>
-      <span class="step-step text-muted">Step {{ step }}</span>
+      
+      <span class="step-indicator text-muted">
+        Step <span class="text-orange">{{ step }}</span>
+      </span>
     </div>
 
-    <!-- 🟦 진행 바 -->
-    <div v-if="progressPercent" class="progress" style="height: 8px;">
-      <div
-        class="progress-bar bg-primary"
-        role="progressbar"
-        :style="{ width: progressPercent + '%' }"
-      ></div>
+    <div v-if="progressPercent > 0" class="progress-container">
+      <div class="progress">
+        <div
+          class="progress-bar"
+          role="progressbar"
+          :style="{ width: progressPercent + '%' }"
+          aria-valuemin="0" 
+          aria-valuemax="100"
+        ></div>
+      </div>
     </div>
   </div>
 </template>
@@ -32,7 +44,6 @@ const props = defineProps({
   step: { type: [String, Number], default: '1/6' },
 })
 
-// 🔢 진행률 자동 계산 (예: '3/6' → 50%)
 const progressPercent = computed(() => {
   const [current, total] = String(props.step).split('/').map(Number)
   if (!current || !total) return 0
@@ -41,41 +52,52 @@ const progressPercent = computed(() => {
 </script>
 
 <style scoped>
-.step-header {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  padding-bottom: 0.75rem;
+.sub-header {
+  padding: 0 0.5rem; /* PageHeader 내부 콘텐츠와 라인 맞춤 */
 }
 
 .back-icon {
-  font-size: 1.6rem;
-  cursor: pointer;
   color: #ff8c00;
-  margin-right: 0.5rem;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease, color 0.2s ease;
+  margin-left: -0.5rem; /* 아이콘의 여백 보정하여 텍스트 라인 정렬 */
 }
 
 .back-icon:hover {
-  transform: translateX(-2px);
+  transform: translateX(-4px);
+  color: #e07b00;
 }
 
-.step-title {
-  font-weight: 700;
-  color: #1b3b6f;
+.header-title {
+  color: #1B3B6F;
+  letter-spacing: -0.5px;
 }
 
-.step-step {
+.header-subtitle {
+  font-size: 0.85rem;
+}
+
+.step-indicator {
+  font-family: 'memoment', sans-serif; /* 폰트가 없다면 sans-serif */
   font-size: 0.9rem;
-  color: #6c757d;
+  letter-spacing: 0.5px;
 }
 
+.text-orange {
+  color: #ff8c00;
+  font-weight: 600;
+}
+
+/* 프로그레스 바 스타일 고도화 */
 .progress {
+  height: 8px; /* 너무 두껍지 않게 조정 (세련됨 유지) */
   background-color: #f1f3f5;
-  border-radius: 1rem;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .progress-bar {
-  border-radius: 1rem;
-  background-color: #ff8c00 !important;
-  transition: width 0.4s ease;
+  background-color: #ff8c00;
+  border-radius: 10px;
+  transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 </style>

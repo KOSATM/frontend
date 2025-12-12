@@ -325,7 +325,7 @@ const processPayment = () => {
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .payment-item {
   display: flex;
   align-items: center;
