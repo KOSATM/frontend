@@ -1,7 +1,7 @@
 <template>
   <div class="supporter-page">
     <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
-    <BackButtonPageHeader title="메인 페이지" subtitle="위치 기반으로 당신의 여행을 도와드립니다." @back="goBack"/>
+    <!-- <BackButtonPageHeader title="메인 페이지" subtitle="위치 기반으로 당신의 여행을 도와드립니다." @back="goBack"/> -->
 
     <div class="map-wrapper-full mb-4">
       <div class="map-top-row d-flex align-items-start justify-content-between mb-2">
@@ -10,7 +10,7 @@
             이미지 기반 여행 AI
           </button>
           <button role="tab" :class="['tab-btn', { active: currentTab === 'restroom' }]" @click="currentTab = 'restroom'">
-            Restrooms
+            공중 화장실
           </button>
         </nav>
 
@@ -139,7 +139,7 @@ import NaverMap from '@/components/supporter/NaverMap.vue'
 import ToiletApi from '@/api/ToiletApi'
 import imageSearchApi from '@/api/imageSearchApi'
 import {useAuthStore} from '@/store/authStore'
-import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
+// import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 
 
 const router = useRouter()
@@ -487,7 +487,7 @@ const goToImageAIHistory = () => {
   background: #fff;
   border: 1px solid rgba(2, 6, 23, 0.06);
   padding: 6px 12px;
-  font-size: 0.9rem;
+  font-size: 0.85em;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 6px;
