@@ -39,7 +39,7 @@
                 <!-- reuse same add button behavior, pass index -1 => insert at top (now stored as day._topItem) -->
                 <div v-if="mode === 'add'" class="action-wrap">
                   <button class="btn btn-add" @click.stop="addToItinerary(dIdx, -1)" :disabled="alreadyAddedAnywhere()"
-                    :title="alreadyAddedAnywhere() ? '이미 추가된 장소입니다' : 'Add to top of day'">＋</button>
+                    :title="alreadyAddedAnywhere() ? '이미 추가된 장소입니다' : '여정의 첫 번째로 추가해보세요.'">＋</button>
                 </div>
               </template>
 
@@ -51,7 +51,7 @@
 
                 <div class="me-2 d-flex align-items-center">
                   <div class="added-badge me-2">Added</div>
-                  <button class="btn btn-remove" @click.stop="removeTopAdded(dIdx)" aria-label="Remove">✕</button>
+                  <button class="btn btn-remove" @click.stop="removeTopAdded(dIdx)" aria-label="삭제">✕</button>
                 </div>
               </template>
             </li>
@@ -70,26 +70,26 @@
 
               <!-- replaced badge + undo -->
               <div v-if="it._replaced" class="me-2 d-flex align-items-center">
-                <div class="replaced-badge me-2">{{ it._appliedReplace ? 'Replaced' : 'Will Replace' }}</div>
+                <div class="replaced-badge me-2">{{ it._appliedReplace ? '대체됨' : '대체 예정' }}</div>
                 <button class="btn btn-undo" @click.stop="undoReplace(dIdx, iIdx)">↺</button>
               </div>
 
               <!-- added badge + remove (for added items) -->
               <div v-else-if="it._added" class="me-2 d-flex align-items-center">
                 <div class="added-badge me-2">Added</div>
-                <button class="btn btn-remove" @click.stop="removeAdded(dIdx, iIdx)" aria-label="Remove">✕</button>
+                <button class="btn btn-remove" @click.stop="removeAdded(dIdx, iIdx)" aria-label="삭제">✕</button>
               </div>
 
               <!-- mode = add : show + button per item -->
               <div v-else-if="mode === 'add'" class="action-wrap">
                 <button class="btn btn-add" @click.stop="addToItinerary(dIdx, iIdx)" :disabled="alreadyAddedAnywhere()"
-                  :title="alreadyAddedAnywhere() ? '이미 추가된 장소입니다' : 'Add here'">＋</button>
+                  :title="alreadyAddedAnywhere() ? '이미 추가된 장소입니다' : '이 곳을 추가하세요.'">＋</button>
               </div>
 
               <!-- mode = replace : show check button to replace THIS item -->
               <div v-else-if="mode === 'replace'" class="action-wrap">
                 <button class="btn btn-replace" :class="{ active: it._replaced }" @click.stop="replaceThis(dIdx, iIdx)"
-                  :title="it._replaced ? '이미 대체됨 (되돌리기 가능)' : 'Replace this item'">
+                  :title="it._replaced ? '이미 대체됨 (되돌리기 가능)' : '이 장소로 대체하세요.'">
                   ✓
                 </button>
               </div>
@@ -102,10 +102,14 @@
     <div v-if="toast.visible" class="action-toast">{{ toast.message }}</div>
 
     <div class="d-flex mt-3">
-      <router-link class="btn btn-link" :to="{ name: 'CreateNewSearch' }">뒤로가기</router-link>
-      <button class="btn btn-primary ms-auto" :disabled="!hasChanges" @click="done">
-        Apply / Done
-      </button>
+
+      <NavigationButtons
+    back-text="뒤로가기"
+    next-text="완료하기"
+    :is-next-disabled="selectedIndex === null"
+    @back="goBack"
+    @next="done"
+      />
     </div>
   </div>
   </div>
@@ -115,10 +119,14 @@
 import { ref, reactive, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PageHeader from '@/components/common/header/PageHeader.vue'
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const route = useRoute()
 const router = useRouter()
 
+const goBack = () => {
+  router.push({ name: 'CreateNewSearch' });
+};
 // read mode and item from route.state first, then fallback to query
 const mode = route?.state?.mode || route?.query?.mode || 'add'
 

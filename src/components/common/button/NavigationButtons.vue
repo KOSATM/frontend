@@ -1,3 +1,4 @@
+<!-- /src.components/common/button/NavigationButtons.vue -->
 <template>
   <div class="navigation-buttons">
     <button class="btn-back" @click="$emit('back')">

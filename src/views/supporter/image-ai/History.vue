@@ -130,15 +130,17 @@
         </ul>
 
         <!-- Buttons -->
-        <div class="d-flex mt-4 gap-2">
-          <button class="btn btn-outline-secondary flex-grow-1" @click="changeStatusItem = null">
-            취소
-          </button>
-          <button class="btn btn-primary flex-grow-1" :disabled="!changeStatusSelection" @click="confirmChangeStatus">
-            확인
-          </button>
-        </div>
-      </div>
+    <div class="d-flex gap-3 mt-5">
+
+      <NavigationButtons
+      back-text="취소"
+      next-text="확인"
+      :is-next-disabled="!changeStatusSelection"
+      @back="changeStatusItem = null"
+      @next="confirmChangeStatus"
+      />
+  </div>
+  </div>
     </div>
   </teleport>
   </div>
@@ -153,6 +155,7 @@ import ActivityDetailsModal from '@/components/planner/ActivityDetailsModal.vue'
 import imageSearchApi from '@/api/imageSearchApi'
 import PageHeader from '@/components/common/header/PageHeader.vue'
 import { useAuthStore } from '@/store/authStore'
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const authStore = useAuthStore()
 

@@ -1,24 +1,23 @@
 <template>
   <div class="supporter-page">
   <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
-  <StepHeader title="Image-based Travel AI" subtitle="AI Analysis Complete" step="3/4"
+  <StepHeader title="이미지 기반 여행 AI" subtitle="AI가 사진 분석을 완료했습니다!" step="3/4"
     @back="router.push({ name: 'ImageType' })" />
-  <BaseSection icon="bi bi-images" title="AI Analysis Complete"
-    :subtitle="`Found ${results.length} similar destinations`">
+  <BaseSection icon="bi bi-images" title="AI 분석 완료"
+    :subtitle="`유사한 장소 ${results.length} 개`">
     <template #actions>
-      <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'CreateNewSearch' }">New
-        Search</router-link>
+      <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'CreateNewSearch' }">새로운 검색</router-link>
     </template>
 
     <div v-if="isLoading" class="text-center py-5">
       <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
+        <span class="visually-hidden">로딩 중...</span>
       </div>
       <p class="mt-3 text-muted">AI가 분석 중입니다...</p>
     </div>
 
     <template v-else>
-      <h5 class="mb-3">Recommended Destinations</h5>
+      <h5 class="mb-3">추천된 목적지</h5>
       <div class="results-list">
         <div v-for="(r, i) in results" :key="i" class="result-card card mb-3 p-3"
           :class="{ selected: selectedIndex === i }" @click="select(i)" @keyup.enter.space.prevent="select(i)"
@@ -58,10 +57,13 @@
   </BaseSection>
 
     <div class="d-flex mt-2">
-      <router-link class="btn btn-link" :to="{ name: 'ImageType' }">뒤로가기</router-link>
-      <button class="btn btn-primary ms-auto" :disabled="selectedIndex === null" @click="addPlan">
-        Add Plan
-      </button>
+      <NavigationButtons
+    back-text="뒤로가기"
+    next-text="적용하기"
+    :is-next-disabled="selectedIndex === null"
+    @back="goBack"
+    @next="addPlan"
+      />
     </div>
   </div>
 </template>
@@ -75,6 +77,7 @@ import imageSearchApi from '@/api/imageSearchApi'
 import StepHeader from '@/components/common/header/StepHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import PageHeader from '@/components/common/header/PageHeader.vue'
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const router = useRouter()
 const route = useRoute()
@@ -83,6 +86,11 @@ const imageSearchStore = useImageSearchStore()
 const selectedIndex = ref(null)
 const results = ref([])
 const isLoading = ref(true)
+
+
+const goBack = () => {
+  router.push({ name: 'CreateNewSearch' });
+};
 
 // Base64 문자열을 File 객체로 변환
 function base64ToFile(base64String, fileName) {

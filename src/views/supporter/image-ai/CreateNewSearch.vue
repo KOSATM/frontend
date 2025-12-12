@@ -33,14 +33,30 @@
       </div>
     </label>
   </BaseSection>
+    
 
-  <section>
+    <section>
     <div class="d-grid">
-      <input id="imageInput" type="file" accept="image/*" class="d-none" @change="onFileChange" />
-      <!-- 버튼은 '다음(타입 선택)' 역할. 사진 없으면 비활성화 -->
-      <button class="btn btn-primary" :disabled="!imagePreview" @click.prevent="goToType">
-        <i class="bi bi-arrow-right-circle me-2"></i> 사진에서 알고 싶은 점을 구체적으로 선택해주세요.
-      </button>
+      <input 
+        id="imageInput" 
+        type="file" 
+        accept="image/*" 
+        class="d-none" 
+        @change="onFileChange" 
+      />
+
+      <NavigationButtons
+        back-text="취소"
+        :is-next-disabled="!imagePreview"
+        @back="handleCancel"
+        @next="goToType"
+      >
+        <template #next-content>
+          <i class="bi bi-arrow-right-circle me-2"></i>
+          사진에서 알고 싶은 점을 구체적으로 선택해주세요.
+        </template>
+      </NavigationButtons>
+      
     </div>
   </section>
    </div>
@@ -52,10 +68,17 @@ import PageHeader from '@/components/common/header/PageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const route = useRoute()
 const router = useRouter()
 const imagePreview = ref(null)
+
+const handleCancel = () => {
+  imagePreview.value = null; // 미리보기 초기화
+  const input = document.getElementById('imageInput');
+  if (input) input.value = ''; // 파일 input 초기화
+};
 
 const onFileChange = (e) => {
   const f = e.target.files && e.target.files[0]

@@ -3,7 +3,8 @@
   <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
   <StepHeader title="이미지 기반 여행 AI" subtitle="AI 추천을 사용해보세요." step="4/4" @back="onStepBack" />
 
-  <BaseSection icon="bi-list-check" title="AI 추천을 어떻게 사용하고 싶으신가요?" subtitle="Completion Rate">
+  <!-- completion rate 가 뭐지 뭘 위해서 한걸까 -->
+  <BaseSection icon="bi-list-check" title="AI 추천을 어떻게 사용하고 싶으신가요?" subtitle="완료율">
     <template #actions>
       <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'CreateNewSearch' }">새로운 검색</router-link>
     </template>
@@ -72,12 +73,19 @@
     </ul>
   </BaseSection>
 
-  <div class="d-flex mt-3">
-    <router-link class="btn btn-link" :to="{ name: 'AiRecommend' }">뒤로가기</router-link>
-    <button class="btn btn-primary ms-auto" :disabled="!selectedOption || isSaving" @click="confirm">
-      {{ isSaving ? 'Saving...' : 'Confirm' }}
-    </button>
-  </div>
+
+      <div class="d-flex gap-3 mt-5">
+       <NavigationButtons
+        back-text="뒤로가기"
+        next-text="확인"
+        :is-next-disabled="!selectedOption || isSaving"
+        @back="onStepBack"
+        @next="confirm"
+      >
+    </NavigationButtons>
+    </div>
+
+
   </div>
 </template>
 
@@ -90,6 +98,7 @@ import PageHeader from '@/components/common/header/PageHeader.vue'
 import StepHeader from '@/components/common/header/StepHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import { useAuthStore } from '@/store/authStore'
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const router = useRouter()
 const imageSearchStore = useImageSearchStore()
