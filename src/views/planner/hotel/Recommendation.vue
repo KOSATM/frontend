@@ -1,15 +1,5 @@
 <template>
   <div class="hotel-recommendation container py-4">
-    <!-- <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" /> -->
-    <!-- <StepHeader :step="'3/4'" :title="'Select an Accommodation'" @back="goBack"/> -->
-
-    <!-- <div class="form-header mx-2 my-4">
-      <RouterLink to="/planner/edit" class="text-decoration-none">
-        <i class="bi bi-arrow-left"></i>
-        <span class="ms-2">Back: Revise Itinerary Draft</span>
-      </RouterLink>
-    </div> -->
-
     <div class="form-content bg-white rounded-4 p-4">
       <!-- 로딩 상태 -->
       <div v-if="isLoading" class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
@@ -48,19 +38,6 @@
               <option value="other">Other</option>
             </select>
           </BaseSection>
-          <!-- <div class="mb-3">
-          <label class="form-label d-flex align-items-center">
-            <i class="bi bi-building me-2"></i>
-            Accommodation Type
-          </label>
-          <select v-model="filters.accommodationType" class="form-select rounded-pill">
-            <option value="all">All Types</option>
-            <option value="hotel">Hotel</option>
-            <option value="guesthouse">Guesthouse</option>
-            <option value="hanok">Hanok Style</option>
-            <option value="other">Other</option>
-          </select>
-        </div> -->
 
           <!-- Number of Guests -->
           <BaseSection icon="bi-people" title="Number of Guests">
@@ -69,16 +46,6 @@
               <span class="ms-2">Guests</span>
             </div>
           </BaseSection>
-          <!-- <div class="mb-3">
-          <label class="form-label d-flex align-items-center">
-            <i class="bi bi-people me-2"></i>
-            Number of Guests
-          </label>
-          <div class="input-group">
-            <input type="number" v-model="filters.guests" class="form-control rounded-pill" min="1" max="10" />
-            <span class="ms-2">Guests</span>
-          </div>
-        </div> -->
         </div>
 
         <!-- Hotel List -->
@@ -157,9 +124,6 @@
 
         <!-- Confirm Button -->
         <div class="text-center">
-          <!-- <RouterLink class="btn btn-primary btn-lg px-5" :disabled="!selectedHotel" @click="confirmSelection" to="/planner/payment">
-          Make a Payment
-        </RouterLink> -->
           <BaseButton :disabled="!selectedHotel" @click="confirmSelection()" variant="primary" class="w-100 py-2">Next:
             Make a Payment</BaseButton>
         </div>
@@ -171,7 +135,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import hotelIllust from '@/assets/img/hotel-logo.png';
+import hotelPlaceholder from '@/assets/img/hotel-logo.png';
 import BaseButton from '@/components/common/BaseButton.vue';
 import { useTravelStore } from '@/store/travelStore';
 import { useAuthStore } from '@/store/authStore';
@@ -183,7 +147,7 @@ const travelStore = useTravelStore();
 const authStore = useAuthStore();
 
 const rangeValue = ref(50);
-const budget = ref(1000000);  // 100만원으로 변경
+const budget = ref(1000000);
 const travelDays = ref(3);
 const filters = ref({
   accommodationType: 'all',
@@ -194,8 +158,55 @@ const hotels = ref([]);
 const isLoading = ref(false);
 const error = ref(null);
 
+// ✅ 호텔 이미지 배열 (0001.jpg ~ 0010.jpg)
+const hotelImages = ref([]);
+const usedImageIndices = ref(new Set());
+
+// ✅ 호텔 이미지 초기화
+const initializeHotelImages = () => {
+  const images = [];
+  for (let i = 1; i <= 10; i++) {
+    const imageNum = String(i).padStart(4, '0');
+    try {
+      images.push(require(`@/assets/img/hotel-image/${imageNum}.jpg`));
+    } catch (error) {
+      console.warn(`⚠️ Image not found: ${imageNum}.jpg, using placeholder`);
+      images.push(hotelPlaceholder);
+    }
+  }
+  hotelImages.value = images;
+  usedImageIndices.value.clear();
+  console.log('🖼️ Hotel images initialized:', hotelImages.value.length);
+};
+
+// ✅ 랜덤 이미지 선택 (중복 없음)
+const getRandomHotelImage = () => {
+  if (hotelImages.value.length === 0) {
+    return hotelPlaceholder;
+  }
+
+  // 모든 이미지를 사용했으면 리셋
+  if (usedImageIndices.value.size === hotelImages.value.length) {
+    usedImageIndices.value.clear();
+  }
+
+  // 사용하지 않은 이미지 인덱스 찾기
+  let randomIndex;
+  do {
+    randomIndex = Math.floor(Math.random() * hotelImages.value.length);
+  } while (usedImageIndices.value.has(randomIndex));
+
+  usedImageIndices.value.add(randomIndex);
+  console.log(`✅ Using image ${randomIndex + 1}/${hotelImages.value.length}`);
+  
+  return hotelImages.value[randomIndex];
+};
+
 // 마운트 시 API 호출
 onMounted(async () => {
+  // ✅ 호텔 이미지 초기화
+  initializeHotelImages();
+  
   authStore.initializeAuth();
   
   isLoading.value = true;
@@ -219,7 +230,7 @@ onMounted(async () => {
           totalPrice: hotel.pricing.totalPrice,
           rating: 4.5,
           reviews: 100,
-          image: hotelIllust,
+          image: getRandomHotelImage(),  // ✅ 랜덤 이미지 할당
           type: 'hotel',
           checkInDate: hotel.checkInDate,
           checkOutDate: hotel.checkOutDate,
