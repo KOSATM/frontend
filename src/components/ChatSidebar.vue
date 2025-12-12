@@ -7,8 +7,8 @@
         ✈
       </div>
       <div class="overflow-hidden">
-        <h6 class="mb-0 text-truncate">AI 여행 어시스턴트</h6>
-        <small class="text-muted" style="font-size: 11px;">Seoul Trip Planner</small>
+        <h5 class="mb-0 text-truncate">AI 여행 어시스턴트</h5>
+        <small class="text-muted">서울 여행 플래너</small>
       </div>
     </div>
 
@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <div class="quick-actions px-3 pb-2">
+    <!-- <div class="quick-actions px-3 pb-2">
       <div class="d-flex gap-2 overflow-x-auto pb-2 custom-scrollbar-x">
         <button @click="sendQuickMessage('Start early')" class="btn btn-xs btn-outline-secondary rounded-pill text-nowrap">
           🌅 Early Start
@@ -59,7 +59,7 @@
           💰 Save Cost
         </button>
       </div>
-    </div>
+    </div> -->
 
     <div class="chat-input-wrapper p-3 border-top bg-white">
       <div class="chat-input-container">
@@ -125,10 +125,10 @@ const autoResize = () => {
   }
 };
 
-const sendQuickMessage = (msg) => {
-  currentMessage.value = msg;
-  sendMessage();
-};
+// const sendQuickMessage = (msg) => {
+//   currentMessage.value = msg;
+//   sendMessage();
+// };
 
 // 메시지 전송
 const sendMessage = async () => {
@@ -209,22 +209,46 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* [중요] 레이아웃 시스템과의 통합을 위해 
-  Position Fixed 관련 스타일을 모두 제거하고 
-  Flexbox 기반으로 변경했습니다. 
-*/
-
+  
 .chat-layout-wrapper {
-  /* sidebar-area 내부를 꽉 채움 */
-  width: 100%;
-  height: 100%; 
-  overflow: hidden; /* 이중 스크롤 방지 */
+  display: flex;
+  flex-direction: column;
+  height: 100%;       /* 부모 높이 꽉 채움 */
+  background-color: #fff;
 }
 
-/* 메시지 영역 스크롤 */
+/* 헤더 스타일 */
+.chat-header {
+  flex-shrink: 0;     /* 줄어들지 않음 */
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* 메시지 영역 스타일 */
 .chat-messages {
-  overflow-y: auto;
-  background-color: #fff;
+  flex-grow: 1;       /* 남은 공간 모두 차지 (반응형 높이) */
+  overflow-y: auto;   /* 내용 넘칠 때만 여기에 스크롤바 생성 */
+  min-height: 0;      /* Flexbox 스크롤 버그 방지 */
+  
+  /* 스크롤바 디자인 (Webkit) */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #ced4da;
+    border-radius: 3px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+}
+
+/* 입력창 영역 스타일 */
+.chat-input-wrapper {
+  flex-shrink: 0;     /* 줄어들지 않음 (바닥 고정) */
+  background: #fff;
+  border-top: 1px solid #e9ecef;
+  padding: 1rem;
 }
 
 /* 메시지 버블 스타일 */
