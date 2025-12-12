@@ -1,5 +1,7 @@
 <template>
-  <PageHeader title="Image-based Travel AI" subtitle="Use AI recommendation" />
+  <div class = "supporter-page">
+  <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
+  <PageHeader title="이미지 기반 여행 AI" subtitle="AI 추천을 사용해보세요." />
 
   <div class="complete-card card p-5 mt-4 text-center">
     <div class="check-circle mb-4">✓</div>
@@ -13,6 +15,7 @@
         Supporter</router-link>
     </div>
   </div>
+  </div>\
 </template>
 
 <script setup>
@@ -25,6 +28,12 @@ const plans = route?.state?.plans || null
 </script>
 
 <style scoped>
+.supporter-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+}
+
 .complete-wrap {
   padding-bottom: 40px;
 }

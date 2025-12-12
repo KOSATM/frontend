@@ -14,8 +14,8 @@
         @keyup.enter.space.prevent="setType('landscape')" aria-pressed="false">
         <div class="option-icon gradient-1 me-3"><i class="bi bi-image-fill"></i></div>
         <div class="flex-fill">
-          <div class="fw-medium">Landscape / Places</div>
-          <div class="small text-muted">Parks, temples, towers, streets</div>
+          <div class="fw-medium">풍경 / 광장</div>
+          <div class="small text-muted">공원, 절, 전망대, 거리</div>
         </div>
         <div class="check-mark" v-if="selectedType === 'landscape'">✓</div>
       </li>
@@ -26,8 +26,8 @@
         aria-pressed="false">
         <div class="option-icon gradient-2 me-3"><i class="bi bi-cup-straw"></i></div>
         <div class="flex-fill">
-          <div class="fw-medium">Food / Restaurants</div>
-          <div class="small text-muted">Korean BBQ, street food, cafes</div>
+          <div class="fw-medium">음식 / 레스토랑</div>
+          <div class="small text-muted">삼겹살, 길거리 음식, 카페</div>
         </div>
         <div class="check-mark" v-if="selectedType === 'food'">✓</div>
       </li>
@@ -38,8 +38,8 @@
         @keyup.enter.space.prevent="setType('activities')" aria-pressed="false">
         <div class="option-icon gradient-3 me-3"><i class="bi bi-person-fill"></i></div>
         <div class="flex-fill">
-          <div class="fw-medium">Activities / Experiences</div>
-          <div class="small text-muted">Photo spots, cultural experiences</div>
+          <div class="fw-medium">활동 / 경험</div>
+          <div class="small text-muted">사진 명소, 문화 체험</div>
         </div>
         <div class="check-mark" v-if="selectedType === 'activities'">✓</div>
       </li>

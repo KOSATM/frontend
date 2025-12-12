@@ -1,8 +1,11 @@
 <template>
-  <PageHeader title="Choose Plan" subtitle="Select an itinerary to add / replace" />
+  <div class="supporter-page">
+  <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
+
+  <PageHeader title="여정 선택" subtitle="장소를 추가하거나 대체하기 위해 여정을 선택하세요." />
 
   <div class="card p-4 mt-3">
-    <h5 class="mb-3">Existing Plans</h5>
+    <h5 class="mb-3">존재하는 여정</h5>
 
     <div class="plans-accordion">
       <div v-for="(day, dIdx) in plansDays" :key="day.id"
@@ -104,6 +107,7 @@
         Apply / Done
       </button>
     </div>
+  </div>
   </div>
 </template>
 
@@ -324,6 +328,12 @@ const done = () => {
 </script>
 
 <style scoped>
+.supporter-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+}
+
 .card {
   border-radius: 12px;
   position: relative;

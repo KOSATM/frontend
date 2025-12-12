@@ -1,6 +1,7 @@
 // filepath: c:\kosa-course\userProject\ATM\projects\frontend\src\views\supporter\image-ai\History.vue
 
 <template>
+  <div class = "supporter-page">
   <BackButtonPageHeader title="이미지 기반 여행 AI" subtitle="당신의 사진으로 여행 장소를 찾아보아요!" />
 
   <BaseSection icon="bi-clock-history" title="AI가 추천한 히스토리">
@@ -139,6 +140,8 @@
       </div>
     </div>
   </teleport>
+  </div>
+
 </template>
 
 <script setup>
@@ -316,6 +319,12 @@ const confirmChangeStatus = async () => {
 </script>
 
 <style scoped>
+.supporter-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+}
+
 .history-card {
   background: #FFD9A6;
   border-radius: 12px;

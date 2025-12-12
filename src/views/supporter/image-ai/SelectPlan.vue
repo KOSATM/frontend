@@ -63,8 +63,8 @@
         :aria-pressed="selectedOption === 'not_interested'">
         <div class="icon no me-3">✕</div>
         <div class="flex-fill">
-          <div class="fw-medium">Not Interested</div>
-          <div class="small text-muted">Do nothing and return to search</div>
+          <div class="fw-medium">관심 없음</div>
+          <div class="small text-muted">아무것도 하지 않고 검색으로 돌아갑니다.</div>
         </div>
 
         <div v-if="selectedOption === 'not_interested'" class="select-check" aria-hidden="true">✓</div>
@@ -198,9 +198,16 @@ const confirm = async () => {
     router.push({ name: 'History' }).catch(() => { })
   }
 }
+
 </script>
 
 <style scoped>
+.supporter-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+}
+
 .history-card {
   background: #FFD9A6;
   border-radius: 12px;
