@@ -241,6 +241,7 @@ const modalData = ref(null);
 const chatStore = useChatStore();
 
 const plan = ref(null);
+
 const days = ref([]);
 const selectedDayIndex = ref(0);
 
@@ -251,6 +252,100 @@ const applyAiPlan = (payload) => {
     startDate: payload.startDate,
     endDate: payload.endDate,
     title: payload.title ?? "AI 추천 여행 일정",
+// =======
+// const days = ref(null);
+
+// /* 교체/삭제 모달 상태 */
+// const replaceModal = ref({
+//   open: false,
+//   dayIndex: null,
+//   actIndex: null,
+//   target: null,
+//   alternatives: [],
+// });
+
+// /* 상세 모달 상태 */
+// const detailsModal = ref({
+//   open: false,
+//   dayIndex: null,
+//   actIndex: null,
+//   data: null,
+//   spendInput: null,
+// });
+
+// /* 현재 액티비티 완료 모달 상태 */
+// const completeModal = ref({
+//   open: false,
+//   dayIndex: null,
+//   actIndex: null,
+//   title: "",
+//   spendInput: null,
+//   comment: "",
+// });
+
+// // ✅ 실제 진행 중인 Day만 추적 (openDayId와 무관)
+// const currentDay = computed(() => {
+//   if (run.value.started && run.value.dayId != null) {
+//     return days.value.find((d) => d.day.id === run.value.dayId) || null;
+//   }
+//   return null; // 진행 중이 아니면 null
+// });
+
+// const currentDayIndex = computed(() => {
+//   if (run.value.started && run.value.dayId != null) {
+//     return days.value.findIndex((d) => d.day.id === run.value.dayId);
+//   }
+//   return -1; // 진행 중이 아니면 -1
+// });
+
+// const currentActivityIndex = computed(() => {
+//   if (!currentDay.value) return 0;
+//   const idx = currentDay.value.places.findIndex((a) => !a.completed);
+//   return idx === -1 ? currentDay.value.places.length - 1 : idx;
+// });
+
+// const currentActivity = computed(() => {
+//   return currentDay.value?.places?.[currentActivityIndex.value] || null;
+// });
+
+// const dayProgress = computed(() => {
+//   return progressOf(currentDay.value);
+// });
+
+// const startedAtClock = computed(() => {
+//   if (!run.value.startedAt) return "—";
+//   const d = new Date(run.value.startedAt);
+//   const mm = d.getMinutes().toString().padStart(2, "0");
+//   const hh24 = d.getHours();
+//   const ap = hh24 >= 12 ? "PM" : "AM";
+//   const hh = hh24 % 12 || 12;
+//   return `${hh}:${mm} ${ap}`;
+// });
+
+// const currentDurationText = computed(() => {
+//   if (!run.value.startedAt) return "—";
+//   const diffMs = Date.now() - run.value.startedAt;
+//   const mins = Math.max(1, Math.round(diffMs / 60000));
+//   return `~${mins}m`;
+// });
+
+// const currentStatusText = computed(() => {
+//   if (!currentActivity.value) return "—";
+//   const now = new Date();
+//   const nowMin = now.getHours() * 60 + now.getMinutes();
+//   const sched = parseTime(currentActivity.value.time);
+//   const diff = nowMin - sched;
+//   if (Math.abs(diff) <= 20) return "On schedule ✓";
+//   if (diff < -20) return "A bit early";
+//   return "Running late";
+// });
+
+// const currentQuickStats = computed(() => {
+//   return {
+//     started: startedAtClock.value,
+//     duration: currentDurationText.value,
+//     status: currentStatusText.value,
+
   };
 
   days.value = payload.days.map((d) => ({
@@ -363,9 +458,197 @@ const typeLabel = (type) => {
   }
 };
 
+
 const currentDayPlaces = computed(
   () => days.value?.[selectedDayIndex.value]?.places ?? []
 );
+
+<!-- 충돌로 인한 주석 처리 -->
+/* 시작/진행 */
+// const startDay = (dayId) => {
+//   console.log("heroDay", heroDay)
+//   console.log("run", run.value);
+//   if (run.value.started) return;
+//   const day = days.value.find((d) => d.day.id === dayId);
+//   console.log("days", days);
+//   console.log("day", day);
+//   console.log("dayId", dayId);
+//   if (!day) return;
+//   openDayId.value = dayId;
+//   run.value.started = true;
+//   run.value.startedAt = Date.now();
+//   run.value.dayId = dayId; // ✅ 진행 중인 Day 저장
+//   // 모든 액티비티는 미완료 상태 그대로 → 첫 번째 일정부터 진행
+// };
+
+// /* 현재 액티비티 완료 모달 열기 */
+// const openCompleteForCurrent = () => {
+//   if (!currentDay.value || !currentActivity.value) return;
+//   const dIdx = currentDayIndex.value;
+//   const aIdx = currentActivityIndex.value;
+//   completeModal.value = {
+//     open: true,
+//     dayIndex: dIdx,
+//     actIndex: aIdx,
+//     title: currentActivity.value.title,
+//     spendInput: currentActivity.value.spent ?? null,
+//     comment: currentActivity.value.note || "",
+//   };
+// };
+
+// const closeCompleteModal = () => {
+//   completeModal.value.open = false;
+// };
+
+// /* 상세 모달 */
+// const openDetailsModal = (dayIndex, actIndex) => {
+//   const act = days.value[dayIndex].places[actIndex];
+//   const details = act.details || buildFallbackDetails(act);
+//   detailsModal.value = {
+//     open: true,
+//     dayIndex,
+//     actIndex,
+//     data: details,
+//     spendInput: act.spent ?? null,
+//   };
+// };
+
+// const closeDetailsModal = () => {
+//   detailsModal.value.open = false;
+// };
+
+// const buildFallbackDetails = (act) => {
+//   return {
+//     title: act.title,
+//     address: act.title + ", Seoul",
+//     hours: "09:00–21:00",
+//     area: "Seoul",
+//     cost: act.cost,
+//     desc: "A cozy spot popular with locals. Good for short stops during your itinerary.",
+//     gallery: defaultGallery,
+//     imageQuery: act.title + " Seoul",
+//   };
+// };
+
+// /* 공통 완료 로직 */
+// const completeActivity = (dayIndex, actIndex, spendInput, comment) => {
+//   const day = days.value[dayIndex];
+//   if (!day) return;
+//   const act = day.places[actIndex];
+//   if (!act) return;
+
+//   if (spendInput != null && spendInput >= 0) {
+//     act.spent = Number(spendInput);
+//   }
+//   if (comment) {
+//     act.note = comment;
+//   }
+//   act.completed = true;
+
+//   // 해당 Day 모두 끝났으면 Hero 화면 표시 (다음 Day 시작 대기)
+//   const stillLeft = day.places.some((a) => new Date(a.endAt) > new Date());
+//   console.log("stillLeft", stillLeft);
+//   if (!stillLeft && run.value.dayId === day.day.id) {
+//     // ✅ Day 완료 시 Hero 화면이 표시되도록 상태만 초기화
+//     const nextDay = days.value.find((d) => d.day.id > day.day.id);
+//     console.log("nextDay", nextDay)
+//     if (nextDay) {
+//       // 다음 Day 카드 열기 (Hero 화면 표시됨)
+//       openDayId.value = nextDay.day.id;
+//       // run 상태 초기화 (Hero 화면에서 다시 시작 버튼 클릭 대기)
+//       run.value.started = false;
+//       run.value.startedAt = null;
+//       run.value.dayId = null;
+//     } else {
+//       // 모든 Day 완료
+//       run.value.started = false;
+//       run.value.startedAt = null;
+//       run.value.dayId = null;
+//     }
+//   }
+// };
+
+// /* 현재 액티비티 완료 모달에서 Confirm */
+// const completeCurrentActivity = () => {
+//   const { dayIndex, actIndex, spendInput, comment } = completeModal.value;
+//   if (dayIndex == null || actIndex == null) return;
+//   completeActivity(dayIndex, actIndex, spendInput, comment);
+//   closeCompleteModal();
+// };
+
+// /* 상세 모달에서 Save/Complete */
+// const saveSpent = () => {
+//   const { dayIndex: d, actIndex: a, spendInput: val } = detailsModal.value;
+//   if (d == null || a == null) return;
+//   completeActivity(d, a, val, null);
+//   closeDetailsModal();
+// };
+
+// const openReplaceFromDetails = () => {
+//   const { dayIndex, actIndex } = detailsModal.value;
+//   if (dayIndex == null || actIndex == null) return;
+//   closeDetailsModal();
+//   openReplaceModal(dayIndex, actIndex);
+// };
+
+// /* 교체/삭제 모달 */
+// const openReplaceModal = async (dayIndex, actIndex) => {
+//   console.group("openReplaceModal")
+//   console.log("days", days.value);
+//   const target = days.value[dayIndex].places[actIndex];
+//   console.log("target", target);
+//   const res = await plannerApi.getSuggestPlaces(authStore.userId, target);
+//   console.log("res", res)
+//   const candidates = res.data.data.data;
+//   console.log("candidates", candidates);
+  
+//   const suggestionSet = new Set();
+//   while (suggestionSet.size < 3) {
+//     const idx = Math.floor(Math.random() * candidates.length);
+//     suggestionSet.add(candidates[idx]);
+//   }
+//   const shuffled = [...suggestionSet];
+
+//   const suggestions = []
+//   shuffled.forEach((item) => {
+//     suggestions.push({title: item.title, description: item.description})
+//   })
+
+
+//   replaceModal.value = {
+//     open: true,
+//     dayIndex,
+//     actIndex,
+//     target,
+//     alternatives: shuffled
+//     // alternatives: [
+//     //   {
+//     //     title: "Cafe Onion Anguk",
+//     //     time: target.time,
+//     //     type: "cafe",
+//     //     cost: 8,
+//     //   },
+//     //   {
+//     //     title: "Seoul Wave Coffee",
+//     //     time: target.time,
+//     //     type: "cafe",
+//     //     cost: 10,
+//     //   },
+//     //   {
+//     //     title: "Ikseon Hanok Cafe",
+//     //     time: target.time,
+//     //     type: "dessert",
+//     //     cost: 9,
+//     //   },
+//     // ],
+//   };
+//   console.groupEnd();
+// };
+
+// const closeReplaceModal = () => {
+//   replaceModal.value.open = false;
+// };
+
 
 const router = useRouter();
 const authStore = useAuthStore();

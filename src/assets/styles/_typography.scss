@@ -1,47 +1,79 @@
-
+// src/assets/styles/_typography.scss
 // ===============================
-// ✍️ Typography Settings
+// 🅰️ Custom Font Import
 // ===============================
 
-html {
-  font-size: 17px;
+@font-face {
+  font-family: 'memoment';  // 제목용
+  src: url('@/assets/fonts/MemomentKkukkukk.ttf') format('truetype');
+  font-style: normal;
+  font-display: swap;
 }
 
+@font-face {
+  font-family: 'parkdahyun'; // 본문용
+  src: url('@/assets/fonts/ownglyphParkDaHyun.ttf') format('truetype');
+  font-style: normal;
+  font-display: swap;
+}
+
+
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'parkdahyun';
   font-weight: 400;
+  
+  /* ✅ 글자 크기 키우기 (기본 16px -> 20px 정도로 변경) */
+  font-size: 1.5rem; 
+  // font-size: 25px;
+  /* 또는 px 단위가 편하시면: font-size: 20px; */
+
   line-height: 1.6;
   background-color: $body-bg;
   color: $body-color;
 }
 
-h1, h2, h3, h4, h5 {
-  font-family: inherit;  // body 기본 글씨체 사용
-  font-weight: 700;
-  color: $secondary;
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'memoment';
+  font-weight: 700; // 제목은 두껍게
+  color: $secondary; // 제목 색상을 '스카이 코랄'로 할지, '다크 그레이'로 할지 결정
+  // color: $body-color; // 깔끔한게 좋다면 다크 그레이 추천
+  margin-bottom: 1rem;
 }
-
-p {
-  font-family: inherit;
-  font-size: 1.1rem;
-  color: #555;
-}
-
 
 .text-muted {
-  color: #777 !important;
+  color: lighten($body-color, 30%) !important;
 }
 
+/* 본문 태그: Parkdahyun 폰트 */
+p {
+  font-family: 'parkdahyun', cursive;
+  font-size: 1.25rem; 
+  margin-bottom: 1rem;
+  word-break: keep-all; /* 한글 단어 끊김 방지 */
+}
+
+/* 링크 태그: Orange Color + 밑줄 효과 */
 a {
-  color: $primary;
+  color: #ff8c00;
   text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'parkdahyun', cursive;
 
   &:hover {
-    color: darken($primary, 10%);
+    color: #e67e00;
+    text-decoration: underline;
+    text-underline-offset: 4px; /* 밑줄 간격 띄우기 */
   }
 }
-@media (max-width: 576px) {
-  html {
-    font-size: 20px; // 모바일에서 글씨 크게
-  }
+
+/* 강조 텍스트 (Bootstrap .lead 등) */
+.lead {
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+/* 작은 텍스트 */
+small, .small {
+  font-size: 1rem; /* 손글씨라 너무 작게 안 함 */
 }

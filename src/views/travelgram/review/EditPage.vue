@@ -58,11 +58,13 @@
       </div>
     </section>
 
-    <!-- 하단 버튼 -->
-    <div class="navigation-buttons">
-      <button class="btn-back" @click="goBack">Back</button>
-      <button class="btn-next" @click="goNext">Next Step</button>
-    </div>
+        <NavigationButtons
+      backText="Back"
+      :isNextDisabled="!canProceed"
+      @back="goBack"
+      @next="goNext"
+    >
+    </NavigationButtons>
   </div>
 </template>
 
@@ -73,6 +75,7 @@ import { useReviewStore } from "@/store/reviewStore";
 import api from "@/api/travelgramApi"
 import StepHeader from "@/components/common/StepHeader.vue";
 import PageHeader from "@/components/common/PageHeader.vue";
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -85,7 +88,13 @@ const selectedHashtags = computed(() => reviewStore.selectedHashtags || []);
 
 // ✅ 현재 사진 인덱스
 const currentPhotoIndex = ref(0);
+// 🔥 [추가] 1. 저장 중 상태 관리 (중복 클릭 방지)
+const isSaving = ref(false);
 
+// 🔥 [추가] 2. 버튼 활성화 조건 (사진이 있고, 저장 중이 아닐 때)
+const canProceed = computed(() => {
+  return photos.value && photos.value.length > 0 && !isSaving.value;
+});
 // 반응형 저장
 watch(caption, (val) => reviewStore.caption = val);
 
@@ -114,27 +123,28 @@ const scrollToPhoto = () => {
 
 const goBack = () => router.back();
 const goNext = async() => {
+// 🔥 [수정] 저장 시작 시 로딩 상태 true
+  isSaving.value = true;
 
-try {
-    // 1) 스토어에 상태 저장 (클라이언트 상태 동기화)
+  try {
     reviewStore.setCaption(caption.value);
 
-    // 2) API 호출 (DB 업데이트)
-    // reviewPostId가 없으면 에러 방지 (선택사항)
     if (reviewStore.reviewPostId) {
       await api.updateCaption(reviewStore.reviewPostId, caption.value);
     } else {
       console.warn("reviewPostId가 없습니다. 저장을 건너뜁니다.");
     }
 
-    // 3) 다음 페이지로 이동
     router.push({ name: 'InstagramPreview', params: { planId: route.params.planId } });
 
   } catch (error) {
     console.error("캡션 저장 중 오류 발생:", error);
     alert("저장에 실패했습니다. 다시 시도해주세요.");
+  } finally {
+    // 🔥 [수정] 로딩 상태 해제 (혹시 실패하더라도 버튼 다시 눌러야 하니까)
+    isSaving.value = false;
   }
-};  
+};
 </script>
 
 <style scoped>
@@ -222,42 +232,6 @@ try {
   padding: .2rem .5rem;
 }
 
-/* ✅ 네비게이션 버튼 */
-.nav-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 1.2rem;
-  transition: all 0.2s ease;
-  z-index: 10;
-}
-
-.nav-btn:hover:not(:disabled) {
-  background: rgba(0, 0, 0, 0.8);
-}
-
-.nav-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.nav-prev {
-  left: 0.75rem;
-}
-
-.nav-next {
-  right: 0.75rem;
-}
 
 .caption-box {
   width: 100%;
@@ -268,7 +242,6 @@ try {
   font-size: 0.9rem;
   line-height: 1.5;
   resize: none;
-  font-family: 'Kyobo2024', sans-serif;
 }
 
 .hashtag-box {

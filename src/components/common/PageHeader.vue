@@ -1,10 +1,19 @@
 <template>
   <header class="page-header">
-    <div class="header-top">
-      <i v-if="icon" :class="['bi', icon, 'me-2']" :style="{ color: iconColor }"></i>
-      <h5 class="page-title">{{ title }}</h5>
+    <div class="d-flex flex-column">
+      <div class="d-flex align-items-center mb-1">
+        <i 
+          v-if="icon" 
+          :class="['bi', icon, 'me-2', 'fs-4']" 
+          :style="{ color: iconColor }"
+        ></i>
+        <h5 class="page-title m-0 fw-bold">{{ title }}</h5>
+      </div>
+      
+      <p v-if="subtitle" class="page-subtitle text-muted m-0 ms-1">
+        {{ subtitle }}
+      </p>
     </div>
-    <p v-if="subtitle" class="page-subtitle">{{ subtitle }}</p>
   </header>
 </template>
 
@@ -12,34 +21,27 @@
 defineProps({
   title: { type: String, required: true },
   subtitle: { type: String, default: "" },
-  icon: { type: String, default: "" }, // Bootstrap Icon class name (e.g., 'bi-instagram')
-  iconColor: { type: String, default: "#ff8c00" } // optional color prop
+  icon: { type: String, default: "" },
+  iconColor: { type: String, default: "#ff8c00" }
 });
 </script>
 
 <style scoped>
 .page-header {
+  /* 통일된 웜톤 그라디언트 배경 */
   background: linear-gradient(90deg, #fffaf3 0%, #ffffff 100%);
-  padding: 1.25rem 1.5rem 1rem;
+  padding: 1.5rem 1.5rem;
   border-bottom: 1px solid rgba(27, 59, 111, 0.08);
-  margin-bottom: 1.5rem;
-
-.header-top {
-  display: flex;
-  align-items: center;
+  margin-bottom: 2rem; /* 하단 콘텐츠와의 여백 */
 }
 
 .page-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #1b3b6f;
-  margin: 0;
+  color: #1B3B6F; /* 기본 텍스트 컬러 통일 */
+  letter-spacing: -0.5px;
 }
 
 .page-subtitle {
   font-size: 0.9rem;
-  color: #6c757d;
-  margin: 0.35rem 0 0 2rem;
-}
+  line-height: 1.4;
 }
 </style>
