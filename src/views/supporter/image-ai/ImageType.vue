@@ -47,7 +47,7 @@
   </BaseSection>
 
     <div class="d-flex mt-2">
-      <router-link class="btn btn-link" :to="{ name: 'New' }">뒤로가기</router-link>
+      <router-link class="btn btn-link" :to="{ name: 'CreateNewSearch' }">뒤로가기</router-link>
       <button class="btn btn-primary ms-auto" :disabled="!selectedType" @click="goNext">
         Next
       </button>

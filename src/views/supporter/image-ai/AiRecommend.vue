@@ -4,7 +4,7 @@
   <BaseSection icon="bi bi-images" title="AI Analysis Complete"
     :subtitle="`Found ${results.length} similar destinations`">
     <template #actions>
-      <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'New' }">New
+      <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'CreateNewSearch' }">New
         Search</router-link>
     </template>
 

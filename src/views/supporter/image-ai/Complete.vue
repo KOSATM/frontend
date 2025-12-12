@@ -7,7 +7,7 @@
     <p class="text-muted mb-4">Destination added to your itinerary</p>
 
     <div class="d-flex flex-column align-items-center gap-3">
-      <router-link class="btn btn-lg btn-primary btn-wide" :to="{ name: 'New' }">Search Another
+      <router-link class="btn btn-lg btn-primary btn-wide" :to="{ name: 'CreateNewSearch' }">Search Another
         Photo</router-link>
       <router-link class="btn btn-lg btn-outline-primary btn-wide" :to="{ name: 'SupporterMain' }">Back to Travel
         Supporter</router-link>

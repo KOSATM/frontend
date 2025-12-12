@@ -99,7 +99,7 @@
     <div v-if="toast.visible" class="action-toast">{{ toast.message }}</div>
 
     <div class="d-flex mt-3">
-      <router-link class="btn btn-link" :to="{ name: 'New' }">뒤로가기</router-link>
+      <router-link class="btn btn-link" :to="{ name: 'CreateNewSearch' }">뒤로가기</router-link>
       <button class="btn btn-primary ms-auto" :disabled="!hasChanges" @click="done">
         Apply / Done
       </button>

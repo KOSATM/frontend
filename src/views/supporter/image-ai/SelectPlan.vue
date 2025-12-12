@@ -1,11 +1,11 @@
 <template>
   <div class="supporter-page">
   <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
-  <StepHeader title="이미지 기반 여행 AI" subtitle="Use AI recommendation" step="4/4" @back="onStepBack" />
+  <StepHeader title="이미지 기반 여행 AI" subtitle="AI 추천을 사용해보세요." step="4/4" @back="onStepBack" />
 
-  <BaseSection icon="bi-list-check" title="How would you like to use this?" subtitle="Completion Rate">
+  <BaseSection icon="bi-list-check" title="AI 추천을 어떻게 사용하고 싶으신가요?" subtitle="Completion Rate">
     <template #actions>
-      <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'New' }">New Search</router-link>
+      <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'CreateNewSearch' }">새로운 검색</router-link>
     </template>
 
     <div class="selected-place card p-3 mb-3 d-flex align-items-center">

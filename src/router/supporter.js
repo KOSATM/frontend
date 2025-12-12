@@ -11,7 +11,7 @@ const routes = [
     },
     {
         path: '/supporter/image-ai/new-search',
-        name: 'New',
+        name: 'CreateNewSearch',
         component: () => import('@/views/supporter/image-ai/CreateNewSearch.vue')
     },
     {

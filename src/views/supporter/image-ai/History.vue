@@ -5,7 +5,7 @@
 
   <BaseSection icon="bi-clock-history" title="AI가 추천한 히스토리">
     <template #actions>
-      <router-link class="btn btn-sm btn-primary" :to="{ name: 'New' }">+ 새로운 검색</router-link>
+      <router-link class="btn btn-sm btn-primary" :to="{ name: 'CreateNewSearch' }">+ 새로운 검색</router-link>
     </template>
     
     <div v-if="isLoading" class="text-center py-5">
