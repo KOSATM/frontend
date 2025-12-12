@@ -1,6 +1,6 @@
 <template>
   <div class="supporter-page">
-  <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
+  <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" />
   <StepHeader title="이미지 기반 여행 AI" subtitle="AI가 사진 분석을 완료했습니다!" step="3/4"
     @back="router.push({ name: 'ImageType' })" />
   <BaseSection icon="bi bi-images" title="AI 분석 완료"

@@ -1,6 +1,6 @@
 <template>
   <div class="supporter-page">
-  <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
+  <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" />
   <StepHeader title="이미지 기반 여행 AI" subtitle="AI 추천을 사용해보세요." step="4/4" @back="onStepBack" />
 
   <!-- completion rate 가 뭐지 뭘 위해서 한걸까 -->

@@ -2,7 +2,7 @@
 
 <template>
   <div class = "supporter-page">
-  <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
+  <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" />
   <BackButtonPageHeader title="이미지 기반 여행 AI" subtitle="당신의 사진으로 여행 장소를 찾아보아요!" />
 
   <BaseSection icon="bi-clock-history" title="AI가 추천한 히스토리">
