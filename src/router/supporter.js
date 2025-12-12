@@ -1,5 +1,9 @@
 const routes = [
     {
+        path: '/',
+        redirect: '/supporter'
+    },
+    {
         path: '/supporter',
         name: 'Supporter',
         component: () => import('@/views/supporter/index.vue')

@@ -1,8 +1,6 @@
 <template>
   <div class="travelgram-page">
     <PageHeader title="Travelgram" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
-    <BackButtonPageHeader title="Select one card to review your travel" subtitle="종료된 여행 카드를 선택해서 리뷰를 작성해보세요." @back="goBack"/>
-    
     <ProfileSummary :name="displayName" bio="여행 애호가" initials="userInitials" :totalplans="stats.totalPlans"
       :travelDays="stats.travelDays" :completed="stats.completed" />
     <h4 class="my-3">
@@ -38,8 +36,6 @@ import { storeToRefs } from 'pinia'
 import planCard from '@/components/common/PlanCard.vue';
 import ProfileSummary from "@/components/travelgram/ProfileSummary.vue";
 import PageHeader from '@/components/common/PageHeader.vue';
-import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
-
 
 const store = useStore()
 const router = useRouter()
@@ -163,13 +159,11 @@ const profileImage = computed(() => {
   if (stored) return stored
   return new URL('../../assets/img/profile-logo.png', import.meta.url).href
 })
-const goBack = () => router.back()
 </script>
 
 <style scoped>
 .travelgram-page {
-  /* 배경색이나 패딩은 유지 */
-  background-color: #fffaf3; 
+  background-color: #fffaf3;
   min-height: 100vh;
   padding: 2rem 1.25rem;
 }
@@ -184,12 +178,7 @@ const goBack = () => router.back()
   font-weight: 600;
 }
 
-/* ✅ 핵심 수정 부분: 리스트형 배치 */
 .plan-list {
-  display: flex;
-  flex-direction: column; /* 위에서 아래로 쌓이게 설정 */
-  gap: 1.5rem;            /* 카드 사이의 간격 */
   margin-bottom: 2rem;
-  width: 100%;            /* 리스트 전체 너비 100% */
 }
 </style>

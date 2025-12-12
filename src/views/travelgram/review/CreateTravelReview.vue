@@ -88,9 +88,9 @@
 
 
 
-    <h5 class="upload-title mb-1">
+    <h6 class="upload-title mb-1">
       <i class="bi bi-image me-1 text-secondary"></i> 사진 업로드
-    </h5>
+    </h6>
     <p class="upload-subtitle">
       10개까지 사진을 올릴 수 있습니다. ({{ uploadedImages.length }}/10)
     </p>
@@ -122,19 +122,17 @@
         <span class="small ms-1">사진 요약이 종료될 때까지 기다려주세요.</span>
       </div>
     </div>
-
-
-    <NavigationButtons
-      backText="Back"
-      :isNextDisabled="!canProceed"
-      @back="goBack"
-      @next="goNext"
-    >
-      <template #next-content>
+  <!-- 🟦 하단 버튼 -->
+  <div class="navigation-buttons">
+      <button 
+        class="btn-next" 
+        :disabled="!canProceed" 
+        @click="nextStep"
+      >
         <span v-if="isAnalyzing">분석 중...</span>
         <span v-else>Next Step</span>
-      </template>
-    </NavigationButtons>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -146,7 +144,6 @@ import { useReviewStore } from '@/store/reviewStore'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted,onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const router = useRouter()
 const route = useRoute()
@@ -402,7 +399,7 @@ const uploadPhotos = async (files, photoGroupId, startOrderIndex = 0) => {
 
 
 // Step 2로 이동
-const goNext = () => {
+const nextStep = () => {
   reviewStore.setPhotos(uploadedImages.value)
   reviewStore.nextStep()
   router.push({
@@ -596,5 +593,33 @@ const goBack = () => router.back()
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* 하단 버튼 */
+.navigation-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.btn-next {
+  flex: 1;
+  height: 48px;
+  background-color: #1b3b6f;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 1rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-next:disabled {
+  background-color: #b0bfd8;
+  cursor: not-allowed;
+}
+
+.btn-next:hover:not(:disabled) {
+  background-color: #ff8c00;
 }
 </style>

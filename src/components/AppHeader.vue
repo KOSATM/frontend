@@ -109,87 +109,16 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
 
 <style scoped>
 .navbar-fms {
-  background-color: #ffffff; /* ✅ 기본 흰색 */
-  transition: background 0.4s ease, box-shadow 0.4s ease;
-  backdrop-filter: blur(8px);
-  padding: 0 1.25rem;
-  height: 64px; /* ⬆ 기존 42px → 64px로 변경 */
+  height: 60px;
   display: flex;
   align-items: center;
-  justify-content: space-between; /* ✅ 좌우 끝 정렬 */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  font-weight: 600; /* ✅ 글자 두께 강화 */
+}
 
-  .navbar-brand {
-    display: flex;
-    align-items: center; /* ✅ 로고 세로 중앙정렬 */
-    justify-content: center;
-    height: 100%;
-
-    img {
-      height: 50px;
-      object-fit: contain;
-      filter: none; /* 기본: 컬러 유지 */
-      transition: filter 0.4s ease;
-    }
-  }
-
-  .btn i {
-    color: #ff8c00;
-    font-size: 2rem;
-    transition: color 0.4s ease;
-  }
-
-  /* 🟠 스크롤 시 상태 */
-  &.scrolled {
-    background-color: #ff8c00;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-
-    .navbar-brand img {
-      filter: brightness(0) invert(1);
-    }
-
-    .btn i {
-      color: #ffffff;
-    }
-  }
-
-  .navbar-toggler {
-    border: none;
-
-    &:focus {
-      outline: none;
-      box-shadow: none;
-    }
-
-    .navbar-toggler-icon {
-      background-image: none;
-      position: relative;
-      width: 24px;
-      height: 2px;
-      background-color: #fff;
-      transition: all 0.3s;
-
-      &::before,
-      &::after {
-        content: "";
-        position: absolute;
-        width: 24px;
-        height: 2px;
-        background-color: #fff;
-        left: 0;
-        transition: all 0.3s;
-      }
-
-      &::before {
-        top: -8px;
-      }
-
-      &::after {
-        top: 8px;
-      }
-    }
-  }
+.navbar-brand {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
 .logo-img {

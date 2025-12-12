@@ -1,31 +1,39 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-// 1. 필요한 페이지 컴포넌트 import (메인 페이지용 하나만 남김)
+// 기본/공통 페이지
+import Supporter from '@/views/supporter/index.vue'
+import Hotel from '@/views/planner/hotel/Recommendation.vue'
 import CreatePlan from '@/views/planner/CreatePlan.vue'
+import Travelgram from '@/views/travelgram/index.vue'
+import MyProfile from '@/views/mypage/MyProfile.vue'
 import OAuthCallback from '@/views/auth/OAuthCallback.vue'
 
-// 2. 하위 모듈 라우트 import
+// 하위 모듈 라우트
 import travelgram from './travelgram'
 import planner from './planner'
 import supporter from './supporter'
 import mypage from './mypage'
-
-// import { useTravelStore } from '@/store/travelStore' // 필요 시 주석 해제
+import { useTravelStore } from '@/store/travelStore'
 
 const routes = [
-  // ✅ 1. 메인 경로 명확화
-  // (supporter.js에 있는 '/' 리다이렉트와 충돌나지 않게 여기서 확실히 정의하거나, supporter.js에서 '/'를 지워야 함)
-  { 
-    path: '/', 
-    name: 'Home',
-    component: CreatePlan 
-  },
-
-  // ✅ 2. OAuth 콜백 등 전역적으로 필요한 특수 라우트
+  
+  
+  // 기본 라우트
+  { path: '/', component: CreatePlan },
+  { path: '/travelgram', component: Travelgram },
+  { path: '/supporter', component: Supporter },
+  { path: '/mypage', component: MyProfile },
+  { path: '/planner/hotel', component: Hotel },
   { path: '/oauth/callback', component: OAuthCallback },
   
-  // ✅ 3. 하위 모듈 확장 (여기서 모든 세부 경로를 담당)
-  // 중복 선언했던 /travelgram, /supporter, /planner/hotel 등은 다 지움
+  // 호텔 추천 경로
+  { 
+    path: '/planner/hotel/recommendation', 
+    name: 'hotelRecommendation', 
+    component: Hotel 
+  },
+
+  // 하위 모듈 라우트 확장
   ...planner,
   ...supporter,
   ...travelgram,
@@ -39,5 +47,15 @@ const router = createRouter({
     return { top: 0 };
   }
 });
+
+// router.beforeEach((to, from, next) => {
+//   const travelStore = useTravelStore()
+
+//   if (to.path === '/planner/edit' && !travelStore.isTraveling) {
+//     return next('/')
+//   }
+
+//   next()
+// })
 
 export default router
