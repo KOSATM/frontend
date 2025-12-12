@@ -153,63 +153,32 @@ const sendMessage = async () => {
   await nextTick();
   scrollToBottom();
 
-
-  setTimeout(async () => {
-    const res = await chatApi.chat(request);
-    const mainResponse = res.data.mainResponse;
-
-    //  AI 메시지 출력
-    chatMessages.value.push({
-      id: Date.now() + 1,
-      type: "ai",
-      content: markdownToHTML(res.data.mainResponse.message),
-      timestamp: new Date(),
-    });
-
-    //    여기서 payload 추출
-    if (res.data.mainResponse.requirePageMove) {
-      const payload = res.data.mainResponse.data;
-      
-      //  store에 저장 → PlannerList에서 watch 중
-      chatStore.setLivePlan(payload);
-      await nextTick();
-      //  페이지 이동
-      router.push(res.data.mainResponse.targetUrl);
-    }
-
-    isLoading.value = false;
-    await nextTick();
-    scrollToBottom();
-  }, 500);
-};
-
-<!-- 충돌로 인한 주석 처리 -->
-//   try {
-//     // 실제 API 호출 로직 (Mock setTimeout 대신 사용 시)
-//     // const res = await chatApi.chat(request);
+  try {
+    // 실제 API 호출 로직 (Mock setTimeout 대신 사용 시)
+    // const res = await chatApi.chat(request);
     
-//     // Test용 Mock Delay
-//     setTimeout(async () => {
-//       // Mock Response Structure
-//       const mockHtml = marked.parse("Sure! Here is a plan update for **Seoul**.");
+    // Test용 Mock Delay
+    setTimeout(async () => {
+      // Mock Response Structure
+      const mockHtml = marked.parse("Sure! Here is a plan update for **Seoul**.");
       
-//       chatMessages.value.push({
-//         id: Date.now() + 1,
-//         type: "ai",
-//         content: mockHtml, // 실제로는 res.data.mainResponse.message
-//         timestamp: new Date(),
-//       });
+      chatMessages.value.push({
+        id: Date.now() + 1,
+        type: "ai",
+        content: mockHtml, // 실제로는 res.data.mainResponse.message
+        timestamp: new Date(),
+      });
       
-//       isLoading.value = false;
-//       await nextTick();
-//       scrollToBottom();
-//     }, 1000);
+      isLoading.value = false;
+      await nextTick();
+      scrollToBottom();
+    }, 1000);
 
-//   } catch (error) {
-//     console.error(error);
-//     isLoading.value = false;
-//   }
-// };
+  } catch (error) {
+    console.error(error);
+    isLoading.value = false;
+  }
+};
 
 const scrollToBottom = () => {
   if (messagesContainer.value) {
