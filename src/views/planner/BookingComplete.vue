@@ -152,7 +152,7 @@ const formattedHotelTotal = computed(() => {
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .booking-complete {
   max-width: 980px;
   margin: 0 auto;

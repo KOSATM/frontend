@@ -48,14 +48,12 @@
 
     </section>
 
-
-        <NavigationButtons
-      backText="Back"
-      :isNextDisabled="selectedCount === 0"
-      @back="goBack"
-      @next="goNext"
-    >
-    </NavigationButtons>
+    <div class="navigation-buttons">
+      <button class="btn-back" @click="goBack">Back</button>
+      <button class="btn-next" @click="goNext" :disabled="selectedCount === 0">
+        Next Step
+      </button>
+    </div>
   </div>
 </template>
 
@@ -66,7 +64,6 @@ import { useReviewStore } from '@/store/reviewStore'
 import api from '@/api/travelgramApi'
 import StepHeader from '@/components/common/StepHeader.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
-import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const router = useRouter()
 const reviewStore = useReviewStore()

@@ -80,14 +80,11 @@
       </div>
     </section>
 
-        <NavigationButtons
-      backText="Back"
-      :isNextDisabled="!canProceed"
-      @back="goBack"
-      nextText="Publish"
-      @next="publish"
-    >
-    </NavigationButtons>
+    <!-- 🔥 여기! navigation-buttons는 컨테이너 안의 최하단에 있어야 한다 -->
+    <div class="navigation-buttons">
+      <button class="btn-back" @click="goBack">Back</button>
+      <button class="btn-next" @click="publish">Publish</button>
+    </div>
   </div>
 </template>
 
@@ -97,7 +94,6 @@ import { useRouter } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
 import StepHeader from '@/components/common/StepHeader.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
-import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 // 기본 유저정보
 const user = ref({
@@ -112,9 +108,7 @@ const router = useRouter()
 
 const likes = ref(1234)
 const currentIndex = ref(0)
-const canProceed = computed(() => {
-  return reviewStore.photos && reviewStore.photos.length > 0;
-});
+
 // ✅ 안전한 현재 이미지 조회
 const currentPhoto = computed(() => {
   if (!reviewStore.photos || reviewStore.photos.length === 0) return null
@@ -259,6 +253,44 @@ const publish = () => {
   border-radius: 1rem;
   z-index: 5;
 }
+
+/* ✅ 이전/다음 버튼 */
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.nav-prev {
+  left: 0.75rem;
+}
+
+.nav-next {
+  right: 0.75rem;
+}
+
 /* 액션 */
 .insta-actions {
   display: flex;

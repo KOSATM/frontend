@@ -54,7 +54,9 @@ const isOpen = computed(() => props.openDayId === props.day.day.id);
 </script>
 
 <style scoped>
-
+.title {
+    font-family: "Siganpyo", sans-serif;
+}
 
 .collapse-enter-active,
 .collapse-leave-active {

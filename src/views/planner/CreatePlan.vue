@@ -10,8 +10,7 @@
       <div class="prompt-section mb-5">
         <div class="prompt-card">
           <div class="prompt-input-wrapper">
-            <textarea class="prompt-input form-control" placeholder="Leave a comment here" v-model="promptInput"
-              rows="4"></textarea>
+            <textarea class="prompt-input form-control" placeholder="Leave a comment here" v-model="promptInput" rows="4"></textarea>
 
             <!-- Button sits inside the textarea wrapper, overlapping the bottom-left -->
             <button class="btn-generate" @click="generateItinerary" :disabled="!promptInput.trim() || isLoading">
@@ -39,41 +38,40 @@
         <div class="row g-3 mb-3">
           <!-- Accommodation -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500"
-              alt="Accommodation" cardLabel="Accommodation" icon="bi-house-heart" @click="openModal('accommodation')" />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500" alt="Accommodation" cardLabel="Accommodation" icon="bi-house-heart"
+              @click="openModal('accommodation')" />
           </div>
 
           <!-- Restaurants -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500"
-              alt="Restaurants" cardLabel="Restaurants" icon="bi-cup-hot" @click="openModal('restaurants')" />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500" alt="Restaurants" cardLabel="Restaurants" icon="bi-cup-hot"
+              @click="openModal('restaurants')" />
           </div>
 
           <!-- Attractions -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1553603227-2358aabe821e?w=500"
-              alt="Attractions" cardLabel="Attractions" icon="bi-compass" @click="openModal('attractions')" />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1553603227-2358aabe821e?w=500" alt="Attractions" cardLabel="Attractions" icon="bi-compass"
+              @click="openModal('attractions')" />
           </div>
           <!-- Photo Spots -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=500"
-              alt="Photospots" cardLabel="Photospots" icon="bi-camera" @click="openModal('photospots')" />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=500" alt="Photospots" cardLabel="Photospots" icon="bi-camera"
+              @click="openModal('photospots')" />
           </div>
           <!-- Festivals -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500"
-              alt="Festivals" cardLabel="Festivals" icon="bi-music-note" @click="openModal('festivals')" />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500" alt="Festivals" cardLabel="Festivals" icon="bi-music-note"
+              @click="openModal('festivals')" />
           </div>
           <!-- Experiences -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1528543606781-2f6e6857f318?w=500"
-              alt="Experiences" cardLabel="Experiences" icon="bi-calendar-event" @click="openModal('experiences')" />
+            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1528543606781-2f6e6857f318?w=500" alt="Experiences" cardLabel="Experiences" icon="bi-calendar-event"
+              @click="openModal('experiences')" />
           </div>
         </div>
       </div>
       <!-- BlogListModal -->
-      <BlogListModal :isOpen="isModalOpen" :isLoading="isLoading" :items="blogItems" :keyword="currentKeyword"
-        @close="isModalOpen = false" />
+      <BlogListModal :isOpen="isModalOpen" :isLoading="isLoading" :items="blogItems" :keyword="currentKeyword" @close="isModalOpen = false" />
       <!-- Travel Tip -->
       <TipBox name="Travel Tip" description="Enter your budget and AI will create a customized itinerary considering accommodation, transportation, and
             meals." />
@@ -230,12 +228,14 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+// 공용 스타일 임포트
+@use '@/assets/styles/theme' as *;
+
 .planner-create {
-  background-color: #fffaf3;
   min-height: 100vh;
-  padding-bottom: 6rem;
-  padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */
+  background-color: $body-bg; // 테마의 베이지 배경
+  font-family: 'Kyobo2024', sans-serif; // 타이포그래피 적용
 }
 
 .content-wrapper {
@@ -266,15 +266,16 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   font-size: 0.95rem;
-  color: #1b3b6f;
+  color: $secondary;
 
   i {
     font-size: 1.2rem;
-    color: #ff914d;
+    color: $primary;
   }
 
   span:nth-child(2) {
-    color: #1b3b6f;
+    color: $secondary;
+    font-family: 'Siganpyo', sans-serif;
   }
 
   span:nth-child(3) {
@@ -296,7 +297,8 @@ onMounted(async () => {
     border-radius: 0.75rem;
     font-size: 0.95rem;
     background-color: #f9f9f9;
-    color: #1b3b6f;
+    color: $secondary;
+    font-family: 'Kyobo2024', sans-serif;
     transition: all 0.2s ease;
 
     &::placeholder {
@@ -304,15 +306,15 @@ onMounted(async () => {
     }
 
     &:hover {
-      border-color: rgba(#ff914d, 0.3);
-      background-color: rgba(#ff914d, 0.02);
+      border-color: rgba($primary, 0.3);
+      background-color: rgba($primary, 0.02);
     }
 
     &:focus {
-      border-color: #ff914d;
+      border-color: $primary;
       outline: none;
       background-color: #fff;
-      box-shadow: 0 0 0 3px rgba(#ff914d, 0.08);
+      box-shadow: 0 0 0 3px rgba($primary, 0.08);
     }
   }
 
@@ -321,7 +323,7 @@ onMounted(async () => {
     right: 16px;
     bottom: 16px;
     padding: 0.6rem 1.1rem;
-    background: linear-gradient(90deg, #ff914d 0%, lighten(#ff914d, 5%) 100%);
+    background: linear-gradient(90deg, $primary 0%, lighten($primary, 5%) 100%);
     color: white;
     border: none;
     border-radius: 28px;
@@ -331,7 +333,7 @@ onMounted(async () => {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    box-shadow: 0 6px 18px rgba(#ff914d, 0.18);
+    box-shadow: 0 6px 18px rgba($primary, 0.18);
 
     i {
       font-size: 0.85rem;
@@ -339,7 +341,7 @@ onMounted(async () => {
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 22px rgba(#ff914d, 0.22);
+      box-shadow: 0 8px 22px rgba($primary, 0.22);
     }
   }
 
@@ -356,7 +358,8 @@ onMounted(async () => {
 
 /* AI-Recommended Places 제목 - 타이포그래피 스타일 적용 */
 .recommended-section h5 {
-  color: #1b3b6f;
+  font-family: 'Siganpyo', sans-serif;
+  color: $secondary;
   font-weight: 700;
   margin-bottom: 1.5rem !important;
 }
@@ -364,19 +367,19 @@ onMounted(async () => {
 /* 추천 카드 스타일 - 컴포넌트 스타일 적용 */
 .recommendation-card {
   position: relative;
-  border-radius: 2rem;
+  border-radius: $border-radius-lg;
   overflow: hidden;
   cursor: pointer;
   height: 150px;
-  box-shadow: 0 6px 16px rgba(255, 140, 0, 0.2);
+  box-shadow: $card-box-shadow;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 1px solid rgba(#ff914d, 0.3);
-  background-color: #ffffff;
+  border: 1px solid $card-border-color;
+  background-color: $card-bg;
 
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 6px 16px rgba(255, 140, 0, 0.2);
-    border-color: rgba(#ff914d, 0.3);
+    border-color: rgba($primary, 0.3);
   }
 
   img {
@@ -414,20 +417,22 @@ onMounted(async () => {
   .card-label {
     font-size: 14px;
     font-weight: 600;
+    font-family: 'Siganpyo', sans-serif;
   }
 }
 
 /* 버튼 스타일 - BaseButton이 있지만 추가 커스텀 */
 :deep(.btn-primary) {
-  background: linear-gradient(90deg, #ff914d 0%, lighten(#ff914d, 10%) 100%);
+  background: linear-gradient(90deg, $primary 0%, lighten($primary, 10%) 100%);
   border: none;
   color: #fff;
   font-weight: 500;
+  border-radius: $border-radius-pill;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
     transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(#ff914d, 0.4);
+    box-shadow: 0 4px 12px rgba($primary, 0.4);
   }
 }
 

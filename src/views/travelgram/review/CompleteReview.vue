@@ -27,13 +27,14 @@
         </a>
       </div>
 
-          <NavigationButtons
-      backText="Back to Travelgram"
-      nextText="Back to Main"
-      @back="goToTravelgram"
-      @next="goHome"
-    >
-    </NavigationButtons>
+      <div class="button-group">
+        <button class="btn-back" @click="goToTravelgram">
+          Back to Travelgram
+        </button>
+        <button class="btn-home" @click="goHome">
+          Back to Main
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -41,7 +42,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import PageHeader from '@/components/common/PageHeader.vue'
-import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const router = useRouter()
 

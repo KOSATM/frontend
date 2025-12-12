@@ -1,15 +1,21 @@
 <template>
-  <div class="supporter-page">
+  <div class="planner-container py-3 px-3">
     <PageHeader title="Supporter" subtitle="Real-time travel support and updates" icon="bi-chat-dots" />
-    <BackButtonPageHeader title="서포터 홈" subtitle="위치 기반으로 당신의 여행을 도와드립니다." @back="goBack"/>
+    <!-- Weather component -->
+    <div class="m-4">
+      <!-- <WeatherCard /> -->
+    </div>
 
+    <!-- MAP wrapper: full width at top -->
     <div class="map-wrapper-full mb-4">
       <div class="map-top-row d-flex align-items-start justify-content-between mb-2">
         <nav class="browser-tabs" role="tablist" aria-label="Map tabs">
-          <button role="tab" :class="['tab-btn', { active: currentTab === 'image' }]" @click="currentTab = 'image'">
+          <button role="tab" :aria-selected="currentTab === 'image'"
+            :class="['tab-btn', { active: currentTab === 'image' }]" @click="currentTab = 'image'">
             Image-based Travel AI
           </button>
-          <button role="tab" :class="['tab-btn', { active: currentTab === 'restroom' }]" @click="currentTab = 'restroom'">
+          <button role="tab" :aria-selected="currentTab === 'restroom'"
+            :class="['tab-btn', { active: currentTab === 'restroom' }]" @click="currentTab = 'restroom'">
             Restrooms
           </button>
         </nav>
@@ -20,6 +26,7 @@
       </div>
 
       <div class="card map-container shadow-sm border-0 p-0 position-relative">
+        <!-- Image 탭 지도 -->
         <NaverMap
           v-if="currentTab === 'image'"
           :markers="historyMarkers"
@@ -27,6 +34,7 @@
           :initialZoom="11"
           :fitBoundsMode="true"
         />
+        <!-- Restroom 탭 지도 -->
         <NaverMap
           v-if="currentTab === 'restroom'"
           ref="restroomMapRef"
@@ -39,7 +47,12 @@
       </div>
     </div>
 
-    <div v-show="currentTab === 'image'">
+    <div class="row gx-4">
+      <!-- LEFT COLUMN: weather + checklist -->
+
+      <!-- Image UI (default) -->
+      <div v-show="currentTab === 'image'">
+
         <BaseSection title="Image-based Travel AI" subtitle="Upload photo → Get recommendations">
           <template #icon>
             <div class="ai-badge"><i class="bi bi-camera-fill"></i></div>
@@ -91,6 +104,7 @@
         </BaseSection>
       </div>
 
+      <!-- Restrooms UI -->
       <div v-show="currentTab === 'restroom'">
         <BaseSection title="Nearby Public Restrooms" subtitle="Find nearby public restrooms">
           <template #icon>
@@ -126,7 +140,7 @@
           </div>
         </BaseSection>
       </div>
-    
+    </div>
   </div>
 </template>
 
@@ -135,15 +149,13 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import PageHeader from '@/components/common/PageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
+import WeatherCard from '@/components/supporter/WeatherCard.vue'
 import NaverMap from '@/components/supporter/NaverMap.vue'
 import ToiletApi from '@/api/ToiletApi'
 import imageSearchApi from '@/api/imageSearchApi'
-import {useAuthStore} from '@/store/authStore'
-import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
-
 
 const router = useRouter()
-const authStore= useAuthStore()
+
 // Map-related state
 const currentTab = ref('image')
 
@@ -192,7 +204,8 @@ const loadImageHistory = async () => {
   try {
     isLoadingHistory.value = true
     
-    const userId = authStore.userId;
+    // 하드코딩된 userId 사용 (테스트용)
+    const userId = 17
     
     console.log('🖼️ 이미지 히스토리 로드 중... userId:', userId)
     
@@ -439,12 +452,123 @@ const goToImageAIHistory = () => {
 </script>
 
 <style scoped>
-.supporter-page {
-  background-color: #fffaf3;
-  min-height: 100vh;
-  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+.planner-container {
+  color: var(--foreground);
 }
 
+/* Weather card */
+.weather-splan {
+  margin-bottom: 16px;
+}
+
+.weather-card {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.weather-top {
+  background: #2f79b8;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.weather-top .weather-icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+.weather-top .temp-value {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.weather-top .temp-unit {
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.weather-top .desc {
+  font-size: 14px;
+  opacity: 0.95;
+}
+
+.weather-top .location {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.weather-bottom {
+  display: flex;
+  background: #fff;
+}
+
+.weather-bottom .stat {
+  padding: 12px 16px;
+}
+
+.weather-bottom .stat .stat-icon {
+  font-size: 18px;
+  color: #4b5563;
+}
+
+.weather-bottom .stat .stat-value {
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+.weather-bottom .stat-label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.weather-bottom .border-start {
+  border-left: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.weather-bottom .border-end {
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.weather-splan .card {
+  padding: 10px;
+}
+
+.weather-top {
+  background: #3A5797;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 16px;
+}
+
+.weather-icon {
+  /* icon size and positioning */
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.temp-value {
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-right: 4px;
+}
+
+.desc {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.location {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
 
 /* two-column spacing handled by Bootstrap .row/.col */
 

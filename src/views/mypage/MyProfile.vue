@@ -1,168 +1,226 @@
 <template>
-  <div class="mypage-page">
-    <PageHeader title="MyPage" subtitle="나의 여행 정보" icon="bi-person" />
-    <BackButtonPageHeader title="My Profile" subtitle="당신의 여행 프로필을 확인해보세요." @back="goBack"/>
+  <!-- 메인 컨텐츠 -->
+  <div class="profile-container container-fms">
+    <!-- 🔙 상단 헤더 -->
+    <BackButtonPageHeader title="My Profile" subtitle="Your travel profile"></BackButtonPageHeader>
 
-    <div class="text-center mb-5">
-      <div class="position-relative d-inline-block">
-        <img v-if="profileImage" :src="profileImage" alt="Profile"
-          class="rounded-circle shadow-sm border border-4 border-white"
-          style="width: 140px; height: 140px; object-fit: cover;" />
-        <div v-else
-          class="rounded-circle shadow-sm border border-4 border-white bg-light d-flex align-items-center justify-content-center"
-          style="width: 140px; height: 140px;">
-          <i class="bi bi-person text-secondary" style="font-size: 4rem;"></i>
-        </div>
-
-        <button @click="goToEditProfile"
-          class="btn btn-sm btn-light position-absolute bottom-0 end-0 rounded-circle shadow-sm border"
-          style="width: 40px; height: 40px;">
-          <i class="bi bi-pencil-fill text-primary"></i>
-        </button>
-      </div>
-
-      <div class="mt-3">
-        <h2 class="mb-1">{{ profileData.name }}</h2>
-        <p class="text-muted fs-5 m-0">{{ profileData.email }}</p>
-      </div>
-    </div>
-
-    <BaseSection icon="bi-person-vcard" title="Basic Info" subtitle="기본 정보">
-      <div class="row g-4">
-        <div class="col-6">
-          <h4 class="text-secondary mb-1">Korean Name</h4>
-          <p class="fs-5 border-bottom pb-2">{{ profileData.koreanName || '-' }}</p>
-        </div>
-        <div class="col-6">
-          <h4 class="text-secondary mb-1">Nationality</h4>
-          <p class="fs-5 border-bottom pb-2">{{ profileData.nationality || '-' }}</p>
-        </div>
-      </div>
-    </BaseSection>
-
-    <BaseSection icon="bi-airplane" title="Travel Style" subtitle="나의 여행 스타일">
-      <div class="mb-4">
-        <h4 class="text-secondary mb-1">Currency</h4>
-        <p class="fs-5">{{ getCurrencyLabel(profileData.preferredCurrency) }}</p>
-      </div>
-
-      <h4 class="text-secondary mb-3">Interests</h4>
-      <div class="d-flex flex-wrap gap-2">
-        <div v-for="interest in availableInterests" :key="interest.id" class="interest-chip"
-          :class="{ 'active': profileData.interests.includes(interest.id) }">
-          <i :class="interest.icon"></i>
-          <span class="ms-2">{{ interest.name }}</span>
-        </div>
-      </div>
-    </BaseSection>
-
-    <BaseSection icon="bi-building-check" title="Reservations" subtitle="호텔 예약 내역">
-      <div v-if="profileData.reservations.length > 0" class="d-flex flex-column gap-3">
-        <div v-for="(reservation, index) in profileData.reservations" :key="index" class="custom-card p-3">
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <div>
-              <h4 class="m-0 text-primary">{{ reservation.hotelName }}</h4>
-              <p class="text-muted m-0 fs-6">{{ reservation.location }}</p>
-            </div>
-            <span class="badge rounded-pill fw-normal"
-              :class="reservation.status === 'Confirmed' ? 'bg-success' : 'bg-warning text-dark'">
-              {{ reservation.status }}
-            </span>
-          </div>
-
-          <div class="d-flex gap-4 mt-2 text-secondary fs-6">
-            <div>
-              <i class="bi bi-calendar-check me-1"></i> Check-in : {{ reservation.checkIn }}
-            </div>
-            <div>
-              <i class="bi bi-moon-stars me-1"></i> {{ reservation.nights }} Nights
-            </div>
+    <!-- 프로필 이미지 섹션 -->
+    <BaseSection icon="bi-image" title="Profile Photo" subtitle="Your profile picture">
+      <div class="profile-image-upload text-center">
+        <div class="current-avatar mb-3">
+          <img v-if="profileImage" :src="profileImage" :alt="profileData.displayName"
+            class="avatar-img" />
+          <div v-else class="avatar-placeholder">
+            <i class="bi bi-person-circle"></i>
           </div>
         </div>
       </div>
-      <p v-else class="text-muted text-center py-3">예약된 내역이 없습니다.</p>
+    </BaseSection>
+    
+    <!-- 기본 정보 섹션 -->
+    <BaseSection icon="bi-person" title="Basic Information" subtitle="Your account information">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Name</label>
+          <div class="form-value">{{ profileData.name }}</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Korean Name</label>
+          <div class="form-value">{{ profileData.koreanName || 'Not specified' }}</div>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Email</label>
+          <div class="form-value">{{ profileData.email }}</div>
+        </div>
+      </div>
     </BaseSection>
 
-    <BaseSection icon="bi-wallet2" title="Payment" subtitle="결제 정보">
-      <h4 class="text-secondary mb-3">Payment Methods</h4>
-      <div v-if="profileData.paymentMethods.length > 0" class="d-flex flex-column gap-2 mb-4">
-        <div v-for="(card, index) in profileData.paymentMethods" :key="index"
-          class="custom-card p-3 d-flex align-items-center justify-content-between">
-          <div class="d-flex align-items-center gap-3">
-            <i class="bi bi-credit-card-2-front fs-2 text-primary"></i>
-            <div>
-              <h5 class="m-0">{{ card.type }} <span class="fs-6 text-muted">**** {{ card.lastFour }}</span></h5>
-              <p class="m-0 text-muted fs-6">Expires {{ card.expiry }}</p>
+    <!-- 여행 선호도 섹션 -->
+    <BaseSection icon="bi-airplane" title="Travel Preferences" subtitle="Your travel information">
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Nationality</label>
+          <div class="form-value">{{ profileData.nationality || 'Not specified' }}</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Preferred Currency</label>
+          <div class="form-value">{{ getCurrencyLabel(profileData.preferredCurrency) }}</div>
+        </div>
+      </div>
+
+      <div class="interests-selection">
+        <label class="form-label mb-3">Travel Interests</label>
+        <div class="preview-grid">
+          <div v-for="interest in availableInterests" :key="interest.id" class="interest-tag"
+            :class="{ 'active': profileData.interests.includes(interest.id) }">
+            <i :class="interest.icon + ' me-2'"></i>
+            <span>{{ interest.name }}</span>
+          </div>
+        </div>
+      </div>
+    </BaseSection>
+
+    <!-- 예약한 호텔 정보 섹션 -->
+    <BaseSection icon="bi-building" title="Reservation" subtitle="Your hotel reservations">
+      <div class="reservation-list">
+        <div v-if="profileData.reservations.length > 0">
+          <div v-for="(reservation, index) in profileData.reservations" :key="index" class="reservation-card mb-3">
+            <div class="reservation-header d-flex justify-content-between align-items-start">
+              <div>
+                <h6 class="reservation-hotel mb-1">{{ reservation.hotelName }}</h6>
+                <small class="text-muted">{{ reservation.location }}</small>
+              </div>
+              <span class="badge bg-info">{{ reservation.status }}</span>
+            </div>
+            <div class="reservation-details mt-2">
+              <div class="detail-row">
+                <span class="detail-label">Check-in:</span>
+                <span>{{ reservation.checkIn }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Check-out:</span>
+                <span>{{ reservation.checkOut }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Nights:</span>
+                <span>{{ reservation.nights }}</span>
+              </div>
             </div>
           </div>
-          <span v-if="card.isDefault" class="badge bg-primary rounded-pill fw-normal">Default</span>
+        </div>
+        <div v-else class="text-center text-muted py-3">
+          <i class="bi bi-building me-2"></i>
+          No reservations
         </div>
       </div>
-      <p v-else class="text-muted mb-4">등록된 카드가 없습니다.</p>
     </BaseSection>
 
-    <BaseSection icon="bi-heart-pulse" title="Health" subtitle="건강 정보">
-
-      <h4 class="text-secondary mb-2">Medicine info</h4>
-      <div class="p-3 bg-light rounded-3">
-        <div class="mb-2">
-          <span class="fw-bold me-2" style="color: #ff8c00;">Allergies:</span>
-          <span>{{ profileData.medicalInfo.allergies || 'None' }}</span>
+    <!-- 결제 정보 섹션 -->
+    <BaseSection icon="bi-credit-card" title="Payment Information" subtitle="Your registered payment methods">
+      <div class="card-list">
+        <div v-if="profileData.paymentMethods.length > 0">
+          <div v-for="(card, index) in profileData.paymentMethods" :key="index" class="payment-card mb-2">
+            <div class="card-info d-flex justify-content-between align-items-center">
+              <div class="card-details d-flex align-items-center">
+                <i class="bi bi-credit-card-2-front me-3 text-primary"></i>
+                <div>
+                  <div class="card-number">**** **** **** {{ card.lastFour }}</div>
+                  <div class="card-type text-muted">{{ card.type }} • Expires {{ card.expiry }}</div>
+                </div>
+              </div>
+              <div class="card-actions">
+                <span v-if="card.isDefault" class="badge bg-primary">Default</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          <span class="fw-bold me-2" style="color: #ff8c00;">Dietary:</span>
-          <span>{{ profileData.medicalInfo.dietaryRestrictions || 'None' }}</span>
+        <div v-else class="text-center text-muted py-3">
+          <i class="bi bi-credit-card me-2"></i>
+          No payment methods registered
         </div>
       </div>
-
-
     </BaseSection>
 
-    <div class="d-flex gap-3 mt-5">
-       <NavigationButtons
-  back-text="Back"
-  next-text="Edit Profile"
-  :is-next-disabled="isLoading"
-  @back="goBack"
-  @next="goToEditProfile"
->
-</NavigationButtons>
+    <!-- 의료 정보 섹션 -->
+    <BaseSection icon="bi-heart-pulse" title="Medical Information" subtitle="Important health information">
+      <div class="medical-info">
+        <div class="info-section mb-3">
+          <label class="form-label">Allergies</label>
+          <div class="form-value">{{ profileData.medicalInfo.allergies || 'None reported' }}</div>
+        </div>
+        <div class="info-section">
+          <label class="form-label">Dietary Restrictions</label>
+          <div class="form-value">{{ profileData.medicalInfo.dietaryRestrictions || 'None reported' }}</div>
+        </div>
+      </div>
+    </BaseSection>
+
+    <!-- SNS 연동 섹션 -->
+    <BaseSection icon="bi-share" title="Social Media Integration" subtitle="Connected accounts">
+      <div class="social-integration">
+        <div class="social-item d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <i class="bi bi-instagram me-2 text-danger"></i>
+            <span>Instagram</span>
+          </div>
+          <span v-if="profileData.instagramConnected" class="badge bg-success">Connected</span>
+          <span v-else class="badge bg-secondary">Not Connected</span>
+        </div>
+      </div>
+    </BaseSection>
+
+    <!-- 🟦 하단 버튼 -->
+    <div class="next-step-area mt-4">
+      <div class="d-flex gap-3">
+        <BaseButton variant="secondary" class="flex-fill" @click="goBack">
+          <i class="bi bi-arrow-left me-2"></i>
+          Back
+        </BaseButton>
+        <BaseButton variant="primary" class="flex-fill" @click="goToEditProfile">
+          <i class="bi bi-pencil me-2"></i>
+          Edit Profile
+        </BaseButton>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/authStore'
-import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
+import BaseButton from '@/components/common/BaseButton.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
-import PageHeader from "@/components/common/PageHeader.vue";
-import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
-// ... 데이터 로직은 기존과 동일하게 유지 ...
-// (스크립트 부분은 기존 로직이 잘 짜여져 있어서, 
-//  불필요한 props나 import만 정리하고 그대로 쓰시면 됩니다.)
-
+// Core 사용자 데이터
 const profileData = reactive({
   name: 'John Doe',
   koreanName: '도우존',
   email: 'john.doe@gmail.com',
+  profileImage: '',
   nationality: 'United States',
   preferredCurrency: 'USD',
   interests: ['culture', 'food', 'adventure'],
   reservations: [
-    { hotelName: 'The Shilla Seoul', location: 'Jung-gu, Seoul', checkIn: '2024-10-15', checkOut: '2024-10-18', nights: 3, status: 'Confirmed' },
-    { hotelName: 'Four Seasons Busan', location: 'Haeundae-gu, Busan', checkIn: '2024-11-01', checkOut: '2024-11-03', nights: 2, status: 'Pending' }
+    {
+      hotelName: 'The Shilla Seoul',
+      location: 'Jung-gu, Seoul',
+      checkIn: '2024-10-15',
+      checkOut: '2024-10-18',
+      nights: 3,
+      status: 'Confirmed'
+    },
+    {
+      hotelName: 'Four Seasons Busan',
+      location: 'Haeundae-gu, Busan',
+      checkIn: '2024-11-01',
+      checkOut: '2024-11-03',
+      nights: 2,
+      status: 'Pending'
+    }
   ],
   paymentMethods: [
-    { type: 'Visa', lastFour: '4567', expiry: '12/25', isDefault: true },
-    { type: 'Mastercard', lastFour: '8901', expiry: '08/26', isDefault: false }
+    {
+      type: 'Visa',
+      lastFour: '4567',
+      expiry: '12/25',
+      isDefault: true
+    },
+    {
+      type: 'Mastercard',
+      lastFour: '8901',
+      expiry: '08/26',
+      isDefault: false
+    }
   ],
-  medicalInfo: { allergies: 'Shellfish, Peanuts', dietaryRestrictions: 'Vegetarian, Gluten-free' },
+  medicalInfo: {
+    allergies: 'Shellfish, Peanuts',
+    dietaryRestrictions: 'Vegetarian, Gluten-free'
+  },
   instagramConnected: true
 })
 
@@ -178,75 +236,251 @@ const availableInterests = [
 ]
 
 const getCurrencyLabel = (code) => {
-  const currencies = { 'USD': 'USD ($)', 'KRW': 'KRW (₩)', 'EUR': 'EUR (€)', 'JPY': 'JPY (¥)' }
+  const currencies = {
+    'USD': 'USD ($)',
+    'KRW': 'KRW (₩)',
+    'EUR': 'EUR (€)',
+    'JPY': 'JPY (¥)'
+  }
   return currencies[code] || code
 }
 
-const goBack = () => router.back()
-const goToEditProfile = () => router.push('/mypage/edit')
+const goBack = () => {
+  router.go(-1)
+}
 
+const goToEditProfile = () => {
+  router.push('/mypage/edit')
+}
+
+// 프로필 이미지 computed
+// store에서 프로필 이미지 가져오기 (없으면 asset의 기본값)
 const profileImage = computed(() => {
-  return authStore.userProfileImage || new URL('@/assets/img/profile-logo.png', import.meta.url).href
+  return authStore.userProfileImage || new URL('../../assets/img/profile-logo.png', import.meta.url).href
 })
 
+// 컴포넌트 마운트 시 로컬 스토리지에서 데이터 로드
 onMounted(() => {
-  authStore.initializeAuth()
+  authStore.loadStoredUser()
+  
   if (authStore.user) {
     profileData.name = authStore.user.name || 'User'
     profileData.email = authStore.user.email || ''
+  }
+
+  try {
+    const savedProfile = localStorage.getItem('userProfile')
+    if (savedProfile) {
+      Object.assign(profileData, JSON.parse(savedProfile))
+    }
+  } catch (error) {
+    console.warn('Failed to load saved profile:', error)
   }
 })
 </script>
 
 <style scoped>
-/* 커스텀 CSS는 최소화하고 레이아웃의 디테일만 잡습니다. */
-.mypage-page {
-  background-color: #fffaf3;
-  min-height: 100vh;
-  padding: 2rem 1.25rem;
+.btn-primary {
+  background-color: #1b3b6f !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  border: none !important;
+  border-radius: 1rem !important;
+  padding: 0.9rem 2rem !important;
+  transition: all 0.3s ease !important;
 }
 
-/* 취향 태그 (Chips) */
-.interest-chip {
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
-  /* 둥글게 */
-  border: 1px solid #dee2e6;
-  color: #6c757d;
-  font-size: 0.95rem;
-  /* 본문 폰트보다 약간 작게 */
+.btn-primary:hover:not(:disabled) {
+  background-color: #ff8c00 !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-secondary {
+  background-color: #f9fafc !important;
+  color: #6c757d !important;
+  font-weight: 600 !important;
+  border: 1px solid #d0d5dd !important;
+  border-radius: 1rem !important;
+  padding: 0.9rem 2rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-secondary:hover {
+  background-color: #fff !important;
+  border-color: #ff8c00 !important;
+  color: #ff8c00 !important;
+}
+
+.profile-container {
+  background-color: #fff;
+  border-radius: 1.25rem;
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.profile-image-upload .current-avatar .avatar-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e9ecef;
+}
+
+.profile-image-upload .current-avatar .avatar-placeholder {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #f8f9fa;
+  border: 3px dashed #dee2e6;
   display: flex;
   align-items: center;
-  transition: all 0.2s;
+  justify-content: center;
+  margin: 0 auto;
 }
 
-/* 선택된 취향 태그 */
-.interest-chip.active {
-  background-color: #ff8c00;
-  /* Primary Orange */
+.avatar-placeholder .bi-person-circle {
+  font-size: 3rem;
+  color: #6c757d;
+}
+
+.form-label {
+  color: #1b3b6f;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.form-value {
+  padding: 0.75rem 1rem;
+  background-color: #f9fafc;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.75rem;
+  color: #333;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.preview-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.interest-tag {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.75rem;
+  background: #fff;
+  font-size: 0.9rem;
+  min-width: fit-content;
+  color: #6c757d;
+}
+
+.interest-tag.active {
   border-color: #ff8c00;
+  background-color: #ff8c00;
   color: white;
-  font-weight: normal;
-  /* Parkdahyun은 bold보다 normal이 예쁨 */
 }
 
-/* 카드 스타일 (예약, 결제수단 등) */
-.custom-card {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-  transition: transform 0.2s ease;
+.interest-tag i {
+  font-size: 1rem;
 }
 
-.custom-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+.reservation-card {
+  padding: 1rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.75rem;
+  background: #fff;
+  transition: all 0.3s ease;
 }
 
-/* 폰트 및 텍스트 헬퍼 (글로벌과 충돌하지 않도록) */
-h4 {
-  font-size: 1.1rem;
-  /* 제목 라벨 크기 조절 */
+.reservation-hotel {
+  color: #1b3b6f;
+  font-weight: 600;
+}
+
+.detail-row {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #1b3b6f;
+  min-width: 80px;
+}
+
+.payment-card {
+  padding: 1rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.75rem;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.card-number {
+  font-weight: 600;
+  color: #1b3b6f;
+}
+
+.card-type {
+  font-size: 0.9rem;
+}
+
+.medical-info .info-section {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.medical-info .info-section:last-child {
+  border-bottom: none;
+}
+
+.social-item {
+  padding: 1rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.75rem;
+  background: #fff;
+}
+
+.next-step-area {
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 1.5rem;
+  }
+
+  .avatar-img,
+  .avatar-placeholder {
+    width: 100px !important;
+    height: 100px !important;
+  }
+
+  .preview-grid {
+    gap: 0.5rem;
+  }
+
+  .interest-tag {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .next-step-area .d-flex {
+    flex-direction: column;
+    gap: 0.75rem !important;
+  }
 }
 </style>
