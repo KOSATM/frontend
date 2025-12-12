@@ -60,13 +60,20 @@
   </div>
 </section>
 
-<div class="navigation-buttons">
-  <button class="btn-back" @click="goBack">Back</button>
-  <button class="btn-next" @click="nextStep" :disabled="!mainPhotoId || isLoading">
-        <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-        {{ isLoading ? 'AI가 열심히 분석 중 입니다...' : 'Next Step' }}
-      </button>
-    </div>
+<NavigationButtons
+      backText="Back"
+      :isNextDisabled="!canProceed"
+      @back="goBack"
+      @next="goNext"
+    >
+      <template #next-content>
+        <span v-if="isLoading">
+          <span class="spinner-border spinner-border-sm me-2"></span>
+          AI가 열심히 분석 중 입니다...
+        </span>
+        <span v-else>Next Step</span>
+      </template>
+    </NavigationButtons>
 
     <div v-if="isLoading" class="loading-overlay">
       <div class="loading-content">
@@ -75,17 +82,19 @@
         <p>여행의 분위기를 감지하고 있습니다...</p>
       </div>
     </div>
-</div>
+
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted,computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
 import api from '@/api/travelgramApi'
 import StepHeader from '@/components/common/StepHeader.vue'
 import PageHeader from '@/components/common/PageHeader.vue'
 import TipBox from '@/components/common/TipBox.vue'
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const router = useRouter()
 const route = useRoute()
@@ -169,8 +178,13 @@ const removePhoto = (id) => {
 ----------------------------------- */
 
 const isLoading = ref(false) // 🔥 로딩 상태 추가
-
-const nextStep = async () => {
+const canProceed = computed(() => {
+  // 1) 사진이 1장 이상 있어야 함
+  // 2) 대표 사진이 선택되어 있어야 함
+  // 3) 현재 로딩 중(분석 중)이 아니어야 함 (중복 클릭 방지)
+  return photos.value.length > 0 && !!mainPhotoId.value && !isLoading.value
+})
+const goNext = async () => {
   if (!mainPhotoId.value) return
   
   // 로딩 시작
@@ -321,38 +335,4 @@ const goBack = () => router.back()
   object-fit: cover;
 }
 
-
-
-
-/* 버튼 영역 */
-.navigation-buttons {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 2rem;
-}
-
-.btn-back,
-.btn-next {
-  flex: 1;
-  height: 48px;
-  border-radius: 1rem;
-  border: none;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.btn-back {
-  background-color: #fff;
-  color: #1b3b6f;
-  border: 2px solid #1b3b6f;
-  margin-right: 0.75rem;
-}
-.btn-next {
-  background-color: #1b3b6f;
-  color: #fff;
-}
-.btn-next:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
 </style>
