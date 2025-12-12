@@ -93,6 +93,7 @@
 </template>
 
 <script setup>
+// trigger pr
 import { computed } from "vue";
 import defaultImg1 from "@/assets/planner/activity-default-1.jpg";
 
