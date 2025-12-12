@@ -27,8 +27,8 @@
         :aria-pressed="selectedOption === 'add'">
         <div class="icon add me-3">＋</div>
         <div class="flex-fill">
-          <div class="fw-medium">Add to Itinerary</div>
-          <div class="small text-muted">Add this place to your travel schedule</div>
+          <div class="fw-medium">여정에 추가하기</div>
+          <div class="small text-muted">당신의 여정에 이 장소를 추가해보세요.</div>
         </div>
 
         <div v-if="selectedOption === 'add'" class="select-check" aria-hidden="true">✓</div>
@@ -39,8 +39,8 @@
         :aria-pressed="selectedOption === 'replace'">
         <div class="icon replace me-3">↺</div>
         <div class="flex-fill">
-          <div class="fw-medium">Replace Existing</div>
-          <div class="small text-muted">Replace an existing schedule item</div>
+          <div class="fw-medium">장소 대체</div>
+          <div class="small text-muted">장소를 대체해보세요.</div>
         </div>
 
         <div v-if="selectedOption === 'replace'" class="select-check" aria-hidden="true">✓</div>
@@ -51,8 +51,8 @@
         :aria-pressed="selectedOption === 'save'">
         <div class="icon save me-3">💾</div>
         <div class="flex-fill">
-          <div class="fw-medium">Save Only</div>
-          <div class="small text-muted">Save for later without adding to schedule</div>
+          <div class="fw-medium">저장하기</div>
+          <div class="small text-muted">일정 추가 없이 저장하고 히스토리 내역에서 확인할 수 있어요.</div>
         </div>
 
         <div v-if="selectedOption === 'save'" class="select-check" aria-hidden="true">✓</div>
