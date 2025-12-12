@@ -17,37 +17,7 @@
       </div>
 
       <!-- 정상 콘텐츠 -->
-      <div v-else>
-        <!-- Accommodation Budget Propertion -->
-        <div class="mb-3">
-          <BaseSection icon="bi-percent" title="Accommodation Budget Propertion">
-            <input type="range" id="range4" class="form-range" min="0" max="100" v-model="rangeValue" />
-            <output :for="'range4'" aria-hidden="true">{{ rangeValue }}% (₩{{ Math.floor(budget * rangeValue / 100 / travelDays).toLocaleString() }})</output>
-          </BaseSection>
-        </div>
-
-        <!-- Filter Section -->
-        <div class="filter-section mb-4">
-          <!-- Accommodation Type -->
-          <BaseSection icon="bi-building" title="Accommodation Type">
-            <select v-model="filters.accommodationType" class="form-select rounded-pill">
-              <option value="all">All Types</option>
-              <option value="hotel">Hotel</option>
-              <option value="guesthouse">Guesthouse</option>
-              <option value="hanok">Hanok Style</option>
-              <option value="other">Other</option>
-            </select>
-          </BaseSection>
-
-          <!-- Number of Guests -->
-          <BaseSection icon="bi-people" title="Number of Guests">
-            <div class="input-group">
-              <input type="number" v-model="filters.guests" class="form-control rounded-pill" min="1" max="10" />
-              <span class="ms-2">Guests</span>
-            </div>
-          </BaseSection>
-        </div>
-
+      <div v-else>        
         <!-- Hotel List -->
         <div class="hotel-list mb-4">
           <BaseSection icon="bi-buildings" title="Recommended Hotels" :subtitle="`Showing ${ filteredHotels.length} hotels for ${filters.guests} guests`">
@@ -124,8 +94,13 @@
 
         <!-- Confirm Button -->
         <div class="text-center">
-          <BaseButton :disabled="!selectedHotel" @click="confirmSelection()" variant="primary" class="w-100 py-2">Next:
-            Make a Payment</BaseButton>
+          <NavigationButtons
+            :backText="'이전'"
+            :nextText="'Next: Make a Payment'"
+            :isNextDisabled="!selectedHotel"
+            @back="goBack"
+            @next="confirmSelection"
+          />
         </div>
       </div>
     </div>
@@ -133,6 +108,7 @@
 </template>
 
 <script setup>
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import hotelPlaceholder from '@/assets/img/hotel-logo.png';
