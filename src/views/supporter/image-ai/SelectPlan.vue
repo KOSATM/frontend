@@ -1,5 +1,7 @@
 <template>
-  <StepHeader title="Image-based Travel AI" subtitle="Use AI recommendation" step="4/4" @back="onStepBack" />
+  <div class="supporter-page">
+  <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
+  <StepHeader title="이미지 기반 여행 AI" subtitle="Use AI recommendation" step="4/4" @back="onStepBack" />
 
   <BaseSection icon="bi-list-check" title="How would you like to use this?" subtitle="Completion Rate">
     <template #actions>
@@ -71,10 +73,11 @@
   </BaseSection>
 
   <div class="d-flex mt-3">
-    <router-link class="btn btn-link" :to="{ name: 'AiRecommend' }">Back</router-link>
+    <router-link class="btn btn-link" :to="{ name: 'AiRecommend' }">뒤로가기</router-link>
     <button class="btn btn-primary ms-auto" :disabled="!selectedOption || isSaving" @click="confirm">
       {{ isSaving ? 'Saving...' : 'Confirm' }}
     </button>
+  </div>
   </div>
 </template>
 
@@ -83,6 +86,7 @@ import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useImageSearchStore } from '@/store/imageSearchStore'
 import imageSearchApi from '@/api/imageSearchApi'
+import PageHeader from '@/components/common/header/PageHeader.vue'
 import StepHeader from '@/components/common/header/StepHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import { useAuthStore } from '@/store/authStore'

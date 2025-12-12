@@ -56,7 +56,7 @@
   </BaseSection>
 
     <div class="d-flex mt-2">
-      <router-link class="btn btn-link" :to="{ name: 'ImageType' }">Back</router-link>
+      <router-link class="btn btn-link" :to="{ name: 'ImageType' }">뒤로가기</router-link>
       <button class="btn btn-primary ms-auto" :disabled="selectedIndex === null" @click="addPlan">
         Add Plan
       </button>

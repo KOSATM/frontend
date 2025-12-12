@@ -219,7 +219,7 @@
     <!-- Action Buttons -->
     <div class="d-flex gap-3 justify-content-center">
       <button class="btn btn-outline-secondary btn-lg px-5" @click="goBack">
-        Back
+        뒤로가기
       </button>
       <!-- <button
         class="btn btn-primary btn-lg px-5"
@@ -236,7 +236,7 @@
         <span v-if="!isProcessing">Pay ₩{{ totalAmount.toLocaleString() }}</span>
         <span v-else>
           <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          Processing...
+          처리 중...
         </span>
       </BaseButton>
     </div>

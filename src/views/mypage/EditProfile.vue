@@ -112,7 +112,7 @@
     <div class="d-flex gap-3 mt-5 pb-5">
 
  <NavigationButtons
-  back-text="Cancel"
+  back-text="취소"
   :is-next-disabled="isLoading"
   @back="goBack"
   @next="saveProfile"

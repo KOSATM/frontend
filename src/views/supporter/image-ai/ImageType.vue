@@ -1,9 +1,9 @@
 <template>
 
-  <StepHeader title="Image-based Travel AI" subtitle="Find destinations from your photos" step="2/4"
+  <StepHeader title="이미지 기반 여행 AI" subtitle="당신의 사진으로 여행 장소를 찾아보아요!" step="2/4"
     @back="router.push({ name: 'New' })" />
 
-  <BaseSection icon="bi-camera" title="What type of photo is this?">
+  <BaseSection icon="bi-camera" title="이 사진에서 알고 싶은 정보는 무엇인가요?">
     <div class="preview-wrap mb-3" v-if="preview">
       <img :src="preview" alt="uploaded preview" class="preview-img" />
     </div>
@@ -47,7 +47,7 @@
   </BaseSection>
 
     <div class="d-flex mt-2">
-      <router-link class="btn btn-link" :to="{ name: 'New' }">Back</router-link>
+      <router-link class="btn btn-link" :to="{ name: 'New' }">뒤로가기</router-link>
       <button class="btn btn-primary ms-auto" :disabled="!selectedType" @click="goNext">
         Next
       </button>

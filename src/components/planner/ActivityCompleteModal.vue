@@ -85,10 +85,10 @@
 
         <div class="d-flex justify-content-between">
           <button class="btn flex-fill me-2" @click="$emit('close')">
-            Cancel
+            취소
           </button>
           <button class="btn primary flex-fill" @click="$emit('confirm')">
-            Complete Activity
+            활동 완료
           </button>
         </div>
       </div>
