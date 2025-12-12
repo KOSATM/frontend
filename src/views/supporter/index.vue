@@ -65,7 +65,7 @@
                     </template>
                     <template v-else>
                       <i class="bi bi-camera fs-1"></i>
-                      <div class="mt-2 label-text">Upload</div>
+                      <div class="mt-2 label-text">업로드</div>
                     </template>
                   </div>
                 </div>
@@ -77,7 +77,7 @@
                 <div class="upload-gradient d-flex align-items-center justify-content-center h-100 w-100">
                   <div class="text-center text-white-50">
                     <i class="bi bi-clock-history fs-1"></i>
-                    <div class="mt-2 label-text">History</div>
+                    <div class="mt-2 label-text">히스토리</div>
                   </div>
                 </div>
               </label>
