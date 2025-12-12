@@ -193,7 +193,10 @@ const loadImageHistory = async () => {
     isLoadingHistory.value = true
     
     const userId = authStore.userId;
-    
+    if(!userId){
+      console.warn('❌ 사용자 ID가 없습니다. (비로그인 상태 또는 초기화 실패)');
+      historyMarkers.value = [];
+    }
     console.log('🖼️ 이미지 히스토리 로드 중... userId:', userId)
     
     const response = await imageSearchApi.getSessionsByUserId(userId)
@@ -420,7 +423,7 @@ const goToImageAI = () => {
 }
 // navigator to open new Image AI page
 const goToImageAINew = () => {
-  router.push({ name: 'New' })
+  router.push({ name: 'CreateNewSearch' })
     .then(() => {
       // ensure we are at page top after navigation
       window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })

@@ -180,7 +180,6 @@ const loadHistory = async () => {
   try {
     isLoading.value = true
     
-    // 임시로 userId 17 사용
     const userId = authStore.userId;
     console.log('📋 히스토리 로드 - userId:', userId)
     

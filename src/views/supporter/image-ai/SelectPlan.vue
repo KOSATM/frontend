@@ -83,7 +83,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useImageSearchStore } from '@/store/imageSearchStore'
 import imageSearchApi from '@/api/imageSearchApi'
 import PageHeader from '@/components/common/header/PageHeader.vue'
@@ -91,7 +91,6 @@ import StepHeader from '@/components/common/header/StepHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import { useAuthStore } from '@/store/authStore'
 
-const route = useRoute()
 const router = useRouter()
 const imageSearchStore = useImageSearchStore()
 const authStore = useAuthStore()
@@ -127,7 +126,7 @@ const saveToDatabase = async (action) => {
     
     const userId = authStore.userId;
     if (!userId) {
-      throw new Error('User not logged in')
+      throw new Error('유저가 로그인하지 않았습니다.')
     }
     
     // 모든 후보지 저장
@@ -165,7 +164,7 @@ const confirm = async () => {
 
   // Not Interested -> 저장하지 않고 돌아가기
   if (selectedOption.value === 'not_interested') {
-    router.push({ name: 'New' }).catch(() => { })
+    router.push({ name:'CreateNewSearch' }).catch(() => { })
     return
   }
 

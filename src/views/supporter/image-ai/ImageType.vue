@@ -1,7 +1,8 @@
 <template>
-
+<div class="supporter-page">
+  <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
   <StepHeader title="이미지 기반 여행 AI" subtitle="당신의 사진으로 여행 장소를 찾아보아요!" step="2/4"
-    @back="router.push({ name: 'New' })" />
+    @back="router.push({ name: 'CreateNewSearch' })" />
 
   <BaseSection icon="bi-camera" title="이 사진에서 알고 싶은 정보는 무엇인가요?">
     <div class="preview-wrap mb-3" v-if="preview">
@@ -52,6 +53,8 @@
         Next
       </button>
     </div>
+</div>
+
 </template>
 
 <script setup>
@@ -59,6 +62,7 @@ import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import StepHeader from '@/components/common/header/StepHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
+import PageHeader from '@/components/common/header/PageHeader.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -87,6 +91,13 @@ const goNext = async () => {
 </script>
 
 <style scoped>
+
+.supporter-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+}
+
 .preview-wrap {
   background: #F5F7FA;
   padding: 14px;

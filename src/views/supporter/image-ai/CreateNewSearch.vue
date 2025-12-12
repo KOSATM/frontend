@@ -78,7 +78,7 @@ const goToType = () => {
   if (!imagePreview.value) return
   router.push({
     name: 'ImageType',
-    query: { preview: imagePreview.value, from: 'New' }
+    query: { preview: imagePreview.value, from: 'CreateNewSearch' }
   })
 }
 

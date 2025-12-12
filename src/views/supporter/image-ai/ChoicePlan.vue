@@ -202,7 +202,7 @@ const addToItinerary = (dIdx, iIdx) => {
     showToast(`"${item.name}" 은(는) 이미 추가되어 있습니다`)
     return
   }
-  const newId = `${item.id || 'new'}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+  const newId = `${item.id || 'CreateNewSearch'}-${Date.now()}-${Math.floor(Math.random() * 1000)}`
   const newItem = {
     id: newId,
     title: item.name || 'New Place',
