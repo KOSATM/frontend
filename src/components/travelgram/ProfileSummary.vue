@@ -2,36 +2,35 @@
   <div class="profile-card shadow-sm">
     <!-- 프로필 이미지 -->
     <div class="profile-avatar mx-auto mb-2">
-      <img :src="profileImage" :alt="name" class="avatar-img" />
+      <img :src="profileImage" :alt="profileName" class="avatar-img" />
     </div>
 
-    <!-- 이름 및 소개 -->
-    <h5 class="profile-name mb-1">{{ name }}</h5>
+    <!-- 프로필 내용 -->
+    <h4 class="profile-name mb-1">{{ profileName }}</h4>
     <p class="profile-bio mb-3">{{ bio }}</p>
 
-    <!-- 통계 -->
-    <div class="profile-stats d-flex justify-content-center text-center">
+    <!-- 프로필 통계 -->
+    <div class="profile-stats">
       <div class="stat-item">
-        <h6>{{ totalplans }}</h6>
-        <p>총 여행</p>
+        <span class="stat-number">{{ totalplans }}</span>
+        <span class="stat-label">총 여행</span>
       </div>
       <div class="stat-item">
-        <h6>{{ travelDays }}</h6>
-        <p>여행 일수</p>
+        <span class="stat-number">{{ travelDays }}</span>
+        <span class="stat-label">여행 일수</span>
       </div>
       <div class="stat-item">
-        <h6>{{ completed }}</h6>
-        <p>완료된 여행</p>
+        <span class="stat-number">{{ completed }}</span>
+        <span class="stat-label">완료된 여행</span>
       </div>
     </div>
   </div>
 </template>
-
 <script setup>
 import defaultProfileImg from '@/assets/img/profile-logo.png'
 
 defineProps({
-  name: { type: String, required: true },
+  profileName: { type: String, required: true },
   bio: { type: String, required: true },
   profileImage: { type: String, default: defaultProfileImg },
   totalplans: { type: Number, default: 0 },
@@ -77,27 +76,37 @@ defineProps({
 }
 
 .profile-bio {
-  font-size: 0.9rem;
   color: #666;
 }
 
+/* --- 통계 영역 수정 부분 --- */
 .profile-stats {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center; /* 전체 영역 가운데 정렬 */
+  gap: 1.5rem; /* 아이템 사이 간격 (margin 대신 gap 사용 추천) */
 }
 
 .stat-item {
-  padding: 0 1rem;
+  /* 내부 요소(숫자, 글자)를 수직 중앙 정렬 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px; /* 각 항목의 최소 너비를 잡아주면 더 안정적임 */
 }
 
-.stat-item h6 {
+.stat-number {
+  font-size: 1.5rem; /* h5 사이즈 대체 */
   font-weight: 700;
   color: #1b3b6f;
   margin-bottom: 0.25rem;
+  line-height: 1.2;
 }
 
-.stat-item p {
-  font-size: 0.8rem;
+.stat-label {
+  font-size: 1.25rem;
   color: #888;
-  margin-bottom: 0;
+  white-space: nowrap; /* 글자가 줄바꿈되지 않도록 */
 }
 </style>

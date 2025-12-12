@@ -3,7 +3,7 @@
     <PageHeader title="Travelgram" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
     <!-- <BackButtonPageHeader title="Select one card to review your travel" subtitle="종료된 여행 카드를 선택해서 리뷰를 작성해보세요." @back="goBack"/> -->
     
-    <ProfileSummary :name="displayName" bio="여행 애호가" initials="userInitials" :totalplans="stats.totalPlans"
+    <ProfileSummary :profileName="displayName" bio="여행 애호가" initials="userInitials" :totalplans="stats.totalPlans"
       :travelDays="stats.travelDays" :completed="stats.completed" />
     <h4 class="my-3">
       <i class="bi bi-instagram me-2 text-primary"></i> 완료된 여행 일정
@@ -30,7 +30,6 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/authStore'
 import api from '@/api/travelgramApi'
@@ -38,10 +37,10 @@ import { storeToRefs } from 'pinia'
 import planCard from '@/components/common/PlanCard.vue';
 import ProfileSummary from "@/components/travelgram/ProfileSummary.vue";
 import PageHeader from '@/components/common/PageHeader.vue';
+// import defaultImg from '@/assets/img/profile-logo.png' // 필요시 경로 확인
 // import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 
-
-const store = useStore()
+const authStore = useAuthStore()
 const router = useRouter()
 
 // 상태 관리
@@ -49,18 +48,26 @@ const plans = ref([])
 const loading = ref(true)
 const stats = ref({ totalPlans: 0, travelDays: 0, completed: 0 })
 
-const authStore = useAuthStore()
 // 스토어에서 로그인된 유저 정보 가져오기 (vuex 구조에 따라 수정 필요
 // 3. Extract using storeToRefs (maintains Reactivity and .value access)
-const { userId, userName } = storeToRefs(authStore)
+const { userId, userName, userProfileImage } = storeToRefs(authStore)
 
-const displayName = computed(() => userName.value || 'Traveler')
+const displayName = computed(() => userName.value || '여행자')
+
+const computedProfileImage = computed(() => {
+  // 1. 스토어에 이미지가 있으면 그것을 사용
+  if (userProfileImage.value) {
+    return userProfileImage.value
+  }
+  // 2. 없으면 기본 이미지 (assets 경로 처리)
+  return new URL('@/assets/img/profile-logo.png', import.meta.url).href
+})
 
 // (선택사항) 이름에서 이니셜 추출 (예: "Jessica Han" -> "JH")
 const userInitials = computed(() => {
-  const name = displayName.value;
-  if (!name) return 'ME';
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  const profileName = displayName.value;
+  if (!profileName) return '나';
+  return profileName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
 })
 // 데이터 가져오기 함수
 const fetchPlans = async () => {
@@ -110,7 +117,7 @@ const calculateTotalDays = (plansList) => {
     const start = new Date(cur.startDate)
     const end = new Date(cur.endDate)
     const diff = (end - start) / (1000 * 60 * 60 * 24) + 1
-    return acc + diff
+    return acc + Math.max(1, Math.round(diff)) // 최소 1일 보장 및 반올림
   }, 0)
 }
 
@@ -157,12 +164,6 @@ onMounted(() => {
   fetchPlans()
 })
 
-// store에서 프로필 이미지 가져오기 (없으면 asset의 기본값)
-const profileImage = computed(() => {
-  const stored = store?.getters?.getProfileImage
-  if (stored) return stored
-  return new URL('../../assets/img/profile-logo.png', import.meta.url).href
-})
 const goBack = () => router.back()
 </script>
 
