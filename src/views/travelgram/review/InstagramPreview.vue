@@ -95,8 +95,8 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
-import StepHeader from '@/components/common/StepHeader.vue'
-import PageHeader from '@/components/common/PageHeader.vue'
+import StepHeader from '@/components/common/header/StepHeader.vue'
+import PageHeader from '@/components/common/header/PageHeader.vue'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 // 기본 유저정보

@@ -110,7 +110,7 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import PageHeader from '@/components/common/PageHeader.vue'
+import PageHeader from '@/components/common/header/PageHeader.vue'
 
 const route = useRoute()
 const router = useRouter()

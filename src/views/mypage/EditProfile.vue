@@ -131,7 +131,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseSection from '@/components/common/BaseSection.vue'
-import PageHeader from "@/components/common/PageHeader.vue";
+import PageHeader from "@/components/common/header/PageHeader.vue";
 // import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 

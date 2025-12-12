@@ -246,13 +246,12 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import PageHeader from '@/components/common/PageHeader.vue';
+import PageHeader from '@/components/common/header/PageHeader.vue';
 import hotelIllust from '@/assets/img/hotel-logo.png';
-import StepHeader from '@/components/common/StepHeader.vue';
-import BaseButton from '@/components/common/BaseButton.vue';
+import StepHeader from '@/components/common/header/StepHeader.vue';
+import BaseButton from '@/components/common/button/BaseButton.vue';
 import { useTravelStore } from '@/store/travelStore';
 import BaseSection from '@/components/common/BaseSection.vue';
-import BaseSelection from '@/components/common/BaseSelection.vue';
 
 const router = useRouter();
 const travelStore = useTravelStore();

@@ -172,7 +172,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import hotelIllust from '@/assets/img/hotel-logo.png';
-import BaseButton from '@/components/common/BaseButton.vue';
+import BaseButton from '@/components/common/button/BaseButton.vue';
 import { useTravelStore } from '@/store/travelStore';
 import { useAuthStore } from '@/store/authStore';
 import hotelApi from '@/api/hotelApi';

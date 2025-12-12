@@ -144,7 +144,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
+import BackButtonPageHeader from '@/components/common/header/BackButtonPageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import ActivityDetailsModal from '@/components/planner/ActivityDetailsModal.vue'
 import imageSearchApi from '@/api/imageSearchApi'

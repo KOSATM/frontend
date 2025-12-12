@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import PageHeader from '@/components/common/PageHeader.vue'
+import PageHeader from '@/components/common/header/PageHeader.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()

@@ -64,8 +64,8 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
 import api from '@/api/travelgramApi'
-import StepHeader from '@/components/common/StepHeader.vue'
-import PageHeader from '@/components/common/PageHeader.vue'
+import StepHeader from '@/components/common/header/StepHeader.vue'
+import PageHeader from '@/components/common/header/PageHeader.vue'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const router = useRouter()

@@ -140,8 +140,8 @@
 
 <script setup>
 import api from '@/api/travelgramApi'
-import PageHeader from '@/components/common/PageHeader.vue'
-import StepHeader from '@/components/common/StepHeader.vue'
+import PageHeader from '@/components/common/header/PageHeader.vue'
+import StepHeader from '@/components/common/header/StepHeader.vue'
 import { useReviewStore } from '@/store/reviewStore'
 import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted,onUnmounted, ref } from 'vue'

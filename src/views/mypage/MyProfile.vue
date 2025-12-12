@@ -137,7 +137,7 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/authStore'
 // import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
-import PageHeader from "@/components/common/PageHeader.vue";
+import PageHeader from "@/components/common/header/PageHeader.vue";
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
 const router = useRouter()

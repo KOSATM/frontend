@@ -47,8 +47,8 @@
 </template>
 
 <script setup>
-import StepHeader from '@/components/common/StepHeader.vue'
-import PageHeader from '@/components/common/PageHeader.vue'
+import StepHeader from '@/components/common/header/StepHeader.vue'
+import PageHeader from '@/components/common/header/PageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'

@@ -34,9 +34,9 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/authStore'
 import api from '@/api/travelgramApi'
 import { storeToRefs } from 'pinia'
-import planCard from '@/components/common/PlanCard.vue';
+import planCard from '@/components/travelgram/PlanCard.vue';
 import ProfileSummary from "@/components/travelgram/ProfileSummary.vue";
-import PageHeader from '@/components/common/PageHeader.vue';
+import PageHeader from '@/components/common/header/PageHeader.vue';
 // import defaultImg from '@/assets/img/profile-logo.png' // 필요시 경로 확인
 // import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 

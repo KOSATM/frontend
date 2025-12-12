@@ -133,7 +133,7 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import PageHeader from '@/components/common/PageHeader.vue'
+import PageHeader from '@/components/common/header/PageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import NaverMap from '@/components/supporter/NaverMap.vue'
 import ToiletApi from '@/api/ToiletApi'

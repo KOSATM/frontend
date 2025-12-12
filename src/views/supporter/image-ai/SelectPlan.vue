@@ -83,7 +83,7 @@ import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useImageSearchStore } from '@/store/imageSearchStore'
 import imageSearchApi from '@/api/imageSearchApi'
-import StepHeader from '@/components/common/StepHeader.vue'
+import StepHeader from '@/components/common/header/StepHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import { useAuthStore } from '@/store/authStore'
 

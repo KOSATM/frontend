@@ -57,7 +57,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import StepHeader from '@/components/common/StepHeader.vue'
+import StepHeader from '@/components/common/header/StepHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 
 const router = useRouter()

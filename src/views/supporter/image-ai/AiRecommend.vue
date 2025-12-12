@@ -70,7 +70,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useSupporterStore } from '@/store/supporterStore'
 import { useImageSearchStore } from '@/store/imageSearchStore'
 import imageSearchApi from '@/api/imageSearchApi'
-import StepHeader from '@/components/common/StepHeader.vue'
+import StepHeader from '@/components/common/header/StepHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 
 const router = useRouter()
