@@ -56,6 +56,16 @@
         >
           <i class="bi bi-list"></i>
         </button>
+
+        <!-- Chat Toggle Button (Add this) -->
+        <button 
+          @click="$emit('toggle-chat')" 
+          class="btn btn-chat-toggle"
+          title="채팅 열기"
+        >
+          <i class="bi bi-chat-dots"></i>
+          <span class="ms-2">채팅</span>
+        </button>
       </div>
     </div>
   </nav>
@@ -278,5 +288,27 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid white;
+}
+
+.btn-chat-toggle {
+  background: #1B3B6F;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-chat-toggle:hover {
+  background: #152f59;
+  transform: translateY(-2px);
+}
+
+.btn-chat-toggle i {
+  font-size: 1.2rem;
 }
 </style>
