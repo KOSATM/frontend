@@ -5,9 +5,9 @@
       <div v-if="isLoading" class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
         <div class="text-center">
           <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">불러오는 중...</span>
           </div>
-          <p class="text-muted">호텔 추천 정보를 불러오는 중입니다...</p>
+          <p class="text-muted">{{ loadingMessage }}</p>
         </div>
       </div>
 
@@ -17,43 +17,13 @@
       </div>
 
       <!-- 정상 콘텐츠 -->
-      <div v-else>
-        <!-- Accommodation Budget Propertion -->
-        <div class="mb-3">
-          <BaseSection icon="bi-percent" title="Accommodation Budget Propertion">
-            <input type="range" id="range4" class="form-range" min="0" max="100" v-model="rangeValue" />
-            <output :for="'range4'" aria-hidden="true">{{ rangeValue }}% (₩{{ Math.floor(budget * rangeValue / 100 / travelDays).toLocaleString() }})</output>
-          </BaseSection>
-        </div>
-
-        <!-- Filter Section -->
-        <div class="filter-section mb-4">
-          <!-- Accommodation Type -->
-          <BaseSection icon="bi-building" title="Accommodation Type">
-            <select v-model="filters.accommodationType" class="form-select rounded-pill">
-              <option value="all">All Types</option>
-              <option value="hotel">Hotel</option>
-              <option value="guesthouse">Guesthouse</option>
-              <option value="hanok">Hanok Style</option>
-              <option value="other">Other</option>
-            </select>
-          </BaseSection>
-
-          <!-- Number of Guests -->
-          <BaseSection icon="bi-people" title="Number of Guests">
-            <div class="input-group">
-              <input type="number" v-model="filters.guests" class="form-control rounded-pill" min="1" max="10" />
-              <span class="ms-2">Guests</span>
-            </div>
-          </BaseSection>
-        </div>
-
+      <div v-else>        
         <!-- Hotel List -->
         <div class="hotel-list mb-4">
-          <BaseSection icon="bi-buildings" title="Recommended Hotels" :subtitle="`Showing ${ filteredHotels.length} hotels for ${filters.guests} guests`">
+          <BaseSection icon="bi-buildings" title="추천하는 호텔" :subtitle="`Showing ${ filteredHotels.length} hotels for ${filters.guests} guests`">
             <div v-if="isLoading" class="text-center py-4">
               <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">불러오는 중...</span>
               </div>
             </div>
             <div v-else-if="error" class="alert alert-warning" role="alert">
@@ -76,7 +46,7 @@
                             <h5 class="card-title text-secondary mb-2">{{ hotel.name }}</h5>
                             <small class="text-muted d-block mb-2">{{ hotel.roomType }}</small>
                           </div>
-                          <span class="badge bg-primary">Rank #{{ hotel.rank }}</span>
+                          <span class="badge bg-primary">#{{ hotel.rank }}</span>
                         </div>
                         <p class="card-text text-muted small mb-2">
                           <i class="bi bi-geo-alt"></i>
@@ -91,7 +61,7 @@
                             <i class="bi bi-wifi me-1"></i> {{ hotel.facilities.WiFi }}
                           </span>
                           <span class="badge bg-light text-secondary me-2" v-if="hotel.breakfast">
-                            <i class="bi bi-cup-hot me-1"></i> Breakfast
+                            <i class="bi bi-cup-hot me-1"></i> 아침 식사
                           </span>
                           <span class="badge bg-light text-secondary me-2" v-if="hotel.facilities?.['24시간프론트']">
                             <i class="bi bi-clock me-1"></i> {{ hotel.facilities['24시간프론트'] }}
@@ -104,13 +74,13 @@
                           <div class="rating">
                             <i class="bi bi-star-fill text-warning"></i>
                             <span class="ms-1">{{ hotel.rating }}</span>
-                            <span class="text-muted">({{ hotel.reviews }} reviews)</span>
+                            <span class="text-muted">({{ hotel.reviews }} 후기들)</span>
                           </div>
                           <div class="price text-end">
                             <div class="fs-5 fw-bold text-primary">
                               ₩{{ hotel.price.toLocaleString() }}
                             </div>
-                            <small class="text-muted">per night</small>
+                            <small class="text-muted">1박당 가격</small>
                           </div>
                         </div>
                       </div>
@@ -124,8 +94,13 @@
 
         <!-- Confirm Button -->
         <div class="text-center">
-          <BaseButton :disabled="!selectedHotel" @click="confirmSelection()" variant="primary" class="w-100 py-2">Next:
-            Make a Payment</BaseButton>
+          <NavigationButtons
+            :backText="'이전'"
+            :nextText="'결제하기'"
+            :isNextDisabled="!selectedHotel"
+            @back="goBack"
+            @next="confirmSelection"
+          />
         </div>
       </div>
     </div>
@@ -133,6 +108,7 @@
 </template>
 
 <script setup>
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import hotelPlaceholder from '@/assets/img/hotel-logo.png';
@@ -159,6 +135,27 @@ const selectedHotel = ref(null);
 const hotels = ref([]);
 const isLoading = ref(false);
 const error = ref(null);
+const loadingMessage = ref('');
+
+// ✅ 로딩 메시지 배열
+const loadingMessages = [
+  '인공지능이 고객님에 맞는 호텔을 찾고 있습니다',
+  '최적의 호텔을 추천하고 있습니다',
+  '당신의 여행 스타일에 맞는 호텔을 검색 중입니다',
+  '완벽한 호텔을 찾기 위해 분석 중입니다',
+  '고객님의 조건에 맞는 호텔들을 수집 중입니다',
+  '호텔 정보를 비교하고 있습니다',
+  '추천 호텔 목록을 준비하고 있습니다',
+  '인공지능이 최고의 선택지를 찾고 있습니다',
+  '숙박 시설 데이터를 분석 중입니다',
+  '당신을 위한 특별한 호텔을 추천하고 있습니다'
+];
+
+// ✅ 랜덤 로딩 메시지 선택
+const getRandomLoadingMessage = () => {
+  const randomIndex = Math.floor(Math.random() * loadingMessages.length);
+  return loadingMessages[randomIndex];
+};
 
 // ✅ 호텔 이미지 배열 (0001.jpg ~ 0010.jpg)
 const hotelImages = ref([]);
@@ -208,6 +205,9 @@ const getRandomHotelImage = () => {
 onMounted(async () => {
   // ✅ 호텔 이미지 초기화
   initializeHotelImages();
+  
+  // ✅ 랜덤 로딩 메시지 설정
+  loadingMessage.value = getRandomLoadingMessage();
   
   authStore.initializeAuth();
   chatStore.planId ||= Number(localStorage.getItem("planId"));

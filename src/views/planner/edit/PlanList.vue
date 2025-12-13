@@ -2,8 +2,8 @@
   <section class="planner-right card shadow-sm rounded-4 h-100 d-flex flex-column">
 
     <!-- Header -->
-    <div class="p-4 pb-3 border-bottom d-flex justify-content-between align-items-center">
-      <div class="d-flex gap-3 align-items-center">
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center">
+      <div class="d-flex gap-3 align-items-center flex-grow-1">
         <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
           style="width: 46px; height: 46px">
           📅
@@ -16,9 +16,12 @@
           </p>
         </div>
       </div>
+    </div>
 
-      <button v-if="currentDayPlaces.length > 0" class="btn btn-outline-secondary btn-sm" @click="toggleEditMode">
-        {{ editMode ? "일정 보기" : "편집" }}
+    <!-- Edit Button (moved) -->
+    <div v-if="currentDayPlaces.length > 0" class="d-flex justify-content-end px-4 pt-3">
+      <button class="btn btn-outline-secondary edit-btn-large" @click="toggleEditMode">
+        {{ editMode ? "편집 완료" : "편집" }}
       </button>
     </div>
 
@@ -155,13 +158,13 @@
 
     <!-- CTA -->
     <div class="p-4 pt-0 border-top bg-white">
-      <BaseButton v-if="!travelStore.$state.isTraveling" @click="next()" variant="primary" class="w-100 py-2">
-        Next: Select Accommodation
-      </BaseButton>
-
-      <BaseButton v-else @click="endplan()" variant="success" class="w-100 py-2">
-        FORCE to End plan
-      </BaseButton>
+      <NavigationButtons
+        :backText="'이전'"
+        :nextText="travelStore.$state.isTraveling ? '여행 종료' : '여행 일정 요약페이지로 이동'"
+        :isNextDisabled="false"
+        @back="onBack"
+        @next="onNext"
+      />
     </div>
 
     <!-- Modal -->
@@ -174,6 +177,7 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 
 import BaseButton from "@/components/common/button/BaseButton.vue";
+import NavigationButtons from "@/components/common/button/NavigationButtons.vue";
 import plannerApi from "@/api/plannerApi";
 
 import { useAuthStore } from "@/store/authStore";
@@ -374,12 +378,32 @@ onMounted(async () => {
   await renderPlan();
 });
 
+
+const onNext = () => {
+  if (travelStore.$state.isTraveling) {
+    endplan();
+  } else {
+    goToSummary();
+  }
+};
+const onBack = () => {
+  router.back();
+};
+
 const next = () => router.push("/planner/hotel");
+const goToSummary = () => router.push("/planner/summary");
 const endplan = () => router.push("/planner");
 </script>
 
 
 <style scoped>
+/* Bigger edit button above day-section-wrapper */
+.edit-btn-large {
+  padding: 0.5rem 1.5rem;
+  font-size: 1.08rem;
+  height: 44px;
+  border-radius: 0.8rem;
+}
 /* highlight */
 :deep(.highlight) {
   background: #fff0b3;

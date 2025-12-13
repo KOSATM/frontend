@@ -2,6 +2,7 @@
 
 <template>
   <div class = "supporter-page">
+  <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" />
   <BackButtonPageHeader title="이미지 기반 여행 AI" subtitle="당신의 사진으로 여행 장소를 찾아보아요!" />
 
   <BaseSection icon="bi-clock-history" title="AI가 추천한 히스토리">
@@ -129,15 +130,17 @@
         </ul>
 
         <!-- Buttons -->
-        <div class="d-flex mt-4 gap-2">
-          <button class="btn btn-outline-secondary flex-grow-1" @click="changeStatusItem = null">
-            취소
-          </button>
-          <button class="btn btn-primary flex-grow-1" :disabled="!changeStatusSelection" @click="confirmChangeStatus">
-            확인
-          </button>
-        </div>
-      </div>
+    <div class="d-flex gap-3 mt-5">
+
+      <NavigationButtons
+      back-text="취소"
+      next-text="확인"
+      :is-next-disabled="!changeStatusSelection"
+      @back="changeStatusItem = null"
+      @next="confirmChangeStatus"
+      />
+  </div>
+  </div>
     </div>
   </teleport>
   </div>
@@ -146,14 +149,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import BackButtonPageHeader from '@/components/common/header/BackButtonPageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import ActivityDetailsModal from '@/components/planner/ActivityDetailsModal.vue'
 import imageSearchApi from '@/api/imageSearchApi'
+import PageHeader from '@/components/common/header/PageHeader.vue'
 import { useAuthStore } from '@/store/authStore'
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
-const router = useRouter()
 const authStore = useAuthStore()
 
 // 모달 상태
@@ -423,9 +426,6 @@ const confirmChangeStatus = async () => {
   box-shadow: 0 4px 8px rgba(124, 58, 237, 0.3);
 }
 
-:deep(.upload-section .upload-title) {
-  font-size: 100rem !important;
-}
 
 /* Change Status Modal Styles */
 .modal-backdrop {
