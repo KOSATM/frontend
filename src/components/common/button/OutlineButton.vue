@@ -23,7 +23,6 @@ defineProps({
   height: 48px;
   border-radius: 1rem;
   font-weight: 600;
-  font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
   width: 100%;
