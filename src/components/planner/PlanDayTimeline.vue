@@ -1,47 +1,57 @@
 <!-- src/components/planner/PlanDayTimeline.vue -->
 <template>
-  <!-- Body -->
   <div class="planner-scroll flex-grow-1 overflow-auto">
+    <!-- ✅ Day Tabs (분리된 스타일) -->
+    <div class="day-tab-wrapper">
+      <button
+        v-for="(day, idx) in days"
+        :key="idx"
+        class="day-tab-btn"
+        :class="{ active: selectedDayIndex === idx }"
+        @click="selectedDayIndex = idx"
+      >
+        Day {{ idx + 1 }}
+      </button>
+    </div>
+
+    <!-- Body -->
     <div class="day-section-wrapper">
+      <!-- No Schedule -->
+      <div v-if="!currentDayPlaces.length" class="empty-text">
+        일정이 없습니다.
+      </div>
+
+      <!-- Render Places -->
       <div v-for="(place, idx) in currentDayPlaces" :key="idx" class="section-block">
-        <div class="place-block">
-          <!-- 번호 + 라벨 -->
+        <!-- WITH LABEL -->
+        <div v-if="typeLabel(place.details?.type)" class="place-block with-label">
+          <!-- ✅ 번호 + 라벨 + 시간 : 원래 구조 그대로 -->
           <div class="place-number-wrapper">
             <div class="place-number-circle" :class="typeColor(place.details?.type)">
               {{ idx + 1 }}
             </div>
 
             <div class="label-text-wrapper">
-              <h6 v-if="typeLabel(place.details?.type)" class="place-label">
+              <span class="place-label">
                 {{ typeLabel(place.details?.type) }}
-              </h6>
+              </span>
 
-              <span
-                v-if="place.startAt"
-                class="place-start-time"
-                :class="{ 'under-label': typeLabel(place.details?.type) }"
-              >
+              <!-- ⏰ label 아래 시간 -->
+              <span v-if="place.startAt" class="place-start-time under-label">
                 {{ formatTime(place.startAt) }}
               </span>
             </div>
           </div>
 
-          <!-- 타임라인 + 카드 -->
           <div class="place-row">
             <div
               v-if="idx !== currentDayPlaces.length - 1"
-              class="timeline-line"
-              :class="{ 'label-line': typeLabel(place.details?.type) }"
+              class="timeline-line label-line"
             ></div>
 
-            <div
-              class="place-content"
-              :class="{ 'label-card-offset': typeLabel(place.details?.type) }"
-            >
-              <div
-                class="place-card shadow-sm rounded-3 p-3 flex-fill"
-                @click="$emit('open-modal', place)"
-              >
+            <!-- 카드(오른쪽으로 자연스럽게 이동) -->
+            <div class="place-content label-card-offset">
+              <div class="place-card shadow-sm rounded-3 p-3 flex-fill" @click="$emit('open-modal', place)">
                 <button
                   v-if="editMode"
                   class="delete-btn"
@@ -52,41 +62,92 @@
 
                 <div class="d-flex gap-3">
                   <div class="thumb">
-                    <img
-                      v-if="place.details?.gallery?.[0]"
-                      :src="place.details.gallery[0]"
-                    />
+                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" />
                     <div v-else class="thumb-placeholder"></div>
                   </div>
 
                   <div class="flex-fill">
                     <div class="place-title">{{ place.title }}</div>
                     <div class="place-type text-muted small">
-                      {{ categoryMap[place.details?.type] || '장소' }}
+                      {{ categoryMap[place.details?.type] || "장소" }}
                     </div>
-
-                    <hr class="place-divider" />
-
+                    <hr />
                     <div class="place-recommend text-primary small">
-                      추천 {{ place.details?.desc || '상세 설명 없음' }}
+                      추천 {{ place.details?.desc || "상세 설명 없음" }}
                     </div>
                   </div>
                 </div>
               </div>
+
+              <!-- (필요하면 나중에 add 버튼도 여기 다시 넣으면 됨) -->
             </div>
           </div>
+        </div>
 
+        <!-- NO LABEL -->
+        <div v-else class="place-block no-label">
+          <div class="place-row">
+            <!-- 숫자 -->
+            <div class="place-number-circle" :class="typeColor(place.details?.type)">
+              {{ idx + 1 }}
+            </div>
+
+            <!-- 세로선 -->
+            <div v-if="idx !== currentDayPlaces.length - 1" class="timeline-line"></div>
+
+            <!-- 카드 (숫자 바로 옆) -->
+            <div class="place-content">
+              <div class="place-card shadow-sm rounded-3 p-3 flex-fill" @click="$emit('open-modal', place)">
+                <button
+                  v-if="editMode"
+                  class="delete-btn"
+                  @click.stop="$emit('delete-place', idx, place)"
+                >
+                  ✕
+                </button>
+
+                <div class="d-flex gap-3">
+                  <div class="thumb">
+                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" />
+                    <div v-else class="thumb-placeholder"></div>
+                  </div>
+
+                  <div class="flex-fill">
+                    <div class="place-title">{{ place.title }}</div>
+                    <div class="place-type text-muted small">
+                      {{ categoryMap[place.details?.type] || "장소" }}
+                    </div>
+
+                    <!-- ⏰ no-label 케이스는 카드 내부에 붙이면 레이아웃이 안 깨짐 -->
+                    <div v-if="place.startAt" class="place-start-time">
+                      {{ formatTime(place.startAt) }}
+                    </div>
+
+                    <hr class="place-divider" />
+                    <div class="place-recommend text-primary small">
+                      추천 {{ place.details?.desc || "상세 설명 없음" }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- (필요하면 나중에 add 버튼도 여기 다시 넣으면 됨) -->
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
 <script setup>
-defineProps({
-  currentDayPlaces: {
-    type: Array,
-    required: true,
-  },
+import { ref, computed } from "vue";
+
+defineEmits(["open-modal", "delete-place"]);
+
+const props = defineProps({
+  days: { type: Array, required: true },
+
   editMode: Boolean,
   typeColor: Function,
   typeLabel: Function,
@@ -94,26 +155,65 @@ defineProps({
   categoryMap: Object,
 });
 
-defineEmits(['open-modal', 'delete-place']);
+/* ✅ Day 상태는 이 컴포넌트가 관리 */
+const selectedDayIndex = ref(0);
+
+const currentDayPlaces = computed(() => {
+  return props.days?.[selectedDayIndex.value]?.places ?? [];
+});
 </script>
+
 <style scoped>
-.planner-scroll {
-  flex-grow: 1;
-  overflow: auto;
+/* =========================
+   1) Day Tab 전용 스타일 (분리)
+   ========================= */
+.day-tab-wrapper {
+  display: flex;
+  gap: 14px;
+  padding: 0 22px 16px;
+  margin: 18px 18px 0;
+  border-bottom: 1px solid #ddd;
 }
 
-/* day wrapper */
+.day-tab-btn {
+  font-size: 0.85rem;
+  padding: 4px 12px;
+  border-radius: 14px;
+  border: 2px solid #ff9800;
+  color: #ff9800;
+  background: transparent;
+  cursor: pointer;
+}
+
+.day-tab-btn.active {
+  background: #ff9800;
+  color: #fff;
+  font-weight: 700;
+}
+
+/* =========================
+   2) 기존 타임라인/카드 스타일 (원복)
+   ========================= */
+
+/* wrapper */
 .day-section-wrapper {
   padding: 26px 22px;
   background: #fafafa;
   border-radius: 14px;
-  margin: 28px 18px 36px;
+  margin: 20px 18px 36px;
+}
+
+.empty-text {
+  color: #888;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 18px 0;
 }
 
 /* number + label */
 .place-number-wrapper {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-start; /* ✅ label/time 때문에 top 정렬 */
   gap: 10px;
   margin-bottom: 8px;
 }
@@ -137,24 +237,28 @@ defineEmits(['open-modal', 'delete-place']);
 .color-green { background: #e5ffeb; color: #3ac569; }
 .color-gray { background: #efefef; color: #666; }
 
-/* label + time wrapper */
+/* label+time wrapper */
 .label-text-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .place-label {
-  font-size: inherit;
-  font-weight: inherit;
-  line-height: normal;
-  margin-top: 0;
-  margin-bottom: 2px;
+  font-size: 1.05rem; /* ✅ 기존처럼 라벨이 좀 크게 */
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+/* time */
+.place-start-time {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  margin-top: 2px;
 }
 
 .place-start-time.under-label {
   font-size: 0.9rem;
-  color: #9ca3af;
   line-height: 1.1;
 }
 
@@ -169,14 +273,14 @@ defineEmits(['open-modal', 'delete-place']);
 .timeline-line {
   position: absolute;
   left: 13px;
-  top: 0px;
+  top: 30px;
   bottom: -20px;
   width: 2px;
   background: #d0d9ff;
 }
 
 .label-line {
-  top: 5px;
+  top: 5px; /* ✅ 라벨 케이스 보정 */
 }
 
 /* content container */
@@ -188,6 +292,7 @@ defineEmits(['open-modal', 'delete-place']);
   gap: 10px;
 }
 
+/* WITH LABEL → 카드 오른쪽 이동 */
 .label-card-offset {
   margin-left: 45px;
 }
@@ -219,6 +324,12 @@ defineEmits(['open-modal', 'delete-place']);
   object-fit: cover;
 }
 
+.thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #eee;
+}
+
 /* text */
 .place-title {
   font-size: 1rem;
@@ -248,6 +359,7 @@ defineEmits(['open-modal', 'delete-place']);
   color: white;
   cursor: pointer;
   z-index: 5;
+  text-align: center;
   line-height: 22px;
 }
 </style>
