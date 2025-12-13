@@ -15,7 +15,7 @@
 
     <section class="preview-section">
       <h6 class="section-title">
-        <i class="bi bi-instagram me-2"></i>
+        <i class="bi bi-instagram me-2 instagram-gradient-icon"></i>
         인스타그램 미리보기
       </h6>
       <p class="section-subtitle">
@@ -355,5 +355,37 @@ const publish = () => {
 .btn-copy:hover {
   background: #1b3b6f;
   color: white;
+}
+
+/* 인스타그램 아이콘 그라데이션 */
+.instagram-gradient-icon {
+  background: linear-gradient(
+    45deg,
+    #feda75,
+    #fa7e1e,
+    #d62976,
+    #962fbf,
+    #4f5bd5
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  min-height: 260px;              /* 카드 높이 기준 */
+  text-align: center;
+
+  color: #1b3b6f;
+  font-weight: 600;
+  line-height: 1.6;
+
+  padding: 2rem 1.5rem;
 }
 </style>
