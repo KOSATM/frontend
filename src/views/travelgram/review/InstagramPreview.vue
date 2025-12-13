@@ -120,7 +120,7 @@ const userInfo = computed(() => {
     // authStore의 프로필 이미지 경로 사용 (없으면 null)
     profileImage: authStore.userProfileImage,
     // 위치 정보 (추후 store에서 가져올 수 있음)
-    location: 'Seoul, South Korea' 
+    location: '대한민국, 서울' 
   }
 })
 
