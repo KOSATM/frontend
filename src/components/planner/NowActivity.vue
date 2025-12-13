@@ -5,27 +5,27 @@
     class="now-active-card"
     @click="onClickCard"
   >
-    <!-- Header -->
-    <div class="now-header">
-      <!-- Day Plan (크게) -->
-      <h3 class="now-badge mb-0">
-        ★ Day {{ dayIndex + 1 }} Plan
-      </h3>
+    <!-- Top row: NOW pill + dot + status + (nav on right) -->
+    <div class="now-top">
+      <span class="now-pill">NOW</span>
 
-      <!-- 오른쪽 영역 -->
-      <div class="now-nav">
-        <!-- 상태 배지 : < 버튼 왼쪽 -->
-        <span
-          class="badge"
-          :class="place.status === 'DONE' ? 'bg-success' : 'bg-warning'"
-        >
-          {{ place.status === 'DONE' ? '✔ Done' : '⏳ Pending' }}
-        </span>
+      <span
+        class="dot"
+        :class="{ done: place.status === 'DONE' }"
+        aria-hidden="true"
+      ></span>
 
+      <span class="status">
+        {{ place.status === "DONE" ? "완료됨" : "진행 중" }}
+      </span>
+
+      <!-- 네비게이션: 기능 유지 (UI는 최대한 얇게) -->
+      <div class="now-nav" @click.stop>
         <button
           class="now-nav-btn"
           :disabled="index === 0"
           @click.stop="$emit('update:index', index - 1)"
+          aria-label="previous"
         >
           ‹
         </button>
@@ -38,73 +38,62 @@
           class="now-nav-btn"
           :disabled="index === total - 1"
           @click.stop="$emit('update:index', index + 1)"
+          aria-label="next"
         >
           ›
         </button>
       </div>
     </div>
 
-    <!-- Title -->
-    <h5 class="now-title">
+    <!-- Center title -->
+    <div class="now-title">
       {{ place.title }}
-    </h5>
+    </div>
 
-    <!-- Time -->
-    <p class="now-subtitle text-muted">
-      {{ formatTime(place.startAt) }}
-      <span v-if="place.endAt">
-        – {{ formatTime(place.endAt) }}
+    <!-- subtitle: time • place -->
+    <div class="now-sub">
+      <span class="time">
+        {{ formatTime(place.startAt) }}
+        <span v-if="place.endAt">– {{ formatTime(place.endAt) }}</span>
       </span>
-    </p>
+      <span class="sep">•</span>
+      <span class="place truncate">
+        {{ place.details?.area || place.details?.address || "Seoul" }}
+      </span>
+    </div>
 
-    <!-- Info -->
-    <div class="now-info-row">
-      <div class="now-info-box">
-        <small class="now-info-label">Duration</small>
-        <div class="now-info-value">
-          {{ getDuration(place.startAt, place.endAt) }}
-        </div>
-      </div>
-
-      <div class="now-info-box">
-        <small class="now-info-label">Address</small>
-        <div class="now-info-value truncate">
-          {{ place.details?.address || "주소 정보 없음" }}
-        </div>
-      </div>
-
-      <div class="now-info-box">
-        <small class="now-info-label">Type</small>
-        <div class="now-info-value">
-          {{ categoryMap[place.details?.type] || "기타" }}
-        </div>
-      </div>
+    <!-- progress -->
+    <div class="progress" aria-hidden="true">
+      <div class="bar" :style="{ width: progressPercent + '%' }"></div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { computed, toRefs } from "vue";
+
 /* ===========================
-   Props / Emits
+   Props / Emits (그대로)
 =========================== */
 const props = defineProps({
   place: { type: Object, default: null },
   index: { type: Number, required: true },
   total: { type: Number, required: true },
-  dayIndex: { type: Number, required: true },
+  dayIndex: { type: Number, required: true }, // 기능 유지(사용 안 해도 OK)
 });
 
 const emit = defineEmits(["update:index", "complete"]);
+const { place, index, total } = toRefs(props);
 
 /* ===========================
-   Handlers
+   Handlers (그대로)
 =========================== */
 const onClickCard = () => {
-  emit("complete", props.place);
+  emit("complete", place.value);
 };
 
 /* ===========================
-   Utils
+   Utils (그대로)
 =========================== */
 const formatTime = (iso) => {
   if (!iso) return "";
@@ -115,55 +104,113 @@ const formatTime = (iso) => {
   });
 };
 
-const getDuration = (start, end) => {
-  if (!start || !end) return "-";
-  const diff = (new Date(end) - new Date(start)) / 60000;
-  const h = Math.floor(diff / 60);
-  const m = Math.floor(diff % 60);
-  if (h && m) return `${h}h ${m}m`;
-  if (h) return `${h}h`;
-  return `${m}m`;
-};
-
-const categoryMap = {
-  FOOD: "음식점",
-  SPOT: "관광지",
-  SHOPPING: "쇼핑",
-  CAFE: "카페",
-  HOTEL: "숙소",
-  EVENT: "이벤트",
-  ETC: "기타",
-};
+/* ===========================
+   UI용 progress
+=========================== */
+const progressPercent = computed(() => {
+  if (!place.value) return 0;
+  return place.value.status === "DONE" ? 100 : 35;
+});
 </script>
 
 <style scoped>
-/* ===============================
-   NOW ACTIVE CARD
-=============================== */
+/* =================================================
+   NOW ACTIVE CARD (스크린샷 스타일: 가로 글래스 카드)
+================================================= */
 .now-active-card {
   margin: 16px 18px 22px;
-  padding: 20px 22px;
-  border-radius: 16px;
-  border: 2px solid #3b82f6;
-  background: linear-gradient(135deg, #f5f9ff, #fdfdff);
+  width: min(920px, calc(100% - 36px));
+  border-radius: 22px;
+  padding: 18px 20px 14px;
+  position: relative;
+  overflow: hidden;
   cursor: pointer;
+
+  /* 🔥 핵심 수정 */
+  background:
+    linear-gradient(
+      135deg,
+      rgba(20, 18, 48, 0.92),
+      rgba(42, 18, 85, 0.92)
+    );
+
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  box-shadow:
+    0 18px 70px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.10);
 }
 
-/* header */
-.now-header {
+/* 카드 내부 ‘도트’ 분위기 (사진처럼 은은하게) */
+.now-active-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .35;
+
+  background-image:
+    radial-gradient(rgba(255,255,255,.22) 1px, transparent 1px);
+  background-size: 18px 18px;
+  background-position: center;
+  mask-image: radial-gradient(closest-side, rgba(0,0,0,.9), transparent 68%);
+  -webkit-mask-image: radial-gradient(closest-side, rgba(0,0,0,.9), transparent 68%);
+}
+
+/* 쉬머 살짝 */
+.now-active-card::before {
+  content: "";
+  position: absolute;
+  inset: -40% -20% auto -20%;
+  height: 160%;
+  background: radial-gradient(closest-side, rgba(255,255,255,.16), transparent 70%);
+  transform: rotate(18deg);
+  opacity: .30;
+  pointer-events: none;
+}
+
+/* =========================
+   TOP ROW
+========================= */
+.now-top {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
 }
 
-.now-badge {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #2563eb;
+.now-pill {
+  font-size: 12px;
+  letter-spacing: .12em;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.14);
+  border: 1px solid rgba(255,255,255,.22);
+  color: rgba(255,255,255,.92);
 }
 
-/* navigation */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(150, 255, 210, .95);
+  box-shadow: 0 0 0 6px rgba(150, 255, 210, .14);
+}
+
+.dot.done {
+  background: rgba(170, 255, 120, .95);
+  box-shadow: 0 0 0 6px rgba(170, 255, 120, .14);
+}
+
+.status {
+  font-size: 13px;
+  color: rgba(255,255,255,.84);
+}
+
+/* nav: 최대한 얇게, 우측 정렬 */
 .now-nav {
   margin-left: auto;
   display: flex;
@@ -172,12 +219,12 @@ const categoryMap = {
 }
 
 .now-nav-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 1px solid #c7d2fe;
-  background: white;
-  color: #2563eb;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.92);
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
@@ -185,61 +232,68 @@ const categoryMap = {
 }
 
 .now-nav-btn:disabled {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: default;
 }
 
 .now-nav-count {
-  font-size: 0.75rem;
-  color: #6b7280;
+  font-size: 12px;
+  color: rgba(255,255,255,.62);
 }
 
-/* title */
+/* =========================
+   TITLE / SUB (센터 정렬)
+========================= */
 .now-title {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 4px;
-}
-
-/* subtitle */
-.now-subtitle {
-  font-size: 0.9rem;
-  color: #6b7280;
-  margin-bottom: 14px;
-}
-
-/* info */
-.now-info-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.now-info-box {
-  background: white;
-  border-radius: 12px;
-  padding: 10px 12px;
+  margin: 14px 0 8px;
   text-align: center;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  font-size: 26px;
+  line-height: 1.15;
+  font-weight: 850;
+  color: rgba(255,255,255,.96);
+  text-shadow: 0 10px 26px rgba(0,0,0,.28);
+  position: relative;
+  z-index: 2;
 }
 
-.now-info-label {
-  font-size: 0.72rem;
-  color: #6b7280;
-  margin-bottom: 2px;
+.now-sub {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: rgba(255,255,255,.82);
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 2;
 }
 
-.now-info-value {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #111827;
-}
+.sep { opacity: .6; }
 
-/* truncate */
 .truncate {
+  max-width: 44ch;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+/* =========================
+   PROGRESS (바닥에 길게)
+========================= */
+.progress {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.14);
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+.bar {
+  height: 100%;
+  border-radius: 999px;
+  background: rgba(255,255,255,.82);
+  box-shadow: 0 10px 26px rgba(255,255,255,.16);
+  transition: width .35s ease;
 }
 </style>
