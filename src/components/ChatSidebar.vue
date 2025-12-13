@@ -216,7 +216,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-<style scoped>
 /* [수정 사항]
   - 글로벌(_typography.scss)에서 설정된 폰트 패밀리를 그대로 상속받습니다.
   - 불필요한 font-family 재정의 코드를 모두 삭제했습니다.
