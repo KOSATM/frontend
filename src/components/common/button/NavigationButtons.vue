@@ -1,33 +1,39 @@
-<!-- /src.components/common/button/NavigationButtons.vue -->
 <template>
   <div class="navigation-buttons">
-    <button class="btn-back" @click="$emit('back')">
+    <OutlineButton 
+      class="flex-item" 
+      @click="$emit('back')"
+      :main-color="themeColor"
+      :hover-color="activeColor"
+    >
       {{ backText }}
-    </button>
-    <button 
-      class="btn-next" 
+    </OutlineButton>
+
+    <FilledButton 
+      class="flex-item" 
       @click="$emit('next')" 
       :disabled="isNextDisabled"
+      :bg-color="themeColor"
+      :hover-color="activeColor"
     >
       <slot name="next-content">{{ nextText }}</slot>
-    </button>
+    </FilledButton>
   </div>
 </template>
 
 <script setup>
+import OutlineButton from './OutlineButton.vue';
+import FilledButton from './FilledButton.vue';
+
 defineProps({
-  backText: {
-    type: String,
-    default: 'Back'
-  },
-  nextText: {
-    type: String,
-    default: 'Next Step'
-  },
-  isNextDisabled: {
-    type: Boolean,
-    default: false
-  }
+  backText: { type: String, default: 'Back' },
+  nextText: { type: String, default: 'Next Step' },
+  isNextDisabled: { type: Boolean, default: false },
+  
+  // 테마 색상 (기본값: 네이비)
+  themeColor: { type: String, default: '#1b3b6f' },
+  // 활성화/호버 색상 (기본값: 오렌지)
+  activeColor: { type: String, default: '#ff8c00' }
 });
 
 defineEmits(['back', 'next']);
@@ -40,46 +46,7 @@ defineEmits(['back', 'next']);
   margin-top: 2rem;
   width: 100%;
 }
-
-.btn-back,
-.btn-next {
+.flex-item {
   flex: 1;
-  height: 48px;
-  border-radius: 1rem;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease; /* 색상 변경을 부드럽게 */
-}
-
-/* 🔙 Back 버튼 스타일 (Outline -> Filled) */
-.btn-back {
-  background-color: #fff;
-  color: #1b3b6f; /* 네이비 텍스트 */
-  border: 2px solid #1b3b6f; /* 네이비 테두리 */
-}
-
-.btn-back:hover {
-  background-color: #ff8c00; /* 오렌지 배경 */
-  color: #fff; /* 흰색 텍스트 */
-  border-color: #ff8c00; /* 테두리도 오렌지로 변경 */
-}
-
-/* 🔜 Next 버튼 스타일 (Filled -> Changed Color) */
-.btn-next {
-  background-color: #1b3b6f; /* 네이비 배경 */
-  color: #fff;
-  border: none;
-}
-
-.btn-next:hover:not(:disabled) {
-  background-color: #ff8c00; /* 오렌지 배경 */
-}
-
-/* 비활성화 상태 */
-.btn-next:disabled {
-  background-color: #b0bfd8;
-  cursor: not-allowed;
-  opacity: 0.7;
 }
 </style>
