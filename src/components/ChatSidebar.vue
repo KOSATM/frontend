@@ -42,7 +42,7 @@
           <div class="message-bubble loading-bubble">
             <div class="spinner-container">
               <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
-              <span class="ms-2 text-muted" style="font-size: 12px;">Thinking...</span>
+              <small class="ms-2 text-muted">생각 중...</small>
             </div>
           </div>
         </div>
@@ -216,113 +216,132 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* [중요] 레이아웃 시스템과의 통합을 위해 
-  Position Fixed 관련 스타일을 모두 제거하고 
-  Flexbox 기반으로 변경했습니다. 
+<style scoped>
+/* [수정 사항]
+  - 글로벌(_typography.scss)에서 설정된 폰트 패밀리를 그대로 상속받습니다.
+  - 불필요한 font-family 재정의 코드를 모두 삭제했습니다.
+  - 오직 가독성을 위한 font-size 확대와 레이아웃/여백 조정에만 집중했습니다.
 */
 
 .chat-layout-wrapper {
-  /* sidebar-area 내부를 꽉 채움 */
   width: 100%;
   height: 100%; 
-  overflow: hidden; /* 이중 스크롤 방지 */
+  overflow: hidden;
+  /* 기본 글자 크기를 여기서 한 번만 키워주면 내부 요소들이 상속받습니다 */
+  font-size: 1.25rem; 
+  color: #333;
 }
 
-/* 메시지 영역 스크롤 */
+/* --- 상단 헤더 영역 --- */
+.chat-header h6 {
+  /* h6 태그는 이미 글로벌에서 memoment 폰트가 적용되어 있으므로 크기만 조정 */
+  font-size: 1.5rem; 
+  margin: 0;
+}
+
+.chat-header small {
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+/* --- 메시지 영역 --- */
 .chat-messages {
   overflow-y: auto;
   background-color: #fff;
 }
 
-/* 메시지 버블 스타일 */
+/* 메시지 말풍선 공통 */
 .message-bubble {
-  padding: 10px 14px;
+  padding: 12px 18px; 
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  font-size: 13.5px;
+  font-size: 1.25rem; /* 말풍선 텍스트 크기 확보 */
   line-height: 1.5;
-  word-break: break-word; /* 좁은 폭에서 단어 줄바꿈 */
+  word-break: break-word;
 }
 
+/* AI 메시지 */
 .ai-message {
   align-items: flex-start;
   margin-right: 1rem;
 }
-
 .ai-message .message-bubble {
   background: #f8f9fa;
   color: #333;
   border: 1px solid #f1f3f5;
-  border-radius: 16px 16px 16px 2px;
+  border-radius: 20px 20px 20px 4px;
 }
 
+/* 유저 메시지 */
 .user-message {
   align-items: flex-end;
   margin-left: 1rem;
 }
-
 .user-message .message-bubble {
-  background: #1B3B6F; /* 메인 테마 컬러에 맞춤 */
+  background: #1B3B6F;
   color: white;
-  border-radius: 16px 16px 2px 16px;
+  border-radius: 20px 20px 4px 20px;
 }
 
-/* Markdown Style Override (사이드바 폭에 맞춤) */
+/* [Markdown 스타일 재정의] */
 :deep(.markdown-body) {
-  font-size: 13.5px !important;
+  /* 글로벌 p 태그 스타일을 따라가지만, 혹시 모를 초기화를 위해 크기만 명시 */
+  font-size: 1.25rem !important; 
   background: transparent !important;
   color: inherit !important;
+  line-height: 1.6 !important;
 }
 
-/* 제목 태그(h1~h6)들의 크기와 여백을 강제로 줄임 */
+/* 마크다운 내부 제목 태그 (h1~h6) */
+/* 글로벌 h 태그 스타일이 적용되므로 크기와 여백만 조정합니다 */
 :deep(.markdown-body h1),
 :deep(.markdown-body h2),
 :deep(.markdown-body h3),
 :deep(.markdown-body h4),
 :deep(.markdown-body h5),
 :deep(.markdown-body h6) {
-  font-size: 1.1em !important; /* 본문보다 약간만 크게 설정 (약 15px) */
-  font-weight: 700 !important; /* 굵기는 유지 */
-  margin-top: 12px !important; /* 위쪽 여백 줄임 */
-  margin-bottom: 6px !important; /* 아래쪽 여백 줄임 */
-  line-height: 1.4 !important;
-  border-bottom: none !important; /* h1, h2에 자주 붙는 밑줄 제거 */
-}
-:deep(.markdown-body p) {
-  margin-bottom: 0.5rem !important;
-}
-:deep(.markdown-body ul) {
-  padding-left: 1.2rem !important;
-}
-/* 이미지 크기 제한 및 스타일링 */
-:deep(.markdown-body img) {
-  max-width: 100% !important;    /* 가로: 말풍선 너비를 넘지 않도록 설정 */
-  height: auto !important;       /* 세로: 비율에 맞춰 자동 조절 */
-  max-height: 300px !important;  /* 세로 최대 크기 제한 (너무 길쭉한 이미지 방지) */
-  object-fit: contain !important; /* 이미지가 찌그러지지 않고 비율 유지 */
-  
-  border-radius: 8px !important; /* 이미지 모서리를 둥글게 (보기 좋게) */
-  display: block !important;     /* 블록 요소로 변경 */
-  margin: 10px 0 !important;     /* 위아래 여백 추가 */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important; /* 살짝 그림자 효과 */
+  font-size: 1.4em !important; 
+  margin-top: 1.2rem !important;
+  margin-bottom: 0.6rem !important;
+  line-height: 1.3 !important;
+  border-bottom: none !important;
 }
 
-/* (선택 사항) 로딩 중이거나 깨진 이미지 아이콘 숨김 처리 */
-:deep(.markdown-body img[alt=""]) {
-  display: none !important;
+:deep(.markdown-body p) {
+  margin-bottom: 0.8rem !important;
 }
-/* 입력창 스타일 */
+
+:deep(.markdown-body ul), 
+:deep(.markdown-body ol) {
+  padding-left: 1.5rem !important;
+}
+
+:deep(.markdown-body li) {
+  margin-bottom: 0.4rem !important;
+}
+
+/* 이미지 스타일 */
+:deep(.markdown-body img) {
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: 350px !important;
+  border-radius: 12px !important;
+  margin: 10px 0 !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+}
+
+/* --- 입력창 영역 --- */
 .chat-input-wrapper {
   background: #fff;
 }
 
 .chat-input-container {
   display: flex;
-  align-items: flex-end; /* 텍스트 많아질 때 버튼 하단 정렬 */
-  gap: 6px;
-  padding: 8px 10px;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 12px 16px; 
   background: #f8f9fa;
   border: 1px solid #e9ecef;
-  border-radius: 20px;
+  border-radius: 24px;
 }
 
 .chat-text-input {
@@ -330,15 +349,29 @@ onMounted(() => {
   border: none;
   background: transparent;
   outline: none;
-  font-size: 13px;
+  
+  /* 주의: textarea/input은 브라우저 기본 스타일 때문에 글로벌 body 폰트를 
+     상속받지 않는 경우가 많습니다. 
+     이 경우에만 font-family: inherit;을 주면 글로벌 폰트를 따라갑니다. 
+  */
+  font-family: inherit; 
+  font-size: 1.25rem; 
+  line-height: 1.5;
+  
   padding: 4px 0;
-  max-height: 100px;
+  max-height: 120px;
   resize: none;
 }
 
+.chat-text-input::placeholder {
+  color: #adb5bd;
+  font-size: 1.2rem;
+}
+
+/* 버튼 아이콘 */
 .icon-btn {
-  width: 28px;
-  height: 28px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -348,6 +381,12 @@ onMounted(() => {
   border-radius: 50%;
   transition: all 0.2s;
   padding: 0;
+  cursor: pointer;
+}
+
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
 }
 
 .icon-btn:hover {
@@ -367,33 +406,24 @@ onMounted(() => {
   color: #ced4da;
 }
 
-/* 퀵 액션 버튼 스타일 */
-.btn-xs {
-  padding: 2px 10px;
-  font-size: 11px;
+/* 스크롤바 */
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
 }
-
-/* 스크롤바 커스텀 */
-.chat-messages::-webkit-scrollbar,
-.custom-scrollbar-x::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-}
-.chat-messages::-webkit-scrollbar-thumb,
-.custom-scrollbar-x::-webkit-scrollbar-thumb {
+.chat-messages::-webkit-scrollbar-thumb {
   background: #dee2e6;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
-/* Typing Animation */
+/* 타이핑 인디케이터 */
 .typing-indicator span {
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
   background: #adb5bd;
   display: inline-block;
   border-radius: 50%;
   animation: typing 1.4s infinite ease-in-out both;
-  margin: 0 1px;
+  margin: 0 2px;
 }
 .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
 .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
