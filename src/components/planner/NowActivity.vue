@@ -2,14 +2,19 @@
   <div v-if="place" class="now-active-card">
     <!-- Header -->
     <div class="now-header">
-      <span class="now-badge">⭐ Day {{ dayIndex + 1 }} Plan</span>
+      <!-- Day Plan (크게) -->
+      <h3 class="now-badge mb-0">
+        Day {{ dayIndex + 1 }} Plan
+      </h3>
 
+      <!-- 오른쪽 영역 -->
       <div class="now-nav">
-        <button
-          class="now-nav-btn"
-          :disabled="index === 0"
-          @click="$emit('update:index', index - 1)"
-        >
+        <!-- 상태 배지 : < 버튼 왼쪽 -->
+        <span class="badge" :class="place.status === 'DONE' ? 'bg-success' : 'bg-warning'">
+          {{ place.status === 'DONE' ? '✔ Done' : '⏳ Pending' }}
+        </span>
+
+        <button class="now-nav-btn" :disabled="index === 0" @click="$emit('update:index', index - 1)">
           ‹
         </button>
 
@@ -17,47 +22,44 @@
           {{ index + 1 }} / {{ total }}
         </span>
 
-        <button
-          class="now-nav-btn"
-          :disabled="index === total - 1"
-          @click="$emit('update:index', index + 1)"
-        >
+        <button class="now-nav-btn" :disabled="index === total - 1" @click="$emit('update:index', index + 1)">
           ›
         </button>
       </div>
     </div>
 
-    <!-- Title -->
-    <div class="now-title">
+
+    <!-- Title (h 계열 활용 → typography.scss 적용) -->
+    <h5 class="now-title">
       {{ place.title }}
-    </div>
+    </h5>
 
     <!-- Time -->
-    <div class="now-subtitle">
+    <p class="now-subtitle text-muted">
       {{ formatTime(place.startAt) }}
       <span v-if="place.endAt">
         – {{ formatTime(place.endAt) }}
       </span>
-    </div>
+    </p>
 
     <!-- Info -->
     <div class="now-info-row">
       <div class="now-info-box">
-        <div class="now-info-label">Duration</div>
+        <small class="now-info-label">Duration</small>
         <div class="now-info-value">
           {{ getDuration(place.startAt, place.endAt) }}
         </div>
       </div>
 
       <div class="now-info-box">
-        <div class="now-info-label">Address</div>
+        <small class="now-info-label">Address</small>
         <div class="now-info-value truncate">
           {{ place.details?.address || "주소 정보 없음" }}
         </div>
       </div>
 
       <div class="now-info-box">
-        <div class="now-info-label">Type</div>
+        <small class="now-info-label">Type</small>
         <div class="now-info-value">
           {{ categoryMap[place.details?.type] || "기타" }}
         </div>
@@ -65,6 +67,7 @@
     </div>
   </div>
 </template>
+
 
 <script setup>
 /* ===========================

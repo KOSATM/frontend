@@ -38,6 +38,7 @@
 
     <!-- 🔥 Body Component -->
     <PlanDayTimeline
+      :days="days"
       :currentDayPlaces="currentDayPlaces"
       :editMode="editMode"
       :typeColor="typeColor"
@@ -260,7 +261,7 @@ const categoryMap = {
     CAFE: "카페",
     HOTEL: "숙소",
     EVENT: "이벤트",
-    ETC: "기타",
+    ETC: "공원",
 };
 
 const typeColor = (type) => {
@@ -271,6 +272,7 @@ const typeColor = (type) => {
         case "HOTEL": return "color-gray";
         case "SPOT": return "color-purple";
         case "EVENT": return "color-purple";
+        case "ETC": return "color-purple";
         default: return "color-purple";
     }
 };
@@ -283,6 +285,7 @@ const typeLabel = (type) => {
         case "HOTEL": return "숙소 이동";
         case "SPOT": return "관광지 추천";
         case "EVENT": return "이벤트 방문";
+        case "ETC": return "공원 산책";
         default: return null;
     }
 };
