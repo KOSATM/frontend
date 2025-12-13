@@ -156,8 +156,9 @@ const goToReview = async (id, title) => {
     // (이미 리스트가 업데이트되었으므로 뒤로가기로 돌아와도 제목이 유지됩니다)
     router.push({
       name: 'CreateTravelReview',
-      params: { planId: id },
-      query: { title: targetTitle },
+      params: { planId: id,
+        planTitle: targetTitle
+       },
     })
   }
 onMounted(() => {
