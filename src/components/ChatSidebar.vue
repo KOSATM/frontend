@@ -68,7 +68,7 @@
           @keydown.enter.exact.prevent="sendMessage"
           :disabled="isLoading"
           class="chat-text-input" 
-          placeholder="Ask plan..."
+          placeholder="질문을 입력해주세요..."
           rows="1"
           @input="autoResize"
           ref="textareaRef"
