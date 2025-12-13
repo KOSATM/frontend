@@ -1,6 +1,6 @@
 <template>
 <div class="supporter-page">
-  <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
+  <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" />
   <StepHeader title="이미지 기반 여행 AI" subtitle="당신의 사진으로 여행 장소를 찾아보아요!" step="2/4"
     @back="router.push({ name: 'CreateNewSearch' })" />
 
@@ -47,12 +47,17 @@
     </ul>
   </BaseSection>
 
-    <div class="d-flex mt-2">
-      <router-link class="btn btn-link" :to="{ name: 'CreateNewSearch' }">뒤로가기</router-link>
-      <button class="btn btn-primary ms-auto" :disabled="!selectedType" @click="goNext">
-        Next
-      </button>
+    <div class="d-flex gap-3 mt-5">
+       <NavigationButtons
+        back-text="뒤로 가기"
+        next-text="다음으로 가기"
+        :is-next-disabled="!selectedType"
+        @back="goBack"
+        @next="goNext"
+      >
+    </NavigationButtons>
     </div>
+
 </div>
 
 </template>
@@ -63,7 +68,15 @@ import { useRouter, useRoute } from 'vue-router'
 import StepHeader from '@/components/common/header/StepHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import PageHeader from '@/components/common/header/PageHeader.vue'
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
+
+const goBack = async () => {
+  router.push({
+    name: 'AiRecommend',
+    query: { preview: preview.value, type: selectedType.value }
+  })
+}
 const router = useRouter()
 const route = useRoute()
 

@@ -5,9 +5,9 @@
       <div v-if="isLoading" class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
         <div class="text-center">
           <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">불러오는 중...</span>
           </div>
-          <p class="text-muted">호텔 추천 정보를 불러오는 중입니다...</p>
+          <p class="text-muted">{{ loadingMessage }}</p>
         </div>
       </div>
 
@@ -20,10 +20,10 @@
       <div v-else>        
         <!-- Hotel List -->
         <div class="hotel-list mb-4">
-          <BaseSection icon="bi-buildings" title="Recommended Hotels" :subtitle="`Showing ${ filteredHotels.length} hotels for ${filters.guests} guests`">
+          <BaseSection icon="bi-buildings" title="추천하는 호텔" :subtitle="`Showing ${ filteredHotels.length} hotels for ${filters.guests} guests`">
             <div v-if="isLoading" class="text-center py-4">
               <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+                <span class="visually-hidden">불러오는 중...</span>
               </div>
             </div>
             <div v-else-if="error" class="alert alert-warning" role="alert">
@@ -46,7 +46,7 @@
                             <h5 class="card-title text-secondary mb-2">{{ hotel.name }}</h5>
                             <small class="text-muted d-block mb-2">{{ hotel.roomType }}</small>
                           </div>
-                          <span class="badge bg-primary">Rank #{{ hotel.rank }}</span>
+                          <span class="badge bg-primary">#{{ hotel.rank }}</span>
                         </div>
                         <p class="card-text text-muted small mb-2">
                           <i class="bi bi-geo-alt"></i>
@@ -61,7 +61,7 @@
                             <i class="bi bi-wifi me-1"></i> {{ hotel.facilities.WiFi }}
                           </span>
                           <span class="badge bg-light text-secondary me-2" v-if="hotel.breakfast">
-                            <i class="bi bi-cup-hot me-1"></i> Breakfast
+                            <i class="bi bi-cup-hot me-1"></i> 아침 식사
                           </span>
                           <span class="badge bg-light text-secondary me-2" v-if="hotel.facilities?.['24시간프론트']">
                             <i class="bi bi-clock me-1"></i> {{ hotel.facilities['24시간프론트'] }}
@@ -74,13 +74,13 @@
                           <div class="rating">
                             <i class="bi bi-star-fill text-warning"></i>
                             <span class="ms-1">{{ hotel.rating }}</span>
-                            <span class="text-muted">({{ hotel.reviews }} reviews)</span>
+                            <span class="text-muted">({{ hotel.reviews }} 후기들)</span>
                           </div>
                           <div class="price text-end">
                             <div class="fs-5 fw-bold text-primary">
                               ₩{{ hotel.price.toLocaleString() }}
                             </div>
-                            <small class="text-muted">per night</small>
+                            <small class="text-muted">1박당 가격</small>
                           </div>
                         </div>
                       </div>
@@ -96,7 +96,7 @@
         <div class="text-center">
           <NavigationButtons
             :backText="'이전'"
-            :nextText="'Next: Make a Payment'"
+            :nextText="'결제하기'"
             :isNextDisabled="!selectedHotel"
             @back="goBack"
             @next="confirmSelection"
@@ -117,10 +117,12 @@ import { useTravelStore } from '@/store/travelStore';
 import { useAuthStore } from '@/store/authStore';
 import hotelApi from '@/api/hotelApi';
 import BaseSection from '@/components/common/BaseSection.vue';
+import { useChatStore } from '@/store/chatStore';
 
 const router = useRouter();
 const travelStore = useTravelStore();
 const authStore = useAuthStore();
+const chatStore = useChatStore();
 
 const rangeValue = ref(50);
 const budget = ref(1000000);
@@ -133,6 +135,27 @@ const selectedHotel = ref(null);
 const hotels = ref([]);
 const isLoading = ref(false);
 const error = ref(null);
+const loadingMessage = ref('');
+
+// ✅ 로딩 메시지 배열
+const loadingMessages = [
+  '인공지능이 고객님에 맞는 호텔을 찾고 있습니다',
+  '최적의 호텔을 추천하고 있습니다',
+  '당신의 여행 스타일에 맞는 호텔을 검색 중입니다',
+  '완벽한 호텔을 찾기 위해 분석 중입니다',
+  '고객님의 조건에 맞는 호텔들을 수집 중입니다',
+  '호텔 정보를 비교하고 있습니다',
+  '추천 호텔 목록을 준비하고 있습니다',
+  '인공지능이 최고의 선택지를 찾고 있습니다',
+  '숙박 시설 데이터를 분석 중입니다',
+  '당신을 위한 특별한 호텔을 추천하고 있습니다'
+];
+
+// ✅ 랜덤 로딩 메시지 선택
+const getRandomLoadingMessage = () => {
+  const randomIndex = Math.floor(Math.random() * loadingMessages.length);
+  return loadingMessages[randomIndex];
+};
 
 // ✅ 호텔 이미지 배열 (0001.jpg ~ 0010.jpg)
 const hotelImages = ref([]);
@@ -173,7 +196,7 @@ const getRandomHotelImage = () => {
   } while (usedImageIndices.value.has(randomIndex));
 
   usedImageIndices.value.add(randomIndex);
-  console.log(`✅ Using image ${randomIndex + 1}/${hotelImages.value.length}`);
+  console.log(`Using image ${randomIndex + 1}/${hotelImages.value.length}`);
   
   return hotelImages.value[randomIndex];
 };
@@ -183,7 +206,12 @@ onMounted(async () => {
   // ✅ 호텔 이미지 초기화
   initializeHotelImages();
   
+  // ✅ 랜덤 로딩 메시지 설정
+  loadingMessage.value = getRandomLoadingMessage();
+  
   authStore.initializeAuth();
+  chatStore.planId ||= Number(localStorage.getItem("planId"));
+  chatStore.dayIndex ||= Number(localStorage.getItem("dayIndex"));
   
   isLoading.value = true;
   

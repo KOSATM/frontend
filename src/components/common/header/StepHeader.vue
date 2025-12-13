@@ -89,7 +89,7 @@ const progressPercent = computed(() => {
 
 /* 프로그레스 바 스타일 고도화 */
 .progress {
-  height: 8px; /* 너무 두껍지 않게 조정 (세련됨 유지) */
+  height: 10px; /* 너무 두껍지 않게 조정 (세련됨 유지) */
   background-color: #f1f3f5;
   border-radius: 10px;
   overflow: hidden;

@@ -1,30 +1,46 @@
 <template>
   <div class = "supporter-page">
-  <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
+  <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" />
   <PageHeader title="이미지 기반 여행 AI" subtitle="AI 추천을 사용해보세요." />
 
   <div class="complete-card card p-5 mt-4 text-center">
     <div class="check-circle mb-4">✓</div>
-    <h3 class="mb-2">Action Completed!</h3>
-    <p class="text-muted mb-4">Destination added to your itinerary</p>
+    <!-- action completed를 어케 번역함니까 -->
+    <h3 class="mb-2">이미지 검색 완료!</h3>
+    <p class="text-muted mb-4">당신의 여정에 장소가 추가됩니다!</p>
 
     <div class="d-flex flex-column align-items-center gap-3">
-      <router-link class="btn btn-lg btn-primary btn-wide" :to="{ name: 'CreateNewSearch' }">Search Another
-        Photo</router-link>
-      <router-link class="btn btn-lg btn-outline-primary btn-wide" :to="{ name: 'SupporterMain' }">Back to Travel
-        Supporter</router-link>
-    </div>
+             <NavigationButtons
+            back-text="다른 사진 검색하기"
+            next-text="서포터 메인으로 돌아가기"
+            @back="goSearchAnother"
+            @next="goBackToSupporter"
+          >
+          </NavigationButtons>
   </div>
-  </div>\
+  </div>
+  </div>
 </template>
 
 <script setup>
 import PageHeader from '@/components/common/header/PageHeader.vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 
+const router = useRouter();
 const route = useRoute()
 // optional: receive state plans if needed
 const plans = route?.state?.plans || null
+
+// 왼쪽(Back) 버튼 클릭 시 이동
+const goBackToSupporter = () => {
+  router.push({ name: 'SupporterMain' });
+};
+
+// 오른쪽(Next) 버튼 클릭 시 이동
+const goSearchAnother = () => {
+  router.push({ name: 'CreateNewSearch' });
+};
 </script>
 
 <style scoped>

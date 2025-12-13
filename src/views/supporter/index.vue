@@ -1,6 +1,6 @@
 <template>
   <div class="supporter-page">
-    <PageHeader title="서포터" subtitle="실시간으로 여행을 도와드립니다." icon="bi-chat-dots" />
+    <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" />
     <!-- <BackButtonPageHeader title="메인 페이지" subtitle="위치 기반으로 당신의 여행을 도와드립니다." @back="goBack"/> -->
 
     <div class="map-wrapper-full mb-4">

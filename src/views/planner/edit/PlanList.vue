@@ -158,46 +158,46 @@ const formatTime = (isoString) => {
 
 /* ---------- AI 일정 → 화면에 적용하는 함수 ---------- */
 const applyAiPlan = (payload) => {
-    console.log("✅ [PlanList] applyAiPlan 호출됨", payload);
+  console.log("✅ [PlanList] applyAiPlan 호출됨", payload);
 
-    if (!payload) return;
+  if (!payload) return;
 
-    plan.value = {
-        id: payload.planId,
-        startDate: payload.startDate,
-        endDate: payload.endDate,
-        title: payload.title ?? "AI 추천 여행 일정",
-    };
+  plan.value = {
+    id: payload.planId,
+    startDate: payload.startDate,
+    endDate: payload.endDate,
+    title: payload.title ?? "AI 추천 여행 일정",
+  };
 
-    days.value = payload.days.map((d) => ({
-        day: {
-            id: d.dayIndex,
-            dayIndex: d.dayIndex,
-            planDate: d.date,
-            title: `Day ${d.dayIndex}`,
-        },
-        places: d.schedules.map((s) => ({
-            title: s.title,
-            startAt: s.startAt,
-            endAt: s.endAt,
-            placeName: s.placeName,
-            address: s.address,
-            details: {
-                type: s.normalizedCategory ?? "ETC",
-                gallery: s.firstImage2
-                    ? [s.firstImage2]
-                    : (s.firstImage ? [s.firstImage] : []),
-                desc: `${s.title} 방문을 추천합니다`,
-                address: s.address,
-                area: "Seoul",
-                firstImage: s.firstImage,
-                firstImage2: s.firstImage2,
-            },
-        })),
-    }));
-
-    selectedDayIndex.value = 0;
-    console.log("✅ [PlanList] days 갱신:", days.value);
+  days.value = payload.days.map((d) => ({
+    day: {
+      id: d.dayIndex,
+      dayIndex: d.dayIndex,
+      planDate: d.date,
+      title: `Day ${d.dayIndex}`,
+    },
+    places: d.schedules.map((s) => ({
+      title: s.title,
+      startAt: s.startAt,
+      endAt: s.endAt,
+      placeName: s.placeName,
+      address: s.address,
+      details: {
+        type: s.normalizedCategory ?? "ETC",
+        gallery: s.firstImage2
+          ? [s.firstImage2]
+          : (s.firstImage ? [s.firstImage] : []),
+        desc: `${s.title} 방문을 추천합니다`,
+        address: s.address,
+        area: "Seoul",
+        firstImage: s.firstImage,
+        firstImage2: s.firstImage2,
+      },
+    })),
+  }));
+  travelStore.setPlanInfo(payload.planId, travelStore.dayIndex, travelStore.planDate);
+  selectedDayIndex.value = 0;
+  console.log("[PlanList] days 갱신:", days.value);
 };
 
 /* ---------- ⭐ 핵심: 시간(updatedAt)을 watch ---------- */
@@ -308,13 +308,17 @@ const renderPlan = async () => {
     const res = await plannerApi.getActivePlan(authStore.userId);
     const raw = res?.data?.data || {};
 
-    console.log("📥 [PlanList] 서버에서 불러온 계획 데이터:", raw);
-    plan.value = raw.plan || null;
+  console.log("📥 [PlanList] 서버에서 불러온 계획 데이터:", raw);
+  
+  plan.value = raw.plan || null;
 
-    days.value = (raw.days || []).map((d) => ({
-        day: d.day,
-        places: normalizePlaces(d.places),
-    }));
+  days.value = (raw.days || []).map((d) => ({
+    day: d.day,
+    places: normalizePlaces(d.places),
+  }));
+
+  travelStore.setPlanInfo(raw.plan.id, travelStore.dayIndex, travelStore.planDate);
+  
 };
 
 /* ---------- onMounted ---------- */
@@ -332,7 +336,14 @@ onMounted(async () => {
     console.log(
         "🔵 [PlanList] onMounted: 스토어에 AI 플랜 없음 → 서버에서 플랜 불러옴"
     );
-    await renderPlan();
+    applyAiPlan(chatStore.livePlanFromChat.data);
+    return;
+  }
+
+  console.log(
+    "🔵 [PlanList] : 스토어에 AI 플랜 없음 → 서버에서 플랜 불러옴"
+  );
+  await renderPlan();
 });
 
 

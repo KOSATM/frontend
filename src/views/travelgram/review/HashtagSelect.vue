@@ -1,6 +1,6 @@
 <template>
   <div class="hashtag-page">
-    <PageHeader title="Travelgram" subtitle="더 많은 사람에게 닿을 수 있도록 해시태그를 함께 추가해주세요." icon="bi-instagram" />
+    <PageHeader title="트래벌그램" subtitle="더 많은 사람에게 닿을 수 있도록 해시태그를 함께 추가해주세요." icon="bi-instagram" />
     <StepHeader title="해시태그 편집" :subtitle="reviewStore.planTitle" step="4/6" @back="goBack" />
 
     <section class="hashtag-section">
@@ -132,7 +132,7 @@ const addCustomTag = () => {
   newTagInput.value = ''
 }
 
-const goBack = () => router.back()
+const goBack = () => router.push({name: 'CaptionSelect'});
 
 const goNext = async() => {
   try {
