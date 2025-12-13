@@ -8,40 +8,45 @@
          HERO / 여행 요약 카드
     ========================== -->
     <div class="plan-hero" v-if="currentplanInfo">
-      <div class="plan-hero-top">
-        <div class="plan-hero-text">
-          <h3 class="plan-hero-title">{{ planTitle }}</h3>
-          <p class="plan-hero-sub">
-            사진으로 여행을 다시 정리해요.
-            업로드하면 AI가 감성적인 후기를 만들어줘요.
-          </p>
+    <!-- 상단 정보 영역 -->
+    <div class="hero-main">
+      <div class="hero-text">
+        <h3 class="plan-hero-title">{{ planTitle }}</h3>
+        <p class="plan-hero-sub">
+          사진으로 여행을 다시 정리해요.
+          업로드하면 AI가 감성적인 후기를 만들어줘요.
+        </p>
 
-          <div class="chip-row">
-            <span class="chip">📍 {{ currentplanInfo.location }}</span>
-            <span class="chip">📅 {{ currentplanInfo.date }}</span>
-            <span class="chip" v-if="currentplanInfo.rawCost > 0">
-              💸 {{ currentplanInfo.cost }}
-            </span>
-            <span class="chip" v-else>💸 Budget 미입력</span>
-          </div>
+        <div class="chip-row">
+          <span class="chip">📍 {{ currentplanInfo.location }}</span>
+          <span class="chip">📅 {{ currentplanInfo.date }}</span>
+          <span class="chip" v-if="currentplanInfo.rawCost > 0">
+            💸 {{ currentplanInfo.cost }}
+          </span>
+          <span class="chip" v-else>💸 Budget 미입력</span>
         </div>
-
-        <div class="hero-cover">
-          <transition name="fade">
-            <img v-if="hasPhotos" :src="uploadedImages[0]?.previewUrl || uploadedImages[0]?.url"
-              class="hero-cover-img" />
-            <div v-else class="hero-cover-placeholder">
-              대표 사진 미리보기
-            </div>
-          </transition>
-        </div>
-
-
-        <!-- 핵심 CTA -->
-        <button class="primary-cta" @click="scrollToUploader">
-          📸 여행 사진 업로드하고 AI 후기 만들기
-        </button>
       </div>
+
+      <!-- 대표사진 -->
+      <div class="hero-image">
+        <transition name="fade">
+          <img
+            v-if="hasPhotos"
+            :src="uploadedImages[0]?.previewUrl || uploadedImages[0]?.url"
+            class="hero-cover-img"
+          />
+          <div v-else class="hero-cover-placeholder">
+            대표 사진 미리보기
+          </div>
+        </transition>
+      </div>
+    </div>
+
+    <!-- CTA는 분리 -->
+    <button class="primary-cta" @click="scrollToUploader">
+      📸 여행 사진 업로드하고 AI 후기 만들기
+    </button>
+
 
       <!-- =========================
          일정 (접힘/펼침)
@@ -64,13 +69,7 @@
          사진 업로드 섹션
     ========================== -->
       <div class="uploader-anchor"></div>
-
       <div class="upload-section">
-        <h5 class="upload-title">사진 업로드</h5>
-        <p class="upload-sub">
-          최대 10장까지 업로드할 수 있어요.
-          업로드 후 AI가 자동으로 분석해요.
-        </p>
 
         <PhotoUploader v-model="uploadedImages" :is-ready="isReady" :photo-group-id="reviewStore.photoGroupId"
           :max-count="10" @upload-started="startPolling" />
@@ -246,6 +245,10 @@ const hasPhotos = computed(() => uploadedImages.value.length > 0)
   padding: 2rem 1.25rem 6rem;
 }
 
+.itinerary-section {
+  margin-top: 28px; /* 🔥 이 한 줄이 핵심 */
+}
+
 .plan-hero {
   background: #fff;
   border-radius: 20px;
@@ -308,6 +311,41 @@ const hasPhotos = computed(() => uploadedImages.value.length > 0)
   background: linear-gradient(135deg, #ff7a00, #ffb347);
 }
 
+.hero-main {
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+/* 텍스트 영역 */
+.hero-text {
+  flex: 1 1 320px; /* 최소 폭 */
+}
+
+/* 이미지 영역 */
+.hero-image {
+  flex: 0 0 180px;
+  aspect-ratio: 3 / 4; /* 🔥 사진 비율 고정 */
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* 이미지 */
+.hero-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  .hero-image {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
+
 .plan-hero-top {
   display: grid;
   grid-template-columns: 1fr 160px;
@@ -366,15 +404,6 @@ const hasPhotos = computed(() => uploadedImages.value.length > 0)
   box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
   padding: 18px;
   margin-top: 20px;
-}
-
-.upload-title {
-  font-weight: 800;
-}
-
-.upload-sub {
-  color: #6b7280;
-  font-size: .9rem;
 }
 
 .uploader-anchor {
