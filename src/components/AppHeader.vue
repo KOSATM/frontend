@@ -1,52 +1,37 @@
 <template>
-  <nav ref="navbar" class="navbar navbar-fms fixed-top" >
+  <nav ref="navbar" class="navbar navbar-fms fixed-top">
     <div class="container-fluid d-flex justify-content-between align-items-center px-3">
-      <!-- 좌측: 로고 -->
       <router-link to="/" class="navbar-brand d-flex align-items-center text-decoration-none">
-        <img
-          src="@/assets/img/logo-bg-rm.png"
-          alt="Find My Seoul"
-          class="logo-img"
-        />
+        <img src="@/assets/img/logo-bg-rm.png" alt="Find My Seoul" class="logo-img" />
       </router-link>
 
-      <!-- 우측: 프로필 이미지 + 햄버거 버튼 -->
       <div class="d-flex align-items-center gap-3">
-        <!-- 로그인 상태 표시 -->
+        
         <div v-if="isLoggedIn" class="login-info d-flex align-items-center gap-2">
-          <span class="user-info">{{ userInfo }}</span>
-          <button
-            @click="handleLogout"
-            class="logout-btn"
-            title="Logout"
-          >
+          
+          <span class="user-info">{{ userName || 'User' }}</span>
+          
+          <button @click="onLogoutClick" class="logout-btn" title="Logout">
             로그아웃
           </button>
         </div>
 
-        <!-- OAuth 로그인 / 프로필 이미지 버튼 -->
         <a
           v-if="!isLoggedIn"
           href="http://localhost:8080/oauth2/authorization/google"
           class="btn profile-btn border-0 p-0"
           title="Login with Google OAuth"
         >
-          <img
-            src="@/assets/img/profile-logo.png"
-            alt="Profile"
-            class="profile-img"
-          />
+          <img src="@/assets/img/profile-logo.png" alt="Profile" class="profile-img" />
         </a>
 
-        <!-- 로그인 후 프로필 이미지 -->
         <img
           v-else
-          src="@/assets/img/profile-logo.png"
+          :src="userProfileImage || defaultProfileImg" 
           alt="Profile"
           class="profile-img-logged-in"
         />
 
-        <!-- 햄버거 버튼 -->
         <button
           class="btn text-white fs-4 border-0 p-2"
           type="button"
@@ -62,40 +47,31 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/store/authStore'
+import { storeToRefs } from 'pinia'
 
-const navbar = ref(null)
+// ✅ 기본 이미지 import (템플릿에서 쓰기 위해)
+import defaultProfileImg from '@/assets/img/profile-logo.png'
+
 const router = useRouter()
+const navbar = ref(null)
 
-// 로그인 상태 확인
-const isLoggedIn = computed(() => {
-  return !!localStorage.getItem('jwtToken')
-})
+const authStore = useAuthStore()
 
-// 사용자 정보 표시 (이름)
-const userInfo = computed(() => {
-  const userStr = localStorage.getItem('user')
+// isLoggedIn, userName, userProfileImage가 실시간으로 바뀝니다.
+const { isLoggedIn, userName, userProfileImage } = storeToRefs(authStore)
+
+const onLogoutClick = () => {
+  // Store의 로그아웃 액션 실행 (데이터 비우기)
+  authStore.logout() 
   
-  if (userStr) {
-    try {
-      const user = JSON.parse(userStr)
-      return user.name || user.email || 'User'
-    } catch (e) {
-      console.error('Failed to parse user:', e)
-      return 'User'
-    }
-  }
-  return 'User'
-})
-
-// 로그아웃 함수
-const handleLogout = () => {
-  localStorage.removeItem('jwtToken')
-  localStorage.removeItem('accessToken')
-  localStorage.removeItem('user')
   console.log('✅ 로그아웃 완료')
-  window.location.href = '/'
+  
+  // 메인으로 이동
+  router.push('/') 
+  // 또는 window.location.href = '/' (새로고침이 필요하다면 이것 사용)
 }
 
 const handleScroll = () => {
