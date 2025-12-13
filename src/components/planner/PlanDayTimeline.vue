@@ -1,3 +1,4 @@
+<!-- src/components/planner/PlanDayTimeline.vue -->
 <template>
   <!-- Body -->
   <div class="planner-scroll flex-grow-1 overflow-auto">
