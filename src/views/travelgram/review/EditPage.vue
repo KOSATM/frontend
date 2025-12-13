@@ -41,7 +41,7 @@
         <textarea v-model="caption" rows="4" class="caption-box" maxlength="2200"></textarea>
         
         <p class="char-count" :class="{ 'text-danger': captionByteLength > 2200 }">
-          {{ captionByteLength }} / 2200 (Byte)
+          {{ captionByteLength }} / 2200 (바이트)
         </p>
       </div>
 
