@@ -17,11 +17,8 @@
 
       <TipBox
       name="대표 사진 안내"
-      description="대표 사진은 삭제되거나 순서를 바꿀 수 없습니다.
-      기존 대표 사진이 아닌 사진 항목을 선택해 대표 사진으로 만들 수 있습니다.
-      대표 사진은 항상 맨 위로 고정됩니다.
-      다른 사진들은 자유롭게 삭제하거나 순서를 바꿀 수 있습니다."
-  />
+      description="대표 사진은 삭제할 수 없습니다.
+                  사진 순서만 변경할 수 있습니다." />
   <transition-group
   name="photo-move"
       tag="div"
@@ -37,7 +34,9 @@
         <div class="photo-thumb">
         <img :src="photo.url" />
         <transition name="badge-pop">
-          <span v-if="photo.id === mainPhotoId" class="main-badge">
+          <span
+          v-if="index === 0 && photo.id === mainPhotoId"
+          class="main-badge">
             대표
           </span>
         </transition>
@@ -56,9 +55,9 @@
           <button class="btn btn-sm btn-outline-secondary me-1" @click="moveDown(index)">
             <i class="bi bi-arrow-down"></i>
           </button>
-          <button class="btn btn-sm btn-outline-danger me-1" @click="removePhoto(photo.id)">
+          <!-- <button class="btn btn-sm btn-outline-danger me-1" @click="removePhoto(photo.id)">
             <i class="bi bi-x-lg"></i>
-          </button>
+          </button> -->
         </div>
       </div>
     </transition-group>
@@ -117,9 +116,8 @@ const mainPhotoId = ref(reviewStore.mainPhotoId)
    🔥 1) 첫 번째 사진을 기본 대표사진으로 자동 설정
 ----------------------------------- */
 onMounted(() => {
-  if (!mainPhotoId.value && photos.value.length > 0) {
+    if (photos.value.length > 0) {
     mainPhotoId.value = photos.value[0].id
-    photos.value[0].isMain = true
   }
 })
 const syncMainPhoto = () => {
