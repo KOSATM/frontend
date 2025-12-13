@@ -5,5 +5,13 @@ export const JOURNEY_SUBTITLES = {
   4: '여행의 분위기를 선택해요. 감성의 색을 입혀볼까요?',
   5: '여행을 잘 설명해줄 태그들을 정리해요.',
   6: '모든 준비가 끝났어요. 여행 이야기를 완성해볼까요?'
-}
-export default JOURNEY_SUBTITLES;
+};
+
+export const journeySteps = [
+  { key: 1, icon: 'bi-camera' },
+  { key: 2, icon: 'bi-star' },
+  { key: 3, icon: 'bi-pencil' },
+  { key: 4, icon: 'bi-palette' },
+  { key: 5, icon: 'bi-tags' },
+  { key: 6, icon: 'bi-rocket' }
+];
