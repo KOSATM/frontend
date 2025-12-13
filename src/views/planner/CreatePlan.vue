@@ -1,7 +1,7 @@
 <template>
   <div class="planner-create">
     <!-- 플래너 탭 -->
-    <PageHeader title="Planner" subtitle="Create and manage your Seoul travel itinerary" icon="bi-map" />
+    <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
 
     <!-- 메인 컨텐츠 -->
     <div class="content-wrapper px-4 py-4">
@@ -10,13 +10,13 @@
       <div class="prompt-section mb-5">
         <div class="prompt-card">
           <div class="prompt-input-wrapper">
-            <textarea class="prompt-input form-control" placeholder="Leave a comment here" v-model="promptInput"
+            <textarea class="prompt-input form-control" placeholder="여행 일정을 생성해보세요. 예) KPOP 3일 여행 일정을 생성해줘." v-model="promptInput"
               rows="4"></textarea>
 
             <!-- Button sits inside the textarea wrapper, overlapping the bottom-left -->
             <button class="btn-generate" @click="generateItinerary" :disabled="!promptInput.trim() || isLoading">
               <span v-if="isLoading" class="spinner-border spinner-border-sm" role="status"></span>
-              Start
+              생성하기
               <i class="bi bi-play-fill"></i>
             </button>
           </div>
@@ -33,41 +33,41 @@
 
       <!-- AI-Recommended Places -->
       <div class="recommended-section mb-4">
-        <h5 class="fw-bold">AI-Recommended Places</h5>
+        <h3 class="fw-bold">서울 추천 장소 검색</h3>
 
         <!-- 카드 그리드 -->
         <div class="row g-3 mb-3">
           <!-- Accommodation -->
           <div class="col-6">
             <RecommendationCard imageSrc="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500"
-              alt="Accommodation" cardLabel="Accommodation" icon="bi-house-heart" @click="openModal('accommodation')" />
+              alt="Accommodation" cardLabel="감성 숙소" icon="bi-house-heart" @click="openModal('accommodation')" />
           </div>
 
           <!-- Restaurants -->
           <div class="col-6">
             <RecommendationCard imageSrc="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500"
-              alt="Restaurants" cardLabel="Restaurants" icon="bi-cup-hot" @click="openModal('restaurants')" />
+              alt="Restaurants" cardLabel="맛집 내돈내산" icon="bi-cup-hot" @click="openModal('restaurants')" />
           </div>
 
           <!-- Attractions -->
           <div class="col-6">
             <RecommendationCard imageSrc="https://images.unsplash.com/photo-1553603227-2358aabe821e?w=500"
-              alt="Attractions" cardLabel="Attractions" icon="bi-compass" @click="openModal('attractions')" />
+              alt="Attractions" cardLabel="가볼만한 곳" icon="bi-compass" @click="openModal('attractions')" />
           </div>
           <!-- Photo Spots -->
           <div class="col-6">
             <RecommendationCard imageSrc="https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=500"
-              alt="Photospots" cardLabel="Photospots" icon="bi-camera" @click="openModal('photospots')" />
+              alt="Photospots" cardLabel="사진 명소" icon="bi-camera" @click="openModal('photospots')" />
           </div>
           <!-- Festivals -->
           <div class="col-6">
             <RecommendationCard imageSrc="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500"
-              alt="Festivals" cardLabel="Festivals" icon="bi-music-note" @click="openModal('festivals')" />
+              alt="Festivals" cardLabel="축제" icon="bi-music-note" @click="openModal('festivals')" />
           </div>
           <!-- Experiences -->
           <div class="col-6">
             <RecommendationCard imageSrc="https://images.unsplash.com/photo-1528543606781-2f6e6857f318?w=500"
-              alt="Experiences" cardLabel="Experiences" icon="bi-calendar-event" @click="openModal('experiences')" />
+              alt="Experiences" cardLabel="이색 체험" icon="bi-calendar-event" @click="openModal('experiences')" />
           </div>
         </div>
       </div>
@@ -83,7 +83,6 @@
 </template>
 
 <script setup>
-import BaseButton from "@/components/common/button/BaseButton.vue";
 import PageHeader from "@/components/common/header/PageHeader.vue";
 import TipBox from "@/components/common/TipBox.vue";
 import RecommendationCard from "@/components/planner/RecommendationCard.vue";
@@ -265,11 +264,9 @@ onMounted(async () => {
 .prompt-header {
   display: flex;
   align-items: center;
-  font-size: 0.95rem;
   color: #1b3b6f;
 
   i {
-    font-size: 1.2rem;
     color: #ff914d;
   }
 
@@ -278,7 +275,6 @@ onMounted(async () => {
   }
 
   span:nth-child(3) {
-    font-size: 0.9rem;
     color: #999;
   }
 }
@@ -294,7 +290,6 @@ onMounted(async () => {
     /* top right bottom left */
     border: 1px solid #ddd;
     border-radius: 0.75rem;
-    font-size: 0.95rem;
     background-color: #f9f9f9;
     color: #1b3b6f;
     transition: all 0.2s ease;
@@ -326,7 +321,6 @@ onMounted(async () => {
     border: none;
     border-radius: 28px;
     font-weight: 600;
-    font-size: 0.95rem;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -334,7 +328,6 @@ onMounted(async () => {
     box-shadow: 0 6px 18px rgba(#ff914d, 0.18);
 
     i {
-      font-size: 0.85rem;
     }
 
     &:hover {
@@ -355,70 +348,15 @@ onMounted(async () => {
 }
 
 /* AI-Recommended Places 제목 - 타이포그래피 스타일 적용 */
-.recommended-section h5 {
+/* .recommended-section h5 {
   color: #1b3b6f;
   font-weight: 700;
   margin-bottom: 1.5rem !important;
-}
+} */
 
-/* 추천 카드 스타일 - 컴포넌트 스타일 적용 */
-.recommendation-card {
-  position: relative;
-  border-radius: 2rem;
-  overflow: hidden;
-  cursor: pointer;
-  height: 150px;
-  box-shadow: 0 6px 16px rgba(255, 140, 0, 0.2);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border: 1px solid rgba(#ff914d, 0.3);
-  background-color: #ffffff;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(255, 140, 0, 0.2);
-    border-color: rgba(#ff914d, 0.3);
-  }
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .card-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 12px;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .card-icon {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(255, 255, 255, 0.95) !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-    i {
-      font-size: 16px;
-    }
-  }
-
-  .card-label {
-    font-size: 14px;
-    font-weight: 600;
-  }
-}
 
 /* 버튼 스타일 - BaseButton이 있지만 추가 커스텀 */
-:deep(.btn-primary) {
+/* :deep(.btn-primary) {
   background: linear-gradient(90deg, #ff914d 0%, lighten(#ff914d, 10%) 100%);
   border: none;
   color: #fff;
@@ -429,7 +367,7 @@ onMounted(async () => {
     transform: scale(1.02);
     box-shadow: 0 4px 12px rgba(#ff914d, 0.4);
   }
-}
+} */
 
 /* 그리드 간격 조정 */
 .row.g-3 {
@@ -455,14 +393,6 @@ onMounted(async () => {
     .card-icon {
       width: 28px;
       height: 28px;
-
-      i {
-        font-size: 14px;
-      }
-    }
-
-    .card-label {
-      font-size: 12px;
     }
 
     .card-overlay {
@@ -470,8 +400,5 @@ onMounted(async () => {
     }
   }
 
-  .recommended-section h5 {
-    font-size: 1.1rem;
-  }
 }
 </style>

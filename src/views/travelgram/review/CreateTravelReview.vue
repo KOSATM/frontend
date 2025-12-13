@@ -1,6 +1,6 @@
 <template>
   <div class="photo-upload-page">
-    <PageHeader title="Travelgram" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
+    <PageHeader title="트래벌그램" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
     <!-- 🔸 상단 헤더 -->
     <StepHeader title="여행 후기 작성" :subtitle="reviewStore.planTitle" step="1/6" @back="goBack" />
 
