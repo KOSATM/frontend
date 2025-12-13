@@ -8,6 +8,12 @@ async function getSuggestPlaces(userId, planPlace) {
   return await api.post(`/${userId}/suggest-places`, planPlace)
 }
 
+
+async function getActivePlanIdAndDayIndex(userId) {
+  const res = await api.get(`/plans/${userId}/active/plan/info`, userId)
+  return res.data;
+}
+
 const getBlogList = async (keyword) => {
   const res = await api.get('api/search/blog', {
     params: {
@@ -19,5 +25,6 @@ const getBlogList = async (keyword) => {
 export default {
   getActivePlan,
   getBlogList,
-  getSuggestPlaces
+  getSuggestPlaces,
+  getActivePlanIdAndDayIndex
 };

@@ -141,10 +141,12 @@ import { useTravelStore } from '@/store/travelStore';
 import { useAuthStore } from '@/store/authStore';
 import hotelApi from '@/api/hotelApi';
 import BaseSection from '@/components/common/BaseSection.vue';
+import { useChatStore } from '@/store/chatStore';
 
 const router = useRouter();
 const travelStore = useTravelStore();
 const authStore = useAuthStore();
+const chatStore = useChatStore();
 
 const rangeValue = ref(50);
 const budget = ref(1000000);
@@ -197,7 +199,7 @@ const getRandomHotelImage = () => {
   } while (usedImageIndices.value.has(randomIndex));
 
   usedImageIndices.value.add(randomIndex);
-  console.log(`✅ Using image ${randomIndex + 1}/${hotelImages.value.length}`);
+  console.log(`Using image ${randomIndex + 1}/${hotelImages.value.length}`);
   
   return hotelImages.value[randomIndex];
 };
@@ -208,6 +210,8 @@ onMounted(async () => {
   initializeHotelImages();
   
   authStore.initializeAuth();
+  chatStore.planId ||= Number(localStorage.getItem("planId"));
+  chatStore.dayIndex ||= Number(localStorage.getItem("dayIndex"));
   
   isLoading.value = true;
   
