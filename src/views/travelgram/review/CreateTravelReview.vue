@@ -1,7 +1,6 @@
 <template>
   <div class="photo-upload-page">
     <PageHeader title="트래벌그램" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
-    <!-- 🔸 상단 헤더 -->
     <StepHeader title="여행 후기 작성" subtitle="여행 사진을 업로드해서 AI에게 사진 분석을 맡겨보세요." step="1/6" @back="goBack" />
 
     <!-- 여행 정보 카드 -->
@@ -86,43 +85,21 @@
       </div>
     </div>
 
+    <PhotoUploader 
+      v-model="uploadedImages" 
+      :is-ready="isReady"
+      :photo-group-id="reviewStore.photoGroupId"
+      :max-count="10"
+      @upload-started="startPolling"
+    />
 
-
-    <h5 class="upload-title mb-1">
-      <i class="bi bi-image me-1 text-secondary"></i> 사진 업로드
-    </h5>
-    <p class="upload-subtitle">
-      10개까지 사진을 올릴 수 있습니다. ({{ uploadedImages.length }}/10)
-    </p>
-    <section class="upload-section">
-
-      <!-- 🖼️ 업로드 박스 -->
-      <div v-if="isReady" class="upload-box" @click="triggerFileInput">
-        <i class="bi bi-cloud-arrow-up fs-2 text-secondary mb-2"></i>
-        <p class="text-secondary mb-0">클릭해서 사진을 업로드하세요.</p>
-        <small class="text-muted">사진 크기는 각 10MB까지 가능하며, JPG,PNG만 올려주세요.</small>
-        <input type="file" multiple accept="image/*" ref="fileInput" @change="handleFileUpload" hidden />
-      </div>
-
-      <div v-if="uploadedImages.length" class="preview-grid mt-3">
-        <div v-for="(img, idx) in uploadedImages" :key="idx" class="preview-item">
-          <img :src="img.url" :alt="img.name" :class="{ 'opacity-50': img.uploading }" />
-
-          <div v-if="img.uploading" class="upload-spinner">
-            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
-          </div>
-        </div>
-      </div>
-  </section>
-
-<div v-if="isAnalyzing" class="alert alert-info mt-3 d-flex align-items-center">
+    <div v-if="isAnalyzing" class="alert alert-info mt-3 d-flex align-items-center">
       <div class="spinner-border spinner-border-sm me-2" role="status"></div>
       <div>
         <strong>AI가 사진을 분석하고 있어요...</strong>
         <span class="small ms-1">사진 요약이 종료될 때까지 기다려주세요.</span>
       </div>
     </div>
-
 
     <NavigationButtons
       backText="Back"
@@ -147,6 +124,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { computed, onMounted,onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+import PhotoUploader from '@/components/travelgram/PhotoUploader.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -306,99 +284,11 @@ onUnmounted(() => {
   stopPolling()
 })
 
-
-
-const triggerFileInput = () => fileInput.value?.click()
-// ------------------------------
-// 1) 파일 선택 핸들러 (즉시 미리보기 + 동시 업로드)
-// ------------------------------
-const handleFileUpload = async (event) => {
-  const files = Array.from(event.target.files);
-
-  if (uploadedImages.value.length + files.length > 10) {
-    alert('최대 10장까지만 업로드할 수 있습니다.');
-    return;
-  }
-
-  const baseOrderIndex = uploadedImages.value.length;
-
-  // ✅ [STEP 1] 즉시 미리보기 생성 (FileReader 제거)
-  // URL.createObjectURL은 파일을 읽을 필요 없이 브라우저 메모리 주소만 따오므로 즉시 실행됩니다.
-  const newPreviewImages = files.map((file, index) => ({
-    id: uuidv4(),      // 임시 ID
-    name: file.name,
-    url: URL.createObjectURL(file), // ⭐ 핵심: 즉시 미리보기 URL 생성
-    file: file,
-    uploading: true,   // 로딩 상태 표시용
-    orderIndex: baseOrderIndex + index,
-  }));
-
-  // 화면에 바로 반영 (사용자는 이미지가 바로 뜬 것처럼 느낌)
-  uploadedImages.value = [...uploadedImages.value, ...newPreviewImages];
-
-  // ✅ [STEP 2] 백그라운드에서 업로드 수행
-  try {
-    const uploadedList = await uploadPhotos(files, reviewStore.photoGroupId, baseOrderIndex);
-    const finalUploadedList = uploadedList.data || [];
-
-    // ✅ [STEP 3] 업로드가 완료되면 S3 URL로 교체해주기
-    finalUploadedList.forEach((uploaded) => {
-      const targetImg = uploadedImages.value.find(
-        (img) => img.orderIndex === uploaded.orderIndex
-      );
-      startPolling()
-      if (targetImg) {
-        // 기존 blob: URL 메모리 해제 (메모리 누수 방지)
-        URL.revokeObjectURL(targetImg.url);
-
-        // 서버에서 받은 진짜 URL과 ID로 교체
-        targetImg.url = uploaded.fileUrl;
-        targetImg.id = uploaded.id;
-        targetImg.uploading = false; // 로딩 완료
-        targetImg.file = null;       // 원본 파일 객체는 이제 필요 없음
-      }
-    });
-
-    console.log("업로드 완료 및 URL 교체 성공");
-
-  } catch (error) {
-    console.error('File upload failed:', error);
-    alert('사진 업로드에 실패했습니다.');
-
-    // 실패 시, 방금 추가했던 가짜 이미지들 삭제
-    uploadedImages.value = uploadedImages.value.filter(
-      (img) => img.orderIndex < baseOrderIndex
-    );
-  } finally {
-    // input 초기화 (같은 파일 다시 선택 가능하게)
-    if (fileInput.value) fileInput.value.value = '';
-  }
-};
-
 const canProceed = computed(() => {
   return uploadedImages.value.length > 0 
       && !uploadedImages.value.some(img => img.uploading)
       && !isAnalyzing.value
 })
-// ============================================================
-// 2) 백엔드 업로드 함수 (여기가 '다이어트' 된 핵심 부분)
-// ============================================================
-const uploadPhotos = async (files, photoGroupId, startOrderIndex = 0) => {
-  const formData = new FormData();
-  
-  formData.append("photoGroupId", photoGroupId);
-  formData.append("startOrderIndex", startOrderIndex);
-
-  const fileArray = Array.isArray(files) ? files : [files];
-  fileArray.forEach((file) => {
-    formData.append("files", file); 
-  });
-
-  return api.uploadReviewPhotos(formData);
-};
-
-
-
 
 
 // Step 2로 이동
