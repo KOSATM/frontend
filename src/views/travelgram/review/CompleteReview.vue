@@ -1,147 +1,178 @@
 <template>
+  <div class="travelgram-page">
   <PageHeader
     title="트래벌그램"
     subtitle="당신의 지난 여행 기록들"
     icon="bi-instagram"
   />
+
   <div class="complete-page">
     <div class="complete-container">
+      <!-- 🎉 아이콘 -->
       <div class="success-icon">
         🎉
       </div>
 
-      <h2>인스타그램에 후기가 성공적으로 업로드 되었습니다!</h2>
-      <p class="message">
-        당신의 여행 후기가 인스타그램에 공유되었습니다.<br />
-        당신의 추억이 다른 사람들의 여행에 영감을 주기를 바랍니다!
-      </p>
+      <!-- 제목 -->
+      <h2 class="complete-title">
+        후기가 인스타그램에<br />
+        성공적으로 업로드되었어요
+      </h2>
 
-      <div class="share-box">
-        <p>인스타그램에서 다른 사람들에게 당신의 게시물을 공유하고 싶나요?</p>
-        <a
-          href="https://www.instagram.com/"
-          target="_blank"
-          class="btn-view"
-        >
-          <i class="bi bi-instagram me-2"></i>인스타그램에서 보기
-        </a>
+      <!-- 설명 (가독성 개선) -->
+      <div class="message">
+        <p>당신의 여행 이야기가 세상과 연결되었습니다.</p>
+        <p>이 순간이 누군가의 여행에</p>
+        <p>작은 영감이 되기를 바랍니다.</p>
       </div>
 
-          <NavigationButtons
-      backText="처음으로 돌아가기"
-      nextText="메인 홈으로 돌아가기"
-      @back="goToTravelgram"
-      @next="goHome"
-    >
-    </NavigationButtons>
+      <!-- 인스타 CTA -->
+      <div class="share-box">
+        <p class="share-text">
+          인스타그램에서 직접 확인해보세요
+        </p>
+
+        <!-- ✅ 버튼 형태 -->
+        <button class="btn-instagram" @click="openInstagram">
+          <i class="bi bi-instagram me-2"></i>
+          인스타그램에서 보기
+        </button>
+      </div>
+
+      <!-- 하단 네비 -->
+      <NavigationButtons
+        backText="다시 후기 만들기"
+        nextText="메인 홈으로"
+        @back="goToTravelgram"
+        @next="goHome"
+      />
     </div>
   </div>
+  </div>
 </template>
+
 
 <script setup>
 import { useRouter } from 'vue-router'
 import PageHeader from '@/components/common/header/PageHeader.vue'
-import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue'
 
 const router = useRouter()
 
 const goToTravelgram = () => router.push({ name: 'Travelgram' })
 const goHome = () => router.push('/')
+
+const openInstagram = () => {
+  window.open('https://www.instagram.com/', '_blank')
+}
 </script>
 
+
 <style scoped>
+
+.travelgram-page{
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding: 2rem 1.25rem 6rem;
+
+}
 .complete-page {
   background-color: #fffaf3;
   min-height: 100vh;
-  text-align: center;
-  padding: 2rem 1.25rem;
-}
-
-/* 🎉 중앙 카드 */
-.complete-container {
-  margin-top: 3rem;
-  background: white;
-  border-radius: 1.5rem;
-  padding: 2.5rem 1.5rem;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  display: inline-block;
-}
-
-.success-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  animation: bounce 1.2s ease infinite alternate;
-}
-
-@keyframes bounce {
-  from { transform: translateY(0); }
-  to { transform: translateY(-10px); }
-}
-
-h2 {
-  color: #1B3B6F;
-  margin-bottom: 0.5rem;
-  font-weight: 700;
-}
-
-.message {
-  color: #666;
-  margin-bottom: 2rem;
-  line-height: 1.6;
-}
-
-/* 🔗 인스타 바로가기 */
-.share-box {
-  background: #f9f9f9;
-  border-radius: 1rem;
-  padding: 1rem;
-  margin-bottom: 2rem;
-}
-
-.btn-view {
-  background: #ff8c00;
-  color: white;
-  border: none;
-  padding: 0.7rem 1.4rem;
-  border-radius: 1rem;
-  font-weight: 600;
-  display: inline-block;
-  text-decoration: none;
-  transition: all 0.2s;
-}
-
-.btn-view:hover {
-  background: #e67800;
-}
-
-/* 버튼 그룹 */
-.button-group {
+  padding: 3rem 1.25rem 6rem;
   display: flex;
   justify-content: center;
-  gap: 1rem;
 }
 
-.btn-back,
-.btn-home {
-  border: none;
-  border-radius: 1rem;
-  padding: 0.7rem 1.4rem;
+.complete-container {
+  background: white;
+  border-radius: 2rem;
+  padding: 3.5rem 2rem 3rem;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+  animation: fadeUp 0.8s ease both;
+}
+
+/* 🎉 */
+.success-icon {
+  font-size: 5rem;
+  margin-bottom: 1.5rem;
+  animation: popBounce 1.2s ease;
+}
+
+/* 제목 */
+.complete-title {
+  color: #1b3b6f;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
+}
+
+/* 설명 */
+.message {
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+}
+
+.message p {
+  margin: 0.25rem 0;
+}
+
+/* 공유 박스 */
+.share-box {
+  background: #f8f9fb;
+  border-radius: 1.25rem;
+  padding: 1.6rem 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.share-text {
+  color: #1b3b6f;
   font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* 🔥 인스타 버튼 (공식 감성) */
+.btn-instagram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  color: white;
+  font-weight: 700;
+  padding: 0.9rem 1.9rem;
+  border-radius: 999px;
   cursor: pointer;
-  transition: all 0.2s;
+  background: linear-gradient(
+    45deg,
+    #f09433,
+    #e6683c,
+    #dc2743,
+    #cc2366,
+    #bc1888
+  );
+  box-shadow: 0 10px 24px rgba(220, 39, 67, 0.35);
+  transition: all 0.25s ease;
 }
 
-.btn-back {
-  background: #fff;
-  color: #1B3B6F;
-  border: 2px solid #1B3B6F;
-}
-.btn-home {
-  background: #1B3B6F;
-  color: #fff;
+.btn-instagram:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(220, 39, 67, 0.45);
 }
 
-.btn-home:hover {
-  background: #16305c;
+/* 애니메이션 */
+@keyframes popBounce {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
+
