@@ -39,34 +39,35 @@
         <div class="row g-3 mb-3">
           <!-- Accommodation -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500"
+            <RecommendationCard :imageSrc="accommodationImg"
               alt="Accommodation" cardLabel="감성 숙소" icon="bi-house-heart" @click="openModal('accommodation')" />
           </div>
 
+          <!-- @/src/assets/img/planner-recommendation/accomdation.png -->
           <!-- Restaurants -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500"
+            <RecommendationCard :imageSrc="restaurantImg"
               alt="Restaurants" cardLabel="맛집 내돈내산" icon="bi-cup-hot" @click="openModal('restaurants')" />
           </div>
 
           <!-- Attractions -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1553603227-2358aabe821e?w=500"
+            <RecommendationCard :imageSrc="attractionImg"
               alt="Attractions" cardLabel="가볼만한 곳" icon="bi-compass" @click="openModal('attractions')" />
           </div>
           <!-- Photo Spots -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1583037189850-1921ae7c6c22?w=500"
+            <RecommendationCard :imageSrc="photoSpotImg"
               alt="Photospots" cardLabel="사진 명소" icon="bi-camera" @click="openModal('photospots')" />
           </div>
           <!-- Festivals -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=500"
+            <RecommendationCard :imageSrc="festivalImg"
               alt="Festivals" cardLabel="축제" icon="bi-music-note" @click="openModal('festivals')" />
           </div>
           <!-- Experiences -->
           <div class="col-6">
-            <RecommendationCard imageSrc="https://images.unsplash.com/photo-1528543606781-2f6e6857f318?w=500"
+            <RecommendationCard :imageSrc="experienceImg"
               alt="Experiences" cardLabel="이색 체험" icon="bi-calendar-event" @click="openModal('experiences')" />
           </div>
         </div>
@@ -96,6 +97,15 @@ import { useAuthStore } from "@/store/authStore";
 import plannerApi from "@/api/plannerApi";
 import BlogListModal from "@/components/planner/BlogListModal.vue";
 
+// 1. 이미지 파일들을 import 합니다.
+// (주의: 파일명 철자가 스크린샷과 일치하는지 꼭 확인하세요! 예: accomodation vs accommodation)
+import accommodationImg from '@/assets/img/planner-recommendation/accommodation.png'
+import restaurantImg from '@/assets/img/planner-recommendation/restaurant.png'
+import attractionImg from '@/assets/img/planner-recommendation/attraction.png'
+import photoSpotImg from '@/assets/img/planner-recommendation/photospot.png'
+import festivalImg from '@/assets/img/planner-recommendation/festival.png'
+import experienceImg from '@/assets/img/planner-recommendation/experience.png'
+
 const authStore = useAuthStore();
 const travelStore = useTravelStore()
 const chatStore = useChatStore();
@@ -124,7 +134,6 @@ const keywordMap = {
   festivals: '서울 축제',
   experiences: '서울 이색 체험'
 };
-
 
 // 모달 열기 및 검색 실행
 const openModal = async (category) => {

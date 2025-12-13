@@ -4,7 +4,7 @@
             <img :src=imageSrc :alt=alt />
             <div class="card-overlay">
                 <div class="card-icon bg-white rounded-circle p-2">
-                    <i :class="['bi', icon || 'bi-building', 'text-primary']"></i>
+                    <i :class="['bi', icon || 'bi-building', 'text-secondary']"></i>
                 </div>
                 <span class="card-label text-white fw-semibold">{{ cardLabel }}</span>
             </div>
@@ -42,7 +42,7 @@ defineProps({
   border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
-  height: 150px;
+  height: 200px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
@@ -70,19 +70,15 @@ defineProps({
   }
 
   .card-icon {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    i {
-      font-size: 16px;
-    }
   }
 
   .card-label {
-    font-size: 14px;
+    font-size: 1.5rem;
   }
 }
 </style>
