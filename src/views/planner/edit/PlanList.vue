@@ -238,9 +238,9 @@ const applyAiPlan = (payload) => {
       },
     })),
   }));
-
+  travelStore.setPlanInfo(payload.planId, travelStore.dayIndex, travelStore.planDate);
   selectedDayIndex.value = 0;
-  console.log("✅ [PlanList] days 갱신:", days.value);
+  console.log("[PlanList] days 갱신:", days.value);
 };
 
 /* ---------- ⭐ 핵심: 시간(updatedAt)을 watch ---------- */
@@ -348,12 +348,16 @@ const renderPlan = async () => {
   const raw = res?.data?.data || {};
 
   console.log("📥 [PlanList] 서버에서 불러온 계획 데이터:", raw);
+  
   plan.value = raw.plan || null;
 
   days.value = (raw.days || []).map((d) => ({
     day: d.day,
     places: normalizePlaces(d.places),
   }));
+
+  travelStore.setPlanInfo(raw.plan.id, travelStore.dayIndex, travelStore.planDate);
+  
 };
 
 /* ---------- onMounted ---------- */
@@ -369,7 +373,7 @@ onMounted(async () => {
   }
 
   console.log(
-    "🔵 [PlanList] onMounted: 스토어에 AI 플랜 없음 → 서버에서 플랜 불러옴"
+    "🔵 [PlanList] : 스토어에 AI 플랜 없음 → 서버에서 플랜 불러옴"
   );
   await renderPlan();
 });

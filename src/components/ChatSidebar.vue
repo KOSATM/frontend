@@ -100,6 +100,7 @@
 import chatApi from "@/api/chatApi";
 import { useAuthStore } from "@/store/authStore";
 import { useChatStore } from "@/store/chatStore";
+import { useTravelStore } from "@/store/travelStore";
 import { marked } from "marked";
 import { nextTick, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -107,6 +108,7 @@ import { useRoute, useRouter } from "vue-router";
 // Store & Router
 const authStore = useAuthStore();
 const chatStore = useChatStore();
+const travelStore = useTravelStore();
 const router = useRouter();
 const route = useRoute();
 
@@ -166,7 +168,7 @@ const sendMessage = async () => {
     });
 
     if (mainResponse?.data) {
-      console.log("🔥 서버에서 받은 플랜 payload:", mainResponse.data);
+      console.log("서버에서 받은 플랜 payload:", mainResponse.data);
       chatStore.setLivePlan(mainResponse.data);
     }
 
