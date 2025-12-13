@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <div class="quick-actions px-3 pb-2">
+    <!-- <div class="quick-actions px-3 pb-2">
       <div class="d-flex gap-2 overflow-x-auto pb-2 custom-scrollbar-x">
         <button @click="sendQuickMessage('Start early')" class="btn btn-xs btn-outline-secondary rounded-pill text-nowrap">
           🌅 Early Start
@@ -59,7 +59,7 @@
           💰 Save Cost
         </button>
       </div>
-    </div>
+    </div> -->
 
     <div class="chat-input-wrapper p-3 border-top bg-white">
       <div class="chat-input-container">
