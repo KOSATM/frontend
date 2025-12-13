@@ -6,33 +6,41 @@
       <div class="card-body">
         <div class="row mb-3">
           <div class="col-md-4">
-            <img :src="selectedHotel.image" class="img-fluid rounded" :alt="selectedHotel.name"
+            <img :src="selectedHotel?.image" class="img-fluid rounded" :alt="selectedHotel?.name"
               style="object-fit: cover; height: 200px; width: 100%;" />
           </div>
           <div class="col-md-8">
-            <h5 class="card-title">{{ selectedHotel.name }}</h5>
+            <h5 class="card-title">{{ selectedHotel?.name }}</h5>
             <p class="card-text text-muted">
               <i class="bi bi-geo-alt"></i>
-              {{ selectedHotel.location }}
+              {{ selectedHotel?.location }}
             </p>
+            <p class="card-text text-muted small mb-2">
+              <i class="bi bi-door-closed"></i>
+              {{ selectedHotel?.roomType }}
+            </p>
+            <div class="mb-3 small text-muted">
+              <div><i class="bi bi-calendar-check"></i> {{ selectedHotel?.checkInDate }} ~ {{ selectedHotel?.checkOutDate }}</div>
+              <div><i class="bi bi-moon"></i> {{ selectedHotel?.nights }} | <i class="bi bi-people"></i> {{ selectedHotel?.guests }}명</div>
+            </div>
             <div class="mb-3">
-              <span class="badge bg-light text-secondary me-2" v-if="selectedHotel.freeWifi">
+              <span class="badge bg-light text-secondary me-2" v-if="selectedHotel?.freeWifi">
                 <i class="bi bi-wifi me-1"></i> 무료 와이파이
               </span>
-              <span class="badge bg-light text-secondary me-2" v-if="selectedHotel.breakfast">
+              <span class="badge bg-light text-secondary me-2" v-if="selectedHotel?.breakfast">
                 <i class="bi bi-cup-hot me-1"></i> 조식 포함
               </span>
-              <span class="badge bg-light text-secondary me-2" v-if="selectedHotel.pool">
+              <span class="badge bg-light text-secondary me-2" v-if="selectedHotel?.pool">
                 <i class="bi bi-water me-1"></i> 수영장
               </span>
-              <span class="badge bg-light text-secondary" v-if="selectedHotel.spa">
+              <span class="badge bg-light text-secondary" v-if="selectedHotel?.spa">
                 <i class="bi bi-heart-pulse me-1"></i> 스파
               </span>
             </div>
             <div class="rating">
               <i class="bi bi-star-fill text-warning"></i>
-              <span class="ms-1">{{ selectedHotel.rating }}</span>
-              <span class="text-muted">({{ selectedHotel.reviews }}개의 리뷰)</span>
+              <span class="ms-1">{{ selectedHotel?.rating }}</span>
+              <span class="text-muted">({{ selectedHotel?.reviews }}개의 리뷰)</span>
             </div>
           </div>
         </div>
@@ -43,8 +51,8 @@
     <BaseSection icon="bi-receipt" title="요금 상세">
       <div class="card-body">
         <div class="d-flex justify-content-between mb-2">
-          <span>{{ travelDays }}박 × ₩{{ selectedHotel.price.toLocaleString() }}/박</span>
-          <span class="fw-bold">₩{{ (selectedHotel.price * travelDays).toLocaleString() }}</span>
+          <span>{{ selectedHotel?.nights }} × ₩{{ selectedHotel?.price?.toLocaleString() }}/박</span>
+          <span class="fw-bold">₩{{ (selectedHotel?.price * selectedHotel?.nights)?.toLocaleString() }}</span>
         </div>
         <div class="d-flex justify-content-between mb-2">
           <span>세금 및 수수료</span>
@@ -153,36 +161,19 @@
   </div>
 </template>
 
-
 <script setup>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import PageHeader from '@/components/common/header/PageHeader.vue';
-import hotelIllust from '@/assets/img/hotel-logo.png';
-import StepHeader from '@/components/common/header/StepHeader.vue';
+import { ref, computed, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import BaseButton from '@/components/common/button/BaseButton.vue';
 import { useTravelStore } from '@/store/travelStore';
 import BaseSection from '@/components/common/BaseSection.vue';
 
+const route = useRoute();
 const router = useRouter();
 const travelStore = useTravelStore();
 
-const selectedHotel = ref({
-  id: 1,
-  name: 'Four Seasons Hotel Seoul',
-  location: 'Gwanghwamun, Jongno-gu',
-  price: 315000,
-  rating: 4.8,
-  reviews: 234,
-  image: hotelIllust,
-  freeWifi: true,
-  breakfast: true,
-  pool: true,
-  spa: true
-});
-
-const travelDays = ref(3);
-const taxesAndFees = ref(47250);
+const selectedHotel = ref(null);
+const taxesAndFees = ref(0);
 const paymentMethod = ref('creditCard');
 const cardDetails = ref({
   name: '',
@@ -193,12 +184,54 @@ const cardDetails = ref({
 const agreeToTerms = ref(false);
 const isProcessing = ref(false);
 
+// ✅ 마운트 시 쿼리에서 호텔 정보 받기
+onMounted(() => {
+  console.log('🔍 Payment onMounted');
+  console.log('route.query:', route.query);
+  
+  if (route.query.hotel) {
+    try {
+      selectedHotel.value = JSON.parse(route.query.hotel);
+      console.log('✅ 받은 호텔 정보:', selectedHotel.value);
+      console.log('price:', selectedHotel.value?.price);
+      console.log('nights:', selectedHotel.value?.nights);
+      
+      // ✅ 숫자로 변환
+      const price = Number(selectedHotel.value.price);
+      const nights = Number(selectedHotel.value.nights);
+      const roomPrice = price * nights;
+      
+      console.log('roomPrice:', roomPrice);
+      taxesAndFees.value = Math.ceil(roomPrice * 0.15);
+      console.log('taxesAndFees:', taxesAndFees.value);
+    } catch (error) {
+      console.error('❌ 호텔 정보 파싱 실패:', error);
+      router.push({ name: 'hotel' });
+    }
+  } else {
+    console.warn('❌ 호텔 정보 없음');
+    router.push({ name: 'hotel' });
+  }
+});
+
 const totalAmount = computed(() => {
-  return (selectedHotel.value.price * travelDays.value) + taxesAndFees.value;
+  if (!selectedHotel.value) {
+    console.log('❌ selectedHotel이 없음');
+    return 0;
+  }
+  
+  const price = Number(selectedHotel.value.price) || 0;
+  const nights = Number(selectedHotel.value.nights) || 0;
+  const roomPrice = price * nights;
+  const total = roomPrice + taxesAndFees.value;
+  
+  console.log('totalAmount 계산:', { price, nights, roomPrice, taxesAndFees: taxesAndFees.value, total });
+  
+  return total;
 });
 
 const goBack = () => {
-  router.back("/planner/hotel");
+  router.push({ name: 'hotel' });
 };
 
 const validateCardDetails = () => {
@@ -215,21 +248,20 @@ const validateCardDetails = () => {
 
 const processPayment = () => {
   if (!agreeToTerms.value) {
-    alert('Please agree to the booking terms');
+    alert('예약 조건에 동의해주세요');
     return;
   }
 
   if (!validateCardDetails()) {
-    alert('Please enter valid card information');
+    alert('카드 정보를 입력해주세요');
     return;
   }
 
   isProcessing.value = true;
 
-  // Simulate payment processing
   setTimeout(() => {
     isProcessing.value = false;
-    // Navigate to completion page
+    travelStore.increaseStep();
     router.push({ name: 'bookingComplete' });
   }, 2000);
 };
@@ -248,21 +280,21 @@ const processPayment = () => {
   font-size: 1.3rem;
   min-width: fit-content;
   height: 100%;
+}
 
-  &:hover {
-    border-color: #ff8c00;
-    background-color: #fef8f2;
-  }
+.payment-item:hover {
+  border-color: #ff8c00;
+  background-color: #fef8f2;
+}
 
-  &.active {
-    border-color: #ff8c00;
-    background-color: #ff8c00;
-    color: white;
-  }
+.payment-item.active {
+  border-color: #ff8c00;
+  background-color: #ff8c00;
+  color: white;
+}
 
-  i {
-    font-size: 1rem;
-  }
+.payment-item i {
+  font-size: 1rem;
 }
 
 .card {
@@ -274,7 +306,9 @@ const processPayment = () => {
   border-bottom: 1px solid #e9ecef;
 }
 
-:root {
-  --bs-primary: #ff8c00;
+.rating {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
 }
 </style>

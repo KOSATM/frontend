@@ -284,7 +284,13 @@ const selectHotel = (hotel) => {
 const confirmSelection = () => {
   if (selectedHotel.value) {
     travelStore.increaseStep();
-    router.push({ name: 'payment' });
+    
+    router.push({ 
+      name: 'payment',
+      query: { 
+        hotel: JSON.stringify(selectedHotel.value)  // ✅ query 사용
+      }
+    });
   }
 };
 
