@@ -1,7 +1,7 @@
 <template>
   <div class="preview-page">
     <PageHeader title="트래벌그램" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
-    <StepHeader title="여행 후기 작성" :subtitle="reviewStore.planTitle" step="6/6" @back="goBack" />
+    <StepHeader title="여행 후기 작성" :subtitle="stepSubtitle" step="6/6" @back="goBack" />
 
     <section class="preview-section">
       <h6 class="section-title">
@@ -96,12 +96,13 @@ import PageHeader from '@/components/common/header/PageHeader.vue'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 // ✅ 기본 프로필 이미지 임포트
 import defaultProfileImg from '@/assets/img/profile-logo.png';
+import { JOURNEY_SUBTITLES } from '@/constants/journeySubtitles'
 
 // Store 연결
 const reviewStore = useReviewStore()
 const authStore = useAuthStore() // ✅ authStore 사용
 const router = useRouter()
-
+const stepSubtitle = computed(() => JOURNEY_SUBTITLES[6])
 // ✅ 새로고침 시 인증 정보 유실 방지
 onMounted(() => {
   if (!authStore.isLoggedIn) {

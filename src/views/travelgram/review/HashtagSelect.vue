@@ -1,7 +1,7 @@
 <template>
   <div class="hashtag-page">
     <PageHeader title="트래벌그램" subtitle="더 많은 사람에게 닿을 수 있도록 해시태그를 함께 추가해주세요." icon="bi-instagram" />
-    <StepHeader title="해시태그 편집" :subtitle="reviewStore.planTitle" step="4/6" @back="goBack" />
+    <StepHeader title="해시태그 편집" :subtitle="stepSubtitle" step="4/6" @back="goBack" />
 
     <section class="hashtag-section">
       <h6 class="guide-title">
@@ -67,6 +67,9 @@ import api from '@/api/travelgramApi'
 import StepHeader from '@/components/common/header/StepHeader.vue'
 import PageHeader from '@/components/common/header/PageHeader.vue'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+import { JOURNEY_SUBTITLES } from '@/constants/journeySubtitles'
+
+const stepSubtitle = computed(() => JOURNEY_SUBTITLES[4])
 
 const router = useRouter()
 const reviewStore = useReviewStore()

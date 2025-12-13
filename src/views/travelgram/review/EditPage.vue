@@ -5,7 +5,7 @@
     icon="bi-instagram"
   />
   <div class="review-edit-page">
-    <StepHeader title="여행 후기 편집" :subtitle="reviewStore.planTitle" step="5/6" @back="goBack" />
+    <StepHeader title="여행 후기 편집" :subtitle="stepSubtitle" step="5/6" @back="goBack" />
 
     <section class="review-section">
       <h6 class="section-title">
@@ -74,7 +74,9 @@ import api from "@/api/travelgramApi"
 import StepHeader from "@/components/common/header/StepHeader.vue";
 import PageHeader from "@/components/common/header/PageHeader.vue";
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+import { JOURNEY_SUBTITLES } from '@/constants/journeySubtitles'
 
+const stepSubtitle = computed(() => JOURNEY_SUBTITLES[5])
 const route = useRoute();
 const router = useRouter();
 const reviewStore = useReviewStore();

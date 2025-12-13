@@ -8,7 +8,7 @@
     <!-- 🔸 상단 헤더 -->
     <StepHeader
       title="여행 후기 작성"
-      subtitle="대표 사진과 사진 순서를 수정해보세요."
+      :subtitle="stepSubtitle"
       step="2/6"
       @back="goBack"
     />
@@ -100,6 +100,7 @@ import StepHeader from '@/components/common/header/StepHeader.vue'
 import PageHeader from '@/components/common/header/PageHeader.vue'
 import TipBox from '@/components/common/TipBox.vue'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+import { JOURNEY_SUBTITLES } from '@/constants/journeySubtitles'
 
 const router = useRouter()
 const route = useRoute()
@@ -111,7 +112,7 @@ const planTitle = reviewStore.planTitle || route.query.title
 /* 🔥 대표사진/사진들 */
 const photos = ref([...reviewStore.photos])
 const mainPhotoId = ref(reviewStore.mainPhotoId)
-
+const stepSubtitle = computed(() => JOURNEY_SUBTITLES[2])
 /* -----------------------------------
    🔥 1) 첫 번째 사진을 기본 대표사진으로 자동 설정
 ----------------------------------- */

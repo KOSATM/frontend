@@ -2,7 +2,7 @@
   <div class="photo-upload-page">
     <!-- 상단 헤더 -->
     <PageHeader title="트래벌그램" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
-    <StepHeader title="여행 후기 작성" subtitle="여행 사진을 업로드하면 AI가 자동으로 분석해요." step="1/6" @back="goBack" />
+    <StepHeader title="여행 후기 작성" :subtitle="stepSubtitle" step="1/6" @back="goBack" />
 
     <!-- =========================
          HERO / 여행 요약 카드
@@ -106,6 +106,7 @@ import StepHeader from '@/components/common/header/StepHeader.vue'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue'
 import PhotoUploader from '@/components/travelgram/PhotoUploader.vue'
 import PlanDayTimeline from '@/components/planner/PlanDayTimeline.vue'
+import { JOURNEY_SUBTITLES } from '@/constants/journeySubtitles'
 
 const router = useRouter()
 const route = useRoute()
@@ -121,6 +122,7 @@ const isReady = ref(false)
 const currentplanInfo = ref(null)
 const isItineraryOpen = ref(false)
 
+const stepSubtitle = computed(() => JOURNEY_SUBTITLES[1])
 /* ---------- 일정 헬퍼 ---------- */
 const categoryMap = {
   FOOD: "음식점",
