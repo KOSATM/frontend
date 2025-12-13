@@ -115,11 +115,11 @@
     </section>
 
     <NavigationButtons
-      backText="Back"
+      backText="뒤로가기"
       :isNextDisabled="!canProceed"
       @back="goBack"
       nextText="Publish"
-      @next="publish"
+      @next="발행하기"
     />
   </div>
 </template>

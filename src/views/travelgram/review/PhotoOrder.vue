@@ -66,7 +66,7 @@
 </section>
 
 <NavigationButtons
-      backText="Back"
+      backText="뒤로가기"
       :isNextDisabled="!canProceed"
       @back="goBack"
       @next="goNext"
@@ -76,7 +76,7 @@
           <span class="spinner-border spinner-border-sm me-2"></span>
           AI가 열심히 분석 중 입니다...
         </span>
-        <span v-else>Next Step</span>
+        <span v-else>다음으로 가기</span>
       </template>
     </NavigationButtons>
 
