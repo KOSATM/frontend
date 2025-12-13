@@ -233,7 +233,7 @@ const goNext = async () => {
   }
 }
 
-const goBack = () => router.back()
+const goBack = () => router.push({name: 'CreateTravelReview'});
 </script>
 
 <style scoped>

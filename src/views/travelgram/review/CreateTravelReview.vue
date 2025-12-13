@@ -412,7 +412,7 @@ const goNext = () => {
   })
 }
 
-const goBack = () => router.back()
+const goBack = () => router.push({name: 'Travelgram'});
 </script>
 
 <style scoped>

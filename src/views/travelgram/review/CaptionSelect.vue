@@ -115,7 +115,7 @@ const getLabelClass = (code) => {
     default: return 'casual'
   }
 }
-const goBack = () => router.back()
+const goBack = () => router.push({name: 'PhotoOrder'});
 const goNext = async() => {
   if (selectedIndex.value === null) return
   isAnalyzing.value = true

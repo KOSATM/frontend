@@ -160,7 +160,7 @@ const copyToClipboard = () => {
 };
 
 // 네비게이션
-const goBack = () => router.back()
+const goBack = () => router.push('EditPage')
 const publish = () => {
   alert('✅ Your post has been published to Instagram!')
   router.push({ name: 'Complete' })

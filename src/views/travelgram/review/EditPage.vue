@@ -121,7 +121,7 @@ const scrollToPhoto = () => {
   }
 };
 
-const goBack = () => router.back();
+const goBack = () => router.push({name: 'HashtagSelect'});
 const goNext = async() => {
 // 🔥 [수정] 저장 시작 시 로딩 상태 true
   isSaving.value = true;
