@@ -1,6 +1,6 @@
 <template>
     <PageHeader
-      title="Travelgram"
+      title="트래벌그램"
       subtitle="당신의 지난 여행 기록들"
       icon="bi-instagram"
     />
