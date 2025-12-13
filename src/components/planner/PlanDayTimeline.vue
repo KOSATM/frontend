@@ -1,7 +1,6 @@
 <!-- src/components/planner/PlanDayTimeline.vue -->
 <template>
   <div class="planner-scroll flex-grow-1 overflow-auto">
-    <!-- ✅ Day Tabs (분리된 스타일) -->
     <div class="day-tab-wrapper">
       <button
         v-for="(day, idx) in days"
@@ -14,18 +13,13 @@
       </button>
     </div>
 
-    <!-- Body -->
     <div class="day-section-wrapper">
-      <!-- No Schedule -->
       <div v-if="!currentDayPlaces.length" class="empty-text">
         일정이 없습니다.
       </div>
 
-      <!-- Render Places -->
       <div v-for="(place, idx) in currentDayPlaces" :key="idx" class="section-block">
-        <!-- WITH LABEL -->
         <div v-if="typeLabel(place.details?.type)" class="place-block with-label">
-          <!-- ✅ 번호 + 라벨 + 시간 : 원래 구조 그대로 -->
           <div class="place-number-wrapper">
             <div class="place-number-circle" :class="typeColor(place.details?.type)">
               {{ idx + 1 }}
@@ -36,8 +30,7 @@
                 {{ typeLabel(place.details?.type) }}
               </span>
 
-              <!-- ⏰ label 아래 시간 -->
-              <span v-if="place.startAt" class="place-start-time under-label">
+              <span v-if="place.startAt" class="place-start-time under-label small text-muted">
                 {{ formatTime(place.startAt) }}
               </span>
             </div>
@@ -49,7 +42,6 @@
               class="timeline-line label-line"
             ></div>
 
-            <!-- 카드(오른쪽으로 자연스럽게 이동) -->
             <div class="place-content label-card-offset">
               <div class="place-card shadow-sm rounded-3 p-3 flex-fill" @click="$emit('open-modal', place)">
                 <button
@@ -66,36 +58,33 @@
                     <div v-else class="thumb-placeholder"></div>
                   </div>
 
-                  <div class="flex-fill">
+                  <div class="flex-fill d-flex flex-column justify-content-center">
                     <div class="place-title">{{ place.title }}</div>
-                    <div class="place-type text-muted small">
+                    
+                    <div class="place-type small text-muted">
                       {{ categoryMap[place.details?.type] || "장소" }}
                     </div>
-                    <hr />
-                    <div class="place-recommend text-primary small">
+                    
+                    <hr class="place-divider"/>
+                    
+                    <div class="place-recommend small text-primary">
                       추천 {{ place.details?.desc || "상세 설명 없음" }}
                     </div>
                   </div>
                 </div>
               </div>
-
-              <!-- (필요하면 나중에 add 버튼도 여기 다시 넣으면 됨) -->
             </div>
           </div>
         </div>
 
-        <!-- NO LABEL -->
         <div v-else class="place-block no-label">
           <div class="place-row">
-            <!-- 숫자 -->
             <div class="place-number-circle" :class="typeColor(place.details?.type)">
               {{ idx + 1 }}
             </div>
 
-            <!-- 세로선 -->
             <div v-if="idx !== currentDayPlaces.length - 1" class="timeline-line"></div>
 
-            <!-- 카드 (숫자 바로 옆) -->
             <div class="place-content">
               <div class="place-card shadow-sm rounded-3 p-3 flex-fill" @click="$emit('open-modal', place)">
                 <button
@@ -112,26 +101,25 @@
                     <div v-else class="thumb-placeholder"></div>
                   </div>
 
-                  <div class="flex-fill">
+                  <div class="flex-fill d-flex flex-column justify-content-center">
                     <div class="place-title">{{ place.title }}</div>
-                    <div class="place-type text-muted small">
+                    
+                    <div class="place-type small text-muted">
                       {{ categoryMap[place.details?.type] || "장소" }}
                     </div>
 
-                    <!-- ⏰ no-label 케이스는 카드 내부에 붙이면 레이아웃이 안 깨짐 -->
-                    <div v-if="place.startAt" class="place-start-time">
+                    <div v-if="place.startAt" class="place-start-time small text-muted mt-1">
                       {{ formatTime(place.startAt) }}
                     </div>
 
                     <hr class="place-divider" />
-                    <div class="place-recommend text-primary small">
+                    
+                    <div class="place-recommend small text-primary">
                       추천 {{ place.details?.desc || "상세 설명 없음" }}
                     </div>
                   </div>
                 </div>
               </div>
-
-              <!-- (필요하면 나중에 add 버튼도 여기 다시 넣으면 됨) -->
             </div>
           </div>
         </div>
@@ -147,7 +135,6 @@ defineEmits(["open-modal", "delete-place"]);
 
 const props = defineProps({
   days: { type: Array, required: true },
-
   editMode: Boolean,
   typeColor: Function,
   typeLabel: Function,
@@ -155,7 +142,6 @@ const props = defineProps({
   categoryMap: Object,
 });
 
-/* ✅ Day 상태는 이 컴포넌트가 관리 */
 const selectedDayIndex = ref(0);
 
 const currentDayPlaces = computed(() => {
@@ -163,9 +149,14 @@ const currentDayPlaces = computed(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+/* ✅ 중요: SCSS 변수를 쓰고 싶다면 아래처럼 import 해야 하지만,
+   이미 전역에 등록되어 있다면 생략 가능합니다.
+   @import "@/assets/styles/_variables.scss"; 
+*/
+
 /* =========================
-   1) Day Tab 전용 스타일 (분리)
+   1) Day Tab
    ========================= */
 .day-tab-wrapper {
   display: flex;
@@ -176,26 +167,30 @@ const currentDayPlaces = computed(() => {
 }
 
 .day-tab-btn {
-  font-size: 0.85rem;
+  /* ✅ Font Size 제거 -> 상속 or Base Size 사용 */
+  /* ✅ 제목 성격이므로 memoment 폰트 적용 */
+  font-family: 'memoment';
+  
   padding: 4px 12px;
   border-radius: 14px;
   border: 2px solid #ff9800;
   color: #ff9800;
   background: transparent;
   cursor: pointer;
+  transition: all 0.2s;
 }
 
 .day-tab-btn.active {
   background: #ff9800;
   color: #fff;
-  font-weight: 700;
+  /* active 시 살짝 두껍게 */
+  font-weight: 700; 
 }
 
 /* =========================
-   2) 기존 타임라인/카드 스타일 (원복)
+   2) Content Styles
    ========================= */
 
-/* wrapper */
 .day-section-wrapper {
   padding: 26px 22px;
   background: #fafafa;
@@ -204,21 +199,20 @@ const currentDayPlaces = computed(() => {
 }
 
 .empty-text {
+  /* Base Font Size(1.5rem)에 따라 자동 조정됨 */
   color: #888;
-  font-size: 0.9rem;
   text-align: center;
   padding: 18px 0;
 }
 
-/* number + label */
+/* Number Circle */
 .place-number-wrapper {
   display: flex;
-  align-items: flex-start; /* ✅ label/time 때문에 top 정렬 */
+  align-items: flex-start;
   gap: 10px;
   margin-bottom: 8px;
 }
 
-/* number circle */
 .place-number-circle {
   width: 26px;
   height: 26px;
@@ -228,16 +222,18 @@ const currentDayPlaces = computed(() => {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  /* 숫자는 가독성 위해 기본 폰트보다 조금 작게 조정 필요할 수도 있으나, 
+     일단 typography.scss의 흐름을 따름 */
 }
 
-/* number colors */
+/* Colors */
 .color-purple { background: #ede9ff; color: #7a49ff; }
 .color-red { background: #ffe5e5; color: #ff6b6b; }
 .color-blue { background: #e5f0ff; color: #4fa3ff; }
 .color-green { background: #e5ffeb; color: #3ac569; }
 .color-gray { background: #efefef; color: #666; }
 
-/* label+time wrapper */
+/* Label Text */
 .label-text-wrapper {
   display: flex;
   flex-direction: column;
@@ -245,31 +241,24 @@ const currentDayPlaces = computed(() => {
 }
 
 .place-label {
-  font-size: 1.05rem; /* ✅ 기존처럼 라벨이 좀 크게 */
-  font-weight: 700;
-  line-height: 1.05;
-}
-
-/* time */
-.place-start-time {
-  font-size: 0.78rem;
-  color: #9ca3af;
-  margin-top: 2px;
-}
-
-.place-start-time.under-label {
-  font-size: 0.9rem;
+  font-family: 'memoment';
   line-height: 1.1;
+  color: #333; /* 혹은 SCSS 변수 $secondary */
 }
 
-/* place row */
+.place-start-time {
+  line-height: 1.2;
+}
+
+/* =========================
+   Layout & Lines
+   ========================= */
 .place-row {
   display: flex;
   position: relative;
   margin-bottom: 28px;
 }
 
-/* timeline */
 .timeline-line {
   position: absolute;
   left: 13px;
@@ -280,10 +269,9 @@ const currentDayPlaces = computed(() => {
 }
 
 .label-line {
-  top: 5px; /* ✅ 라벨 케이스 보정 */
+  top: 5px;
 }
 
-/* content container */
 .place-content {
   flex: 1;
   margin-left: 16px;
@@ -292,12 +280,13 @@ const currentDayPlaces = computed(() => {
   gap: 10px;
 }
 
-/* WITH LABEL → 카드 오른쪽 이동 */
 .label-card-offset {
   margin-left: 45px;
 }
 
-/* card */
+/* =========================
+   Card Styles
+   ========================= */
 .place-card {
   position: relative;
   background: white;
@@ -309,13 +298,13 @@ const currentDayPlaces = computed(() => {
   box-sizing: border-box;
 }
 
-/* thumb */
 .thumb {
   width: 72px;
   height: 72px;
   background: #f2f2f2;
   border-radius: 8px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .thumb img {
@@ -330,22 +319,28 @@ const currentDayPlaces = computed(() => {
   background: #eee;
 }
 
-/* text */
+/* Card Text */
 .place-title {
-  font-size: 1rem;
-  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 2px;
 }
 
 .place-type {
-  font-size: 0.82rem;
-  color: #777;
+  /* .small 적용됨 */
+  line-height: 1.2;
+}
+
+.place-recommend {
+  /* .small 적용됨 */
+  line-height: 1.3;
 }
 
 .place-divider {
   margin: 6px 0;
+  opacity: 0.1;
 }
 
-/* delete button */
+/* Delete Button */
 .delete-btn {
   position: absolute;
   top: 6px;
@@ -355,11 +350,12 @@ const currentDayPlaces = computed(() => {
   background: #ff6b6b;
   border-radius: 50%;
   border: none;
-  font-size: 12px;
+  font-size: 0.75rem; /* 버튼 아이콘은 예외적으로 작게 유지 */
   color: white;
   cursor: pointer;
   z-index: 5;
-  text-align: center;
-  line-height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
