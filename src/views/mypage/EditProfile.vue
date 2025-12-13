@@ -1,286 +1,194 @@
 <template>
-  <div class="mypage-page">
-
-    <PageHeader title="MyPage" subtitle="나의 여행 정보" icon="bi-person" />
-    <!-- <BackButtonPageHeader title="Edit Profile" subtitle="나의 정보를 수정해보세요." @back="goBack"/> -->
-
-    <div class="text-center mb-5">
-      <div class="position-relative d-inline-block mb-3">
-        <img v-if="profileData.profileImage" :src="profileData.profileImage" alt="Profile"
-          class="rounded-circle shadow-sm border border-4 border-white"
-          style="width: 140px; height: 140px; object-fit: cover;" />
-        <div v-else
-          class="rounded-circle shadow-sm border border-4 border-white bg-light d-flex align-items-center justify-content-center"
-          style="width: 140px; height: 140px;">
-          <i class="bi bi-person text-secondary" style="font-size: 4rem;"></i>
-        </div>
-
-        <button @click="triggerImageInput"
-          class="btn btn-primary rounded-circle position-absolute bottom-0 end-0 shadow-sm border border-2 border-white"
-          style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;">
-          <i class="bi bi-camera-fill text-white"></i>
-        </button>
+  <div class="now-wrap">
+    <div class="now-card">
+      <div class="now-top">
+        <span class="badge">NOW</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span class="status">진행 중</span>
       </div>
 
-      <div v-if="profileData.profileImage">
-        <button class="btn btn-link text-danger text-decoration-none fw-bold" @click="removeProfileImage">
-          <i class="bi bi-trash me-1"></i> 이미지 삭제
-        </button>
+      <div class="now-title">{{ current.title }}</div>
+
+      <div class="now-sub">
+        <span class="time">{{ current.time }}</span>
+        <span class="sep">•</span>
+        <span class="place">{{ current.place }}</span>
       </div>
 
-      <input ref="profileImageInput" type="file" accept="image/*" @change="handleImageUpload" hidden />
-    </div>
-
-    <BaseSection icon="bi-person-gear" title="Basic Info" subtitle="기본 정보 수정">
-      <div class="row g-4">
-        <div class="col-md-6">
-          <label class="custom-label">Name</label>
-          <input type="text" class="form-control custom-input" v-model="profileData.name" placeholder="이름을 입력하세요" />
-        </div>
-        <div class="col-md-6">
-          <label class="custom-label">Korean Name</label>
-          <input type="text" class="form-control custom-input" v-model="profileData.koreanName" placeholder="한글 이름" />
-        </div>
-        <div class="col-12">
-          <label class="custom-label">Email</label>
-          <input type="email" class="form-control custom-input bg-light" v-model="profileData.email" disabled />
-          <p class="text-muted ms-2 mt-1 fs-6">
-            <i class="bi bi-info-circle me-1"></i> 이메일은 변경할 수 없습니다.
-          </p>
-        </div>
+      <div class="progress">
+        <div class="bar" :style="{ width: current.progress + '%' }"></div>
       </div>
-    </BaseSection>
-
-    <BaseSection icon="bi-airplane" title="Travel Style" subtitle="나의 여행 스타일 설정">
-      <div class="row g-4 mb-4">
-        <div class="col-md-6">
-          <label class="custom-label">Nationality</label>
-          <input type="text" class="form-control custom-input" v-model="profileData.nationality" placeholder="국적" />
-        </div>
-        <div class="col-md-6">
-          <label class="custom-label">Preferred Currency</label>
-          <select class="form-select custom-input" v-model="profileData.preferredCurrency">
-            <option value="USD">USD ($)</option>
-            <option value="KRW">KRW (₩)</option>
-            <option value="EUR">EUR (€)</option>
-            <option value="JPY">JPY (¥)</option>
-          </select>
-        </div>
-      </div>
-
-      <label class="custom-label mb-3">Interests</label>
-      <div class="d-flex flex-wrap gap-2">
-        <div v-for="interest in availableInterests" :key="interest.id" class="interest-chip"
-          :class="{ 'active': profileData.interests.includes(interest.id) }" @click="toggleInterest(interest.id)">
-          <i :class="interest.icon"></i>
-          <span class="ms-2">{{ interest.name }}</span>
-        </div>
-      </div>
-    </BaseSection>
-
-    <BaseSection icon="bi-heart-pulse" title="Medical Info" subtitle="건강 및 특이사항">
-      <div class="row g-4">
-        <div class="col-12">
-          <label class="custom-label">Allergies</label>
-          <textarea class="form-control custom-input" rows="2" v-model="profileData.medicalInfo.allergies"
-            placeholder="알레르기 정보 (예: 땅콩, 갑각류)"></textarea>
-        </div>
-        <div class="col-12">
-          <label class="custom-label">Dietary Restrictions</label>
-          <textarea class="form-control custom-input" rows="2" v-model="profileData.medicalInfo.dietaryRestrictions"
-            placeholder="식단 제한 (예: 채식, 글루텐 프리)"></textarea>
-        </div>
-      </div>
-    </BaseSection>
-
-    <BaseSection icon="bi-share" title="Social Connect" subtitle="SNS 계정 연동">
-      <div class="d-flex justify-content-between align-items-center p-3 border rounded-4 bg-white shadow-sm">
-        <div class="d-flex align-items-center">
-          <i class="bi bi-instagram fs-2 me-3" style="color: #E1306C;"></i>
-          <div>
-            <h5 class="m-0" style="font-family: 'memoment';">Instagram</h5>
-            <small class="text-muted">여행 사진 공유하기</small>
-          </div>
-        </div>
-        <div class="form-check form-switch">
-          <input class="form-check-input" type="checkbox" role="switch" v-model="profileData.instagramConnected"
-            style="width: 3rem; height: 1.5rem;">
-        </div>
-      </div>
-    </BaseSection>
-
-    <div class="d-flex gap-3 mt-5 pb-5">
-
- <NavigationButtons
-  back-text="취소"
-  :is-next-disabled="isLoading"
-  @back="goBack"
-  @next="saveProfile"
->
-  <template #next-content>
-    <i class="bi bi-check-lg me-2" v-if="!isLoading"></i>
-    <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-    {{ isLoading ? 'Saving...' : 'Save Changes' }}
-  </template>
-</NavigationButtons>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import BaseSection from '@/components/common/BaseSection.vue'
-import PageHeader from "@/components/common/header/PageHeader.vue";
-// import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
-import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+import { ref } from "vue";
 
-
-const router = useRouter()
-const isLoading = ref(false)
-const profileImageInput = ref(null)
-
-const triggerImageInput = () => profileImageInput.value?.click()
-
-// 데이터 로직은 기존과 동일
-const profileData = reactive({
-  name: '',
-  koreanName: '',
-  email: '',
-  profileImage: '',
-  nationality: '',
-  preferredCurrency: 'USD',
-  interests: [],
-  medicalInfo: { allergies: '', dietaryRestrictions: '' },
-  instagramConnected: false
-})
-
-const availableInterests = [
-  { id: 'culture', name: 'Culture', icon: 'bi bi-building' },
-  { id: 'food', name: 'Food', icon: 'bi bi-fork-knife' },
-  { id: 'shopping', name: 'Shopping', icon: 'bi bi-bag' },
-  { id: 'nature', name: 'Nature', icon: 'bi bi-tree' },
-  { id: 'nightlife', name: 'Nightlife', icon: 'bi bi-moon-stars' },
-  { id: 'art', name: 'Art & Museums', icon: 'bi bi-palette' },
-  { id: 'adventure', name: 'Adventure', icon: 'bi bi-mountain' },
-  { id: 'relaxation', name: 'Relaxation', icon: 'bi bi-flower1' }
-]
-
-const handleImageUpload = (event) => {
-  const file = event.target.files[0]
-  if (file) {
-    if (file.size > 5 * 1024 * 1024) {
-      alert('이미지는 5MB 이하여야 합니다.')
-      return
-    }
-    const reader = new FileReader()
-    reader.onload = (e) => { profileData.profileImage = e.target.result }
-    reader.readAsDataURL(file)
-  }
-}
-
-const removeProfileImage = () => { profileData.profileImage = '' }
-
-const toggleInterest = (interestId) => {
-  const index = profileData.interests.indexOf(interestId)
-  if (index > -1) profileData.interests.splice(index, 1)
-  else profileData.interests.push(interestId)
-}
-
-const saveProfile = async () => {
-  isLoading.value = true
-  try {
-    await new Promise(resolve => setTimeout(resolve, 1000)) // API Simulate
-    localStorage.setItem('userProfile', JSON.stringify(profileData))
-    alert('프로필이 저장되었습니다!')
-    goBack()
-  } catch (error) {
-    alert('저장에 실패했습니다.')
-  } finally {
-    isLoading.value = false
-  }
-}
-
-const goBack = () => router.back()
-
-
-onMounted(() => {
-  try {
-    const savedProfile = localStorage.getItem('userProfile')
-    if (savedProfile) Object.assign(profileData, JSON.parse(savedProfile))
-    // 기본값 폴백 (예시)
-    if (!profileData.name) profileData.name = 'John Doe'
-    if (!profileData.email) profileData.email = 'john.doe@gmail.com'
-  } catch (e) { console.error(e) }
-})
+const current = ref({
+  title: "남산타워 야경 보기",
+  time: "19:30 – 21:00",
+  place: "Namsan",
+  progress: 35,
+});
 </script>
 
 <style scoped>
-.mypage-page {
-  background-color: #fffaf3;
+/* =========================
+   1) 밤 몽환 배경
+========================= */
+.now-wrap {
   min-height: 100vh;
-  padding: 2rem 1.25rem;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  overflow: hidden;
+  position: relative;
+
+  /* 몽환적인 밤 하늘 + 네온 안개 느낌 */
+  background:
+    radial-gradient(900px 600px at 70% 18%, rgba(140, 120, 255, .22), transparent 60%),
+    radial-gradient(800px 520px at 20% 80%, rgba(90, 210, 255, .14), transparent 55%),
+    radial-gradient(520px 420px at 40% 30%, rgba(255, 120, 220, .10), transparent 60%),
+    linear-gradient(135deg, #070A22 0%, #15103A 45%, #2A0F55 100%);
 }
 
-/* 🖋️ 입력 폼 스타일 (Journal Style) */
-.custom-label {
-  font-family: 'memoment';
-  /* 제목 폰트 */
-  font-size: 1.1rem;
-  color: #ff8c00;
-  /* Primary Color */
-  margin-bottom: 0.5rem;
-  display: block;
+/* 별가루/노이즈 느낌(아주 은은하게) */
+.now-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);
+  background-size: 18px 18px;
+  opacity: .10;
+  pointer-events: none;
 }
 
-.custom-input {
-  font-family: 'parkdahyun';
-  /* 본문 손글씨 폰트 */
-  font-size: 1.25rem;
-  /* 글씨 시원하게 키움 */
-  border-radius: 1rem;
-  /* 둥글게 */
-  border: 1px solid #dee2e6;
-  padding: 0.7rem 1.2rem;
-  background-color: #fff;
-  transition: all 0.2s ease;
+/* =========================
+   2) 중앙 카드(직사각형) + 스카이라인 도트
+========================= */
+.now-card {
+  width: min(580px, 92vw);
+  border-radius: 18px;
+  padding: 22px 22px 18px;
+  position: relative;
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 18px 70px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.14);
 }
 
-.custom-input:focus {
-  border-color: #ff8c00;
-  box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.1);
-  background-color: #fffaf0;
-  /* 포커스 시 아주 연한 오렌지 배경 */
+/* 카드 표면에 은은한 쉬머(빛 번짐) */
+.now-card::before {
+  content: "";
+  position: absolute;
+  inset: -40% -20% auto -20%;
+  height: 160%;
+  background: radial-gradient(closest-side, rgba(255,255,255,.14), transparent 70%);
+  transform: rotate(18deg);
+  opacity: .45;
+  pointer-events: none;
 }
 
-.custom-input:disabled {
-  background-color: #f8f9fa;
-  color: #adb5bd;
+/* ✅ 도트로 그린 마천루(카드 배경) */
+.now-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .75;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: cover;
+
+  /* 위로 갈수록 스카이라인이 사라지게(가독성) */
+  mask-image: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,.6) 45%, transparent 78%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,.6) 45%, transparent 78%);
+
+  /* SVG(도트 패턴 + 마천루 마스크) 데이터 URI */
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20600%20240%27%20preserveAspectRatio%3D%27none%27%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3Cpattern%20id%3D%27dots%27%20width%3D%2710%27%20height%3D%2710%27%20patternUnits%3D%27userSpaceOnUse%27%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%272%27%20cy%3D%272%27%20r%3D%271.2%27%20fill%3D%27%23ffffff%27%20fill-opacity%3D%270.28%27%2F%3E%0A%20%20%20%20%3C%2Fpattern%3E%0A%0A%20%20%20%20%3Cmask%20id%3D%27skyMask%27%3E%0A%20%20%20%20%20%20%3Crect%20width%3D%27600%27%20height%3D%27240%27%20fill%3D%27black%27%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2720%27%20%20y%3D%27110%27%20width%3D%2770%27%20height%3D%27120%27%20rx%3D%276%27%20fill%3D%27white%27%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%27105%27%20y%3D%2770%27%20%20width%3D%2762%27%20height%3D%27160%27%20rx%3D%276%27%20fill%3D%27white%27%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%27180%27%20y%3D%2795%27%20%20width%3D%2780%27%20height%3D%27135%27%20rx%3D%276%27%20fill%3D%27white%27%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%27275%27%20y%3D%2750%27%20%20width%3D%2770%27%20height%3D%27180%27%20rx%3D%276%27%20fill%3D%27white%27%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%27360%27%20y%3D%2785%27%20%20width%3D%2778%27%20height%3D%27145%27%20rx%3D%276%27%20fill%3D%27white%27%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%27455%27%20y%3D%27105%27%20width%3D%2760%27%20height%3D%27125%27%20rx%3D%276%27%20fill%3D%27white%27%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%27525%27%20y%3D%2765%27%20%20width%3D%2755%27%20height%3D%27165%27%20rx%3D%276%27%20fill%3D%27white%27%2F%3E%0A%20%20%20%20%20%20%3Cpath%20d%3D%27M310%2036%20L326%2050%20L294%2050%20Z%27%20fill%3D%27white%27%2F%3E%0A%20%20%20%20%20%20%3Cpath%20d%3D%27M132%2058%20L144%2070%20L120%2070%20Z%27%20fill%3D%27white%27%2F%3E%0A%20%20%20%20%20%20%3Cpath%20d%3D%27M548%2052%20L558%2065%20L538%2065%20Z%27%20fill%3D%27white%27%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%27308%27%20y%3D%2718%27%20width%3D%274%27%20height%3D%2724%27%20fill%3D%27white%27%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%27546%27%20y%3D%2735%27%20width%3D%273%27%20height%3D%2718%27%20fill%3D%27white%27%2F%3E%0A%20%20%20%20%3C%2Fmask%3E%0A%0A%20%20%20%20%3ClinearGradient%20id%3D%27fade%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%270%27%20y2%3D%271%27%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270%27%20stop-color%3D%27%23000%27%20stop-opacity%3D%270%27%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270.45%27%20stop-color%3D%27%23000%27%20stop-opacity%3D%270.15%27%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%271%27%20stop-color%3D%27%23000%27%20stop-opacity%3D%270.55%27%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%3C%2Fdefs%3E%0A%0A%20%20%3Crect%20width%3D%27600%27%20height%3D%27240%27%20fill%3D%27url(%23dots)%27%20mask%3D%27url(%23skyMask)%27%2F%3E%0A%20%20%3Crect%20width%3D%27600%27%20height%3D%27240%27%20fill%3D%27url(%23fade)%27%2F%3E%0A%3C%2Fsvg%3E");
 }
 
-/* 🏷️ 관심사 칩 스타일 (Pill Shape) */
-.interest-chip {
-  padding: 0.6rem 1.2rem;
-  border-radius: 50px;
-  border: 1px solid #dee2e6;
-  color: #6c757d;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s;
+/* =========================
+   3) 텍스트 / 요소
+========================= */
+.now-top {
   display: flex;
   align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
 }
 
-.interest-chip:hover {
-  background-color: #f8f9fa;
-  transform: translateY(-2px);
+.badge {
+  font-size: 12px;
+  letter-spacing: .12em;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.22);
+  color: rgba(255,255,255,.92);
 }
 
-.interest-chip.active {
-  background-color: #ff8c00;
-  border-color: #ff8c00;
-  color: white;
-  font-weight: normal;
-  /* 손글씨체는 normal이 예쁨 */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(150, 255, 210, .95);
+  box-shadow: 0 0 0 6px rgba(150, 255, 210, .14);
+}
+
+.status {
+  font-size: 13px;
+  color: rgba(255,255,255,.84);
+}
+
+/* 일정 이름: 카드 중앙 */
+.now-title {
+  margin: 18px 0 10px;
+  text-align: center;
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 850;
+  color: rgba(255,255,255,.96);
+  text-shadow: 0 10px 26px rgba(0,0,0,.28);
+  position: relative;
+  z-index: 2;
+}
+
+.now-sub {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: rgba(255,255,255,.82);
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 2;
+}
+
+.sep { opacity: .6; }
+
+.progress {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.14);
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+.bar {
+  height: 100%;
+  border-radius: 999px;
+  background: rgba(255,255,255,.80);
+  box-shadow: 0 10px 26px rgba(255,255,255,.16);
+  transition: width .35s ease;
 }
 </style>

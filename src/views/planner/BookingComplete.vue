@@ -4,8 +4,8 @@
       <div class="check-circle mx-auto mb-3 d-inline-flex align-items-center justify-content-center">
         <i class="bi bi-check-lg text-white fs-2"></i>
       </div>
-      <h2 class="fw-bold">All Set!</h2>
-      <p class="text-muted">Your Seoul adventure is ready to begin</p>
+      <h2 class="fw-bold">일정이 준비되었습니다!</h2>
+      <p class="text-muted">항상 당신을 기다리는 도시, 서울이 당신의 방문을 기다립니다</p>
     </div>
 
     <div class="row justify-content-center">
