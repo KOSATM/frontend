@@ -336,14 +336,7 @@ onMounted(async () => {
     console.log(
         "🔵 [PlanList] onMounted: 스토어에 AI 플랜 없음 → 서버에서 플랜 불러옴"
     );
-    applyAiPlan(chatStore.livePlanFromChat.data);
-    return;
-  }
-
-  console.log(
-    "🔵 [PlanList] : 스토어에 AI 플랜 없음 → 서버에서 플랜 불러옴"
-  );
-  await renderPlan();
+    await renderPlan();
 });
 
 
