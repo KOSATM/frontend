@@ -102,7 +102,8 @@
     </section>
 
     <NavigationButtons
-      backText="Back"
+      backText="뒤로가기"
+      nextText="다음으로"
       :isNextDisabled="!canProceed"
       @back="goBack"
       @next="goNext"

@@ -69,6 +69,7 @@
       backText="뒤로가기"
       :isNextDisabled="!canProceed"
       @back="goBack"
+      nextText="다음으로"
       @next="goNext"
     >
       <template #next-content>
