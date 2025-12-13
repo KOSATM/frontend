@@ -2,7 +2,7 @@
   <div class="photo-upload-page">
     <PageHeader title="트래벌그램" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
     <!-- 🔸 상단 헤더 -->
-    <StepHeader title="여행 후기 작성" :subtitle="reviewStore.planTitle" step="1/6" @back="goBack" />
+    <StepHeader title="여행 후기 작성" subtitle="여행 사진을 업로드해서 AI에게 사진 분석을 맡겨보세요." step="1/6" @back="goBack" />
 
     <!-- 여행 정보 카드 -->
     <div class="plan-info-card" v-if="currentplanInfo">
@@ -153,7 +153,7 @@ const route = useRoute()
 const reviewStore = useReviewStore()
 
 const planId = route.params.planId
-const planTitle = route.query.title || 'My plan'
+const planTitle = route.query.title || '나의 여행'
 
 const fileInput = ref(null)
 const uploadedImages = ref([])
@@ -545,7 +545,6 @@ const goBack = () => router.push({name: 'Travelgram'});
 }
 
 .upload-subtitle {
-  font-size: 0.9rem;
   color: #6c757d;
   margin-bottom: 1rem;
 }
@@ -558,7 +557,6 @@ const goBack = () => router.push({name: 'Travelgram'});
   background-color: #fff;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  font-size: 1rem;
   /* ✅ 글씨 키움 */
 }
 
