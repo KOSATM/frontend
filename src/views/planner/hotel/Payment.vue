@@ -21,7 +21,7 @@
             </p>
             <div class="mb-3 small text-muted">
               <div><i class="bi bi-calendar-check"></i> {{ selectedHotel?.checkInDate }} ~ {{ selectedHotel?.checkOutDate }}</div>
-              <div><i class="bi bi-moon"></i> {{ selectedHotel?.nights }} | <i class="bi bi-people"></i> {{ selectedHotel?.guests }}명</div>
+              <div><i class="bi bi-moon"></i> {{ extractNumber(selectedHotel?.nights) }}박 | <i class="bi bi-people"></i> {{ selectedHotel?.guests }}</div>
             </div>
             <div class="mb-3">
               <span class="badge bg-light text-secondary me-2" v-if="selectedHotel?.freeWifi">
@@ -51,17 +51,17 @@
     <BaseSection icon="bi-receipt" title="요금 상세">
       <div class="card-body">
         <div class="d-flex justify-content-between mb-2">
-          <span>{{ selectedHotel?.nights }} × ₩{{ selectedHotel?.price?.toLocaleString() }}/박</span>
-          <span class="fw-bold">₩{{ (selectedHotel?.price * selectedHotel?.nights)?.toLocaleString() }}</span>
+          <span>{{ extractNumber(selectedHotel?.nights) }}박 × ₩{{ formatPrice(selectedHotel?.price) }}/박</span>
+          <span class="fw-bold">₩{{ formatPrice(roomPrice) }}</span>
         </div>
         <div class="d-flex justify-content-between mb-2">
-          <span>세금 및 수수료</span>
-          <span class="fw-bold">₩{{ taxesAndFees.toLocaleString() }}</span>
+          <span>세금 및 수수료 (15%)</span>
+          <span class="fw-bold">₩{{ formatPrice(taxFee) }}</span>
         </div>
         <hr />
         <div class="d-flex justify-content-between">
           <span class="fs-5 fw-bold">총 결제 금액</span>
-          <span class="fs-5 fw-bold text-primary">₩{{ totalAmount.toLocaleString() }}</span>
+          <span class="fs-5 fw-bold text-primary">₩{{ formatPrice(finalTotal) }}</span>
         </div>
       </div>
     </BaseSection>
@@ -144,25 +144,25 @@
     </div>
 
     <!-- 버튼 -->
-    <div class="d-flex gap-3 justify-content-center">
+    <div class="d-flex gap-3 justify-content-center mb-5">
       <button class="btn btn-outline-secondary btn-lg px-5" @click="goBack">
         뒤로가기
       </button>
 
-      <BaseButton class="btn btn-primary btn-lg px-5" @click="processPayment" :disabled="!agreeToTerms || isProcessing">
-        <span v-if="!isProcessing">₩{{ totalAmount.toLocaleString() }} 결제하기</span>
+      <button class="btn btn-primary btn-lg px-5" @click="processPayment" :disabled="!agreeToTerms || isProcessing">
+        <span v-if="!isProcessing">₩{{ formatPrice(finalTotal) }} 결제하기</span>
         <span v-else>
           <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
           결제 처리 중...
         </span>
-      </BaseButton>
+      </button>
     </div>
 
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import BaseButton from '@/components/common/button/BaseButton.vue';
 import { useTravelStore } from '@/store/travelStore';
@@ -172,8 +172,11 @@ const route = useRoute();
 const router = useRouter();
 const travelStore = useTravelStore();
 
+// ✅ 모든 ref는 초기값을 명확하게
 const selectedHotel = ref(null);
-const taxesAndFees = ref(0);
+const roomPrice = ref(0);
+const taxFee = ref(0);
+const finalTotal = ref(0);
 const paymentMethod = ref('creditCard');
 const cardDetails = ref({
   name: '',
@@ -184,50 +187,63 @@ const cardDetails = ref({
 const agreeToTerms = ref(false);
 const isProcessing = ref(false);
 
-// ✅ 마운트 시 쿼리에서 호텔 정보 받기
+// ✅ 숫자만 추출하는 함수
+const extractNumber = (value) => {
+  if (!value) return 0;
+  const num = Number(String(value).replace(/[^0-9]/g, ''));
+  return num || 0;
+};
+
+// ✅ 가격 포맷팅 함수
+const formatPrice = (price) => {
+  if (!price || price === 0 || isNaN(price)) {
+    return '0';
+  }
+  return Number(price).toLocaleString();
+};
+
+// ✅ 가격 계산 함수
+const calculatePrices = () => {
+  if (!selectedHotel.value) return;
+
+  const price = Number(selectedHotel.value.price) || 0;
+  const nights = extractNumber(selectedHotel.value.nights);
+
+  roomPrice.value = price * nights;
+  taxFee.value = Math.ceil(roomPrice.value * 0.15);
+  finalTotal.value = roomPrice.value + taxFee.value;
+
+  console.log('💰 가격 계산:', {
+    price,
+    nights,
+    roomPrice: roomPrice.value,
+    taxFee: taxFee.value,
+    finalTotal: finalTotal.value
+  });
+};
+
+// ✅ 마운트 시 호텔 정보 받기
 onMounted(() => {
-  console.log('🔍 Payment onMounted');
+  console.log('🔍 Payment 페이지 로드');
   console.log('route.query:', route.query);
-  
+
   if (route.query.hotel) {
     try {
       selectedHotel.value = JSON.parse(route.query.hotel);
-      console.log('✅ 받은 호텔 정보:', selectedHotel.value);
-      console.log('price:', selectedHotel.value?.price);
-      console.log('nights:', selectedHotel.value?.nights);
-      
-      // ✅ 숫자로 변환
-      const price = Number(selectedHotel.value.price);
-      const nights = Number(selectedHotel.value.nights);
-      const roomPrice = price * nights;
-      
-      console.log('roomPrice:', roomPrice);
-      taxesAndFees.value = Math.ceil(roomPrice * 0.15);
-      console.log('taxesAndFees:', taxesAndFees.value);
+      console.log('✅ 호텔 정보 로드 성공:', selectedHotel.value);
+      console.log('price:', selectedHotel.value.price);
+      console.log('nights:', selectedHotel.value.nights);
+      calculatePrices();
     } catch (error) {
       console.error('❌ 호텔 정보 파싱 실패:', error);
+      alert('호텔 정보를 불러올 수 없습니다.');
       router.push({ name: 'hotel' });
     }
   } else {
     console.warn('❌ 호텔 정보 없음');
+    alert('호텔을 선택해주세요.');
     router.push({ name: 'hotel' });
   }
-});
-
-const totalAmount = computed(() => {
-  if (!selectedHotel.value) {
-    console.log('❌ selectedHotel이 없음');
-    return 0;
-  }
-  
-  const price = Number(selectedHotel.value.price) || 0;
-  const nights = Number(selectedHotel.value.nights) || 0;
-  const roomPrice = price * nights;
-  const total = roomPrice + taxesAndFees.value;
-  
-  console.log('totalAmount 계산:', { price, nights, roomPrice, taxesAndFees: taxesAndFees.value, total });
-  
-  return total;
 });
 
 const goBack = () => {
@@ -247,20 +263,26 @@ const validateCardDetails = () => {
 };
 
 const processPayment = () => {
+  console.log('💳 결제 프로세스 시작');
+
   if (!agreeToTerms.value) {
-    alert('예약 조건에 동의해주세요');
+    alert('예약 조건에 동의해주세요.');
     return;
   }
 
   if (!validateCardDetails()) {
-    alert('카드 정보를 입력해주세요');
+    alert('카드 정보를 모두 입력해주세요.');
     return;
   }
 
   isProcessing.value = true;
+  console.log('⏳ 결제 처리 중...');
 
+  // ✅ 결제 완료 시뮬레이션
   setTimeout(() => {
     isProcessing.value = false;
+    console.log('✅ 결제 완료');
+    
     travelStore.increaseStep();
     router.push({ name: 'bookingComplete' });
   }, 2000);
@@ -271,15 +293,14 @@ const processPayment = () => {
 .payment-item {
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 0.75rem 1rem;
   border: 1px solid #d0d5dd;
   border-radius: 0.75rem;
   background: #fff;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 1.3rem;
-  min-width: fit-content;
-  height: 100%;
+  text-align: center;
 }
 
 .payment-item:hover {
@@ -294,7 +315,7 @@ const processPayment = () => {
 }
 
 .payment-item i {
-  font-size: 1rem;
+  font-size: 1.2rem;
 }
 
 .card {
@@ -302,13 +323,64 @@ const processPayment = () => {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.card-header {
-  border-bottom: 1px solid #e9ecef;
-}
-
 .rating {
   display: flex;
   align-items: center;
   font-size: 0.95rem;
 }
+
+.form-control {
+  border: 1px solid #d0d5dd;
+}
+
+.form-control:focus {
+  border-color: #ff8c00;
+  box-shadow: 0 0 0 0.2rem rgba(255, 140, 0, 0.25);
+}
+
+.btn-primary {
+  background-color: #1b3b6f;
+  border-color: #1b3b6f;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #ff8c00;
+  border-color: #ff8c00;
+}
+
+.btn-outline-secondary {
+  color: #1b3b6f;
+  border-color: #1b3b6f;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #ff8c00;
+  border-color: #ff8c00;
+  color: white;
+}
+
+.btn-primary {
+  background-color: #1b3b6f;
+  border-color: #1b3b6f;
+  color: white !important;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #ff8c00;
+  border-color: #ff8c00;
+  color: white !important;
+}
+
+.btn-outline-secondary {
+  color: #1b3b6f !important;
+  border-color: #1b3b6f;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #ff8c00;
+  border-color: #ff8c00;
+  color: white !important;
+}
+
+
 </style>
