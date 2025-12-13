@@ -1,9 +1,9 @@
 <template>
-    <PageHeader
-      title="트래벌그램"
-      subtitle="당신의 지난 여행 기록들"
-      icon="bi-instagram"
-    />
+  <PageHeader
+    title="트래벌그램"
+    subtitle="당신의 지난 여행 기록들"
+    icon="bi-instagram"
+  />
   <div class="review-edit-page">
     <StepHeader title="여행 후기 편집" :subtitle="reviewStore.planTitle" step="5/6" @back="goBack" />
 
@@ -13,12 +13,10 @@
         후기 & 편집
       </h6>
 
-      <!-- 📸 Photos -->
       <div class="photo-section">
         <div class="photo-header d-flex justify-content-between align-items-center">
           <p class="photo-count">사진 ({{ photos.length }})</p>
         </div>
-        <!-- ✅ 사진 컨테이너 (네비게이션 포함) -->
         <div class="photo-container">
           <div class="photo-carousel">
             <div v-for="(photo, index) in photos" :key="photo.id" class="photo-item">
@@ -27,7 +25,6 @@
               <div class="photo-index">{{ index + 1 }}/{{ photos.length }}</div>
             </div>
           </div>
-          <!-- ✅ 이전/다음 네비게이션 버튼 -->
           <button v-if="photos.length > 1" class="nav-btn nav-prev" @click="prevPhoto" :disabled="currentPhotoIndex === 0">
             <i class="bi bi-chevron-left"></i>
           </button>
@@ -37,16 +34,17 @@
         </div>
       </div>
 
-      <!-- ✍️ Caption -->
       <div class="caption-section mt-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <h6>내용</h6>
         </div>
         <textarea v-model="caption" rows="4" class="caption-box" maxlength="2200"></textarea>
-        <p class="char-count">{{ caption.length }} 글자</p>
+        
+        <p class="char-count" :class="{ 'text-danger': captionByteLength > 2200 }">
+          {{ captionByteLength }} / 2200 (바이트)
+        </p>
       </div>
 
-      <!-- 🏷️ Hashtags -->
       <div class="hashtag-section mt-4">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <h6>해시태그</h6>
@@ -58,7 +56,7 @@
       </div>
     </section>
 
-        <NavigationButtons
+    <NavigationButtons
       backText="Back"
       :isNextDisabled="!canProceed"
       @back="goBack"
@@ -81,24 +79,37 @@ const route = useRoute();
 const router = useRouter();
 const reviewStore = useReviewStore();
 
-// store 데이터
 const photos = computed(() => reviewStore.photos);
 const caption = ref(reviewStore.caption || "");
 const selectedHashtags = computed(() => reviewStore.selectedHashtags || []);
 
-// ✅ 현재 사진 인덱스
 const currentPhotoIndex = ref(0);
-// 🔥 [추가] 1. 저장 중 상태 관리 (중복 클릭 방지)
 const isSaving = ref(false);
 
-// 🔥 [추가] 2. 버튼 활성화 조건 (사진이 있고, 저장 중이 아닐 때)
 const canProceed = computed(() => {
   return photos.value && photos.value.length > 0 && !isSaving.value;
 });
-// 반응형 저장
+
+// 🔥 [추가] 한국어 기준 글자수 계산 (한글 2, 영문 1)
+const captionByteLength = computed(() => {
+  let total = 0;
+  const text = caption.value;
+  
+  for (let i = 0; i < text.length; i++) {
+    const charCode = text.charCodeAt(i);
+    // 한글 및 특수문자(유니코드 > 127)는 2byte(2글자) 취급
+    // 일반적인 영문, 숫자, 기본 공백은 1byte(1글자) 취급
+    if (charCode > 127) {
+      total += 2;
+    } else {
+      total += 1;
+    }
+  }
+  return total;
+});
+
 watch(caption, (val) => reviewStore.caption = val);
 
-// ✅ 사진 네비게이션
 const prevPhoto = () => {
   if (currentPhotoIndex.value > 0) {
     currentPhotoIndex.value--;
@@ -116,32 +127,26 @@ const nextPhoto = () => {
 const scrollToPhoto = () => {
   const carousel = document.querySelector('.photo-carousel');
   if (carousel) {
-    const itemWidth = carousel.querySelector('.photo-item').offsetWidth + 16; // 16은 gap
+    const itemWidth = carousel.querySelector('.photo-item').offsetWidth + 16;
     carousel.scrollLeft = currentPhotoIndex.value * itemWidth;
   }
 };
 
 const goBack = () => router.push({name: 'HashtagSelect'});
 const goNext = async() => {
-// 🔥 [수정] 저장 시작 시 로딩 상태 true
   isSaving.value = true;
-
   try {
     reviewStore.setCaption(caption.value);
-
     if (reviewStore.reviewPostId) {
       await api.updateCaption(reviewStore.reviewPostId, caption.value);
     } else {
       console.warn("reviewPostId가 없습니다. 저장을 건너뜁니다.");
     }
-
     router.push({ name: 'InstagramPreview', params: { planId: route.params.planId } });
-
   } catch (error) {
     console.error("캡션 저장 중 오류 발생:", error);
     alert("저장에 실패했습니다. 다시 시도해주세요.");
   } finally {
-    // 🔥 [수정] 로딩 상태 해제 (혹시 실패하더라도 버튼 다시 눌러야 하니까)
     isSaving.value = false;
   }
 };
@@ -262,35 +267,25 @@ const goNext = async() => {
   font-size: 0.85rem;
 }
 
-/* 하단 버튼 영역 */
-.navigation-buttons {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 2rem;
+.char-count {
+  text-align: right;
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 0.5rem;
 }
 
-.btn-back,
-.btn-next {
-  flex: 1;
-  height: 48px;
+.text-danger {
+  color: #dc3545 !important; /* 글자수 초과 시 붉은색 표시 */
+}
+
+.caption-box {
+  width: 100%;
+  border: 1px solid #ddd;
   border-radius: 1rem;
-  border: none;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.btn-back {
-  background-color: #fff;
-  color: #1b3b6f;
-  border: 2px solid #1b3b6f;
-  margin-right: 0.75rem;
-}
-.btn-next {
-  background-color: #1b3b6f;
-  color: #fff;
-}
-.btn-next:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+  padding: 1rem;
+  background: #fff;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  resize: none;
 }
 </style>

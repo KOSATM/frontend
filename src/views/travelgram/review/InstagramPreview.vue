@@ -1,10 +1,8 @@
 <template>
   <div class="preview-page">
     <PageHeader title="트래벌그램" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
-    <!-- 상단 헤더 -->
     <StepHeader title="여행 후기 작성" :subtitle="reviewStore.planTitle" step="6/6" @back="goBack" />
 
-    <!-- 📸 인스타그램 프리뷰 섹션 -->
     <section class="preview-section">
       <h6 class="section-title">
         <i class="bi bi-instagram text-danger me-2"></i> 인스타그램 미리보기
@@ -13,23 +11,25 @@
         당신의 게시물이 인스타그램에 어떻게 보일지 미리보기로 확인해보세요.
       </p>
 
-      <!-- 인스타 카드 -->
       <div class="insta-card" v-if="currentPhoto">
-        <!-- 프로필 -->
         <div class="insta-header">
-          <div class="profile-circle">{{ user.initials }}</div>
+          
+          <img 
+            :src="userInfo.profileImage || defaultProfileImg" 
+            class="profile-img-circle" 
+            alt="Profile" 
+          />
+
           <div class="profile-info">
-            <strong>{{ user.username }}</strong>
-            <p>{{ user.location }}</p>
+            <strong>{{ userInfo.handle }}</strong>
+            <p>{{ userInfo.location }}</p>
           </div>
         </div>
 
-        <!-- 사진 캐러셀 -->
         <div class="photo-carousel">
           <img :src="currentPhoto.url" class="preview-photo" :alt="currentPhoto.name" @error="handleImageError" />
           <div class="photo-index">{{ currentIndex + 1 }}/{{ reviewStore.photos.length }}</div>
 
-          <!-- ✅ 이전/다음 버튼 -->
           <button v-if="reviewStore.photos.length > 1" class="nav-btn nav-prev" @click="prevPhoto"
             :disabled="currentIndex === 0">
             <i class="bi bi-chevron-left"></i>
@@ -40,7 +40,6 @@
           </button>
         </div>
 
-        <!-- 액션 -->
         <div class="insta-actions">
           <i class="bi bi-heart"></i>
           <i class="bi bi-chat"></i>
@@ -49,13 +48,11 @@
 
         <p class="likes-count">{{ likes.toLocaleString() }} likes</p>
 
-        <!-- 캡션 -->
         <div class="insta-caption">
-          <strong>{{ user.username }}</strong>
-          <span>{{ reviewStore.caption || 'No caption added' }}</span>
+          <strong>{{ userInfo.handle }}</strong>
+          <span>{{ reviewStore.caption || '추가된 내용이 없습니다.' }}</span>
         </div>
 
-        <!-- 해시태그 -->
         <div class="insta-hashtags" v-if="reviewStore.selectedHashtags.length">
           <span v-for="tag in reviewStore.selectedHashtags" :key="tag.id">
             #{{ tag.name }}
@@ -65,14 +62,12 @@
         <p class="time-posted">2 hours ago</p>
       </div>
 
-      <!-- 사진이 없을 때 -->
       <p v-else class="text-muted text-center mt-4">
-        ❌ No photos uploaded yet
+        ❌ 사진이 업로드 되지 않았습니다. 새로고침을 하셨다면 처음부터 다시 시작해주세요.
         <br />
         <small>Photos length: {{ reviewStore.photos?.length || 0 }}</small>
       </p>
 
-      <!-- 복사 버튼 -->
       <div class="copy-section">
         <button class="btn-copy" @click="copyToClipboard">
           <i class="bi bi-clipboard me-2"></i>Copy Caption & Hashtags
@@ -92,23 +87,42 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
+import { useAuthStore } from '@/store/authStore' // ✅ authStore import
 import StepHeader from '@/components/common/header/StepHeader.vue'
 import PageHeader from '@/components/common/header/PageHeader.vue'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+// ✅ 기본 프로필 이미지 임포트
+import defaultProfileImg from '@/assets/img/profile-logo.png';
 
-// 기본 유저정보
-const user = ref({
-  initials: 'JH',
-  username: 'jessica.han',
-  location: 'Jeju Island',
+// Store 연결
+const reviewStore = useReviewStore()
+const authStore = useAuthStore() // ✅ authStore 사용
+const router = useRouter()
+
+// ✅ 새로고침 시 인증 정보 유실 방지
+onMounted(() => {
+  if (!authStore.isLoggedIn) {
+    authStore.initializeAuth()
+  }
 })
 
-// store 연결 (reactive)
-const reviewStore = useReviewStore()
-const router = useRouter()
+// ✅ 유저 정보 Computed (authStore 연동)
+const userInfo = computed(() => {
+  // 이름이 없으면 'Traveler' 사용
+  const name = authStore.userName || 'Traveler'
+  
+  return {
+    // 인스타 아이디처럼 보이게 공백을 점으로 대체하고 소문자로 변환
+    handle: name.toLowerCase().replace(/\s+/g, '.'),
+    // authStore의 프로필 이미지 경로 사용 (없으면 null)
+    profileImage: authStore.userProfileImage,
+    // 위치 정보 (추후 store에서 가져올 수 있음)
+    location: '대한민국, 서울' 
+  }
+})
 
 const likes = ref(1234)
 const currentIndex = ref(0)
@@ -134,10 +148,12 @@ const nextPhoto = () => {
   }
 }
 
-// 디버깅용 로그
-console.log('InstagramPreview mounted')
-console.log('Store photos:', reviewStore.photos)
-console.log('Store photos length:', reviewStore.photos?.length)
+// 이미지 로드 에러 처리 (옵션)
+const handleImageError = (e) => {
+  // e.target.src = '/path/to/fallback/image.jpg' 
+  console.error('Image load failed:', e.target.src)
+}
+
 
 // 복사 기능
 const copyToClipboard = () => {
@@ -210,19 +226,17 @@ const publish = () => {
   border-bottom: 1px solid #f1f1f1;
 }
 
-.profile-circle {
+/* ✅ 프로필 이미지 스타일 추가 */
+.profile-img-circle {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: #1b3b6f;
-  color: white;
-  font-weight: 600;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  object-fit: cover;
+  border: 1px solid #eee;
   margin-right: 0.75rem;
 }
+
+/* 기존 .profile-circle 스타일 제거됨 */
 
 .profile-info p {
   color: #777;
@@ -259,6 +273,43 @@ const publish = () => {
   border-radius: 1rem;
   z-index: 5;
 }
+
+/* 네비게이션 버튼 */
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  color: #333;
+  transition: background 0.2s;
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.nav-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.nav-prev {
+  left: 10px;
+}
+
+.nav-next {
+  right: 10px;
+}
+
 /* 액션 */
 .insta-actions {
   display: flex;
@@ -281,6 +332,9 @@ const publish = () => {
   line-height: 1.5;
 }
 
+.insta-caption strong {
+  margin-right: 8px; /* 간격 크기 조절 (6px ~ 8px 추천) */
+}
 /* 해시태그 */
 .insta-hashtags {
   padding: 0.5rem 1rem;
@@ -323,39 +377,5 @@ const publish = () => {
 .btn-copy:hover {
   background: #1b3b6f;
   color: white;
-}
-
-/* 하단 버튼 영역 */
-.navigation-buttons {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 2rem;
-}
-
-.btn-back,
-.btn-next {
-  flex: 1;
-  height: 48px;
-  border-radius: 1rem;
-  border: none;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.btn-back {
-  background-color: #fff;
-  color: #1b3b6f;
-  border: 2px solid #1b3b6f;
-  margin-right: 0.75rem;
-}
-
-.btn-next {
-  background-color: #1b3b6f;
-  color: #fff;
-}
-
-.btn-next:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
 }
 </style>
