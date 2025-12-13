@@ -177,12 +177,17 @@ defineExpose({
   padding: 0 !important;
   border: none !important;
   box-shadow: none !important;
+  padding-top: 64px;
 }
 
 .chat-header {
   flex-shrink: 0;
   padding: 1rem;
   border-bottom: 1px solid #e9ecef;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 50;
 }
 
 .chat-header .btn-ghost {
@@ -249,24 +254,6 @@ defineExpose({
   word-wrap: break-word;
 }
 
-.chat-messages::-webkit-scrollbar {
-  width: 8px;
-}
-
-.chat-messages::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.chat-messages::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
-
-.chat-messages::-webkit-scrollbar-thumb:hover {
-  background: #868e96;
-}
-
-/* ✅ 스크롤바 스타일 - 항상 표시 */
 .chat-messages::-webkit-scrollbar {
   width: 12px;
 }
@@ -338,39 +325,54 @@ defineExpose({
   }
 }
 
+/* Markdown Style Override (사이드바 폭에 맞춤) */
 :deep(.markdown-body) {
   font-size: 13.5px !important;
   background: transparent !important;
   color: inherit !important;
 }
 
+/* --- 여기부터 추가하세요 --- */
+/* 제목 태그(h1~h6)들의 크기와 여백을 강제로 줄임 */
 :deep(.markdown-body h1),
 :deep(.markdown-body h2),
 :deep(.markdown-body h3),
 :deep(.markdown-body h4),
 :deep(.markdown-body h5),
 :deep(.markdown-body h6) {
-  font-size: 1.1em !important;
-  font-weight: 700 !important;
-  margin-top: 12px !important;
-  margin-bottom: 6px !important;
+  font-size: 1.1em !important; /* 본문보다 약간만 크게 설정 (약 15px) */
+  font-weight: 700 !important; /* 굵기는 유지 */
+  margin-top: 12px !important; /* 위쪽 여백 줄임 */
+  margin-bottom: 6px !important; /* 아래쪽 여백 줄임 */
+  line-height: 1.4 !important;
+  border-bottom: none !important; /* h1, h2에 자주 붙는 밑줄 제거 */
 }
+/* --- 여기까지 --- */
 
 :deep(.markdown-body p) {
   margin-bottom: 0.5rem !important;
 }
-
-:deep(.markdown-body ul),
-:deep(.markdown-body ol) {
+:deep(.markdown-body ul) {
   padding-left: 1.2rem !important;
   margin-bottom: 5px !important;
+
 }
 
+/* 이미지 크기 제한 및 스타일링 */
 :deep(.markdown-body img) {
-  max-width: 100% !important;
-  height: auto !important;
-  max-height: 300px !important;
-  border-radius: 8px !important;
-  margin: 10px 0 !important;
+  max-width: 100% !important;    /* 가로: 말풍선 너비를 넘지 않도록 설정 */
+  height: auto !important;       /* 세로: 비율에 맞춰 자동 조절 */
+  max-height: 300px !important;  /* 세로 최대 크기 제한 (너무 길쭉한 이미지 방지) */
+  object-fit: contain !important; /* 이미지가 찌그러지지 않고 비율 유지 */
+  
+  border-radius: 8px !important; /* 이미지 모서리를 둥글게 (보기 좋게) */
+  display: block !important;     /* 블록 요소로 변경 */
+  margin: 10px 0 !important;     /* 위아래 여백 추가 */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important; /* 살짝 그림자 효과 */
+}
+
+/* (선택 사항) 로딩 중이거나 깨진 이미지 아이콘 숨김 처리 */
+:deep(.markdown-body img[alt=""]) {
+  display: none !important;
 }
 </style>
