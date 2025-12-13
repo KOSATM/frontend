@@ -166,11 +166,14 @@ import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import BaseButton from '@/components/common/button/BaseButton.vue';
 import { useTravelStore } from '@/store/travelStore';
+import { useAuthStore } from '@/store/authStore';
 import BaseSection from '@/components/common/BaseSection.vue';
+import hotelApi from '@/api/hotelApi';
 
 const route = useRoute();
 const router = useRouter();
 const travelStore = useTravelStore();
+const authStore = useAuthStore();
 
 // ✅ 모든 ref는 초기값을 명확하게
 const selectedHotel = ref(null);
@@ -200,6 +203,12 @@ const formatPrice = (price) => {
     return '0';
   }
   return Number(price).toLocaleString();
+};
+
+// ✅ 날짜를 YYYY-MM-DD 형식으로 변환
+const formatDateToYYYYMMDD = (dateString) => {
+  if (!dateString) return null;
+  return dateString.split('T')[0];
 };
 
 // ✅ 가격 계산 함수
@@ -262,7 +271,8 @@ const validateCardDetails = () => {
   return true;
 };
 
-const processPayment = () => {
+// ✅ 결제 프로세스 시작
+const processPayment = async () => {
   console.log('💳 결제 프로세스 시작');
 
   if (!agreeToTerms.value) {
@@ -278,14 +288,44 @@ const processPayment = () => {
   isProcessing.value = true;
   console.log('⏳ 결제 처리 중...');
 
-  // ✅ 결제 완료 시뮬레이션
-  setTimeout(() => {
+  try {
+    const userId = authStore.userId;
+    console.log('👤 userId:', userId);
+
+    // ✅ 호텔 예약 데이터 준비 (createdAt 제거)
+    const bookingData = {
+      userId: userId,
+      hotelName: selectedHotel.value.name,
+      roomType: selectedHotel.value.roomType,
+      checkinDate: formatDateToYYYYMMDD(selectedHotel.value.checkInDate),
+      checkoutDate: formatDateToYYYYMMDD(selectedHotel.value.checkOutDate)
+    };
+
+    console.log('========== API 요청 데이터 ==========');
+    console.log('📤 예약 데이터:', bookingData);
+    console.log('JSON 형식:', JSON.stringify(bookingData, null, 2));
+    console.log('=====================================');
+
+    // ✅ API 호출 - 호텔 예약 저장
+    console.log('🔄 API 호출 시작...');
+    const response = await hotelApi.createHotelBooking(userId, bookingData);
+    console.log('✅ API 응답 성공:', response);
+    console.log('응답 데이터:', response.data);
+
     isProcessing.value = false;
-    console.log('✅ 결제 완료');
-    
     travelStore.increaseStep();
+    
+    alert('예약이 완료되었습니다!');
     router.push({ name: 'bookingComplete' });
-  }, 2000);
+
+  } catch (error) {
+    console.error('❌ API 호출 실패');
+    console.error('에러 메시지:', error.message);
+    console.error('응답 데이터:', error.response?.data);
+    
+    isProcessing.value = false;
+    alert('예약 처리 중 오류가 발생했습니다.');
+  }
 };
 </script>
 
@@ -341,27 +381,6 @@ const processPayment = () => {
 .btn-primary {
   background-color: #1b3b6f;
   border-color: #1b3b6f;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background-color: #ff8c00;
-  border-color: #ff8c00;
-}
-
-.btn-outline-secondary {
-  color: #1b3b6f;
-  border-color: #1b3b6f;
-}
-
-.btn-outline-secondary:hover {
-  background-color: #ff8c00;
-  border-color: #ff8c00;
-  color: white;
-}
-
-.btn-primary {
-  background-color: #1b3b6f;
-  border-color: #1b3b6f;
   color: white !important;
 }
 
@@ -369,6 +388,12 @@ const processPayment = () => {
   background-color: #ff8c00;
   border-color: #ff8c00;
   color: white !important;
+}
+
+.btn-primary:disabled {
+  background-color: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
 }
 
 .btn-outline-secondary {
@@ -381,6 +406,4 @@ const processPayment = () => {
   border-color: #ff8c00;
   color: white !important;
 }
-
-
 </style>

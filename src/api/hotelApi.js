@@ -18,6 +18,39 @@ async function recommendHotel(userId, userPreferences = null) {
   return api.get('/api/hotel/recommend', { params })
 }
 
-export default {
-  recommendHotel
+
+// 사용자 ID로 호텔 정보를 조회한다.
+async function getHotelByUserId(userId) {
+  const params = {
+    userId: userId
+  }
+  
+  return api.get('/api/hotel-ff', { params })
 }
+
+/**
+ * 호텔 예약을 생성 또는 수정한다. (Upsert)
+ * @param {Long} userId - 사용자 ID
+ * @param {Object} hotelData - 호텔 예약 데이터
+ * @returns {Promise} 저장된 예약 정보
+ */
+async function createHotelBooking(userId, hotelData) {
+  return api.put(`/api/hotel-ff/insert/${userId}`, hotelData)
+}
+
+/**
+ * 호텔 예약을 삭제한다.
+ * @param {Long} id - 예약 ID
+ * @returns {Promise} 삭제 결과
+ */
+async function deleteHotelBooking(id) {
+  return api.delete(`/api/hotel-ff/id/${id}`)
+}
+
+export default {
+  recommendHotel,
+  getHotelByUserId,
+  createHotelBooking,
+  deleteHotelBooking
+}
+
