@@ -3,85 +3,30 @@
     <PageHeader title="트래벌그램" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
     <StepHeader title="여행 후기 작성" subtitle="여행 사진을 업로드해서 AI에게 사진 분석을 맡겨보세요." step="1/6" @back="goBack" />
 
-    <!-- 여행 정보 카드 -->
     <div class="plan-info-card" v-if="currentplanInfo">
-      <div class="plan-info-header">
-        <h5>{{ planTitle }}</h5>
-      </div>
+      <div class="plan-info-header"><h5 class="text-white">{{ planTitle }}</h5></div>
       <div class="plan-info-body">
-        <div class="info-row">
-          <span class="info-label">Location</span>
-          <span class="info-value">{{ currentplanInfo.location }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Date</span>
-          <span class="info-value">{{ currentplanInfo.date }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Budget</span>
-          <span class="info-value">${{ currentplanInfo.cost }}</span>
-        </div>
+        <div class="info-row"><span class="info-label">Location</span><span class="info-value">{{ currentplanInfo.location }}</span></div>
+        <div class="info-row"><span class="info-label">Date</span><span class="info-value">{{ currentplanInfo.date }}</span></div>
+        <div class="info-row"><span class="info-label">Budget</span><span class="info-value">${{ currentplanInfo.cost }}</span></div>
       </div>
     </div>
 
-    
-
-    <!-- 일정 정보 섹션 -->
-
     <div class="itinerary-section" v-if="currentplanInfo && currentplanInfo.itinerary">
-      <h6 class="itinerary-title mb-3">
-        <i class="bi bi-calendar-event me-2 text-secondary"></i>Daily Itinerary
+      <h6 class="itinerary-title mb-0">
+        <i class="bi bi-calendar-event me-2 text-secondary"></i>지난 여행 일정
       </h6>
 
-      <div class="planner-accordion">
-        <div v-for="day in currentplanInfo.itinerary" :key="day.dayNumber"
-          class="card border-0 shadow-sm rounded-4 overflow-hidden mb-3">
-          <!-- Day Header -->
-          <div class="card-body d-flex justify-content-between align-items-center"
-            :class="openDayId === day.dayNumber ? 'bg-secondary text-white' : 'bg-white'" role="button"
-            @click="toggleDay(day.dayNumber)">
-            <div>
-              <div class="small fw-semibold" :class="openDayId !== day.dayNumber ? 'text-secondary' : ''">
-                Day {{ day.dayNumber }}
-              </div>
-              <h6 class="mb-0 title">{{ day.title }}</h6>
-              <div class="small" :class="openDayId !== day.dayNumber ? 'text-muted' : 'text-white-50'">
-                {{ day.date }}
-              </div>
-            </div>
-
-            <div class="text-end">
-              <div class="small" :class="openDayId === day.dayNumber ? 'text-white-50' : ''">
-                Activities
-              </div>
-              <div class="fw-bold title">{{ day.activities.length }}</div>
-              <div class="small">
-                <span class="chevron" :class="{ 'rotate-180': openDayId === day.dayNumber }">⌃</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- ▶ Activities collapse area -->
-          <transition name="collapse">
-            <div v-if="openDayId === day.dayNumber" class="list-group list-group-flush">
-              <div v-for="(act, index) in day.activities" :key="index"
-                class="list-group-item d-flex justify-content-between align-items-center activity-row bg-white">
-                <div class="d-flex align-items-start gap-3">
-                  <div class="icon-badge themed theme-default">⏰</div>
-                  <div>
-                    <div class="fw-semibold small title">{{ act.name }}</div>
-
-                    <div class="d-flex align-items-center gap-2 small text-muted sub">
-                      <span class="soft-chip">
-                        <span class="chip-emoji">🕒</span> {{ act.time }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </transition>
-        </div>
+      <div class="timeline-wrapper">
+        <PlanDayTimeline 
+          :days="currentplanInfo.itinerary" 
+          :edit-mode="false"
+          :type-color="getTypeColor"
+          :type-label="getTypeLabel"
+          :format-time="formatTime"
+          :category-map="categoryMap"
+          @open-modal="handleOpenModal"
+        />
       </div>
     </div>
 
@@ -116,160 +61,206 @@
 </template>
 
 <script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useReviewStore } from '@/store/reviewStore'
 import api from '@/api/travelgramApi'
+
+// 컴포넌트 import
 import PageHeader from '@/components/common/header/PageHeader.vue'
 import StepHeader from '@/components/common/header/StepHeader.vue'
-import { useReviewStore } from '@/store/reviewStore'
-import { v4 as uuidv4 } from 'uuid'
-import { computed, onMounted,onUnmounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue'
 import PhotoUploader from '@/components/travelgram/PhotoUploader.vue'
+import PlanDayTimeline from '@/components/planner/PlanDayTimeline.vue' 
 
 const router = useRouter()
 const route = useRoute()
 const reviewStore = useReviewStore()
 
 const planId = route.params.planId
-const planTitle = route.query.title || '나의 여행'
+const planTitle = route.params.planTitle || '나의 여행'
 
-const fileInput = ref(null)
+// 상태 변수
 const uploadedImages = ref([])
-const openDayId = ref(1) // 기본 1번 Day 오픈
-
-const isAnalyzing = ref(false) // 분석 진행 중 여부
-const pollingInterval = ref(null) // 타이머 저장 변수
-
+const isAnalyzing = ref(false)
+const pollingInterval = ref(null)
+const isReady = ref(false)
 const currentplanInfo = ref(null)
-const toggleDay = (id) => {
-  openDayId.value = openDayId.value === id ? null : id // 토글 기능
+
+// -----------------------------------------------------------
+// 🎨 1. 헬퍼 함수 수정 (planner/edit 코드와 통일)
+// -----------------------------------------------------------
+const categoryMap = {
+  FOOD: "음식점",
+  SPOT: "관광지",
+  SHOPPING: "쇼핑",
+  CAFE: "카페",
+  HOTEL: "숙소",
+  EVENT: "이벤트",
+  ETC: "기타",
+  // 호환성을 위해 추가
+  ATTRACTION: "관광지",
+  RESTAURANT: "음식점",
+  ACCOMMODATION: "숙소"
 }
-// 🔹 [추가] 상세 일정 가져오는 함수
+
+const getTypeColor = (type) => {
+  // 대문자로 변환하여 비교
+  const t = type?.toUpperCase()
+  switch (t) {
+    case "FOOD":
+    case "RESTAURANT": return "color-red";
+    
+    case "SHOPPING": return "color-blue";
+    
+    case "CAFE": return "color-green";
+    
+    case "HOTEL":
+    case "ACCOMMODATION": return "color-gray";
+    
+    case "SPOT": 
+    case "ATTRACTION": return "color-purple";
+    
+    case "EVENT": return "color-purple";
+    default: return "color-purple"; // 기본값
+  }
+};
+
+const getTypeLabel = (type) => {
+  const t = type?.toUpperCase()
+  switch (t) {
+    case "FOOD": 
+    case "RESTAURANT": return "식사 장소 추천";
+    
+    case "SHOPPING": return "쇼핑 추천";
+    case "CAFE": return "카페 추천";
+    
+    case "HOTEL": 
+    case "ACCOMMODATION": return "숙소 이동";
+    
+    case "SPOT": 
+    case "ATTRACTION": return "관광지 추천";
+    
+    case "EVENT": return "이벤트 방문";
+    case "ETC": return "공원 산책";
+    default: return null; // null이면 라벨이 숨겨짐
+  }
+};
+
+const formatTime = (isoString) => {
+  if (!isoString) return ''
+  // 00:00 형태로 자르기
+  return isoString.substring(11, 16)
+}
+
+const handleOpenModal = (place) => {
+  console.log("Place Clicked:", place.title)
+}
+
+// -----------------------------------------------------------
+// 🔹 2. 데이터 로드 및 매핑 수정 (핵심 부분)
+// -----------------------------------------------------------
 const fetchPlanDetail = async () => {
   try {
-    // 백엔드 API 호출 (GET /plans/{planId}/detail)
     const res = await api.getPlanDetail(planId)
     const data = res.data
 
-    // 📍 [수정] Location 추출 로직
-    // plan 객체에 location이 없으므로, 첫 번째 날짜의 첫 번째 장소 주소를 사용
-    let derivedLocation = 'Seoul, Korea' // 기본값
-
-    // 데이터가 있고, 첫째날에 장소가 하나라도 있다면
-    if (data.days && data.days.length > 0) {
-      const firstDay = data.days[0]
-      if (firstDay.places && firstDay.places.length > 0) {
-        const rawAddress = firstDay.places[0].address || ''
-        // 주소 앞부분 2단어만 추출 (예: "서울특별시 송파구 올림픽로..." -> "서울특별시 송파구")
-        const addressParts = rawAddress.split(' ')
-        if (addressParts.length >= 2) {
-          derivedLocation = `${addressParts[0]} ${addressParts[1]}`
-        } else if (addressParts.length === 1) {
-          derivedLocation = addressParts[0]
-        }
-      }
+    // Location 추출
+    let derivedLocation = 'Seoul, Korea'
+    if (data.days?.[0]?.places?.[0]?.address) {
+       const parts = data.days[0].places[0].address.split(' ')
+       derivedLocation = parts.length >= 2 ? `${parts[0]} ${parts[1]}` : parts[0]
     }
 
     currentplanInfo.value = {
-      location: derivedLocation, // 👈 추출한 지역 사용
+      location: derivedLocation,
       date: `${data.plan.startDate} ~ ${data.plan.endDate}`,
       cost: Number(data.plan.budget).toLocaleString(),
       
-      // itinerary 매핑 로직 (기존 유지)
+      // ✅ PlanDayTimeline의 props 구조인 { days: [ { places: [...] } ] } 에 맞춤
       itinerary: data.days.map(d => ({
         dayNumber: d.day.dayIndex,
         title: d.day.title,
         date: d.day.planDate,
-        activities: d.places.map(p => ({
-          name: p.placeName || p.title,
-          // startAt이 ISO string("2025-12-13T01:00:00Z")으로 오므로 시간만 추출
-          time: p.startAt ? p.startAt.substring(11, 16) : 'Anytime', 
-          address: p.address
-        }))
+        
+        // places 배열 매핑
+        places: d.places.map(p => {
+            // 백엔드에서 오는 카테고리 값 확인 (normalizedCategory, placeType 등)
+            // 없는 경우를 대비해 기본값 설정
+            const rawType = p.placeType || p.category || 'ETC';
+            
+            // 이미지 처리: firstImage2가 있으면 우선 사용, 없으면 firstImage
+            const imageList = [];
+            if (p.firstImage2) imageList.push(p.firstImage2);
+            else if (p.firstImage) imageList.push(p.firstImage);
+
+            return {
+              title: p.placeName || p.title, 
+              startAt: p.startAt,           
+              
+              // details 객체 구조 매핑
+              details: { 
+                type: rawType, // 색상/라벨 결정용
+                desc: p.description || `${p.placeName || p.title} 방문 추천`, // 설명 텍스트 보강
+                gallery: imageList, // ✅ 이미지가 있어야 썸네일이 뜸
+                area: p.area || 'Seoul',
+                address: p.address
+              }
+            }
+        })
       }))
     }
   } catch (error) {
-    console.error("상세 일정을 불러오는데 실패했습니다:", error)
-    currentplanInfo.value = { location: '-', date: '-', cost: '0', itinerary: [] }
+    console.error("상세 일정 로드 실패:", error)
+    currentplanInfo.value = null
   }
 }
-// 🔥 업로드 UI를 보여줄 준비되었는지 여부
-const isReady = ref(false);
-// import { createReviewPhotoGroup } from '@/api/travelgramApi'
+
+// -----------------------------------------------------------
+// Lifecycle & Actions (기존 유지)
+// -----------------------------------------------------------
 onMounted(async () => {
-
-  // 1) Store에 정보 저장
   reviewStore.setplanInfo(planId, planTitle)
-
-  // 2) 상세 일정 데이터 로드 (비동기)
   await fetchPlanDetail()
-
-  // 3) 리뷰 생성 API 호출
+  
   try {
-    const res = await api.createReview(planId) 
-    console.log("📌 Review created:", res.data)
+    const res = await api.createReview(planId)
     reviewStore.setReviewInfo(res.data.reviewPostId, res.data.photoGroupId, res.data.hashtagGroupId)
     isReady.value = true
-  } catch (error) {
-    console.error("리뷰 생성 실패:", error)
-    alert("리뷰 생성 초기화에 실패했습니다.")
-  }
+  } catch (e) { console.error(e) }
+})
 
-});
-
-// ------------------------------------------------------------
-// [수정] 분석 상태 확인 (Polling) 함수 - 로직 개선
-// ------------------------------------------------------------
 const checkAnalysisStatus = async () => {
   if (!reviewStore.photoGroupId) return;
-
   try {
-    // 1. 백엔드 조회
     const res = await api.getReviewPhotos(reviewStore.photoGroupId);
     const serverPhotos = res.data.data || [];
 
-    // 로그로 데이터 확인 (디버깅용)
-    console.log("📸 Server Photos:", serverPhotos);
-
-    // 2. 내 로컬 이미지 상태 업데이트
-    // (서버 데이터를 기준으로 매칭되는 로컬 이미지에 '분석완료' 딱지를 붙여줍니다)
     uploadedImages.value.forEach(localImg => {
-      // 업로드 중인건 패스
       if (localImg.uploading) return;
-
-      // ID 비교 (문자열로 변환하여 안전하게 비교)
       const match = serverPhotos.find(s => String(s.id) === String(localImg.id));
-
       if (match && match.summary) {
         localImg.isAnalyzed = true;
-        localImg.summary = match.summary; // 데이터 동기화
+        localImg.summary = match.summary;
       }
     });
 
-    // 3. 종료 조건 확인
-    // "업로드 중인게 하나도 없고" && "모든 이미지가 분석 완료(isAnalyzed) 상태"여야 함
     const isAllUploaded = uploadedImages.value.every(img => !img.uploading);
     const isAllAnalyzed = uploadedImages.value.every(img => img.isAnalyzed);
 
     if (uploadedImages.value.length > 0 && isAllUploaded && isAllAnalyzed) {
-      console.log('✅ 모든 사진 분석 완료!');
       stopPolling();
       isAnalyzing.value = false;
     } else {
-      // 아직 덜 됐으면 계속 진행
       isAnalyzing.value = true;
     }
-
-  } catch (err) {
-    console.error('Polling failed', err);
-  }
+  } catch (err) { console.error('Polling failed', err); }
 };
 
 const startPolling = () => {
   if (pollingInterval.value) return
   isAnalyzing.value = true
-  console.log('⏳ AI 분석 상태 확인 시작...')
-  pollingInterval.value = setInterval(checkAnalysisStatus, 3000) // 3초마다 확인
+  pollingInterval.value = setInterval(checkAnalysisStatus, 3000)
 }
 
 const stopPolling = () => {
@@ -279,19 +270,12 @@ const stopPolling = () => {
   }
 }
 
-// 컴포넌트가 꺼질 때 폴링 중지 (메모리 누수 방지)
-onUnmounted(() => {
-  stopPolling()
-})
+onUnmounted(() => { stopPolling() })
 
 const canProceed = computed(() => {
-  return uploadedImages.value.length > 0 
-      && !uploadedImages.value.some(img => img.uploading)
-      && !isAnalyzing.value
+  return uploadedImages.value.length > 0 && !uploadedImages.value.some(img => img.uploading) && !isAnalyzing.value
 })
 
-
-// Step 2로 이동
 const goNext = () => {
   reviewStore.setPhotos(uploadedImages.value)
   reviewStore.nextStep()
@@ -306,51 +290,13 @@ const goBack = () => router.push({name: 'Travelgram'});
 </script>
 
 <style scoped>
-/* PlannerList.vue style */
-.chevron {
-  transition: transform 0.2s;
-  display: inline-block;
-}
-
-.rotate-180 {
-  transform: rotate(180deg);
-}
-
-.list-group-item.activity-row {
-  transition: background-color 0.18s ease, box-shadow 0.18s ease,
-    transform 0.12s ease;
-}
-
-.soft-chip {
-  padding: 2px 8px;
-  border-radius: 10px;
-  background: #f8f9fa;
-  border: 1px solid #f1f3f5;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-
-
-/* ✅ 전체 페이지 배경 */
+/* 페이지 기본 스타일 */
 .photo-upload-page {
   background-color: #fffaf3;
   min-height: 100vh;
-  padding-bottom: 6rem;
   padding: 2rem 1.25rem 6rem;
 }
 
-/* ✅ 중앙 카드형 컨테이너 */
-.upload-container {
-  background-color: #fff;
-  border-radius: 1.25rem;
-  padding: 2rem 1.5rem;
-  margin: 1.5rem 1.25rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-/* 여행 정보 카드 */
 .plan-info-card {
   background-color: #fff;
   border-radius: 1rem;
@@ -359,130 +305,39 @@ const goBack = () => router.push({name: 'Travelgram'});
   overflow: hidden;
 }
 
-.plan-info-header h5 {
-  color: #ffffff !important;
-}
-
 .plan-info-header {
   background-color: #1B3B6F;
   color: #ffffff;
   padding: 1rem 1.5rem;
-}
-
-.plan-info-header h5 {
-  margin: 0;
-  font-weight: 600;
 
 }
-
-.plan-info-body {
-  padding: 1.5rem;
-}
-
+.plan-info-header h5 { margin: 0; font-weight: 600; }
+.plan-info-body { padding: 1.5rem; }
 .info-row {
   display: flex;
   justify-content: space-between;
   padding: 0.75rem 0;
   border-bottom: 1px solid #eee;
 }
+.info-label { font-weight: 600; color: #1B3B6F; }
+.info-value { color: #666; }
 
-.info-row:last-child {
-  border-bottom: none;
-}
-
-.info-label {
-  font-weight: 600;
-  color: #1B3B6F;
-}
-
-.info-value {
-  color: #666;
-}
-
-/* Accordion 일정 섹션 */
-
-
+/* 일정 섹션 */
 .itinerary-section {
-  background-color: #fff;
-  border-radius: 1rem;
-  padding: 1.5rem;
   margin-bottom: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
-
 .itinerary-title {
   font-weight: 600;
   color: #1B3B6F;
-}
-
-.itinerary-accordion {
-  background-color: #f5f5f5;
-  border-radius: 0.75rem;
-  padding: 1rem;
-}
-
-/* 업로드 섹션 */
-.upload-section {
-  background-color: #f9fafc;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  border: 1px solid #eee;
-}
-
-.upload-title {
-  font-weight: 600;
-  color: #1b3b6f;
-}
-
-.upload-subtitle {
-  color: #6c757d;
   margin-bottom: 1rem;
+  padding-left: 0.5rem;
 }
 
-.upload-box {
-  border: 2px dashed #d0d5dd;
-  border-radius: 0.75rem;
-  padding: 2rem;
-  text-align: center;
-  background-color: #fff;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  /* ✅ 글씨 키움 */
-}
-
-.upload-box:hover {
-  background-color: #fef8f2;
-}
-
-/* 미리보기 */
-.preview-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.preview-item {
-  position: relative;
-  width: 80px;
-  height: 80px;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-.upload-spinner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-}
-
-.opacity-50 {
-  opacity: 0.5;
-}
-.preview-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* Timeline Wrapper: 
+   자식 컴포넌트가 height: 100%를 가질 수 있도록 높이 설정이나
+   배경색 등 최소한의 스타일만 부여
+*/
+.timeline-wrapper {
+  background-color: transparent;
 }
 </style>
