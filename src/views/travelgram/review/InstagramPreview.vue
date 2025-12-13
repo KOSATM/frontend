@@ -118,8 +118,8 @@
       backText="뒤로가기"
       :isNextDisabled="!canProceed"
       @back="goBack"
-      nextText="Publish"
-      @next="발행하기"
+      nextText="발행하기"
+      @next="publish"
     />
   </div>
 </template>
