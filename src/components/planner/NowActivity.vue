@@ -1,20 +1,32 @@
+<!-- src/components/planner/NowActivity.vue -->
 <template>
-  <div v-if="place" class="now-active-card">
+  <div
+    v-if="place"
+    class="now-active-card"
+    @click="onClickCard"
+  >
     <!-- Header -->
     <div class="now-header">
       <!-- Day Plan (크게) -->
       <h3 class="now-badge mb-0">
-        Day {{ dayIndex + 1 }} Plan
+        ★ Day {{ dayIndex + 1 }} Plan
       </h3>
 
       <!-- 오른쪽 영역 -->
       <div class="now-nav">
         <!-- 상태 배지 : < 버튼 왼쪽 -->
-        <span class="badge" :class="place.status === 'DONE' ? 'bg-success' : 'bg-warning'">
+        <span
+          class="badge"
+          :class="place.status === 'DONE' ? 'bg-success' : 'bg-warning'"
+        >
           {{ place.status === 'DONE' ? '✔ Done' : '⏳ Pending' }}
         </span>
 
-        <button class="now-nav-btn" :disabled="index === 0" @click="$emit('update:index', index - 1)">
+        <button
+          class="now-nav-btn"
+          :disabled="index === 0"
+          @click.stop="$emit('update:index', index - 1)"
+        >
           ‹
         </button>
 
@@ -22,14 +34,17 @@
           {{ index + 1 }} / {{ total }}
         </span>
 
-        <button class="now-nav-btn" :disabled="index === total - 1" @click="$emit('update:index', index + 1)">
+        <button
+          class="now-nav-btn"
+          :disabled="index === total - 1"
+          @click.stop="$emit('update:index', index + 1)"
+        >
           ›
         </button>
       </div>
     </div>
 
-
-    <!-- Title (h 계열 활용 → typography.scss 적용) -->
+    <!-- Title -->
     <h5 class="now-title">
       {{ place.title }}
     </h5>
@@ -68,7 +83,6 @@
   </div>
 </template>
 
-
 <script setup>
 /* ===========================
    Props / Emits
@@ -80,7 +94,14 @@ const props = defineProps({
   dayIndex: { type: Number, required: true },
 });
 
-defineEmits(["update:index"]);
+const emit = defineEmits(["update:index", "complete"]);
+
+/* ===========================
+   Handlers
+=========================== */
+const onClickCard = () => {
+  emit("complete", props.place);
+};
 
 /* ===========================
    Utils
@@ -125,6 +146,7 @@ const categoryMap = {
   border-radius: 16px;
   border: 2px solid #3b82f6;
   background: linear-gradient(135deg, #f5f9ff, #fdfdff);
+  cursor: pointer;
 }
 
 /* header */
