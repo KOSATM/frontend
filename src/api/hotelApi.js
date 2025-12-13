@@ -19,13 +19,12 @@ async function recommendHotel(userId, userPreferences = null) {
 }
 
 
-// 사용자 ID로 호텔 정보를 조회한다.
+// ✅ 사용자 ID로 호텔 정보를 조회한다.
 async function getHotelByUserId(userId) {
-  const params = {
-    userId: userId
-  }
+  console.log('📤 API 호출: GET /api/hotel-ff')
+  console.log('userId:', userId)
   
-  return api.get('/api/hotel-ff', { params })
+  return api.get(`/api/hotel-ff/${userId}`)
 }
 
 /**

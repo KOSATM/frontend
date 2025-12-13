@@ -1,7 +1,6 @@
 <template>
   <div class="mypage-page">
     <PageHeader title="MyPage" subtitle="나의 여행 정보" icon="bi-person" />
-    <!-- <BackButtonPageHeader title="My Profile" subtitle="당신의 여행 프로필을 확인해보세요." @back="goBack"/> -->
 
     <div class="text-center mb-5">
       <div class="position-relative d-inline-block">
@@ -56,31 +55,50 @@
       </div>
     </BaseSection>
 
+    <!-- ✅ 호텔 예약 섹션 -->
     <BaseSection icon="bi-building-check" title="Reservations" subtitle="호텔 예약 내역">
-      <div v-if="profileData.reservations.length > 0" class="d-flex flex-column gap-3">
-        <div v-for="(reservation, index) in profileData.reservations" :key="index" class="custom-card p-3">
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <div>
-              <h4 class="m-0 text-primary">{{ reservation.hotelName }}</h4>
-              <p class="text-muted m-0 fs-6">{{ reservation.location }}</p>
-            </div>
-            <span class="badge rounded-pill fw-normal"
-              :class="reservation.status === 'Confirmed' ? 'bg-success' : 'bg-warning text-dark'">
-              {{ reservation.status }}
-            </span>
-          </div>
+      <!-- 로딩 중 -->
+      <div v-if="isLoadingReservation" class="text-center py-3">
+        <div class="spinner-border spinner-border-sm text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="text-muted small mt-2">예약 정보를 불러오는 중...</p>
+      </div>
 
-          <div class="d-flex gap-4 mt-2 text-secondary fs-6">
-            <div>
-              <i class="bi bi-calendar-check me-1"></i> Check-in : {{ reservation.checkIn }}
-            </div>
-            <div>
-              <i class="bi bi-moon-stars me-1"></i> {{ reservation.nights }} Nights
-            </div>
+      <!-- 호텔 예약 정보 표시 -->
+      <div v-else-if="hotelReservation" class="custom-card p-3">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <div>
+            <h4 class="m-0 text-primary">{{ hotelReservation.hotelName }}</h4>
+            <p class="text-muted m-0 fs-6">{{ hotelReservation.roomType }}</p>
+          </div>
+          <span class="badge rounded-pill fw-normal bg-success">
+            <i class="bi bi-check-circle me-1"></i>
+            Confirmed
+          </span>
+        </div>
+
+        <div class="d-flex gap-4 mt-3 text-secondary fs-6">
+          <div>
+            <i class="bi bi-calendar-check me-1"></i>
+            체크인: {{ formatDate(hotelReservation.checkinDate) }}
+          </div>
+          <div>
+            <i class="bi bi-calendar-x me-1"></i>
+            체크아웃: {{ formatDate(hotelReservation.checkoutDate) }}
           </div>
         </div>
+
+        <div class="mt-3 text-secondary fs-6">
+          <i class="bi bi-info-circle me-1"></i>
+          예약 ID: {{ hotelReservation.id }}
+        </div>
       </div>
-      <p v-else class="text-muted text-center py-3">예약된 내역이 없습니다.</p>
+
+      <!-- 예약 없음 -->
+      <p v-else class="text-muted text-center py-3">
+        예약된 숙박이 없습니다.
+      </p>
     </BaseSection>
 
     <BaseSection icon="bi-wallet2" title="Payment" subtitle="결제 정보">
@@ -102,7 +120,6 @@
     </BaseSection>
 
     <BaseSection icon="bi-heart-pulse" title="Health" subtitle="건강 정보">
-
       <h4 class="text-secondary mb-2">Medicine info</h4>
       <div class="p-3 bg-light rounded-3">
         <div class="mb-2">
@@ -114,38 +131,35 @@
           <span>{{ profileData.medicalInfo.dietaryRestrictions || 'None' }}</span>
         </div>
       </div>
-
-
     </BaseSection>
 
     <div class="d-flex gap-3 mt-5">
-       <NavigationButtons
-  back-text="Back"
-  next-text="Edit Profile"
-  :is-next-disabled="isLoading"
-  @back="goBack"
-  @next="goToEditProfile"
->
-</NavigationButtons>
+      <NavigationButtons
+        back-text="Back"
+        next-text="Edit Profile"
+        :is-next-disabled="isLoadingReservation"
+        @back="goBack"
+        @next="goToEditProfile"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive, onMounted, computed } from 'vue'
+import { reactive, onMounted, computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/authStore'
-// import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
-import PageHeader from "@/components/common/header/PageHeader.vue";
-import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+import PageHeader from "@/components/common/header/PageHeader.vue"
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue'
+import hotelApi from '@/api/hotelApi'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
-// ... 데이터 로직은 기존과 동일하게 유지 ...
-// (스크립트 부분은 기존 로직이 잘 짜여져 있어서, 
-//  불필요한 props나 import만 정리하고 그대로 쓰시면 됩니다.)
+// ✅ 호텔 예약 정보
+const hotelReservation = ref(null)
+const isLoadingReservation = ref(false)
 
 const profileData = reactive({
   name: 'John Doe',
@@ -154,10 +168,7 @@ const profileData = reactive({
   nationality: 'United States',
   preferredCurrency: 'USD',
   interests: ['culture', 'food', 'adventure'],
-  reservations: [
-    { hotelName: 'The Shilla Seoul', location: 'Jung-gu, Seoul', checkIn: '2024-10-15', checkOut: '2024-10-18', nights: 3, status: 'Confirmed' },
-    { hotelName: 'Four Seasons Busan', location: 'Haeundae-gu, Busan', checkIn: '2024-11-01', checkOut: '2024-11-03', nights: 2, status: 'Pending' }
-  ],
+  reservations: [],
   paymentMethods: [
     { type: 'Visa', lastFour: '4567', expiry: '12/25', isDefault: true },
     { type: 'Mastercard', lastFour: '8901', expiry: '08/26', isDefault: false }
@@ -177,29 +188,71 @@ const availableInterests = [
   { id: 'relaxation', name: 'Relaxation', icon: 'bi bi-flower1' }
 ]
 
+// ✅ 통화 라벨
 const getCurrencyLabel = (code) => {
   const currencies = { 'USD': 'USD ($)', 'KRW': 'KRW (₩)', 'EUR': 'EUR (€)', 'JPY': 'JPY (¥)' }
   return currencies[code] || code
 }
 
+// ✅ 날짜 포맷팅
+const formatDate = (dateString) => {
+  if (!dateString) return '-'
+  const date = new Date(dateString)
+  return date.toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  })
+}
+
+// ✅ 호텔 예약 정보 조회
+const loadHotelReservation = async () => {
+  isLoadingReservation.value = true
+  try {
+    const userId = authStore.userId
+    console.log('📥 호텔 예약 조회 - userId:', userId)
+
+    const response = await hotelApi.getHotelByUserId(userId)
+    console.log('✅ 호텔 예약 응답:', response.data)
+
+    // ✅ 중첩된 응답 구조 처리
+    if (response.data.success && response.data.data && response.data.data.data) {
+      hotelReservation.value = response.data.data.data
+      console.log('✅ 호텔 정보 로드 성공:', hotelReservation.value)
+    } else {
+      hotelReservation.value = null
+      console.log('⚠️ 예약된 호텔이 없습니다.')
+    }
+  } catch (error) {
+    console.error('❌ 호텔 정보 조회 실패:', error)
+    hotelReservation.value = null
+  } finally {
+    isLoadingReservation.value = false
+  }
+}
+
+// ✅ 내비게이션
 const goBack = () => router.back()
 const goToEditProfile = () => router.push('/mypage/edit')
 
+// ✅ 프로필 이미지
 const profileImage = computed(() => {
   return authStore.userProfileImage || new URL('@/assets/img/profile-logo.png', import.meta.url).href
 })
 
+// ✅ 마운트
 onMounted(() => {
   authStore.initializeAuth()
   if (authStore.user) {
     profileData.name = authStore.user.name || 'User'
     profileData.email = authStore.user.email || ''
   }
+  // ✅ 호텔 예약 정보 로드
+  loadHotelReservation()
 })
 </script>
 
 <style scoped>
-/* 커스텀 CSS는 최소화하고 레이아웃의 디테일만 잡습니다. */
 .mypage-page {
   background-color: #fffaf3;
   min-height: 100vh;
@@ -210,27 +263,24 @@ onMounted(() => {
 .interest-chip {
   padding: 0.5rem 1rem;
   border-radius: 50px;
-  /* 둥글게 */
   border: 1px solid #dee2e6;
   color: #6c757d;
   font-size: 0.95rem;
-  /* 본문 폰트보다 약간 작게 */
   display: flex;
   align-items: center;
   transition: all 0.2s;
+  cursor: pointer;
 }
 
 /* 선택된 취향 태그 */
 .interest-chip.active {
   background-color: #ff8c00;
-  /* Primary Orange */
   border-color: #ff8c00;
   color: white;
   font-weight: normal;
-  /* Parkdahyun은 bold보다 normal이 예쁨 */
 }
 
-/* 카드 스타일 (예약, 결제수단 등) */
+/* 카드 스타일 */
 .custom-card {
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -244,9 +294,16 @@ onMounted(() => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-/* 폰트 및 텍스트 헬퍼 (글로벌과 충돌하지 않도록) */
 h4 {
   font-size: 1.1rem;
-  /* 제목 라벨 크기 조절 */
+}
+
+.badge {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.bg-success {
+  background-color: #28a745 !important;
 }
 </style>
