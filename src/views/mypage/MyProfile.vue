@@ -182,8 +182,8 @@ const getCurrencyLabel = (code) => {
   return currencies[code] || code
 }
 
-const goBack = () => router.back()
-const goToEditProfile = () => router.push('/mypage/edit')
+const goBack = () => router.push({name: 'MyProfile'});
+const goToEditProfile = () => router.push({name: 'EditProfile'});
 
 const profileImage = computed(() => {
   return authStore.userProfileImage || new URL('@/assets/img/profile-logo.png', import.meta.url).href

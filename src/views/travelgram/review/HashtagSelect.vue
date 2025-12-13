@@ -132,7 +132,7 @@ const addCustomTag = () => {
   newTagInput.value = ''
 }
 
-const goBack = () => router.back()
+const goBack = () => router.push({name: 'CaptionSelect'});
 
 const goNext = async() => {
   try {

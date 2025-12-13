@@ -164,7 +164,7 @@ onMounted(() => {
   fetchPlans()
 })
 
-const goBack = () => router.back()
+const goBack = () => router.push({name: 'plannercreate'});
 </script>
 
 <style scoped>

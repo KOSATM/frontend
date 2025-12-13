@@ -198,7 +198,7 @@ const totalAmount = computed(() => {
 });
 
 const goBack = () => {
-  router.back("/planner/hotel");
+  router.push({name: 'hotel'});
 };
 
 const validateCardDetails = () => {
