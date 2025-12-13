@@ -35,8 +35,14 @@
         @click="selectMain(photo.id)"
         >
         <div class="photo-thumb">
-          <img :src="photo.url" :alt="photo.name" />
-        </div>
+        <img :src="photo.url" />
+        <transition name="badge-pop">
+          <span v-if="photo.id === mainPhotoId" class="main-badge">
+            대표
+          </span>
+        </transition>
+      </div>
+
         
         <div class="photo-info flex-grow-1">
           <h6 class="photo-name">{{ photo.name?.replace(/\.[^/.]+$/, '') }}</h6>
@@ -334,5 +340,27 @@ const goBack = () => router.push({name: 'CreateTravelReview'});
   border-radius: 10px;
   object-fit: cover;
 }
+
+.main-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: #ff7a00;
+  color: white;
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.badge-pop-enter-active {
+  animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 
 </style>
