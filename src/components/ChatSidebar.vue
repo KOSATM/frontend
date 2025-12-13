@@ -1,16 +1,21 @@
 <template>
   <div class="chat-layout-wrapper d-flex flex-column h-100 bg-white">
-    
     <div class="chat-header d-flex align-items-center gap-2 p-3 border-bottom">
-      <div class="badge text-white rounded-circle d-flex justify-content-center align-items-center flex-shrink-0"
-        style="width: 32px; height: 32px; background-color: #1B3B6F;">
-        ✈
-      </div>
-      <div class="overflow-hidden">
-        <h6 class="mb-0 text-truncate">AI 여행 어시스턴트</h6>
-        <small class="text-muted" style="font-size: 11px;">Seoul Trip Planner</small>
-      </div>
-    </div>
+  <div class="badge text-white rounded-circle d-flex justify-content-center align-items-center flex-shrink-0"
+    style="width: 32px; height: 32px; background-color: #1B3B6F;">
+    <i class="bi bi-airplane-fill fs-6"></i>
+  </div>
+
+  <div class="overflow-hidden d-flex flex-column justify-content-center">
+    <h6 class="mb-0 fw-bold text-truncate" style="line-height: 1.2;">
+      AI 여행 어시스턴트
+    </h6>
+    
+    <small class="text-muted">
+      서울 여행 플래너
+    </small>
+  </div>
+</div>
 
     <div class="chat-messages flex-grow-1 p-3" ref="messagesContainer">
       <div class="message-list">
@@ -44,7 +49,7 @@
       </div>
     </div>
 
-    <div class="quick-actions px-3 pb-2">
+    <!-- <div class="quick-actions px-3 pb-2">
       <div class="d-flex gap-2 overflow-x-auto pb-2 custom-scrollbar-x">
         <button @click="sendQuickMessage('Start early')" class="btn btn-xs btn-outline-secondary rounded-pill text-nowrap">
           🌅 Early Start
@@ -59,7 +64,7 @@
           💰 Save Cost
         </button>
       </div>
-    </div>
+    </div> -->
 
     <div class="chat-input-wrapper p-3 border-top bg-white">
       <div class="chat-input-container">
@@ -68,7 +73,7 @@
           @keydown.enter.exact.prevent="sendMessage"
           :disabled="isLoading"
           class="chat-text-input" 
-          placeholder="Ask plan..."
+          placeholder="질문을 입력해주세요..."
           rows="1"
           @input="autoResize"
           ref="textareaRef"
