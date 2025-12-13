@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import plannerApi from '@/api/plannerApi'
 
 export const useTravelStore = defineStore('travel', {
   state: () => ({
@@ -29,12 +30,24 @@ export const useTravelStore = defineStore('travel', {
       this.planId = planId
       this.dayIndex = dayIndex
       this.planDate = planDate
+
+      localStorage.setItem("planId", this.planId);
+      localStorage.setItem("dayIndex", this.dayIndex);
     },
     // 여행 정보 초기화
     clearPlanInfo() {
       this.planId = null
       this.dayIndex = null
       this.planDate = null
+    },
+    async initializeTravelInfo(userId) {
+      try {
+        const res = await plannerApi.getActivePlanIdAndDayIndex(userId);
+        this.planId = res.planId;
+        this.dayIndex = res.dayIndex? res.dayIndex : null;
+      } catch (e) {
+        console.log("planId, DayIndex 가져오기 실패");
+      }
     }
   }
 })

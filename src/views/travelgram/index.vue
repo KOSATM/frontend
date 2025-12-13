@@ -1,6 +1,6 @@
 <template>
   <div class="travelgram-page">
-    <PageHeader title="Travelgram" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
+    <PageHeader title="트래벌그램" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
     <!-- <BackButtonPageHeader title="Select one card to review your travel" subtitle="종료된 여행 카드를 선택해서 리뷰를 작성해보세요." @back="goBack"/> -->
     
     <ProfileSummary :profileName="displayName" bio="여행 애호가" initials="userInitials" :totalplans="stats.totalPlans"
@@ -156,15 +156,16 @@ const goToReview = async (id, title) => {
     // (이미 리스트가 업데이트되었으므로 뒤로가기로 돌아와도 제목이 유지됩니다)
     router.push({
       name: 'CreateTravelReview',
-      params: { planId: id },
-      query: { title: targetTitle },
+      params: { planId: id,
+        planTitle: targetTitle
+       },
     })
   }
 onMounted(() => {
   fetchPlans()
 })
 
-const goBack = () => router.back()
+const goBack = () => router.push({name: 'plannercreate'});
 </script>
 
 <style scoped>

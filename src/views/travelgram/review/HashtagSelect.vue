@@ -1,6 +1,6 @@
 <template>
   <div class="hashtag-page">
-    <PageHeader title="Travelgram" subtitle="더 많은 사람에게 닿을 수 있도록 해시태그를 함께 추가해주세요." icon="bi-instagram" />
+    <PageHeader title="트래벌그램" subtitle="더 많은 사람에게 닿을 수 있도록 해시태그를 함께 추가해주세요." icon="bi-instagram" />
     <StepHeader title="해시태그 편집" :subtitle="reviewStore.planTitle" step="4/6" @back="goBack" />
 
     <section class="hashtag-section">
@@ -83,15 +83,32 @@ const newTagInput = ref('')
 const selectedCount = computed(() => selectedSet.value.size)
 
 onMounted(() => {
-  // 1. 이전 단계(CaptionSelect)에서 넘어온 태그들을 가져옴
-  // Store에는 객체 배열 [{id:.., name:..}, ...] 형태로 저장되어 있음
-  const initialTags = reviewStore.selectedHashtags || []
+  // 1. AI가 추천했던 원본 태그들
+  const aiOriginTags = reviewStore.aiHashtags || []
+  
+  // 2. 사용자가 이전에(혹은 방금) 선택한 태그들
+  const currentSelected = reviewStore.selectedHashtags || []
 
-  // 2. 화면 표시용 리스트에 복사
-  displayTags.value = [...initialTags]
+  // 3. 화면에 보여줄 태그 목록 구성 (Display List)
+  // 기본적으로 AI 추천 태그는 다 보여줍니다.
+  const combinedTags = [...aiOriginTags]
 
-  // 3. 초기 상태: 모든 태그를 "선택됨" 상태로 설정
-  initialTags.forEach(tag => {
+  // 4. "사용자가 직접 추가한 커스텀 태그"를 찾아서 목록에 더해줍니다.
+  // (현재 선택된 것 중에 AI 목록에 없는 것이 커스텀 태그입니다)
+  currentSelected.forEach(selTag => {
+    const existsInAi = aiOriginTags.some(aiTag => aiTag.name === selTag.name)
+    if (!existsInAi) {
+      combinedTags.push(selTag)
+    }
+  })
+
+  // 5. 화면 표시용 리스트 업데이트
+  displayTags.value = combinedTags
+
+  // 6. "선택됨(Active)" 상태 복원
+  // currentSelected에 있는 애들만 활성화 표시
+  selectedSet.value.clear()
+  currentSelected.forEach(tag => {
     selectedSet.value.add(tag.name)
   })
 })
@@ -132,7 +149,7 @@ const addCustomTag = () => {
   newTagInput.value = ''
 }
 
-const goBack = () => router.back()
+const goBack = () => router.push({name: 'CaptionSelect'});
 
 const goNext = async() => {
   try {

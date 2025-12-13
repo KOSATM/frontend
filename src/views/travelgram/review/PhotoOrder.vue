@@ -1,14 +1,14 @@
 <template>
   <div class="photo-order-page">
     <PageHeader
-        title="Travelgram"
+        title="트래벌그램"
         subtitle="당신의 지난 여행 기록들"
         icon="bi-instagram"
       />
     <!-- 🔸 상단 헤더 -->
     <StepHeader
       title="여행 후기 작성"
-      :subtitle="reviewStore.planTitle"
+      subtitle="대표 사진과 사진 순서를 수정해보세요."
       step="2/6"
       @back="goBack"
     />
@@ -40,7 +40,7 @@
         
         <div class="photo-info flex-grow-1">
           <h6 class="photo-name">{{ photo.name?.replace(/\.[^/.]+$/, '') }}</h6>
-          <p>Jeju Island</p>
+          <p>{{reviewStore.planTitle}}</p>
         </div>
 
         <div class="photo-actions d-flex align-items-center" @click.stop>
@@ -233,7 +233,7 @@ const goNext = async () => {
   }
 }
 
-const goBack = () => router.back()
+const goBack = () => router.push({name: 'CreateTravelReview'});
 </script>
 
 <style scoped>

@@ -1,69 +1,76 @@
-<!-- src/components/planner/PlannerReplaceModal.vue -->
 <template>
   <teleport to="body">
     <div v-if="open" class="modal-backdrop" @click="$emit('close')">
       <div class="modal-card" @click.stop>
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <h6 class="mb-0">Replace</h6>
-          <button
-            class="btn btn-sm btn-light rounded-circle"
-            @click="$emit('close')"
-          >
-            ✕
-          </button>
+        <!-- Header -->
+        <div class="modal-header">
+          <h3 class="modal-title">Delete Activity?</h3>
+          <button class="icon-close" @click="$emit('close')">✕</button>
         </div>
 
-        <p class="small text-muted mb-3">
-          Choose a replacement for
-          <strong>{{ target?.title }}</strong>
+        <!-- Description -->
+        <p class="modal-desc">
+          정말
+          <strong>{{ target?.title || "this activity" }}</strong
+          >을/를 삭제하시겠습니까?
         </p>
 
-        <div class="list-group">
+        <p class="modal-subdesc">
+          저희가 유사한 장소를 추천해드릴게요
+        </p>
+
+        <!-- Alternatives -->
+        <div class="alt-list">
           <div
             v-for="(alt, i) in alternatives"
             :key="'alt-' + i"
-            class="list-group-item border-0 shadow-sm rounded-3 mb-2 alt-row"
+            class="alt-card"
             @click="$emit('preview-alt', alt)"
           >
-            <div class="d-flex align-items-center gap-3">
-              <div
-                class="icon-badge themed"
-                :class="'theme-' + (alt.type || 'default')"
-              >
-                {{ getIconForType(alt.type) }}
+            <div class="alt-row">
+              <!-- Thumbnail -->
+              <div class="alt-thumb">
+                <img
+                  v-if="alt.image || alt.thumbnail"
+                  :src="alt.image || alt.thumbnail"
+                  alt="place thumbnail"
+                />
+                <div v-else class="alt-thumb-fallback">📍</div>
               </div>
-              <div class="flex-grow-1">
-                <div class="fw-semibold small">{{ alt.title }}</div>
-                <div class="d-flex align-items-center gap-2 small text-muted">
-                  <span class="soft-chip">
-                    <span class="chip-emoji">⏰</span> {{ alt.time }}
-                  </span>
-                  <span v-if="hasCost(alt.cost)" class="soft-chip">
-                    <span class="chip-emoji">💰</span>
-                    {{ formatCost(alt.cost) }}
-                  </span>
+
+              <!-- Body -->
+              <div class="alt-body">
+                <div class="alt-title">{{ alt.title }}</div>
+
+                <!-- 👇 장소 한줄 설명 -->
+                <div class="alt-desc">
+                  {{ alt.shortDesc || alt.desc || "Recommended nearby place" }}
                 </div>
               </div>
-              <button
-                class="btn btn-sm btn-outline-primary rounded-pill"
-                @click.stop="$emit('apply-replacement', alt)"
-              >
-                Replace
-              </button>
             </div>
+
+            <!-- CTA -->
+            <button
+              class="replace-cta"
+              @click.stop="$emit('apply-replacement', alt)"
+            >
+              해당 장소로 대체
+            </button>
           </div>
         </div>
 
-        <div class="d-flex justify-content-between mt-3">
-          <button class="btn btn-light" @click="$emit('close')">취소</button>
-          <button class="btn btn-danger" @click="$emit('delete-anyway')">
-            삭제
+        <!-- Footer -->
+        <div class="modal-footer">
+          <button class="btn-cancel" @click="$emit('close')">취소</button>
+          <button class="btn-delete" @click="$emit('delete-anyway')">
+            그래도 삭제
           </button>
         </div>
       </div>
     </div>
   </teleport>
 </template>
+
 
 <script setup>
 defineProps({
@@ -73,24 +80,6 @@ defineProps({
 });
 
 defineEmits(["close", "preview-alt", "apply-replacement", "delete-anyway"]);
-
-const getIconForType = (type) => {
-  const map = {
-    cafe: "☕",
-    food: "🍜",
-    brunch: "🥞",
-    dessert: "🍰",
-    palace: "🏯",
-    museum: "🏛️",
-    tower: "🗼",
-    walk: "🚶",
-    shopping: "🛍️",
-    market: "🧺",
-    view: "🌇",
-    default: "📍",
-  };
-  return map[type] || map.default;
-};
 
 const hasCost = (cost) => {
   return cost === 0 || (typeof cost === "number" && !Number.isNaN(cost));
@@ -104,6 +93,9 @@ const formatCost = (cost) => {
 </script>
 
 <style scoped>
+/* ===============================
+   Overlay
+=============================== */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -111,20 +103,25 @@ const formatCost = (cost) => {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 6vh 14px;
+  padding: 7vh 16px;
   z-index: 10000;
 }
+
+/* ===============================
+   Modal Card
+=============================== */
 .modal-card {
-  width: min(560px, 92vw);
-  background: #fff;
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+  width: min(560px, 94vw);
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px 22px 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22);
   animation: pop 0.18s ease;
 }
+
 @keyframes pop {
   from {
-    transform: translateY(-6px);
+    transform: translateY(-8px);
     opacity: 0.9;
   }
   to {
@@ -132,44 +129,187 @@ const formatCost = (cost) => {
     opacity: 1;
   }
 }
-.alt-row {
-  cursor: pointer;
-}
-.alt-row:hover {
-  background: #fffdf8;
+
+/* ===============================
+   Header
+=============================== */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
 }
 
-/* 버튼 공통 */
-.btn {
-  padding: 10px 14px;
-  border-radius: 10px;
+.modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0;
+  color: #0f172a;
+}
+
+.icon-close {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: #94a3b8;
+  padding: 6px;
+}
+
+.icon-close:hover {
+  color: #64748b;
+}
+
+/* ===============================
+   Copy Text
+=============================== */
+.modal-desc {
+  margin: 0 0 12px;
+  color: #334155;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.modal-subdesc {
+  margin: 0 0 18px;
+  color: #64748b;
+  font-size: 14.5px;
+}
+
+/* ===============================
+   Alternatives List
+=============================== */
+.alt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.alt-card {
   border: 1px solid #e5e7eb;
-  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  background: #ffffff;
   cursor: pointer;
 }
 
-/* 아이콘/칩 스타일 (리스트와 동일하게) */
-.icon-badge.themed {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: inline-flex;
+.alt-card:hover {
+  background: #fafafa;
+}
+
+/* ===============================
+   Alternative Row
+=============================== */
+.alt-row {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* ===============================
+   Thumbnail (Image)
+=============================== */
+.alt-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f1f5f9;
+  flex-shrink: 0;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  user-select: none;
 }
-.soft-chip {
-  padding: 2px 8px;
-  border-radius: 10px;
-  background: #f8f9fa;
-  border: 1px solid #f1f3f5;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+
+.alt-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
-.chip-emoji {
-  font-size: 12px;
-  line-height: 1;
+
+.alt-thumb-fallback {
+  font-size: 22px;
+  color: #64748b;
 }
+
+/* ===============================
+   Body Text
+=============================== */
+.alt-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.alt-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.alt-desc {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.55;
+}
+
+/* ===============================
+   Replace CTA
+=============================== */
+.replace-cta {
+  width: 100%;
+  margin-top: 14px;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-weight: 700;
+  font-size: 14.5px;
+  cursor: pointer;
+  background: #eef6ff;
+  color: #2563eb;
+}
+
+.replace-cta:hover {
+  background: #e6f0ff;
+}
+
+/* ===============================
+   Footer Buttons
+=============================== */
+.modal-footer {
+  display: flex;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.btn-cancel,
+.btn-delete {
+  flex: 1;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.btn-cancel {
+  background: #f3f4f6;
+  color: #334155;
+}
+
+.btn-cancel:hover {
+  background: #eceef2;
+}
+
+.btn-delete {
+  background: #ffecec;
+  color: #ef4444;
+}
+
+.btn-delete:hover {
+  background: #ffe2e2;
+}
+
 </style>

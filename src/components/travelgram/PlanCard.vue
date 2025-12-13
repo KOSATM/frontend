@@ -41,7 +41,7 @@ const hasTitle = computed(() => {
 const displayTitle = computed(() => {
   return hasTitle.value
     ? props.planTitle
-    : 'If you click this card, AI will generate title for your trip';
+    : '카드를 클릭하면 AI가 당신의 여정에 맞는 제목을 만들어드립니다.';
 })
 
 // 3. 클릭 시 부모에게 id와 title을 전달합니다.

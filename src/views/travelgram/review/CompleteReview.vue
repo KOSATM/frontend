@@ -1,6 +1,6 @@
 <template>
   <PageHeader
-    title="Travelgram"
+    title="트래벌그램"
     subtitle="당신의 지난 여행 기록들"
     icon="bi-instagram"
   />
@@ -17,19 +17,19 @@
       </p>
 
       <div class="share-box">
-        <p>Would you like to view your post on Instagram?</p>
+        <p>인스타그램에서 다른 사람들에게 당신의 게시물을 공유하고 싶나요?</p>
         <a
           href="https://www.instagram.com/"
           target="_blank"
           class="btn-view"
         >
-          <i class="bi bi-instagram me-2"></i>View on Instagram
+          <i class="bi bi-instagram me-2"></i>인스타그램에서 보기
         </a>
       </div>
 
           <NavigationButtons
-      backText="Back to Travelgram"
-      nextText="Back to Main"
+      backText="처음으로 돌아가기"
+      nextText="메인 홈으로 돌아가기"
       @back="goToTravelgram"
       @next="goHome"
     >

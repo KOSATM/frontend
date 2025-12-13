@@ -1,6 +1,6 @@
 <template>
   <div class="review-caption-select">
-    <PageHeader title="Travelgram" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
+    <PageHeader title="트래벌그램" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
     <StepHeader title="여행 후기 작성" :subtitle="reviewStore.planTitle" step="3/6" @back="goBack" />
 
     <section class="caption-section">
@@ -115,7 +115,7 @@ const getLabelClass = (code) => {
     default: return 'casual'
   }
 }
-const goBack = () => router.back()
+const goBack = () => router.push({name: 'PhotoOrder'});
 const goNext = async() => {
   if (selectedIndex.value === null) return
   isAnalyzing.value = true
