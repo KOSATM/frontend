@@ -8,7 +8,7 @@ import CaptionSelect from '@/views/travelgram/review/CaptionSelect.vue'
 import HashtagSelect from '@/views/travelgram/review/HashtagSelect.vue'
 import EditPage from '@/views/travelgram/review/EditPage.vue'
 import InstagramPreview from '@/views/travelgram/review/InstagramPreview.vue'
-import Complete from '@/views/travelgram/review/CompleteReview.vue'
+import CompleteReview from '@/views/travelgram/review/CompleteReview.vue'
 
 const routes = [
   {
@@ -54,8 +54,8 @@ const routes = [
   },
   {
     path: '/travelgram/:planId/complete',
-    name: 'Complete',
-    component: Complete,
+    name: 'CompleteReview',
+    component: CompleteReview,
     props: true,
   },
 ]
