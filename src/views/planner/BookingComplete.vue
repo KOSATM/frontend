@@ -4,88 +4,34 @@
       <div class="check-circle mx-auto mb-3 d-inline-flex align-items-center justify-content-center">
         <i class="bi bi-check-lg text-white fs-2"></i>
       </div>
-      <h2 class="fw-bold">All Set!</h2>
-      <p class="text-muted">Your Seoul adventure is ready to begin</p>
+      <h2 class="fw-bold">완료되었습니다!</h2>
+      <p class="text-muted">서울 여행 준비가 모두 끝났어요</p>
     </div>
 
     <div class="row justify-content-center">
       <div class="col-md-10">
-        <div class="card mb-4 shadow-sm">
-          <div class="card-header bg-primary text-white border-0 rounded-top">
-            <h5 class="mb-0">🧳 plan Summary</h5>
-          </div>
-          <div class="card-body">
-            <dl class="row mb-3">
-              <dt class="col-4 text-secondary">Duration</dt>
-              <dd class="col-8">{{ duration }} days<br/><small class="text-muted">Starting {{ formattedStartDate }}</small></dd>
-
-              <dt class="col-4 text-secondary">Total Budget</dt>
-              <dd class="col-8">{{ formattedBudget }}</dd>
-
-              <!-- <dt class="col-4 text-secondary">Accommodation</dt>
-              <dd class="col-8">
-                <div class="fw-semibold">{{ accommodation.name }}</div>
-                <div class="text-muted small">{{ accommodation.location }}</div>
-                <div class="mt-2 text-primary small">
-                  {{ formattedPricePerNight }} /night • × {{ duration }} nights = {{ formattedHotelTotal }}
-                </div>
-              </dd> -->
-            </dl>
-          </div>
-        </div>
-
-        <div class="card mb-4 shadow-sm">
-          <div class="card-header bg-primary text-white border-0 rounded-top">
-            <h5 class="mb-0">🏠 Accommodation Payment Info</h5>
-          </div>
-          <div class="card-body">
-            <dl class="row mb-3">
-              <dt class="col-4 text-secondary">Booking Number</dt>
-              <dd class="col-8">{{ accommodation.bookingNumber }}<br/><small class="text-muted">Starting {{ formattedStartDate }}</small></dd>
-
-              <dt class="col-4 text-secondary">Hotel Name</dt>
-              <dd class="col-8">
-                <div class="fw-semibold">{{ accommodation.name }}</div>
-                <div class="text-muted small">{{ accommodation.location }}</div>
-                
-              </dd>
-
-              <dt class="col-4 text-secondary">Payment Amount</dt>
-              <dd class="col-8"><div class="mt-2 text-primary small">
-                  {{ formattedPricePerNight }} /night • × {{ duration }} nights = {{ formattedHotelTotal }}
-                </div></dd>
-
-              <dt class="col-4 text-secondary">Payment Date</dt>
-              <dd class="col-8">{{ accommodation.paymentDate }}</dd>
-
-              <!-- <dt class="col-4 text-secondary">Payment Amount</dt>
-              <dd class="col-8">
-                <div class="fw-semibold">{{ accommodation.name }}</div>
-                <div class="text-muted small">{{ accommodation.location }}</div>
-                <div class="mt-2 text-primary small">
-                  {{ formattedPricePerNight }} /night • × {{ duration }} nights = {{ formattedHotelTotal }}
-                </div>
-              </dd> -->
-            </dl>
-          </div>
-        </div>
-
         <div class="card mb-4 bg-light border-0 shadow-sm p-3">
-          <h6 class="mb-2">What's Next?</h6>
+          <h6 class="mb-2">다음 단계</h6>
           <ul class="mb-0 small">
-            <li>Your itinerary has been saved to Travelgram</li>
-            <li>You can modify your plan anytime</li>
-            <li>Use the Supporter tab for real-time assistance during your plan</li>
+            <li>일정이 플래너에 저장되었습니다</li>
+            <li>언제든지 일정을 수정할 수 있어요</li>
+            <li>여행 중에는 서포터에서 유용한 지도 기반 도움을 받을 수 있어요</li>
           </ul>
         </div>
 
         <div class="d-grid mb-2">
-          <router-link class="btn btn-primary btn-lg" :to="{ path: '/planner/edit' }" @click="startTravel">View Full Itinerary</router-link>
+          <router-link
+            class="btn btn-primary btn-lg"
+            :to="{ path: '/planner/edit' }"
+            @click="startTravel"
+          >
+            전체 일정으로 돌아가기
+          </router-link>
         </div>
 
         <p class="text-muted small mt-3">
           <i class="bi bi-pin-angle me-1"></i>
-          Tip: Download offline maps and save important addresses in Korean
+          팁: 챗봇에게 다양한 요청을 해보세요. 여행지를 추천받거나 수정할 수도 있습니다!
         </p>
       </div>
     </div>
@@ -93,98 +39,36 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
 import { useTravelStore } from '@/store/travelStore'
 
 const travelStore = useTravelStore()
-const propsRoute = useRoute()
-
-// Try to read data from route query first, otherwise fallback to sample data
-const duration = Number(propsRoute.query.duration) || 7
-const startDate = propsRoute.query.startDate || new Date().toISOString().split('T')[0]
-const budget = Number(propsRoute.query.budget) || 2000
-const currency = propsRoute.query.currency || 'USD'
-
-const accommodation = {
-  name: propsRoute.query.accName || 'Seoul Boutique Residence',
-  location: propsRoute.query.accLocation || 'Itaewon, Yongsan-gu',
-  pricePerNight: Number(propsRoute.query.accPrice) || 110,
-
-  bookingNumber: '1234',
-  paymentDate: new Date().toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric'
-      }) + ' at ' + new Date().toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-}
 
 function startTravel() {
   travelStore.startTravel()
 }
-
-const formattedStartDate = computed(() => {
-  try {
-    const d = new Date(startDate)
-    return d.toISOString().split('T')[0]
-  } catch (e) {
-    return startDate
-  }
-})
-
-const formattedBudget = computed(() => {
-  if (currency === 'KRW') return `₩${Math.round(budget).toLocaleString()}`
-  return `$${Number(budget).toLocaleString()}`
-})
-
-const formattedPricePerNight = computed(() => {
-  if (currency === 'KRW') return `₩${Math.round(accommodation.pricePerNight).toLocaleString()}`
-  return `$${Number(accommodation.pricePerNight).toLocaleString()}`
-})
-
-const formattedHotelTotal = computed(() => {
-  const total = accommodation.pricePerNight * duration
-  if (currency === 'KRW') return `₩${Math.round(total).toLocaleString()}`
-  return `$${Number(total).toLocaleString()}`
-})
 </script>
 
 <style scoped>
 .booking-complete {
   max-width: 980px;
   margin: 0 auto;
+}
 
-  .check-circle {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: #28a745; /* green */
-    box-shadow: 0 6px 18px rgba(40,167,69,0.12);
-  }
+.check-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #28a745;
+  box-shadow: 0 6px 18px rgba(40, 167, 69, 0.12);
+}
 
-  .card-header.bg-primary {
-    /* use CSS variables like other views; provide fallbacks */
-    background: linear-gradient(90deg, var(--bs-primary, #1B3B6F) 0%, var(--bs-accent, #ff8c00) 100%);
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
-    color: #fff;
-  }
+.btn-primary {
+  background-color: var(--bs-primary, #1B3B6F);
+  border-color: var(--bs-primary, #1B3B6F);
+  color: white;
+}
 
-  .btn-primary {
-    background-color: var(--bs-primary, #1B3B6F);
-    border-color: var(--bs-primary, #1B3B6F);
-    color: white;
-  }
-
-  .btn-primary:hover {
-    opacity: 0.95;
-  }
-
-  .btn-outline-secondary {
-    border-radius: 0.5rem;
-  }
+.btn-primary:hover {
+  opacity: 0.95;
 }
 </style>
