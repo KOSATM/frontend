@@ -24,7 +24,7 @@
       </div>
 
       <!-- Create Budget-Based Itinerary 버튼 -->
-      <!-- <BaseButton variant="primary" 
+      <!-- <BaseButton variant="primary"
       class="w-100 mb-4 py-3 d-flex align-items-center justify-content-center gap-2"
       @click="next()"><i class="bi bi-plus-lg"></i>
         <span class="fw-semibold">Create Budget-Based Itinerary</span>
@@ -203,10 +203,22 @@ const sendMessage = async () => {
 
   setTimeout(async () => {
     const aiText = await generateAIResponse(toProcess);
+    console.log('AI Response:', aiText); // 디버깅용
+    // ✅ Axios 응답 구조를 고려한 정확한 파싱
+    const apiRes = aiText.data;
+    let message = "";
+    if (apiRes?.data?.mainResponse?.message) {
+      message = apiRes.data.mainResponse.message;
+    } else if (apiRes?.message) {
+      message = apiRes.message;
+    } else {
+      message = "응답을 받지 못했습니다.";
+    }
+
     chatMessages.value.push({
       id: Date.now() + 1,
       type: "ai",
-      content: aiText.data.mainResponse.message,
+      content: message,
       timestamp: new Date(),
     });
     isLoading.value = false;
