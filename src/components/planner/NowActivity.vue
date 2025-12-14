@@ -3,6 +3,7 @@
   <div
     v-if="place"
     class="now-active-card"
+    :style="bgGradient"
     @click="onClickCard"
   >
     <!-- Top row: NOW pill + dot + status + (nav on right) -->
@@ -108,8 +109,40 @@ const formatTime = (iso) => {
    UI용 progress
 =========================== */
 const progressPercent = computed(() => {
-  if (!place.value) return 0;
-  return place.value.status === "DONE" ? 100 : 35;
+  if (!total.value || total.value === 0) return 0;
+
+  // index는 0부터 시작하니까 +1
+  return Math.round(((index.value + 1) / total.value) * 100);
+});
+
+
+/* ===========================
+   Time-based background
+=========================== */
+const hour = new Date().getHours();
+
+const bgGradient = computed(() => {
+  // 기본값 (밤)
+  let from = "rgba(16, 14, 40, 0.94)";
+  let to   = "rgba(34, 18, 70, 0.94)";
+
+  if (hour >= 5 && hour < 10) {
+    // 🌅 아침: 아주 은은한 블루 퍼플
+    from = "rgba(18, 20, 48, 0.94)";
+    to   = "rgba(36, 28, 76, 0.94)";
+  } else if (hour >= 10 && hour < 17) {
+    // ☀️ 낮: 보라에 살짝 블루 기
+    from = "rgba(20, 26, 56, 0.94)";
+    to   = "rgba(38, 30, 82, 0.94)";
+  } else if (hour >= 17 && hour < 20) {
+    // 🌇 저녁: 퍼플 + 살짝 웜톤
+    from = "rgba(32, 20, 52, 0.94)";
+    to   = "rgba(54, 24, 78, 0.94)";
+  }
+
+  return {
+    background: `linear-gradient(135deg, ${from}, ${to})`,
+  };
 });
 </script>
 
@@ -126,13 +159,13 @@ const progressPercent = computed(() => {
   overflow: hidden;
   cursor: pointer;
 
-  /* 🔥 핵심 수정 */
+  /* 🔥 핵심 수정
   background:
     linear-gradient(
       135deg,
       rgba(20, 18, 48, 0.92),
       rgba(42, 18, 85, 0.92)
-    );
+    ); */
 
   border: 1px solid rgba(255,255,255,0.18);
   backdrop-filter: blur(12px);

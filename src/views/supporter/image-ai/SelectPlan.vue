@@ -171,6 +171,14 @@ const saveToDatabase = async (action) => {
 const confirm = async () => {
   if (!selectedOption.value) return
 
+  // 로그인 체크 (save, add, replace는 로그인 필요)
+  if (selectedOption.value !== 'not_interested' && !authStore.userId) {
+    alert('로그인이 필요한 서비스입니다.\n로그인 후 이용해주세요.')
+    // 백엔드 OAuth 로그인으로 리다이렉트
+    window.location.href = 'http://localhost:8080/oauth2/authorization/google'
+    return
+  }
+
   // Not Interested -> 저장하지 않고 돌아가기
   if (selectedOption.value === 'not_interested') {
     router.push({ name:'CreateNewSearch' }).catch(() => { })

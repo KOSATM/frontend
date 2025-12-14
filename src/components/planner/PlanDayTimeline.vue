@@ -7,7 +7,7 @@
         :key="idx"
         class="day-tab-btn"
         :class="{ active: selectedDayIndex === idx }"
-        @click="selectedDayIndex = idx"
+        @click="$emit('update:selectedDayIndex', idx)"
       >
         Day {{ idx + 1 }}
       </button>
@@ -129,23 +129,19 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 
-defineEmits(["open-modal", "delete-place"]);
+defineEmits(["open-modal", "delete-place", "update:selectedDayIndex"]);
 
 const props = defineProps({
   days: { type: Array, required: true },
+  currentDayPlaces: { type: Array, required: true },
+  selectedDayIndex: { type: Number, default: 0 },
   editMode: Boolean,
   typeColor: Function,
   typeLabel: Function,
   formatTime: Function,
   categoryMap: Object,
-});
-
-const selectedDayIndex = ref(0);
-
-const currentDayPlaces = computed(() => {
-  return props.days?.[selectedDayIndex.value]?.places ?? [];
 });
 </script>
 

@@ -112,7 +112,7 @@
                 <i class="bi bi-person-standing text-primary fs-4"></i>
               </div>
               <div class="flex-fill">
-                <div class="fw-medium">{{ r.toiletName || '공중화장실' }}</div>
+                <div class="fw-medium">{{ r.name || '공중화장실' }}</div>
                 <div class="small text-muted">
                   <i class="bi bi-geo-alt me-1"></i> {{ r.address || r.roadAddress || '주소 정보 없음' }}
                 </div>
@@ -432,6 +432,13 @@ const goToImageAINew = () => {
 }
 
 const goToImageAIHistory = () => {
+  // 로그인 체크
+  if (!authStore.userId) {
+    alert('로그인이 필요한 서비스입니다.\n히스토리를 확인하려면 로그인해주세요.')
+    window.location.href = 'http://localhost:8080/oauth2/authorization/google'
+    return
+  }
+  
   router.push({ name: 'History' })
     .then(() => {
       // ensure we are at page top after navigation

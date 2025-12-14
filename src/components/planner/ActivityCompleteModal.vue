@@ -5,7 +5,9 @@
       <div class="modal-card" @click.stop>
         <!-- Header -->
         <div class="modal-header">
-          <h3 class="mb-0">활동 완료</h3>
+          <h3 class="mb-0">
+            <strong class="title-highlight">{{ title }}</strong> 방문은 어떠셨나요?
+          </h3>
           <button
             class="btn btn-sm btn-light rounded-circle close-btn"
             @click="$emit('close')"
@@ -13,11 +15,6 @@
             ✕
           </button>
         </div>
-
-        <!-- Intro 🔧 lead 제거 -->
-        <p class="mb-3">
-          <strong>{{ title }}</strong> 방문은 어떠셨나요?
-        </p>
 
         <!-- 비용 입력 -->
         <label class="label">실제 사용 금액 (선택)</label>
@@ -161,6 +158,19 @@ const onInput = (e) => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+}
+
+.modal-header h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+  padding-right: 10px;
+  color: #1f2937; /* 검은색 - "방문은 어떠셨나요?" */
+}
+
+.title-highlight {
+  color: #3730a3; /* 남색 - 장소명 (경복궁) */
+  font-weight: 800;
 }
 
 /* 🔧 본문 텍스트 크기 통일 */

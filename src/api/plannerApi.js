@@ -5,9 +5,11 @@ async function getActivePlan(userId) {
   return await api.get(`/plans/${userId}/active/detail`)
 }
 
-// 쉴 장소 불러오기
+// 쉴 장소(근처 카페) 불러오기
 async function getRestPlaces(lat, lng) {
-  return await api.post(`/search-rest-place`, { params: { lat, lng } })
+  return await api.get(`/search-rest-place`, {
+    params: { lat, lng }
+  })
 }
 
 // 방문할 장소 수정
@@ -34,11 +36,18 @@ const getBlogList = async (keyword) => {
   })
   return res.data
 }
+
+// 활동 완료 저장
+async function saveCurrentActivity(activityData) {
+  return await api.post('/api/travel/current-activity', activityData)
+}
+
 export default {
   getActivePlan,
   getBlogList,
   getActivePlanIdAndDayIndex,
   getRestPlaces,
   updatePlanPlace,
-  deletePlanPlace
+  deletePlanPlace,
+  saveCurrentActivity
 };
