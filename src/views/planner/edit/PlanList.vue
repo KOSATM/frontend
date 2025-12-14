@@ -203,7 +203,15 @@ const travelStore = useTravelStore();
 const applyAiPlan = (payload) => {
   console.log("✅ [PlanList] applyAiPlan 호출됨", payload);
 
-  if (!payload) return;
+  if (!payload) {
+    console.log("⚠️ [PlanList] payload가 없음");
+    return;
+  }
+
+  if (!payload.days || !Array.isArray(payload.days)) {
+    console.log("⚠️ [PlanList] payload.days가 없거나 배열이 아님");
+    return;
+  }
 
   plan.value = {
     id: payload.planId,

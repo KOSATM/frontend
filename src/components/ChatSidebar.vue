@@ -1,6 +1,6 @@
 <template>
   <div class="chat-layout-wrapper d-flex flex-column h-100 bg-white">
-    
+
     <div class="chat-header d-flex align-items-center gap-2 p-3 border-bottom">
       <div class="badge text-white rounded-circle d-flex justify-content-center align-items-center flex-shrink-0"
         style="width: 32px; height: 32px; background-color: #1B3B6F;">
@@ -32,7 +32,7 @@
             </div>
           </div>
         </div>
-        
+
         <div v-if="isLoading" class="message ai-message mb-3">
           <div class="message-bubble loading-bubble">
             <div class="spinner-container">
@@ -63,26 +63,26 @@
 
     <div class="chat-input-wrapper p-3 border-top bg-white">
       <div class="chat-input-container">
-        <textarea 
-          v-model="currentMessage" 
+        <textarea
+          v-model="currentMessage"
           @keydown.enter.exact.prevent="sendMessage"
           :disabled="isLoading"
-          class="chat-text-input" 
+          class="chat-text-input"
           placeholder="Ask plan..."
           rows="1"
           @input="autoResize"
           ref="textareaRef"
         ></textarea>
-        
+
         <button class="icon-btn voice-btn" title="Voice input">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5z"/>
             <path d="M10 8a2 2 0 1 1-4 0V3a2 2 0 1 1 4 0v5zM8 0a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V3a3 3 0 0 0-3-3z"/>
           </svg>
         </button>
-        
-        <button 
-          @click="sendMessage" 
+
+        <button
+          @click="sendMessage"
           :disabled="!currentMessage.trim() || isLoading"
           class="icon-btn send-btn"
         >
@@ -156,23 +156,41 @@ const sendMessage = async () => {
 
   setTimeout(async () => {
     const res = await chatApi.chat(request);
-    const mainResponse = res.data.mainResponse;
+    console.log('Chat Response:', res); // 디버깅용
+
+    // ✅ Axios 응답 구조를 고려한 정확한 파싱
+    const apiRes = res.data;
+
+    let message = "";
+    if (apiRes?.data?.mainResponse?.message) {
+      message = apiRes.data.mainResponse.message;
+    } else if (apiRes?.message) {
+      message = apiRes.message;
+    } else {
+      message = "응답을 받지 못했습니다.";
+    }
+
+    const planData = apiRes?.data || null;
 
     chatMessages.value.push({
       id: Date.now() + 1,
       type: "ai",
-      content: markdownToHTML(mainResponse.message),
+      content: markdownToHTML(message),
       timestamp: new Date(),
     });
 
-    if (mainResponse?.data) {
-      console.log("🔥 서버에서 받은 플랜 payload:", mainResponse.data);
-      chatStore.setLivePlan(mainResponse.data);
+    // data가 있고, days 배열이 있을 때만 livePlan 설정
+    if (planData && planData.days && Array.isArray(planData.days)) {
+      console.log("🔥 서버에서 받은 플랜 payload:", planData);
+      chatStore.setLivePlan(planData);
+    } else {
+      console.log("⚠️ 플랜 데이터가 없거나 형식이 맞지 않음:", planData);
     }
 
-    if (mainResponse.requirePageMove && mainResponse.targetUrl) {
-      router.push(mainResponse.targetUrl);
-    }
+    // 추가 필드가 있으면 처리 (향후 확장)
+    // if (res.requirePageMove && res.targetUrl) {
+    //   router.push(res.targetUrl);
+    // }
 
     isLoading.value = false;
     await nextTick();
@@ -209,15 +227,15 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* [중요] 레이아웃 시스템과의 통합을 위해 
-  Position Fixed 관련 스타일을 모두 제거하고 
-  Flexbox 기반으로 변경했습니다. 
+/* [중요] 레이아웃 시스템과의 통합을 위해
+  Position Fixed 관련 스타일을 모두 제거하고
+  Flexbox 기반으로 변경했습니다.
 */
 
 .chat-layout-wrapper {
   /* sidebar-area 내부를 꽉 채움 */
   width: 100%;
-  height: 100%; 
+  height: 100%;
   overflow: hidden; /* 이중 스크롤 방지 */
 }
 
@@ -292,7 +310,7 @@ onMounted(() => {
   height: auto !important;       /* 세로: 비율에 맞춰 자동 조절 */
   max-height: 300px !important;  /* 세로 최대 크기 제한 (너무 길쭉한 이미지 방지) */
   object-fit: contain !important; /* 이미지가 찌그러지지 않고 비율 유지 */
-  
+
   border-radius: 8px !important; /* 이미지 모서리를 둥글게 (보기 좋게) */
   display: block !important;     /* 블록 요소로 변경 */
   margin: 10px 0 !important;     /* 위아래 여백 추가 */
