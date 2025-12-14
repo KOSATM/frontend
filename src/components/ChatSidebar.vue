@@ -11,7 +11,7 @@
     <h6 class="mb-0 fw-bold text-truncate" style="line-height: 1.2;">
       AI 여행 어시스턴트
     </h6>
-    
+
     <small class="text-muted">
       서울 여행 플래너
     </small>
@@ -33,6 +33,19 @@
         }">
           <div class="message-bubble">
             <div class="markdown-body" v-html="message.content"></div>
+
+            <!-- 🖼️ 플랜 데이터의 이미지 표시 -->
+            <div v-if="message.images && message.images.length > 0" class="place-images-gallery mt-3">
+              <div v-for="(place, idx) in message.images" :key="idx" class="place-image-card">
+                <img v-if="place.image" :src="place.image" :alt="place.title" class="place-img" />
+                <div class="place-card-info">
+                  <p class="place-card-title">{{ place.title }}</p>
+                  <p class="place-card-name text-muted">{{ place.placeName }}</p>
+                  <p v-if="place.address" class="place-card-address text-muted small">{{ place.address }}</p>
+                </div>
+              </div>
+            </div>
+
             <div v-if="message.type === 'ai' && message.loading" class="typing-indicator mt-2">
               <span></span><span></span><span></span>
             </div>
@@ -73,7 +86,7 @@
           v-model="currentMessage"
           @keydown.enter.exact.prevent="sendMessage"
           :disabled="isLoading"
-          class="chat-text-input" 
+          class="chat-text-input"
           placeholder="질문을 입력해주세요..."
           rows="1"
           @input="autoResize"
@@ -164,41 +177,43 @@ const sendMessage = async () => {
 
   setTimeout(async () => {
     const res = await chatApi.chat(request);
-    console.log('Chat Response:', res); // 디버깅용
+    console.log('Chat Response (chatApi already unwrapped):', res); // 디버깅용
 
-    // ✅ Axios 응답 구조를 고려한 정확한 파싱
-    const apiRes = res.data;
+    // ✅ chatApi.chat()은 axios response.data를 반환함
+    // res 구조: { success, status, data: { message, response, data: [...] }, error }
+    const apiRes = res;
 
     let message = "";
-    if (apiRes?.data?.mainResponse?.message) {
-      message = apiRes.data.mainResponse.message;
+    if (apiRes?.data?.message) {
+      message = apiRes.data.message;
     } else if (apiRes?.message) {
       message = apiRes.message;
     } else {
       message = "응답을 받지 못했습니다.";
     }
 
-    const planData = apiRes?.data || null;
+    // 🖼️ 이미지 데이터 추출 (PlaceSuggestAgent 응답)
+    let imagesData = [];
+    if (apiRes?.data?.data && Array.isArray(apiRes.data.data)) {
+      // apiRes.data.data = [{title, image, address, ...}, ...]
+      imagesData = apiRes.data.data.map(place => ({
+        title: place.title,
+        placeName: place.placeName,
+        address: place.address,
+        image: place.image
+      }));
+      console.log("🖼️ 추출된 이미지:", imagesData.length, "개");
+    } else {
+      console.warn("⚠️ 이미지 데이터 없음. apiRes.data.data:", apiRes?.data?.data);
+    }
 
     chatMessages.value.push({
       id: Date.now() + 1,
       type: "ai",
       content: markdownToHTML(message),
+      images: imagesData,
       timestamp: new Date(),
     });
-
-    // data가 있고, days 배열이 있을 때만 livePlan 설정
-    if (planData && planData.days && Array.isArray(planData.days)) {
-      console.log("🔥 서버에서 받은 플랜 payload:", planData);
-      chatStore.setLivePlan(planData);
-    } else {
-      console.log("⚠️ 플랜 데이터가 없거나 형식이 맞지 않음:", planData);
-    }
-
-    // 추가 필드가 있으면 처리 (향후 확장)
-    // if (res.requirePageMove && res.targetUrl) {
-    //   router.push(res.targetUrl);
-    // }
 
     isLoading.value = false;
     await nextTick();
@@ -243,17 +258,17 @@ onMounted(() => {
 
 .chat-layout-wrapper {
   width: 100%;
-  height: 100%; 
+  height: 100%;
   overflow: hidden;
   /* 기본 글자 크기를 여기서 한 번만 키워주면 내부 요소들이 상속받습니다 */
-  font-size: 1.25rem; 
+  font-size: 1.25rem;
   color: #333;
 }
 
 /* --- 상단 헤더 영역 --- */
 .chat-header h6 {
   /* h6 태그는 이미 글로벌에서 memoment 폰트가 적용되어 있으므로 크기만 조정 */
-  font-size: 1.5rem; 
+  font-size: 1.5rem;
   margin: 0;
 }
 
@@ -270,7 +285,7 @@ onMounted(() => {
 
 /* 메시지 말풍선 공통 */
 .message-bubble {
-  padding: 12px 18px; 
+  padding: 12px 18px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   font-size: 1.25rem; /* 말풍선 텍스트 크기 확보 */
   line-height: 1.5;
@@ -303,7 +318,7 @@ onMounted(() => {
 /* [Markdown 스타일 재정의] */
 :deep(.markdown-body) {
   /* 글로벌 p 태그 스타일을 따라가지만, 혹시 모를 초기화를 위해 크기만 명시 */
-  font-size: 1.25rem !important; 
+  font-size: 1.25rem !important;
   background: transparent !important;
   color: inherit !important;
   line-height: 1.6 !important;
@@ -317,7 +332,7 @@ onMounted(() => {
 :deep(.markdown-body h4),
 :deep(.markdown-body h5),
 :deep(.markdown-body h6) {
-  font-size: 1.4em !important; 
+  font-size: 1.4em !important;
   margin-top: 1.2rem !important;
   margin-bottom: 0.6rem !important;
   line-height: 1.3 !important;
@@ -328,7 +343,7 @@ onMounted(() => {
   margin-bottom: 0.8rem !important;
 }
 
-:deep(.markdown-body ul), 
+:deep(.markdown-body ul),
 :deep(.markdown-body ol) {
   padding-left: 1.5rem !important;
 }
@@ -356,7 +371,7 @@ onMounted(() => {
   display: flex;
   align-items: flex-end;
   gap: 8px;
-  padding: 12px 16px; 
+  padding: 12px 16px;
   background: #f8f9fa;
   border: 1px solid #e9ecef;
   border-radius: 24px;
@@ -367,15 +382,15 @@ onMounted(() => {
   border: none;
   background: transparent;
   outline: none;
-  
-  /* 주의: textarea/input은 브라우저 기본 스타일 때문에 글로벌 body 폰트를 
-     상속받지 않는 경우가 많습니다. 
-     이 경우에만 font-family: inherit;을 주면 글로벌 폰트를 따라갑니다. 
+
+  /* 주의: textarea/input은 브라우저 기본 스타일 때문에 글로벌 body 폰트를
+     상속받지 않는 경우가 많습니다.
+     이 경우에만 font-family: inherit;을 주면 글로벌 폰트를 따라갑니다.
   */
-  font-family: inherit; 
-  font-size: 1.25rem; 
+  font-family: inherit;
+  font-size: 1.25rem;
   line-height: 1.5;
-  
+
   padding: 4px 0;
   max-height: 120px;
   resize: none;
@@ -448,5 +463,64 @@ onMounted(() => {
 @keyframes typing {
   0%, 80%, 100% { transform: scale(0); }
   40% { transform: scale(1); }
+}
+
+/* 🖼️ 이미지 갤러리 스타일 */
+.place-images-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.place-image-card {
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+  border: 1px solid #e9ecef;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.place-image-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-color: #1B3B6F;
+}
+
+.place-img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  display: block;
+}
+
+.place-card-info {
+  padding: 8px;
+}
+
+.place-card-title {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #1B3B6F;
+}
+
+.place-card-name {
+  font-size: 11px;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.place-card-address {
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
