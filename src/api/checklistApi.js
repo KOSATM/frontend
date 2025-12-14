@@ -79,3 +79,17 @@ export const toggleChecklistItem = async (id, isChecked) => {
     throw error
   }
 }
+
+// planId + dayIndex로 체크리스트 에이전트 호출
+// GET /supporter/checklists/checklist/{planId}/{dayIndex}
+export const getChecklistBundleByPlanAndDay = async (planId, dayIndex) => {
+  try {
+    const response = await axios.get(`/supporter/checklists/checklist/${planId}/${dayIndex}`)
+    console.log('✅ Checklist bundle loaded:', response.data)
+    return response.data.data || response.data
+  } catch (error) {
+    console.error('❌ Failed to load checklist bundle:', error)
+    console.error('Error response:', error.response?.data)
+    throw error
+  }
+}
