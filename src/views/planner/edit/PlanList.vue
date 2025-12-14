@@ -449,6 +449,7 @@ const onDeletePlace = async (idx, place) => {
         alternatives = topThreeCafes.map(cafe => {
           console.log('🔄 카페 변환 중:', cafe);
           return {
+            id: place.id,
             title: cafe.title || cafe.name || cafe.placeName || '카페',
             image: cafe.firstImage2 || cafe.firstImage || cafe.image,
             thumbnail: cafe.firstImage2 || cafe.firstImage || cafe.thumbnail,
@@ -497,10 +498,16 @@ const onDeletePlace = async (idx, place) => {
 
 const applyReplacement = (alt) => {
   const idx = currentDayPlaces.value.findIndex((p) => p === replaceTarget.value);
+  console.log("replaceTarget", replaceTarget.value);
   if (idx !== -1) {
+    const id = replaceTarget.value.id
     days.value[selectedDayIndex.value].places.splice(idx, 1, alt);
+    console.log("----", replaceTarget.value.id, alt);
+    plannerApi.updatePlanPlace(replaceTarget.value.id, alt);
+    // replaceTarget.value.id = id;
   }
   replaceModalOpen.value = false;
+  console.log("####", replaceTarget.value.id);
 };
 
 const deleteAnyway = () => {
