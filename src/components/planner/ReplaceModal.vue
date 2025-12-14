@@ -61,8 +61,8 @@
 
         <!-- Footer -->
         <div class="modal-footer">
-          <button class="btn-cancel" @click="$emit('close')">취소</button>
-          <button class="btn-delete" @click="$emit('delete-anyway')">
+          <button class="btn-cancel" @click="emit('close')">취소</button>
+          <button class="btn-delete" @click="emit('delete-anyway')">
             그래도 삭제하기
           </button>
         </div>

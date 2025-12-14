@@ -500,11 +500,9 @@ const applyReplacement = (alt) => {
   const idx = currentDayPlaces.value.findIndex((p) => p === replaceTarget.value);
   console.log("replaceTarget", replaceTarget.value);
   if (idx !== -1) {
-    const id = replaceTarget.value.id
     days.value[selectedDayIndex.value].places.splice(idx, 1, alt);
     console.log("----", replaceTarget.value.id, alt);
     plannerApi.updatePlanPlace(replaceTarget.value.id, alt);
-    // replaceTarget.value.id = id;
   }
   replaceModalOpen.value = false;
   console.log("####", replaceTarget.value.id);
@@ -514,6 +512,7 @@ const deleteAnyway = () => {
   const idx = currentDayPlaces.value.findIndex((p) => p === replaceTarget.value);
   if (idx !== -1) {
     days.value[selectedDayIndex.value].places.splice(idx, 1);
+    plannerApi.deletePlanPlace(replaceTarget.value.id);
   }
   replaceModalOpen.value = false;
 };
