@@ -4,20 +4,16 @@
       <div class="modal-card" @click.stop>
         <!-- Header -->
         <div class="modal-header">
-          <h3 class="modal-title">Delete Activity?</h3>
+          <h3 class="modal-title">
+            정말 <strong>{{ target?.title || "이 장소" }}</strong>를 삭제하시겠습니까?
+          </h3>
           <button class="icon-close" @click="$emit('close')">✕</button>
         </div>
 
         <!-- Description -->
-        <p class="modal-desc">
-          정말
-          <strong>{{ target?.title || "this activity" }}</strong
-          >을/를 삭제하시겠습니까?
-        </p>
-
-        <p class="modal-subdesc">
-          저희가 유사한 장소를 추천해드릴게요
-        </p>
+        <h5 class="modal-subdesc">
+          <strong>저희가 유사한 장소를 추천해드릴게요</strong>
+        </h5>
 
         <!-- Alternatives -->
         <div class="alt-list">
@@ -35,7 +31,11 @@
                   :src="alt.image || alt.thumbnail"
                   alt="place thumbnail"
                 />
-                <div v-else class="alt-thumb-fallback">📍</div>
+                <img
+                  v-else
+                  :src="assignedImages[i]"
+                  alt="cafe thumbnail"
+                />
               </div>
 
               <!-- Body -->
@@ -47,15 +47,15 @@
                   {{ alt.shortDesc || alt.desc || "Recommended nearby place" }}
                 </div>
               </div>
-            </div>
 
-            <!-- CTA -->
-            <button
-              class="replace-cta"
-              @click.stop="$emit('apply-replacement', alt)"
-            >
-              해당 장소로 대체
-            </button>
+              <!-- CTA -->
+              <button
+                class="replace-cta"
+                @click.stop="handleReplacement(alt, i)"
+              >
+                장소 변경
+              </button>
+            </div>
           </div>
         </div>
 
@@ -63,7 +63,7 @@
         <div class="modal-footer">
           <button class="btn-cancel" @click="$emit('close')">취소</button>
           <button class="btn-delete" @click="$emit('delete-anyway')">
-            그래도 삭제
+            그래도 삭제하기
           </button>
         </div>
       </div>
@@ -73,13 +73,60 @@
 
 
 <script setup>
-defineProps({
+import { computed } from 'vue';
+
+const props = defineProps({
   open: { type: Boolean, default: false },
   target: { type: Object, default: null },
   alternatives: { type: Array, default: () => [] },
 });
 
-defineEmits(["close", "preview-alt", "apply-replacement", "delete-anyway"]);
+const emit = defineEmits(["close", "preview-alt", "apply-replacement", "delete-anyway"]);
+
+// 카페 더미 이미지 URL 배열 (Unsplash - 무료 사용 가능)
+const dummyCafeImages = [
+  'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400',  // 모던 카페
+  'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400',  // 카페 인테리어
+  'https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=400',  // 커피숍
+  'https://images.unsplash.com/photo-1453614512568-c4024d13c247?w=400',  // 카페 테이블
+  'https://images.unsplash.com/photo-1511920170033-f8396924c348?w=400',  // 카페 외관
+  'https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=400',  // 카페 내부
+  'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400',  // 커피와 노트북
+  'https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=400',  // 카페 분위기
+  'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400',  // 커피 클로즈업
+  'https://images.unsplash.com/photo-1445116572660-236099ec97a0?w=400',  // 카페 음료
+];
+
+// alternatives 개수만큼 중복 없이 이미지 할당
+const assignedImages = computed(() => {
+  // 이미지 배열을 섞음 (Fisher-Yates shuffle)
+  const shuffled = [...dummyCafeImages].sort(() => Math.random() - 0.5);
+  
+  // alternatives 개수만큼만 반환
+  return shuffled.slice(0, props.alternatives.length);
+});
+
+// 대체 버튼 클릭 핸들러
+const handleReplacement = (alt, index) => {
+  console.log('🔄 대체 전 데이터:', alt);
+  
+  // 이미지가 없으면 화면에 보였던 더미 이미지 추가
+  const altWithImage = {
+    ...alt,
+    image: alt.image || alt.thumbnail || assignedImages.value[index],
+    thumbnail: alt.thumbnail || alt.image || assignedImages.value[index],
+    details: {
+      ...alt.details,
+      gallery: alt.details?.gallery?.length 
+        ? alt.details.gallery 
+        : [assignedImages.value[index]]
+    }
+  };
+  
+  console.log('✅ 대체 후 데이터 (이미지 포함):', altWithImage);
+  
+  emit('apply-replacement', altWithImage);
+};
 
 const hasCost = (cost) => {
   return cost === 0 || (typeof cost === "number" && !Number.isNaN(cost));
@@ -147,6 +194,10 @@ const formatCost = (cost) => {
   color: #0f172a;
 }
 
+.modal-title strong {
+  color: #ef4444;
+}
+
 .icon-close {
   border: none;
   background: transparent;
@@ -204,7 +255,7 @@ const formatCost = (cost) => {
 .alt-row {
   display: flex;
   gap: 16px;
-  align-items: flex-start;
+  align-items: center;
 }
 
 /* ===============================
@@ -258,16 +309,16 @@ const formatCost = (cost) => {
    Replace CTA
 =============================== */
 .replace-cta {
-  width: 100%;
-  margin-top: 14px;
   border: none;
-  border-radius: 14px;
-  padding: 14px;
+  border-radius: 12px;
+  padding: 10px 16px;
   font-weight: 700;
-  font-size: 14.5px;
+  font-size: 13px;
   cursor: pointer;
   background: #eef6ff;
   color: #2563eb;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .replace-cta:hover {
