@@ -17,10 +17,11 @@
       </div>
 
       <!-- 정상 콘텐츠 -->
-      <div v-else>        
+      <div v-else>
         <!-- Hotel List -->
         <div class="hotel-list mb-4">
-          <BaseSection icon="bi-buildings" title="추천하는 호텔" :subtitle="`Showing ${ filteredHotels.length} hotels for ${filters.guests} guests`">
+          <BaseSection icon="bi-buildings" title="추천하는 호텔"
+            :subtitle="`Showing ${filteredHotels.length} hotels for ${filters.guests} guests`">
             <div v-if="isLoading" class="text-center py-4">
               <div class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">불러오는 중...</span>
@@ -53,8 +54,10 @@
                           {{ hotel.location }}
                         </p>
                         <div class="hotel-info mb-2 small text-muted">
-                          <div><i class="bi bi-calendar-check"></i> {{ hotel.checkInDate }} ~ {{ hotel.checkOutDate }}</div>
-                          <div><i class="bi bi-moon"></i> {{ hotel.nights }} | <i class="bi bi-people"></i> {{ hotel.guests }}</div>
+                          <div><i class="bi bi-calendar-check"></i> {{ hotel.checkInDate }} ~ {{ hotel.checkOutDate }}
+                          </div>
+                          <div><i class="bi bi-moon"></i> {{ hotel.nights }} | <i class="bi bi-people"></i> {{
+                            hotel.guests }}</div>
                         </div>
                         <div class="hotel-features mb-3">
                           <span class="badge bg-light text-secondary me-2" v-if="hotel.facilities?.WiFi">
@@ -94,13 +97,8 @@
 
         <!-- Confirm Button -->
         <div class="text-center">
-          <NavigationButtons
-            :backText="'이전'"
-            :nextText="'결제하기'"
-            :isNextDisabled="!selectedHotel"
-            @back="goBack"
-            @next="confirmSelection"
-          />
+          <NavigationButtons :backText="'이전'" :nextText="'결제하기'" :isNextDisabled="!selectedHotel" @back="goBack"
+            @next="confirmSelection" />
         </div>
       </div>
     </div>
@@ -117,12 +115,10 @@ import { useTravelStore } from '@/store/travelStore';
 import { useAuthStore } from '@/store/authStore';
 import hotelApi from '@/api/hotelApi';
 import BaseSection from '@/components/common/BaseSection.vue';
-import { useChatStore } from '@/store/chatStore';
 
 const router = useRouter();
 const travelStore = useTravelStore();
 const authStore = useAuthStore();
-const chatStore = useChatStore();
 
 const rangeValue = ref(50);
 const budget = ref(1000000);
@@ -196,8 +192,8 @@ const getRandomHotelImage = () => {
   } while (usedImageIndices.value.has(randomIndex));
 
   usedImageIndices.value.add(randomIndex);
-  console.log(`Using image ${randomIndex + 1}/${hotelImages.value.length}`);
-  
+  console.log(`✅ Using image ${randomIndex + 1}/${hotelImages.value.length}`);
+
   return hotelImages.value[randomIndex];
 };
 
@@ -205,25 +201,23 @@ const getRandomHotelImage = () => {
 onMounted(async () => {
   // ✅ 호텔 이미지 초기화
   initializeHotelImages();
-  
+
   // ✅ 랜덤 로딩 메시지 설정
   loadingMessage.value = getRandomLoadingMessage();
-  
+
   authStore.initializeAuth();
-  chatStore.planId ||= Number(localStorage.getItem("planId"));
-  chatStore.dayIndex ||= Number(localStorage.getItem("dayIndex"));
-  
+
   isLoading.value = true;
-  
+
   try {
     const userId = authStore.userId;
     console.log('1️⃣ userId:', userId);
-    
+
     if (userId) {
       console.log('2️⃣ API 호출 시작');
       const response = await hotelApi.recommendHotel(userId);
       console.log('3️⃣ 응답:', response);
-      
+
       if (response?.data?.data?.hotelSummaryList?.length > 0) {
         console.log('4️⃣ 호텔 데이터 있음');
         hotels.value = response.data.data.hotelSummaryList.map((hotel) => ({
@@ -234,11 +228,11 @@ onMounted(async () => {
           totalPrice: hotel.pricing.totalPrice,
           rating: 4.5,
           reviews: 100,
-          image: getRandomHotelImage(),  // ✅ 랜덤 이미지 할당
+          image: getRandomHotelImage(),
           type: 'hotel',
           checkInDate: hotel.checkInDate,
           checkOutDate: hotel.checkOutDate,
-          nights: hotel.nights,
+          nights: Number(String(hotel.nights).replace(/[^0-9]/g, '')) || 1,  // ✅ 숫자만 추출
           roomType: hotel.roomTypeName,
           guests: hotel.guests,
           rank: hotel.rank,
@@ -288,7 +282,13 @@ const selectHotel = (hotel) => {
 const confirmSelection = () => {
   if (selectedHotel.value) {
     travelStore.increaseStep();
-    router.push({ name: 'payment' });
+
+    router.push({
+      name: 'payment',
+      query: {
+        hotel: JSON.stringify(selectedHotel.value)  // ✅ query 사용
+      }
+    });
   }
 };
 
