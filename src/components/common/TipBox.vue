@@ -3,9 +3,9 @@
     <div class="tip-box bg-white p-3 rounded-3 shadow-sm">
         <div class="d-flex gap-2 mb-2">
             <i class="bi bi-lightbulb text-warning fs-5"></i>
-            <h6 class="fw-bold mb-0">{{ props.name }}</h6>
+            <h5 class="fw-bold mb-0">{{ props.name }}</h5>
         </div>
-        <p class="text-muted small mb-0">
+        <p class="text-muted mb-0">
             {{ props.description }}
         </p>
     </div>

@@ -46,8 +46,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* 본문 태그: Parkdahyun 폰트 */
 p {
-  font-family: 'parkdahyun', cursive;
-  font-size: 1.25rem; 
+  font-family: 'parkdahyun';
+  font-size: 1.3rem; 
   margin-bottom: 1rem;
   word-break: keep-all; /* 한글 단어 끊김 방지 */
 }
@@ -58,7 +58,7 @@ a {
   text-decoration: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-family: 'parkdahyun', cursive;
+  font-family: 'parkdahyun';
 
   &:hover {
     color: #e67e00;

@@ -3,36 +3,38 @@
   <teleport to="body">
     <div v-if="open" class="modal-backdrop" @click="$emit('close')">
       <div class="modal-card" @click.stop>
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="mb-0 title">Complete Activity</h5>
+        <!-- Header -->
+        <div class="modal-header">
+          <h3 class="mb-0">활동 완료</h3>
           <button
-            class="btn btn-sm btn-light rounded-circle"
+            class="btn btn-sm btn-light rounded-circle close-btn"
             @click="$emit('close')"
           >
             ✕
           </button>
         </div>
 
-        <p class="mb-2 sub">
-          How was your visit to <strong>{{ title }}</strong
-          >?
+        <!-- Intro 🔧 lead 제거 -->
+        <p class="mb-3">
+          <strong>{{ title }}</strong> 방문은 어떠셨나요?
         </p>
 
         <!-- 비용 입력 -->
-        <label class="label">Actual Cost (Optional)</label>
+        <label class="label">실제 사용 금액 (선택)</label>
         <div class="input mb-2">
-          <span>$</span>
+          <span class="text-muted">$</span>
           <input
             type="number"
             min="0"
             step="1"
             :value="spendInput"
+            placeholder="금액 입력"
             @input="onInput"
           />
-          <span>USD</span>
+          <span class="text-muted">USD</span>
         </div>
 
-        <!-- 빠른 입력 버튼 -->
+        <!-- 빠른 입력 -->
         <div class="quick-amounts mb-3">
           <button
             v-for="v in [5, 10, 20, 30]"
@@ -48,47 +50,53 @@
             class="chip-btn ghost"
             @click="$emit('update:spend-input', null)"
           >
-            Clear
+            초기화
           </button>
         </div>
 
         <!-- 코멘트 -->
-        <label class="label">Quick note (Optional)</label>
+        <label class="label">한 줄 메모 (선택)</label>
         <textarea
           class="comment-box mb-3"
           rows="2"
           :value="comment"
-          placeholder="Any highlights, issues, or thoughts?"
+          placeholder="기억에 남는 점이나 간단한 메모를 남겨보세요"
           @input="$emit('update:comment', $event.target.value)"
         ></textarea>
 
         <!-- Quick Stats -->
         <div class="stats-card mb-3">
-          <div class="sub small fw-semibold mb-2">Quick Stats</div>
+          <div class="fw-semibold mb-2">[ 활동 요약 ]</div>
           <div class="row small">
             <div class="col-6 mb-1">
-              <span class="text-muted">Started:</span>
+              <span class="text-muted">시작 시간</span>
               <div>{{ quickStats?.started }}</div>
             </div>
             <div class="col-6 mb-1">
-              <span class="text-muted">Duration:</span>
+              <span class="text-muted">소요 시간</span>
               <div>{{ quickStats?.duration }}</div>
             </div>
             <div class="col-12 mt-2">
-              <span class="text-muted">Status:</span>
-              <div class="text-success fw-semibold">
-                {{ quickStats?.status }}
+              <span class="text-muted">상태</span>
+              <div
+                class="fw-semibold"
+                :class="quickStats?.status === 'Completed'
+                  ? 'text-success'
+                  : 'text-warning'"
+              >
+                {{ quickStats?.status === 'Completed' ? '완료됨' : '진행 중' }}
               </div>
             </div>
           </div>
         </div>
 
+        <!-- Actions -->
         <div class="d-flex justify-content-between">
           <button class="btn flex-fill me-2" @click="$emit('close')">
             취소
           </button>
           <button class="btn primary flex-fill" @click="$emit('confirm')">
-            활동 완료
+            활동 완료 처리
           </button>
         </div>
       </div>
@@ -113,25 +121,29 @@ const onInput = (e) => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+/* Backdrop */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(17, 24, 39, 0.45);
   display: flex;
   align-items: flex-start;
   justify-content: center;
   padding: 6vh 14px;
   z-index: 10000;
 }
+
+/* Card */
 .modal-card {
   width: min(520px, 92vw);
-  background: #fff;
-  border-radius: 16px;
-  padding: 20px 18px 18px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 22px 20px 20px;
+  box-shadow: 0 14px 42px rgba(0, 0, 0, 0.25);
   animation: pop 0.18s ease;
 }
+
 @keyframes pop {
   from {
     transform: translateY(-6px);
@@ -143,68 +155,83 @@ const onInput = (e) => {
   }
 }
 
-.label {
-  font-size: 12px;
-  color: #6b7280;
+/* Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
+
+/* 🔧 본문 텍스트 크기 통일 */
+.label,
+.input,
+.input input,
+.comment-box,
+.quick-amounts button,
+p {
+  font-size: 1.3rem; /* typography.scss의 p 기준 */
+}
+
+/* Inputs */
 .input {
   display: flex;
   align-items: center;
   border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 6px 8px;
+  border-radius: 12px;
+  padding: 6px 10px;
   gap: 6px;
-}
-.input input {
-  border: 0;
-  outline: 0;
-  width: 100%;
+
+  input {
+    border: 0;
+    outline: 0;
+    width: 100%;
+    background: transparent;
+  }
 }
 
+/* 🔧 Chips: 작게 */
 .quick-amounts {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
+
 .chip-btn {
   border-radius: 999px;
-  border: 1px solid #e5e7eb;
-  padding: 4px 10px;
-  font-size: 13px;
-  background: #f3f4ff;
+  border: 1px solid #c7d2fe;
+  padding: 2px 10px;        /* 🔽 높이 줄임 */
+  font-size: 1rem;          /* 🔽 small 급 */
+  background: #eef2ff;
+  color: #3730a3;
   cursor: pointer;
-}
-.chip-btn.ghost {
-  background: #fff;
+
+  &.ghost {
+    background: #ffffff;
+    color: #6b7280;
+  }
 }
 
+/* Comment */
 .comment-box {
   width: 100%;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid #e5e7eb;
-  padding: 6px 8px;
-  font-size: 13px;
+  padding: 8px 10px;
   resize: vertical;
 }
 
+/* Stats */
 .stats-card {
-  border-radius: 12px;
-  background: #f3f4ff;
-  padding: 10px 12px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #eef2ff, #f8faff);
+  padding: 12px 14px;
 }
 
-.btn {
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  background: #fff;
-  cursor: pointer;
-}
+/* Buttons */
 .btn.primary {
-  background: #111827;
-  color: #fff;
-  border-color: #111827;
+  background: #1f2937;
+  color: #ffffff;
+  border-color: #1f2937;
 }
-
-
 </style>

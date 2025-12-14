@@ -43,9 +43,11 @@ import WeatherCard from "./components/supporter/WeatherCard.vue";
 import {useAuthStore} from "@/store/authStore"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import { useTravelStore } from "./store/travelStore";
 
 const route = useRoute();
 const authStore = useAuthStore();
+const travelStore = useTravelStore();
 const isSidebarOpen = ref(false);
 authStore.initializeAuth();
 watch(isSidebarOpen, (v) => {
@@ -62,6 +64,9 @@ onMounted(() => {
   const token = params.get("token");
   if (token) {
      // ... (기존 로직 동일) ...
+  }
+  if(authStore.userId != null){
+    const travelInfo = travelStore.initializeTravelInfo(authStore.userId);
   }
 });
 </script>

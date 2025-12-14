@@ -1,15 +1,12 @@
 <template>
   <div class="profile-card shadow-sm">
-    <!-- 프로필 이미지 -->
     <div class="profile-avatar mx-auto mb-2">
-      <img :src="profileImage" :alt="profileName" class="avatar-img" />
+      <img :src="displayImage" :alt="displayName" class="avatar-img" />
     </div>
 
-    <!-- 프로필 내용 -->
-    <h4 class="profile-name mb-1">{{ profileName }}</h4>
+    <h4 class="profile-name mb-1">{{ displayName }}</h4>
     <p class="profile-bio mb-3">{{ bio }}</p>
 
-    <!-- 프로필 통계 -->
     <div class="profile-stats">
       <div class="stat-item">
         <span class="stat-number">{{ totalplans }}</span>
@@ -26,16 +23,33 @@
     </div>
   </div>
 </template>
-<script setup>
-import defaultProfileImg from '@/assets/img/profile-logo.png'
 
+<script setup>
+import { computed } from 'vue';
+import { useAuthStore } from '@/store/authStore'; // 1. Store 임포트
+import defaultProfileImg from '@/assets/img/profile-logo.png';
+
+// 2. Store 초기화
+const authStore = useAuthStore();
+
+// 3. Props 정의 (name, image는 Store에서 가져오므로 제거, 나머지는 유지)
 defineProps({
-  profileName: { type: String, required: true },
   bio: { type: String, required: true },
-  profileImage: { type: String, default: defaultProfileImg },
+  // 통계 데이터는 상황에 따라 API로 가져오거나 Props로 받을 수 있음
   totalplans: { type: Number, default: 0 },
   travelDays: { type: Number, default: 0 },
   completed: { type: Number, default: 0 },
+});
+
+// 4. Computed로 Store 데이터 연결 (반응성 유지)
+// 이름 로직: Store에 이름이 있으면 사용, 없으면 'User'
+const displayName = computed(() => {
+  return authStore.user?.name || '사용자'; 
+});
+
+// 이미지 로직: Store에 이미지가 있으면 사용, 없으면 기본 이미지
+const displayImage = computed(() => {
+  return authStore.userProfileImage || defaultProfileImg;
 });
 </script>
 

@@ -1,14 +1,14 @@
 <template>
   <div class="photo-order-page">
     <PageHeader
-        title="Travelgram"
+        title="트래벌그램"
         subtitle="당신의 지난 여행 기록들"
         icon="bi-instagram"
       />
     <!-- 🔸 상단 헤더 -->
     <StepHeader
       title="여행 후기 작성"
-      :subtitle="reviewStore.planTitle"
+      :subtitle="stepSubtitle"
       step="2/6"
       @back="goBack"
     />
@@ -17,11 +17,8 @@
 
       <TipBox
       name="대표 사진 안내"
-      description="대표 사진은 삭제되거나 순서를 바꿀 수 없습니다.
-      기존 대표 사진이 아닌 사진 항목을 선택해 대표 사진으로 만들 수 있습니다.
-      대표 사진은 항상 맨 위로 고정됩니다.
-      다른 사진들은 자유롭게 삭제하거나 순서를 바꿀 수 있습니다."
-  />
+      description="대표 사진은 삭제할 수 없습니다.
+                  사진 순서만 변경할 수 있습니다." />
   <transition-group
   name="photo-move"
       tag="div"
@@ -35,12 +32,20 @@
         @click="selectMain(photo.id)"
         >
         <div class="photo-thumb">
-          <img :src="photo.url" :alt="photo.name" />
-        </div>
+        <img :src="photo.url" />
+        <transition name="badge-pop">
+          <span
+          v-if="index === 0 && photo.id === mainPhotoId"
+          class="main-badge">
+            대표
+          </span>
+        </transition>
+      </div>
+
         
         <div class="photo-info flex-grow-1">
           <h6 class="photo-name">{{ photo.name?.replace(/\.[^/.]+$/, '') }}</h6>
-          <p>Jeju Island</p>
+          <p>{{reviewStore.planTitle}}</p>
         </div>
 
         <div class="photo-actions d-flex align-items-center" @click.stop>
@@ -50,9 +55,9 @@
           <button class="btn btn-sm btn-outline-secondary me-1" @click="moveDown(index)">
             <i class="bi bi-arrow-down"></i>
           </button>
-          <button class="btn btn-sm btn-outline-danger me-1" @click="removePhoto(photo.id)">
+          <!-- <button class="btn btn-sm btn-outline-danger me-1" @click="removePhoto(photo.id)">
             <i class="bi bi-x-lg"></i>
-          </button>
+          </button> -->
         </div>
       </div>
     </transition-group>
@@ -61,9 +66,10 @@
 </section>
 
 <NavigationButtons
-      backText="Back"
+      backText="뒤로가기"
       :isNextDisabled="!canProceed"
       @back="goBack"
+      nextText="다음으로"
       @next="goNext"
     >
       <template #next-content>
@@ -71,7 +77,7 @@
           <span class="spinner-border spinner-border-sm me-2"></span>
           AI가 열심히 분석 중 입니다...
         </span>
-        <span v-else>Next Step</span>
+        <span v-else>다음으로 가기</span>
       </template>
     </NavigationButtons>
 
@@ -95,6 +101,7 @@ import StepHeader from '@/components/common/header/StepHeader.vue'
 import PageHeader from '@/components/common/header/PageHeader.vue'
 import TipBox from '@/components/common/TipBox.vue'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+import { JOURNEY_SUBTITLES } from '@/constants/journeySubtitles'
 
 const router = useRouter()
 const route = useRoute()
@@ -106,14 +113,13 @@ const planTitle = reviewStore.planTitle || route.query.title
 /* 🔥 대표사진/사진들 */
 const photos = ref([...reviewStore.photos])
 const mainPhotoId = ref(reviewStore.mainPhotoId)
-
+const stepSubtitle = computed(() => JOURNEY_SUBTITLES[2])
 /* -----------------------------------
    🔥 1) 첫 번째 사진을 기본 대표사진으로 자동 설정
 ----------------------------------- */
 onMounted(() => {
-  if (!mainPhotoId.value && photos.value.length > 0) {
+    if (photos.value.length > 0) {
     mainPhotoId.value = photos.value[0].id
-    photos.value[0].isMain = true
   }
 })
 const syncMainPhoto = () => {
@@ -233,7 +239,7 @@ const goNext = async () => {
   }
 }
 
-const goBack = () => router.back()
+const goBack = () => router.push({name: 'CreateTravelReview'});
 </script>
 
 <style scoped>
@@ -334,5 +340,27 @@ const goBack = () => router.back()
   border-radius: 10px;
   object-fit: cover;
 }
+
+.main-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: #ff7a00;
+  color: white;
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.badge-pop-enter-active {
+  animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 
 </style>
