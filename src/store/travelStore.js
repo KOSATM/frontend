@@ -12,9 +12,14 @@ export const useTravelStore = defineStore('travel', {
   actions: {
     startTravel() {
       this.isTraveling = true
+      localStorage.setItem("isTraveling", "true");
     },
     endTravel() {
       this.isTraveling = false
+      localStorage.removeItem("isTraveling");
+    },
+    getIsTraveling() {
+      return localStorage.getItem("isTraveling") != null
     },
     increaseStep() {
       this.planStep++

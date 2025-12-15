@@ -63,7 +63,9 @@ onMounted(() => {
 
   if (authStore.userId != null) {
     travelStore.initializeTravelInfo(authStore.userId);
+    travelStore.isTraveling = travelStore.getIsTraveling();
   }
+
 });
 </script>
 

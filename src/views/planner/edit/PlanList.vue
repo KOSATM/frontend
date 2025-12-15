@@ -28,7 +28,7 @@
       </button>
     </div>
 
-    <NowActivity v-if="travelStore.$state.isTraveling && currentDayPlaces.length > 0" :place="nowPlace"
+    <NowActivity v-if="travelStore.getIsTraveling && currentDayPlaces.length > 0" :place="nowPlace"
       :index="nowIndex" :total="currentDayPlaces.length" :dayIndex="selectedDayIndex" @update:index="nowIndex = $event"
       @complete="openActivityComplete" />
 
