@@ -3,7 +3,7 @@ import CreatePlan from "@/views/planner/CreatePlan.vue";
 import PlanList from "@/views/planner/edit/PlanList.vue";
 import Payment from "@/views/planner/hotel/Payment.vue";
 import BookingComplete from "@/views/planner/BookingComplete.vue";
-import PlannerSummary from "@/components/planner/PlannerSummary.vue"
+import PlannerSummary from "@/views/planner/PlannerSummary.vue"
 import PlannerTest from "@/components/planner/PlannerTest.vue"
 const planner = [
 

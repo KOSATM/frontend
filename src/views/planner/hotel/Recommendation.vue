@@ -1,4 +1,6 @@
 <template>
+  <div class="planner-page">
+  <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
   <div class="hotel-recommendation container py-4">
     <div class="form-content bg-white rounded-4 p-4">
       <!-- 로딩 상태 -->
@@ -103,14 +105,15 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
+import PageHeader from "@/components/common/header/PageHeader.vue";
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import hotelPlaceholder from '@/assets/img/hotel-logo.png';
-import BaseButton from '@/components/common/button/BaseButton.vue';
 import { useTravelStore } from '@/store/travelStore';
 import { useAuthStore } from '@/store/authStore';
 import hotelApi from '@/api/hotelApi';
@@ -298,6 +301,12 @@ const goBack = () => {
 </script>
 
 <style scoped>
+.planner-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding-bottom: 6rem;
+  padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */
+}
 .hotel-card {
   cursor: pointer;
   transition: all 0.3s ease;

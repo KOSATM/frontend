@@ -59,9 +59,17 @@
         </button>
 
         <div v-show="isItineraryOpen" class="timeline-wrapper">
-          <PlanDayTimeline :days="currentplanInfo.itinerary" :edit-mode="false" :type-color="getTypeColor"
-            :type-label="getTypeLabel" :format-time="formatTime" :category-map="categoryMap"
-            @open-modal="handleOpenModal" />
+        <PlanDayTimeline 
+          :days="currentplanInfo.itinerary" 
+          :current-day-places="currentDayPlaces" 
+          v-model:selectedDayIndex="selectedDayIndex"
+          :edit-mode="false" 
+          :type-color="getTypeColor"
+          :type-label="getTypeLabel" 
+          :format-time="formatTime" 
+          :category-map="categoryMap"
+          @open-modal="handleOpenModal" 
+        />
         </div>
       </div>
 
@@ -121,6 +129,14 @@ const pollingInterval = ref(null)
 const isReady = ref(false)
 const currentplanInfo = ref(null)
 const isItineraryOpen = ref(false)
+// [추가] 선택된 Day 인덱스
+const selectedDayIndex = ref(0)
+
+// [추가] 선택된 Day에 해당하는 장소 목록 계산
+const currentDayPlaces = computed(() => {
+  if (!currentplanInfo.value?.itinerary) return []
+  return currentplanInfo.value.itinerary[selectedDayIndex.value]?.places || []
+})
 
 const stepSubtitle = computed(() => JOURNEY_SUBTITLES[1])
 /* ---------- 일정 헬퍼 ---------- */

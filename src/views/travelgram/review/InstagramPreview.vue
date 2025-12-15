@@ -278,24 +278,6 @@ const publish = () => {
   border-radius: 1rem;
 }
 
-/* 네비 */
-.nav-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.75);
-  border: none;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.nav-prev { left: 10px }
-.nav-next { right: 10px }
 
 /* 액션 */
 .insta-actions {
