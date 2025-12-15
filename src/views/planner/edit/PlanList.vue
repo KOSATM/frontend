@@ -1,5 +1,7 @@
 <!-- src/views/planner/PlanList.vue -->
 <template>
+  <div class="planner-page">
+  <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
   <section class="planner-right card shadow-sm rounded-4 h-100 d-flex flex-column">
 
     <!-- Header -->
@@ -95,12 +97,14 @@
       @update:comment="comment = $event"
     />
   </section>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 
+import PageHeader from "@/components/common/header/PageHeader.vue";
 import NavigationButtons from "@/components/common/button/NavigationButtons.vue";
 import plannerApi from "@/api/plannerApi";
 
@@ -652,6 +656,12 @@ const endplan = () => {
 </script>
 
 <style scoped>
+.planner-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding-bottom: 6rem;
+  padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */
+}
 /* Edit 버튼 */
 .edit-btn-large {
   padding: 0.5rem 1.5rem;

@@ -1,5 +1,5 @@
 <template>
-  <div class="planner-create">
+  <div class="planner-page">
     <!-- 플래너 탭 -->
     <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
 
@@ -251,7 +251,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.planner-create {
+.planner-page {
   background-color: #fffaf3;
   min-height: 100vh;
   padding-bottom: 6rem;
