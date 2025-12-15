@@ -42,7 +42,7 @@ const checklist = ref([])
 const loading = ref(false)
 
 // 테스트용: dayIndex = 3 설정
-travelStore.dayIndex = 3
+travelStore.setPlanInfo(travelStore.planId, 3, travelStore.planDate)
 
 // 기본 체크리스트 (dayIndex가 없을 때)
 const defaultChecklist = [
