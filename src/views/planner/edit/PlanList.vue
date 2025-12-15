@@ -708,9 +708,10 @@ const onNext = () => {
 const onBack = () => router.back();
 
 const goToSummary = () => router.push("/planner/summary");
-const endplan = () => {
+const endplan = async () => {
   // 여행 종료 시 메인 페이지로 이동
-  travelStore.$state.isTraveling = false // 여행 상태 초기화
+  travelStore.endTravel() // 여행 상태 초기화
+  await plannerApi.completeTravel(travelStore.planId);
   router.push("/")
 }
 </script>

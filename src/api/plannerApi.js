@@ -46,6 +46,11 @@ async function getCurrentActivity(planPlaceId) {
   return await api.get(`/api/travel/current-activity/${planPlaceId}`, planPlaceId)
 }
 
+// 여행 종료
+async function completeTravel(planId) {
+  return await api.post(`/plans/${planId}/complete`)
+}
+
 export default {
   getActivePlan,
   getBlogList,
@@ -54,5 +59,6 @@ export default {
   updatePlanPlace,
   deletePlanPlace,
   saveCurrentActivity,
-  getCurrentActivity
+  getCurrentActivity,
+  completeTravel
 };
