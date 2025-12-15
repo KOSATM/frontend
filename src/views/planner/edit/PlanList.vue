@@ -232,7 +232,7 @@ const completeActivity = async () => {
 };
 
 /* ---------- AI 일정 → 화면에 적용하는 함수 ---------- */
-const applyAiPlan = (payload) => {
+const applyAiPlan = async (payload) => {
   console.log("✅ [PlanList] applyAiPlan 호출됨", payload);
 
   if (!payload) {
@@ -240,55 +240,57 @@ const applyAiPlan = (payload) => {
     return;
   }
 
-  if (!payload.days || !Array.isArray(payload.days)) {
-    console.log("⚠️ [PlanList] payload.days가 없거나 배열이 아님");
-    return;
-  }
+  // if (!payload.days || !Array.isArray(payload.days)) {
+  //   console.log("⚠️ [PlanList] payload.days가 없거나 배열이 아님");
+  //   return;
+  // }
 
-  plan.value = {
-    id: payload.planId,
-    startDate: payload.startDate,
-    endDate: payload.endDate,
-    title: payload.title ?? "AI 추천 여행 일정",
-  };
+  // plan.value = {
+  //   id: payload.planId,
+  //   startDate: payload.startDate,
+  //   endDate: payload.endDate,
+  //   title: payload.title ?? "AI 추천 여행 일정",
+  // };
 
-  days.value = (payload.days || []).map((d) => ({
-    day: {
-      id: d.dayIndex,
-      dayIndex: d.dayIndex,
-      planDate: d.date,
-      title: `Day ${d.dayIndex}`,
-    },
-    places: (d.schedules || []).map((s) => {
-      const type = s.normalizedCategory ?? "ETC";
+  // days.value = (payload.days || []).map((d) => ({
+  //   day: {
+  //     id: d.dayIndex,
+  //     dayIndex: d.dayIndex,
+  //     planDate: d.date,
+  //     title: `Day ${d.dayIndex}`,
+  //   },
+  //   places: (d.schedules || []).map((s) => {
+  //     const type = s.normalizedCategory ?? "ETC";
 
-      const gallery =
-        s.firstImage2
-          ? [s.firstImage2]
-          : s.firstImage
-            ? [s.firstImage]
-            : getDefaultGalleryByType(type);
+  //     const gallery =
+  //       s.firstImage2
+  //         ? [s.firstImage2]
+  //         : s.firstImage
+  //           ? [s.firstImage]
+  //           : getDefaultGalleryByType(type);
 
-      return {
-        title: s.title,
-        startAt: s.startAt,
-        endAt: s.endAt,
-        placeName: s.placeName,
-        address: s.address,
-        // ✅ status 기본값 (없으면 Pending으로)
-        status: s.status ?? "PENDING",
-        details: {
-          type,
-          gallery,
-          desc: `${s.title} 방문을 추천합니다`,
-          address: s.address,
-          area: "Seoul",
-          firstImage: s.firstImage,
-          firstImage2: s.firstImage2,
-        },
-      };
-    }),
-  }));
+  //     return {
+  //       title: s.title,
+  //       startAt: s.startAt,
+  //       endAt: s.endAt,
+  //       placeName: s.placeName,
+  //       address: s.address,
+  //       // ✅ status 기본값 (없으면 Pending으로)
+  //       status: s.status ?? "PENDING",
+  //       details: {
+  //         type,
+  //         gallery,
+  //         desc: `${s.title} 방문을 추천합니다`,
+  //         address: s.address,
+  //         area: "Seoul",
+  //         firstImage: s.firstImage,
+  //         firstImage2: s.firstImage2,
+  //       },
+  //     };
+  //   }),
+  // }));
+
+  await renderPlan();
 
   travelStore.setPlanInfo(payload.planId, travelStore.dayIndex, travelStore.planDate);
   selectedDayIndex.value = 0;
