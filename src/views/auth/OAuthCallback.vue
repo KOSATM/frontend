@@ -1,116 +1,127 @@
 <template>
-  <div class="oauth-callback-container">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">Loading...</span>
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <div class="spinner"></div>
+
+      <div class="icon">✨</div>
+
+      <h2>로그인 중입니다</h2>
+      <p>계정을 안전하게 확인하고 있어요</p>
     </div>
-    <p>로그인 중입니다...</p>
   </div>
 </template>
 
 <script setup>
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import router from '@/router'
+import { useAuthStore } from '@/store/authStore'
 
 const route = useRoute()
+const authStore = useAuthStore()
 
 onMounted(async () => {
   try {
-    // URL 파라미터에서 Base64 인코딩된 userInfo 받기
     const encodedUserInfo = route.query.userInfo
-    
-    console.log('🎉 OAuth callback received, encoded:', encodedUserInfo)
-
     if (!encodedUserInfo) {
-      console.log('❌ No userInfo in query params')
-      setTimeout(() => {
-        window.location.href = '/'
-      }, 1000)
+      await new Promise(r => setTimeout(r, 800))
+      window.location.href = '/'
       return
     }
 
-    // Base64 디코딩 (UTF-8 한글 처리)
-    const binaryString = atob(encodedUserInfo)
-    console.log('📦 Binary string decoded')
-    
-    const bytes = new Uint8Array(binaryString.length)
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i)
-    }
-    
-    const userInfoJson = new TextDecoder('utf-8').decode(bytes)
-    console.log('📄 Decoded JSON:', userInfoJson)
-    
-    // JSON 파싱
-    const userInfo = JSON.parse(userInfoJson)
-    console.log('✅ Parsed userInfo:', userInfo)
+    const binary = atob(encodedUserInfo)
+    const bytes = Uint8Array.from(binary, c => c.charCodeAt(0))
+    const json = new TextDecoder('utf-8').decode(bytes)
+    const userInfo = JSON.parse(json)
 
-    // 토큰 저장
-    localStorage.setItem('accessToken', userInfo.token)
-    localStorage.setItem('jwtToken', userInfo.token)
-    console.log('🔑 Token saved')
-    
-    // 전체 사용자 정보 저장
-    const user = {
+    // 🔥 기존 방식 유지
+    authStore.setOAuthUser({
       id: userInfo.userId,
       email: userInfo.email,
       name: userInfo.name,
       picture: userInfo.picture,
-      givenName: userInfo.givenName,
-      familyName: userInfo.familyName,
-      locale: userInfo.locale,
-      emailVerified: userInfo.emailVerified,
-      oauthId: userInfo.oauthId,
-      oauthProvider: userInfo.oauthProvider
-    }
-    localStorage.setItem('user', JSON.stringify(user))
-    console.log('👤 User saved:', user.name, '(' + user.email + ')')
+      provider: userInfo.oauthProvider
+    })
 
-    // 페이지 새로고침으로 리다이렉트
-    console.log('🔄 Redirecting to home...')
-    setTimeout(() => {
-      window.location.href = '/'
-    }, 500)
-  } catch (error) {
-    console.error('❌ OAuth callback error:', error)
-    console.error('Error stack:', error.stack)
-    setTimeout(() => {
-      window.location.href = '/'
-    }, 2000)
+    // UX 딜레이
+    await new Promise(r => setTimeout(r, 700))
+
+    authStore.initializeAuth();
+    // 강제 새로고침
+    // window.location.href = '/'
+    router.replace('/');
+
+  } catch (e) {
+    console.error(e)
+    await new Promise(r => setTimeout(r, 1200))
+    window.location.href = '/'
   }
 })
+
 </script>
 
 <style scoped>
-.oauth-callback-container {
+.auth-wrapper {
+  height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
-  color: white;
-  font-size: 18px;
-  gap: 20px;
+  background: #fffaf3;
 }
 
-.spinner-border {
-  color: white;
-  width: 50px;
-  height: 50px;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top-color: white;
+.auth-card {
+  background: #ffffff;
+  padding: 2.5rem 3rem;
+  border-radius: 1.25rem;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  animation: fadeUp 0.4s ease;
+}
+
+.icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1b3b6f;
+  margin-bottom: 0.25rem;
+}
+
+p {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+/* Spinner */
+.spinner {
+  width: 36px;
+  height: 36px;
+  margin: 0 auto 1rem;
+  border: 3px solid rgba(255, 145, 77, 0.25);
+  border-top-color: #ff914d;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
+/* Animations */
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-p {
-  font-size: 16px;
-  font-weight: 500;
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

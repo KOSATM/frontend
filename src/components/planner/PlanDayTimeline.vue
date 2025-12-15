@@ -54,7 +54,7 @@
 
                 <div class="d-flex gap-3">
                   <div class="thumb">
-                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" />
+                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" v-img-fallback="fallbacks" />
                     <div v-else class="thumb-placeholder"></div>
                   </div>
 
@@ -97,7 +97,7 @@
 
                 <div class="d-flex gap-3">
                   <div class="thumb">
-                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" />
+                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" v-img-fallback="fallbacks" />
                     <div v-else class="thumb-placeholder"></div>
                   </div>
 
@@ -143,6 +143,16 @@ const props = defineProps({
   formatTime: Function,
   categoryMap: Object,
 });
+
+const fallbacks = [
+  "/images/01.png",
+  "/images/02.png",
+  "/images/03.png",
+  "/images/04.png",
+  "/images/05.png",
+  "/images/06.png",
+];
+
 </script>
 
 <style scoped lang="scss">

@@ -1,5 +1,6 @@
 <!-- src/components/planner/ActivityDetailsModal.vue -->
 <template>
+
   <teleport to="body">
     <div v-if="open" class="modal-backdrop" @click="$emit('close')">
       <div class="modal-card" @click.stop>
@@ -9,7 +10,7 @@
 
         <!--  상단 메인 이미지 -->
         <div class="main-image-wrapper">
-          <img :src="localGallery[0]" alt="thumbnail" class="main-image" />
+          <img :src="localGallery[0]" alt="thumbnail" class="main-image" v-img-fallback="fallbacks" />
         </div>
 
         <!-- 제목 -->
@@ -78,6 +79,14 @@ const props = defineProps({
   data: { type: Object, default: null },
 });
 
+const fallbacks = [
+  "/images/01.png",
+  "/images/02.png",
+  "/images/03.png",
+  "/images/04.png",
+  "/images/05.png",
+  "/images/06.png",
+];
 
 /* 첫 번째 이미지만 사용 */
 const localGallery = computed(() => {

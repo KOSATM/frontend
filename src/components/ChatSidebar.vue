@@ -190,6 +190,7 @@ const sendMessage = async () => {
     // ✅ chatApi.chat()은 axios response.data를 반환함
     // res 구조: { success, status, data: { message, response, data: [...] }, error }
     const apiRes = res;
+    console.log("apiRes", res);
 
     let message = "";
     if (apiRes?.data?.message) {
@@ -303,6 +304,14 @@ const sendMessage = async () => {
     };
 
     chatMessages.value.push(messageObj);
+
+    // data가 있고, days 배열이 있을 때만 livePlan 설정
+    if (apiRes.success) {
+      console.log("🔥 서버에서 받은 플랜 payload:", apiRes.data);
+      chatStore.setLivePlan(apiRes.data);
+    } else {
+      console.log("⚠️ 플랜 데이터가 없거나 형식이 맞지 않음:", apiRes.data);
+    }
 
     isLoading.value = false;
     await nextTick();

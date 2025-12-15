@@ -8,10 +8,7 @@
           <h3 class="mb-0">
             <strong class="title-highlight">{{ title }}</strong> 방문은 어떠셨나요?
           </h3>
-          <button
-            class="btn btn-sm btn-light rounded-circle close-btn"
-            @click="$emit('close')"
-          >
+          <button class="btn btn-sm btn-light rounded-circle close-btn" @click="$emit('close')">
             ✕
           </button>
         </div>
@@ -33,20 +30,11 @@
 
         <!-- 빠른 입력 -->
         <div class="quick-amounts mb-3">
-          <button
-            v-for="v in [5, 10, 20, 30]"
-            :key="v"
-            type="button"
-            class="chip-btn"
-            @click="$emit('update:spend-input', v)"
-          >
+          <button v-for="v in [5, 10, 20, 30]" :key="v" type="button" class="chip-btn"
+            @click="$emit('update:spend-input', v)">
             ${{ v }}
           </button>
-          <button
-            type="button"
-            class="chip-btn ghost"
-            @click="$emit('update:spend-input', null)"
-          >
+          <button type="button" class="chip-btn ghost" @click="$emit('update:spend-input', null)">
             초기화
           </button>
         </div>
@@ -75,12 +63,9 @@
             </div>
             <div class="col-12 mt-2">
               <span class="text-muted">상태</span>
-              <div
-                class="fw-semibold"
-                :class="quickStats?.status === 'Completed'
-                  ? 'text-success'
-                  : 'text-warning'"
-              >
+              <div class="fw-semibold" :class="quickStats?.status === 'Completed'
+                ? 'text-success'
+                : 'text-warning'">
                 {{ quickStats?.status === 'Completed' ? '완료됨' : '진행 중' }}
               </div>
             </div>
@@ -93,7 +78,7 @@
             취소
           </button>
           <button class="btn primary flex-fill" @click="$emit('confirm')">
-            활동 완료 처리
+            {{ status === 'DONE' ? '수정하기' : '활동 완료 처리' }}
           </button>
         </div>
       </div>
@@ -103,15 +88,14 @@
 
 <script setup>
 defineProps({
-  open: { type: Boolean, default: false },
-  title: { type: String, default: "" },
-  spendInput: { type: Number, default: null },
-  comment: { type: String, default: "" },
-  quickStats: { type: Object, default: () => ({}) },
+  open: Boolean,
+  title: String,
+  status: String,
+  comment: String,
+  spendInput: Number,
+  quickStats: Object,
 });
-
 const emit = defineEmits(["close", "confirm", "update:spend-input", "update:comment"]);
-
 const onInput = (e) => {
   const val = e.target.value === "" ? null : Number(e.target.value);
   emit("update:spend-input", val);
@@ -146,6 +130,7 @@ const onInput = (e) => {
     transform: translateY(-6px);
     opacity: 0.9;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -165,11 +150,13 @@ const onInput = (e) => {
   font-weight: 600;
   line-height: 1.4;
   padding-right: 10px;
-  color: #1f2937; /* 검은색 - "방문은 어떠셨나요?" */
+  color: #1f2937;
+  /* 검은색 - "방문은 어떠셨나요?" */
 }
 
 .title-highlight {
-  color: #3730a3; /* 남색 - 장소명 (경복궁) */
+  color: #3730a3;
+  /* 남색 - 장소명 (경복궁) */
   font-weight: 800;
 }
 
@@ -180,7 +167,8 @@ const onInput = (e) => {
 .comment-box,
 .quick-amounts button,
 p {
-  font-size: 1.3rem; /* typography.scss의 p 기준 */
+  font-size: 1.3rem;
+  /* typography.scss의 p 기준 */
 }
 
 /* Inputs */
@@ -210,8 +198,10 @@ p {
 .chip-btn {
   border-radius: 999px;
   border: 1px solid #c7d2fe;
-  padding: 2px 10px;        /* 🔽 높이 줄임 */
-  font-size: 1rem;          /* 🔽 small 급 */
+  padding: 2px 10px;
+  /* 🔽 높이 줄임 */
+  font-size: 1rem;
+  /* 🔽 small 급 */
   background: #eef2ff;
   color: #3730a3;
   cursor: pointer;

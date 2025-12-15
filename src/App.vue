@@ -3,7 +3,7 @@
     <div class="layout-container" :class="{ 'is-planner-page': route.path.includes('planner') }">
       
       <AppHeader @toggle-sidebar="isSidebarOpen = true" />
-      
+
       <SideBar :isOpen="isSidebarOpen" @close="isSidebarOpen = false" />
 
       <div class="app-body-row">
@@ -22,11 +22,11 @@
           <WeatherCard />
           <Checklist />
         </aside>
-        
+
       </div>
 
       <AppFooter />
-      
+
     </div>
   </div>
 </template>
@@ -36,11 +36,11 @@ import { ref, watch, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import AppHeader from "./components/AppHeader.vue";
 import AppFooter from "./components/AppFooter.vue";
-import SideBar from "./components/Menubar.vue"; 
+import SideBar from "./components/Menubar.vue";
 import ChatSidebar from "./components/ChatSidebar.vue";
 import Checklist from "./components/supporter/Checklist.vue";
 import WeatherCard from "./components/supporter/WeatherCard.vue";
-import {useAuthStore} from "@/store/authStore"
+import { useAuthStore } from "@/store/authStore"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { useTravelStore } from "./store/travelStore";
@@ -49,7 +49,6 @@ const route = useRoute();
 const authStore = useAuthStore();
 const travelStore = useTravelStore();
 const isSidebarOpen = ref(false);
-authStore.initializeAuth();
 watch(isSidebarOpen, (v) => {
   document.body.style.overflow = v ? "hidden" : "";
 });
@@ -60,13 +59,10 @@ const showRightSidebar = computed(() => route.path.includes('supporter'));
 
 // OAuth 로직 (그대로 유지)
 onMounted(() => {
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get("token");
-  if (token) {
-     // ... (기존 로직 동일) ...
-  }
-  if(authStore.userId != null){
-    const travelInfo = travelStore.initializeTravelInfo(authStore.userId);
+  authStore.initializeAuth();
+
+  if (authStore.userId != null) {
+    travelStore.initializeTravelInfo(authStore.userId);
   }
 
   // 📌 Footer 감지: 채팅이 footer를 침범하지 않도록 관리

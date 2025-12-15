@@ -77,7 +77,7 @@
           <span class="spinner-border spinner-border-sm me-2"></span>
           AI가 열심히 분석 중 입니다...
         </span>
-        <span v-else>다음으로 가기</span>
+        <span v-else></span>
       </template>
     </NavigationButtons>
 
