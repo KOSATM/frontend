@@ -42,6 +42,11 @@ async function saveCurrentActivity(activityData) {
   return await api.post('/api/travel/current-activity', activityData)
 }
 
+// 활동 완료 메모 조회
+async function getCurrentActivity(planPlaceId) {
+  return await api.post(`/api/travel/current-activity/${planPlaceId}`, planPlaceId)
+}
+
 export default {
   getActivePlan,
   getBlogList,
@@ -49,5 +54,6 @@ export default {
   getRestPlaces,
   updatePlanPlace,
   deletePlanPlace,
-  saveCurrentActivity
+  saveCurrentActivity,
+  getCurrentActivity
 };
