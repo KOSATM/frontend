@@ -1,22 +1,17 @@
 <template>
-  <div class="chat-layout-wrapper d-flex flex-column h-100 bg-white">
+  <div class="chat-sidebar-root">
 
-    <div class="chat-header d-flex align-items-center gap-2 p-3 border-bottom">
-  <div class="badge text-white rounded-circle d-flex justify-content-center align-items-center flex-shrink-0"
-    style="width: 32px; height: 32px; background-color: #1B3B6F;">
-    <i class="bi bi-airplane-fill fs-6"></i>
-  </div>
-
-  <div class="overflow-hidden d-flex flex-column justify-content-center">
-    <h6 class="mb-0 fw-bold text-truncate" style="line-height: 1.2;">
-      AI 여행 어시스턴트
-    </h6>
-
-    <small class="text-muted">
-      서울 여행 플래너
-    </small>
-  </div>
-</div>
+    <div class="chat-header p-3 border-bottom">
+      <div class="d-flex align-items-center gap-2">
+        <div class="badge text-white rounded-circle d-flex justify-content-center align-items-center flex-shrink-0"
+          style="width: 28px; height: 28px; background-color: #1B3B6F;">
+          <i class="bi bi-airplane-fill fs-6"></i>
+        </div>
+        <h6 class="mb-0 fw-bold" style="font-size: 0.95rem;">
+          AI 여행 어시스턴트 서울 여행 플래너
+        </h6>
+      </div>
+    </div>
 
     <div class="chat-messages flex-grow-1 p-3" ref="messagesContainer">
       <div class="message-list">
@@ -34,7 +29,19 @@
           <div class="message-bubble">
             <div class="markdown-body" v-html="message.content"></div>
 
-            <!-- 🖼️ 플랜 데이터의 이미지 표시 -->
+            <!-- � 일정 카드 표시 (확인 필요한 경우) -->
+            <PlanCardDisplay
+              v-if="message.planCard"
+              :placeInfo="message.planCard.placeInfo"
+              :showConfirmation="message.planCard.showConfirmation"
+              :actionType="message.planCard.actionType"
+              :message="message.planCard.confirmMessage || '이 일정을 삭제하시나요?'"
+              @confirm="onPlanCardConfirm(message)"
+              @cancel="onPlanCardCancel(message)"
+              class="mt-3"
+            />
+
+            <!-- �🖼️ 플랜 데이터의 이미지 표시 -->
             <div v-if="message.images && message.images.length > 0" class="place-images-gallery mt-3">
               <div v-for="(place, idx) in message.images" :key="idx" class="place-image-card">
                 <img v-if="place.image" :src="place.image" :alt="place.title" class="place-img" />
@@ -123,6 +130,7 @@ import { useTravelStore } from "@/store/travelStore";
 import { marked } from "marked";
 import { nextTick, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import PlanCardDisplay from "@/components/chat/PlanCardDisplay.vue";
 
 // Store & Router
 const authStore = useAuthStore();
@@ -192,9 +200,87 @@ const sendMessage = async () => {
       message = "응답을 받지 못했습니다.";
     }
 
-    // 🖼️ 이미지 데이터 추출 (PlaceSuggestAgent 응답)
-    let imagesData = [];
-    if (apiRes?.data?.data && Array.isArray(apiRes.data.data)) {
+
+    // 📋 Tool 응답 찾기 - response 필드 또는 data 필드(Tool 응답) 확인
+    let planCard = null;
+    let toolResponse = null;
+    let imagesData = [];  // 이미지 데이터 (일정 조회 또는 추천 장소)
+
+    // 1️⃣ response 필드에서 먼저 확인
+    if (apiRes?.data?.response && typeof apiRes.data.response === 'object') {
+      toolResponse = apiRes.data.response;
+    }
+    // 2️⃣ data 필드에서 Tool 응답 확인 (status=CONFIRM_NEEDED인 경우 - ChatController에서 보낸 경우)
+    else if (apiRes?.data?.data && typeof apiRes.data.data === 'object' && !Array.isArray(apiRes.data.data) && apiRes.data.data?.status) {
+      toolResponse = apiRes.data.data;
+    }
+
+    if (toolResponse) {
+      let agentResponse = toolResponse;
+
+      // 문자열이면 JSON 파싱 시도
+      if (typeof agentResponse === 'string') {
+        try {
+          agentResponse = JSON.parse(agentResponse);
+          console.log("✅ Tool 응답 JSON 파싱됨:", agentResponse);
+        } catch (e) {
+          console.warn("⚠️ JSON 파싱 실패:", e);
+        }
+      }
+
+      // 📋 최신 일정 데이터 저장 (DELETE_COMPLETE 등의 응답)
+      if (agentResponse?.status === "SUCCESS" && agentResponse?.additionalInfo) {
+        try {
+          // additionalInfo에 최신 일정 JSON이 포함됨
+          const updatedPlan = typeof agentResponse.additionalInfo === 'string'
+            ? JSON.parse(agentResponse.additionalInfo)
+            : agentResponse.additionalInfo;
+
+          // TravelStore에 최신 데이터 저장 (우측 타임라인 자동 갱신)
+          console.log("🔄 최신 일정 데이터 저장:", updatedPlan);
+          chatStore.setLatestPlanData(updatedPlan);
+        } catch (e) {
+          console.warn("⚠️ 최신 일정 데이터 파싱 실패:", e);
+        }
+      }
+
+      // 📅 일정 조회 응답 (SCHEDULE_VIEW)
+      if (agentResponse?.status === "SCHEDULE_VIEW" && agentResponse?.places) {
+        console.log("📅 일정 조회 응답 감지:", agentResponse);
+        // places 배열을 이미지 데이터로 변환 (기존 이미지 렌더링 활용)
+        imagesData = agentResponse.places.map(place => ({
+          title: `${place.visitTime?.substring(11, 16) || '시간미정'} - ${place.placeName}`,
+          placeName: place.placeName,
+          address: place.address,
+          image: place.imageUrl
+        }));
+        // SCHEDULE_VIEW는 카드로만 표시하고 메시지는 간단하게
+        message = agentResponse.message || `${agentResponse.dayIndex}일차 일정 (${agentResponse.placeCount}개)`;
+
+        // ⚠️ 백엔드가 JSON을 반환하는 경우 방어 로직
+        if (message.includes('{') && message.includes('status')) {
+          message = `${agentResponse.dayIndex}일차 일정 (${agentResponse.placeCount}개)`;
+        }
+
+        console.log("✅ 일정 카드로 변환:", imagesData.length, "개");
+      }
+
+      if (agentResponse?.status === "CONFIRM_NEEDED" && agentResponse?.currentState) {
+        planCard = {
+          placeInfo: agentResponse.currentState,
+          showConfirmation: agentResponse.confirmRequired,
+          confirmMessage: agentResponse.confirmMessage || "확인해주세요",
+          actionType: agentResponse.actionType,
+          originalResponse: agentResponse
+        };
+        console.log("📍 일정 카드 생성됨:", planCard);
+        // 카드가 있으면 message는 카드의 confirmMessage만 사용 (중복 텍스트 제거)
+        message = "";
+      }
+    }
+
+    // 🖼️ 이미지 데이터 추출 (PlaceSuggestAgent 응답) - Tool 응답이 아닌 경우만
+    if (!toolResponse && apiRes?.data?.data && Array.isArray(apiRes.data.data)) {
       // apiRes.data.data = [{title, image, address, ...}, ...]
       imagesData = apiRes.data.data.map(place => ({
         title: place.title,
@@ -203,17 +289,20 @@ const sendMessage = async () => {
         image: place.image
       }));
       console.log("🖼️ 추출된 이미지:", imagesData.length, "개");
-    } else {
+    } else if (!toolResponse) {
       console.warn("⚠️ 이미지 데이터 없음. apiRes.data.data:", apiRes?.data?.data);
     }
 
-    chatMessages.value.push({
+    const messageObj = {
       id: Date.now() + 1,
       type: "ai",
       content: markdownToHTML(message),
       images: imagesData,
+      planCard: planCard,
       timestamp: new Date(),
-    });
+    };
+
+    chatMessages.value.push(messageObj);
 
     isLoading.value = false;
     await nextTick();
@@ -242,6 +331,52 @@ const markdownToHTML = (message) => {
   return htmlContent;
 }
 
+// 일정 카드 확인 핸들러
+const onPlanCardConfirm = async (message) => {
+  // Backend API 호출: 확인 상태 업데이트
+  if (message.planCard?.actionType === 'DELETE') {
+    try {
+      console.log('🎯 [ChatSidebar] 삭제 확인 API 호출:', {
+        actionType: message.planCard.actionType,
+        placeName: message.planCard.placeInfo.placeName,
+        userId: authStore.user?.id || 22
+      });
+
+      const result = await chatApi.confirmAction({
+        actionType: message.planCard.actionType,
+        placeName: message.planCard.placeInfo.placeName,
+        userId: authStore.user?.id || 22
+      });
+
+      console.log('✅ [ChatSidebar] 삭제 확인 API 응답:', result);
+
+      // API 호출 완료 후 "네" 메시지 전송
+      currentMessage.value = "네";
+      sendMessage();
+    } catch (error) {
+      console.error('❌ [ChatSidebar] 삭제 확인 API 호출 실패:', error);
+    }
+  } else if (message.planCard?.actionType === 'MODIFY') {
+    try {
+      const result = await chatApi.confirmAction({
+        actionType: message.planCard.actionType,
+        placeName: message.planCard.placeInfo.placeName,
+        userId: authStore.user?.id || 22
+      });
+
+      currentMessage.value = "네";
+      sendMessage();
+    } catch (error) {
+      console.error('❌ 수정 확인 API 호출 실패:', error);
+    }
+  }
+};
+
+const onPlanCardCancel = (message) => {
+  // 취소: "아니오" 응답 전송
+  currentMessage.value = "아니오";
+  sendMessage();
+};
 
 onMounted(() => {
   authStore.initializeAuth();
@@ -265,21 +400,62 @@ onMounted(() => {
   color: #333;
 }
 
-/* --- 상단 헤더 영역 --- */
+/* ========================================
+   🎯 ChatSidebar 전용 Wrapper 스타일
+   ======================================== */
+.chat-sidebar-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+/* 메시지 영역 - 스크롤 적용 */
+.chat-sidebar-root .chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ddd #f8f9fa;
+}
+
+/* 웹킷 브라우저 스크롤바 */
+.chat-sidebar-root .chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-sidebar-root .chat-messages::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.chat-sidebar-root .chat-messages::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 4px;
+}
+
+.chat-sidebar-root .chat-messages::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}
+
+/* ========================================
+   기존 스타일 (변경 없음)
+   ======================================== */
 .chat-header h6 {
   /* h6 태그는 이미 글로벌에서 memoment 폰트가 적용되어 있으므로 크기만 조정 */
-  font-size: 1.5rem;
+  font-size: 1rem;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .chat-header small {
-  font-size: 1rem;
+  font-size: 0.85rem;
   color: #6c757d;
 }
 
 /* --- 메시지 영역 --- */
 .chat-messages {
-  overflow-y: auto;
   background-color: #fff;
 }
 
@@ -465,11 +641,11 @@ onMounted(() => {
   40% { transform: scale(1); }
 }
 
-/* 🖼️ 이미지 갤러리 스타일 */
+/* 🖼️ 이미지 갤러리 스타일 - 1열 배치 */
 .place-images-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   margin-top: 12px;
 }
 

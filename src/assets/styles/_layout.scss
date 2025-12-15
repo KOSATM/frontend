@@ -52,6 +52,11 @@ body {
   overflow: hidden; // 내부 스크롤 제어
 }
 
+// Planner 페이지: 채팅창 sticky 위해 overflow visible
+.is-planner-page .app-body-row {
+  overflow: visible;
+}
+
 // 3. 사이드바 (좌/우 공통)
 .sidebar-area {
   width: 300px; // 고정 너비 (1200px 중 300px 차지)
@@ -63,11 +68,9 @@ body {
   &.left {
     border-right: 1px solid #eee;
     width: 400px; 
-
   }
 
   // 우측 사이드바 (서포터)
-
   &.right {
     border-left: 1px solid #eee;
     background: #fff;
