@@ -1,8 +1,6 @@
 <!-- src/views/planner/PlanList.vue -->
 <template>
-  <div class="planner-page">
-  <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
-  <section class="planner-right card shadow-sm rounded-4 h-100 d-flex flex-column">
+  <section class="plan-root card shadow-sm rounded-4 h-100 d-flex flex-column">
 
     <!-- Header -->
     <div class="p-4 pb-3 border-bottom d-flex align-items-center">
@@ -33,10 +31,21 @@
       @complete="openActivityComplete" />
 
     <!-- 🔥 Body Component -->
-    <PlanDayTimeline :days="days" :currentDayPlaces="currentDayPlaces" :selectedDayIndex="selectedDayIndex"
-      :editMode="editMode" :typeColor="typeColor" :typeLabel="typeLabel" :formatTime="formatTime"
-      :categoryMap="categoryMap" @open-modal="openModal" @delete-place="onDeletePlace"
-      @update:selectedDayIndex="selectedDayIndex = $event" />
+    <div class="plan-body-scroll flex-grow-1 overflow-y-auto">
+      <PlanDayTimeline
+        :days="days"
+        :currentDayPlaces="currentDayPlaces"
+        :selectedDayIndex="selectedDayIndex"
+        :editMode="editMode"
+        :typeColor="typeColor"
+        :typeLabel="typeLabel"
+        :formatTime="formatTime"
+        :categoryMap="categoryMap"
+        @open-modal="openModal"
+        @delete-place="onDeletePlace"
+        @update:selectedDayIndex="selectedDayIndex = $event"
+      />
+    </div>
 
     <!-- CTA -->
     <div class="p-4 pt-0 border-top bg-white">
@@ -742,12 +751,42 @@ const endplan = async () => {
 </script>
 
 <style scoped>
-.planner-page {
-  background-color: #fffaf3;
-  min-height: 100vh;
-  padding-bottom: 6rem;
-  padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */
+/* ========================================
+   🎯 PlanList 전용 Root 스타일
+   ======================================== */
+.plan-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
+
+/* 일정 본문 스크롤 */
+.plan-body-scroll {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ddd #f8f9fa;
+}
+
+/* 웹킷 브라우저 스크롤바 */
+.plan-body-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.plan-body-scroll::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.plan-body-scroll::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 4px;
+}
+
+.plan-body-scroll::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}
+
 /* Edit 버튼 */
 .edit-btn-large {
   padding: 0.5rem 1.5rem;
