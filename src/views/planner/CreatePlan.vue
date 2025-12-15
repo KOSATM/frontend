@@ -233,21 +233,21 @@ const generateAIResponse = async (text) => {
   return res;
 };
 
-onMounted(async () => {
-  try {
-    if (authStore.userId != null) {
-      const res = await plannerApi.getActivePlan(authStore.userId);
-      if (res != null) {
-        if (res.data.success === true) {
-          router.push("/planner/edit");
-        }
-      }
-    }
-  } catch (error) {
-    console.log(error)
-  }
+// onMounted(async () => {
+//   try {
+//     if (authStore.userId != null) {
+//       const res = await plannerApi.getActivePlan(authStore.userId);
+//       if (res != null) {
+//         if (res.data.success === true) {
+//           router.push("/planner/edit");
+//         }
+//       }
+//     }
+//   } catch (error) {
+//     console.log(error)
+//   }
 
-});
+// });
 </script>
 
 <style scoped>

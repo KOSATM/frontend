@@ -66,7 +66,7 @@ onMounted(() => {
      // ... (기존 로직 동일) ...
   }
   if(authStore.userId != null){
-    const travelInfo = travelStore.initializeTravelInfo(authStore.userId);
+    travelStore.initializeTravelInfo(authStore.userId);
   }
 });
 </script>
