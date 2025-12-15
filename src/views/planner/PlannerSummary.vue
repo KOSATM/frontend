@@ -103,9 +103,10 @@
                             </div>
 
                             <div class="card-step-footer">
-                                <button type="button" class="btn btn-outline-secondary px-4" @click="goBackToEdit">
-                                    일정 다시 수정하기
-                                </button>
+                                <OutlineButton 
+                                    @click="goBackToEdit"
+                                    >일정 수정하기
+                                </OutlineButton>
                             </div>
 
                         </div>
@@ -124,10 +125,9 @@
                             </div>
 
                             <div class="card-step-footer">
-                                <button type="button" class="btn btn-primary btn-lg px-5 fw-semibold"
-                                    @click="goToHotel">
-                                    숙소 선택하러 가기 →
-                                </button>
+                                <FilledButton  @click="goToHotel">
+                                숙소 선택하러 가기 →
+                                </FilledButton>
                             </div>
                         </div>
                     </div>
@@ -151,6 +151,8 @@ import { useRouter } from 'vue-router'
 import plannerApi from '@/api/plannerApi'
 import { useAuthStore } from '@/store/authStore'
 import PageHeader from "@/components/common/header/PageHeader.vue";
+import OutlineButton from "@/components/common/button/OutlineButton.vue"
+import FilledButton from "@/components/common/button/FilledButton.vue"
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -326,13 +328,11 @@ const goBackToEdit = () => {
 
     /* 두 카드(NEXT STEP, BEFORE YOU GO)의 Typography 통일 */
     .card-step-title {
-        font-size: 1.1rem;
         font-weight: 700;
         margin-bottom: .75rem;
     }
 
     .card-step-text {
-        font-size: .9rem;
         line-height: 1.45;
         color: #6c757d;
         margin-bottom: 1rem;
