@@ -1,4 +1,6 @@
 <template>
+  <div class="planner-page">
+  <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
   <div class="hotel-payment container py-4">
 
     <!-- 선택한 호텔 요약 -->
@@ -157,18 +159,18 @@
         </span>
       </button>
     </div>
-
+  </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import BaseButton from '@/components/common/button/BaseButton.vue';
 import { useTravelStore } from '@/store/travelStore';
 import { useAuthStore } from '@/store/authStore';
 import BaseSection from '@/components/common/BaseSection.vue';
 import hotelApi from '@/api/hotelApi';
+import PageHeader from "@/components/common/header/PageHeader.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -330,6 +332,12 @@ const processPayment = async () => {
 </script>
 
 <style scoped>
+.planner-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding-bottom: 6rem;
+  padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */
+}
 .payment-item {
   display: flex;
   align-items: center;

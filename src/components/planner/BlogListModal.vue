@@ -77,11 +77,11 @@ const formatDate = (dateStr) => {
   background-color: #f8f9fa;
 }
 
-.title { margin: 0; font-size: 1.1rem; font-weight: bold; }
+.title { margin: 0;  font-weight: bold; }
 .highlight { color: #ff8c00; }
 
 .close-btn {
-  background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #666;
+  background: none; border: none;  cursor: pointer; color: #666;
 }
 
 .modal-body { flex: 1; overflow-y: auto; padding: 0; }
@@ -98,9 +98,9 @@ const formatDate = (dateStr) => {
 }
 .blog-item:hover { background-color: #f9f9f9; }
 
-.item-title { font-weight: bold; font-size: 1rem; margin-bottom: 6px; color: #333; }
-.item-desc { font-size: 0.9rem; color: #666; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.item-date { font-size: 0.8rem; color: #aaa; margin-top: 8px; text-align: right; }
+.item-title { font-weight: bold;  margin-bottom: 6px; color: #333; }
+.item-desc {  color: #666; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.item-date { color: #aaa; margin-top: 8px; text-align: right; }
 
 /* 네이버 API 검색어 하이라이트 스타일 */
 :deep(b) { color: #e56d00; font-weight: 800; }

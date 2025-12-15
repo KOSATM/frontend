@@ -1,17 +1,25 @@
 <template>
-  <button class="btn-outline">
-    <slot></slot>
+  <button
+    class="btn-outline"
+    :class="`btn-${size}`"
+  >
+    <slot />
   </button>
 </template>
 
 <script setup>
 defineProps({
-  // 기본 텍스트 및 테두리 색상
+  /* 색상 */
   mainColor: { type: String, default: '#1b3b6f' },
-  // 호버 시 배경이 될 색상
   hoverColor: { type: String, default: '#ff8c00' },
-  // 호버 시 텍스트 색상 (보통 흰색)
-  hoverTextColor: { type: String, default: '#ffffff' }
+  hoverTextColor: { type: String, default: '#ffffff' },
+
+  /* 사이즈 */
+  size: {
+    type: String,
+    default: 'lg', // sm | md | lg
+    validator: v => ['sm', 'md', 'lg'].includes(v)
+  }
 });
 </script>
 
@@ -20,7 +28,6 @@ defineProps({
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 48px;
   border-radius: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -28,7 +35,6 @@ defineProps({
   width: 100%;
   background-color: #fff;
 
-  /* v-bind 연결 */
   color: v-bind(mainColor);
   border: 2px solid v-bind(mainColor);
 }
@@ -37,5 +43,24 @@ defineProps({
   background-color: v-bind(hoverColor);
   color: v-bind(hoverTextColor);
   border-color: v-bind(hoverColor);
+}
+
+/* ===== Size Variants ===== */
+.btn-sm {
+  height: 32px;
+  font-size: 1rem;
+  padding: 0 0.75rem;
+}
+
+.btn-md {
+  height: 40px;
+  font-size: 1.25rem;
+  padding: 0 1rem;
+}
+
+.btn-lg {
+  height: 48px;
+  font-size: 1.5rem;
+  padding: 0 1.25rem;
 }
 </style>

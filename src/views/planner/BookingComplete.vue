@@ -1,4 +1,6 @@
 <template>
+  <div class="planner-page">    
+  <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
   <div class="booking-complete container py-5">
     <div class="text-center mb-4">
       <div class="check-circle mx-auto mb-3 d-inline-flex align-items-center justify-content-center">
@@ -36,10 +38,13 @@
       </div>
     </div>
   </div>
+  </div>
+
 </template>
 
 <script setup>
 import { useTravelStore } from '@/store/travelStore'
+import PageHeader from "@/components/common/header/PageHeader.vue";
 
 const travelStore = useTravelStore()
 
@@ -49,6 +54,12 @@ function startTravel() {
 </script>
 
 <style scoped>
+.planner-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding-bottom: 6rem;
+  padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */
+}
 .booking-complete {
   max-width: 980px;
   margin: 0 auto;

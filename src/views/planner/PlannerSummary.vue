@@ -1,4 +1,6 @@
 <template>
+    <div class="planner-page">
+    <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
     <div class="plan-summary container py-5">
 
         <!-- 상단 인사 영역 -->
@@ -101,9 +103,10 @@
                             </div>
 
                             <div class="card-step-footer">
-                                <button type="button" class="btn btn-outline-secondary px-4" @click="goBackToEdit">
-                                    일정 다시 수정하기
-                                </button>
+                                <OutlineButton 
+                                    @click="goBackToEdit"
+                                    >일정 수정하기
+                                </OutlineButton>
                             </div>
 
                         </div>
@@ -122,10 +125,9 @@
                             </div>
 
                             <div class="card-step-footer">
-                                <button type="button" class="btn btn-primary btn-lg px-5 fw-semibold"
-                                    @click="goToHotel">
-                                    숙소 선택하러 가기 →
-                                </button>
+                                <FilledButton  @click="goToHotel">
+                                숙소 선택하러 가기 →
+                                </FilledButton>
                             </div>
                         </div>
                     </div>
@@ -140,6 +142,7 @@
 
         </div>
     </div>
+    </div>
 </template>
 
 <script setup>
@@ -147,6 +150,9 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import plannerApi from '@/api/plannerApi'
 import { useAuthStore } from '@/store/authStore'
+import PageHeader from "@/components/common/header/PageHeader.vue";
+import OutlineButton from "@/components/common/button/OutlineButton.vue"
+import FilledButton from "@/components/common/button/FilledButton.vue"
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -231,7 +237,13 @@ const goBackToEdit = () => {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped>
+.planner-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding-bottom: 6rem;
+  padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */
+}
 .plan-summary {
     max-width: 980px;
     margin: 0 auto;
@@ -316,13 +328,11 @@ const goBackToEdit = () => {
 
     /* 두 카드(NEXT STEP, BEFORE YOU GO)의 Typography 통일 */
     .card-step-title {
-        font-size: 1.1rem;
         font-weight: 700;
         margin-bottom: .75rem;
     }
 
     .card-step-text {
-        font-size: .9rem;
         line-height: 1.45;
         color: #6c757d;
         margin-bottom: 1rem;
