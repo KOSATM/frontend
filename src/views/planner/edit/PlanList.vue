@@ -73,7 +73,6 @@
       @update:comment="comment = $event"
     />
   </section>
-  </div>
 </template>
 
 <script setup>
