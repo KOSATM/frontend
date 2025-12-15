@@ -54,7 +54,7 @@
 
                 <div class="d-flex gap-3">
                   <div class="thumb">
-                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" />
+                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" :v-img-fallback="fallbacks" />
                     <div v-else class="thumb-placeholder"></div>
                   </div>
 
@@ -97,7 +97,7 @@
 
                 <div class="d-flex gap-3">
                   <div class="thumb">
-                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" />
+                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" :v-img-fallback="fallbacks" />
                     <div v-else class="thumb-placeholder"></div>
                   </div>
 

@@ -41,8 +41,7 @@ const travelStore = useTravelStore()
 const checklist = ref([])
 const loading = ref(false)
 
-// 테스트용: dayIndex = 3 설정
-travelStore.dayIndex = 3
+
 
 // 기본 체크리스트 (dayIndex가 없을 때)
 const defaultChecklist = [
@@ -58,6 +57,8 @@ const defaultChecklist = [
 const loadChecklist = async () => {
   try {
     loading.value = true
+
+    
     
     console.log('📌 Current dayIndex:', travelStore.dayIndex)
     
@@ -133,6 +134,10 @@ const sortedChecklist = computed(() => {
 
 // 컴포넌트 마운트 시 체크리스트 로드
 onMounted(() => {
+
+  // 테스트용: dayIndex = 3 설정
+  travelStore.dayIndex = 3
+
   loadChecklist()
 })
 </script>
