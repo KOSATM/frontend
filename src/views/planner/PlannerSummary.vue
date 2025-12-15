@@ -1,4 +1,6 @@
 <template>
+    <div class="planner-page">
+    <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
     <div class="plan-summary container py-5">
 
         <!-- 상단 인사 영역 -->
@@ -140,6 +142,7 @@
 
         </div>
     </div>
+    </div>
 </template>
 
 <script setup>
@@ -147,6 +150,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import plannerApi from '@/api/plannerApi'
 import { useAuthStore } from '@/store/authStore'
+import PageHeader from "@/components/common/header/PageHeader.vue";
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -232,6 +236,12 @@ const goBackToEdit = () => {
 </script>
 
 <style scoped lang="scss">
+.planner-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding-bottom: 6rem;
+  padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */
+}
 .plan-summary {
     max-width: 980px;
     margin: 0 auto;
