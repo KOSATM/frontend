@@ -25,7 +25,7 @@
           <div class="d-flex align-items-center">
             <div class="thumb-wrap me-3 position-relative">
               <div class="thumb-bg rounded">
-                <img :src="r.imageUrl || '/sample/placeholder.jpg'" alt="thumb" class="thumb rounded" />
+                <img :src="r.imageUrl || '/sample/placeholder.jpg'" alt="thumb" class="thumb rounded" v-img-fallback="fallbacks" />
               </div>
               <div class="match-badge rounded-pill">{{ Math.round((r.confidence || 0) * 100) }}%</div>
             </div>
@@ -87,6 +87,14 @@ const selectedIndex = ref(null)
 const results = ref([])
 const isLoading = ref(true)
 
+const fallbacks = [
+  "/images/01.png",
+  "/images/02.png",
+  "/images/03.png",
+  "/images/04.png",
+  "/images/05.png",
+  "/images/06.png",
+];
 
 const goBack = () => {
   router.push({ name: 'CreateNewSearch' });

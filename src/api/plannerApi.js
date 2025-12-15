@@ -36,6 +36,11 @@ const getBlogList = async (keyword) => {
   return res.data
 }
 
+// 여행 완료 저장
+async function saveEndTravel(planId) {
+  return await api.post(`/plans/${planId}/complete`, planId)
+}
+
 // 활동 완료 저장
 async function saveCurrentActivity(activityData) {
   return await api.post('/api/travel/current-activity', activityData)
@@ -53,6 +58,7 @@ export default {
   getRestPlaces,
   updatePlanPlace,
   deletePlanPlace,
+  saveEndTravel,
   saveCurrentActivity,
   getCurrentActivity
 };
