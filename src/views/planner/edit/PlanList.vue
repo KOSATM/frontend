@@ -5,10 +5,8 @@
     <!-- Header -->
     <div class="p-4 pb-3 border-bottom d-flex align-items-center">
       <div class="d-flex gap-3 align-items-center flex-grow-1">
-        <div
-          class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
-          style="width: 46px; height: 46px"
-        >
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
           📅
         </div>
 
@@ -22,78 +20,38 @@
     </div>
 
     <!-- Edit Button -->
-    <div
-      v-if="currentDayPlaces.length > 0"
-      class="d-flex justify-content-end px-4 pt-3"
-    >
+    <div v-if="currentDayPlaces.length > 0" class="d-flex justify-content-end px-4 pt-3">
       <button class="btn btn-outline-secondary edit-btn-large" @click="toggleEditMode">
         {{ editMode ? "편집 완료" : "편집" }}
       </button>
     </div>
 
-    <NowActivity
-      v-if="travelStore.$state.isTraveling && currentDayPlaces.length > 0"
-      :place="nowPlace"
-      :index="nowIndex"
-      :total="currentDayPlaces.length"
-      :dayIndex="selectedDayIndex"
-      @update:index="nowIndex = $event"
-      @complete="openActivityComplete"
-    />
+    <NowActivity v-if="travelStore.$state.isTraveling && currentDayPlaces.length > 0" :place="nowPlace"
+      :index="nowIndex" :total="currentDayPlaces.length" :dayIndex="selectedDayIndex" @update:index="nowIndex = $event"
+      @complete="openActivityComplete" />
 
     <!-- 🔥 Body Component -->
-    <PlanDayTimeline
-      :days="days"
-      :currentDayPlaces="currentDayPlaces"
-      :selectedDayIndex="selectedDayIndex"
-      :editMode="editMode"
-      :typeColor="typeColor"
-      :typeLabel="typeLabel"
-      :formatTime="formatTime"
-      :categoryMap="categoryMap"
-      @open-modal="openModal"
-      @delete-place="onDeletePlace"
-      @update:selectedDayIndex="selectedDayIndex = $event"
-    />
+    <PlanDayTimeline :days="days" :currentDayPlaces="currentDayPlaces" :selectedDayIndex="selectedDayIndex"
+      :editMode="editMode" :typeColor="typeColor" :typeLabel="typeLabel" :formatTime="formatTime"
+      :categoryMap="categoryMap" @open-modal="openModal" @delete-place="onDeletePlace"
+      @update:selectedDayIndex="selectedDayIndex = $event" />
 
     <!-- CTA -->
     <div class="p-4 pt-0 border-top bg-white">
-      <NavigationButtons
-        :backText="'이전'"
-        :nextText="travelStore.$state.isTraveling ? '여행 종료' : '여행 일정 요약페이지로 이동'"
-        :isNextDisabled="false"
-        @back="onBack"
-        @next="onNext"
-      />
+      <NavigationButtons :backText="'이전'" :nextText="travelStore.$state.isTraveling ? '여행 종료' : '여행 일정 요약페이지로 이동'"
+        :isNextDisabled="false" @back="onBack" @next="onNext" />
     </div>
 
     <!-- Modals -->
-    <ActivityDetailsModal
-      :open="modalOpen"
-      :data="modalData"
-      @close="modalOpen = false"
-    />
-    <ReplaceModal
-      :open="replaceModalOpen"
-      :target="replaceTarget"
-      :alternatives="replaceAlternatives"
-      @close="replaceModalOpen = false"
-      @apply-replacement="applyReplacement"
-      @delete-anyway="deleteAnyway"
-    />
+    <ActivityDetailsModal :open="modalOpen" :data="modalData" @close="modalOpen = false" />
+
+    <ReplaceModal :open="replaceModalOpen" :target="replaceTarget" :alternatives="replaceAlternatives"
+      @close="replaceModalOpen = false" @apply-replacement="applyReplacement" @delete-anyway="deleteAnyway" />
 
     <!-- ✅ Activity Complete Modal (추가된 연결) -->
-    <ActivityCompleteModal
-      :open="activityModalOpen"
-      :title="activePlace?.title || ''"
-      :spendInput="spendInput"
-      :comment="comment"
-      :quickStats="activityQuickStats"
-      @close="activityModalOpen = false"
-      @confirm="completeActivity"
-      @update:spend-input="spendInput = $event"
-      @update:comment="comment = $event"
-    />
+    <ActivityCompleteModal :open="activityModalOpen" :title="activePlace?.title || ''" :spendInput="spendInput"
+      :comment="comment" :quickStats="activityQuickStats" @close="activityModalOpen = false" @confirm="completeActivity"
+      @update:spend-input="spendInput = $event" @update:comment="comment = $event" />
   </section>
 </template>
 
@@ -194,14 +152,14 @@ const getTripDuration = computed(() => {
 
   const start = new Date(plan.value.startDate);
   const end = new Date(plan.value.endDate);
-  
+
   // 날짜 차이 계산 (일 단위)
   const diffTime = Math.abs(end - start);
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
+
   const days = diffDays + 1; // 당일 포함
   const nights = diffDays;   // 밤 수는 일수 - 1
-  
+
   return {
     nights,
     days,
@@ -231,23 +189,11 @@ const openActivityComplete = (place) => {
 /* ✅ 활동 완료 (confirm) */
 const completeActivity = async () => {
   if (!activePlace.value) return;
-  
-  // 금액과 메모가 둘 다 입력되어야 저장 가능
-  const hasAmount = spendInput.value !== null;
-  const hasMemo = comment.value && comment.value.trim() !== '';
-  
-  if (!hasAmount || !hasMemo) {
-    alert('금액과 메모를 모두 입력해야 저장할 수 있습니다.');
-    return;
-  }
-  
+
   try {
     // 현재 시간을 endedAt으로 설정
     const endedAt = new Date().toISOString();
-    
-    console.log('🔍 activePlace 전체:', activePlace.value);
-    console.log('🔍 activePlace.id:', activePlace.value.id);
-    
+
     // API 요청 데이터 구성 (백엔드 DTO에 맞춤: camelCase)
     const activityData = {
       planPlaceId: activePlace.value.id || activePlace.value.placeId,
@@ -255,35 +201,28 @@ const completeActivity = async () => {
       memo: comment.value,
       endedAt: endedAt
     };
-    
-    console.log('🔄 활동 완료 저장 중...', activityData);
-    
+
     // API 호출
     const response = await plannerApi.saveCurrentActivity(activityData);
-    
-    console.log('✅ 활동 완료 저장 성공:', response);
-    
+
     // UI 상태 업데이트
     activePlace.value.status = "DONE";
     activePlace.value.actualCost = spendInput.value;
     activePlace.value.memo = comment.value;
-    
+
     // 모달 닫기
     activityModalOpen.value = false;
-    
-    // 초기화
+
+    // 다음 일정으로 이동
+    if (nowIndex.value < currentDayPlaces.value.length - 1) {
+      nowIndex.value += 1;
+    }
+
     spendInput.value = null;
     comment.value = "";
-    
+
   } catch (error) {
     console.error('❌ 활동 완료 저장 실패:', error);
-    console.error('❌ 에러 응답:', error.response?.data);
-    console.error('❌ 전송한 데이터:', {
-      planPlaceId: activePlace.value.id || activePlace.value.placeId,
-      actualCost: spendInput.value,
-      memo: comment.value,
-      endedAt: new Date().toISOString()
-    });
     alert('활동 완료 처리에 실패했습니다.\n다시 시도해주세요.');
   }
 };
@@ -401,28 +340,28 @@ const openModal = (place) => {
 /* ---------- ReplaceModal: 삭제 버튼 클릭 시 ---------- */
 const onDeletePlace = async (idx, place) => {
   console.log('🔍 삭제하려는 장소:', place);
-  
+
   // 위치 정보 추출 (여러 경로 시도)
-  let lat = place.lat || 
-            place.latitude || 
-            place.details?.lat ||
-            place.details?.latitude ||
-            place.mapY;
-  
-  let lng = place.lng || 
-            place.longitude || 
-            place.details?.lng ||
-            place.details?.longitude ||
-            place.mapX;
-  
+  let lat = place.lat ||
+    place.latitude ||
+    place.details?.lat ||
+    place.details?.latitude ||
+    place.mapY;
+
+  let lng = place.lng ||
+    place.longitude ||
+    place.details?.lng ||
+    place.details?.longitude ||
+    place.mapX;
+
   // 숫자로 변환 (문자열일 수 있으므로)
   lat = parseFloat(lat);
   lng = parseFloat(lng);
-  
+
   console.log('📍 추출된 위치 (변환 후):', { lat, lng, type: `${typeof lat}, ${typeof lng}` });
-  
+
   let alternatives = [];
-  
+
   // API 호출해서 근처 카페 가져오기
   if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
     try {
@@ -430,22 +369,22 @@ const onDeletePlace = async (idx, place) => {
         url: '/search-rest-place',
         params: { lat, lng }
       });
-      
+
       const response = await plannerApi.getRestPlaces(lat, lng);
-      
+
       console.log('✅ API 응답 전체:', response);
       console.log('✅ API 응답 데이터:', response.data);
-      
+
       // 응답 데이터를 alternatives 형식으로 변환
       const cafes = response.data.data || response.data || [];
-      
+
       console.log('📦 변환할 카페 목록:', cafes);
-      
+
       if (Array.isArray(cafes) && cafes.length > 0) {
         // ⭐ 상위 3개만 선택
         const topThreeCafes = cafes.slice(0, 3);
         console.log(`🎯 상위 3개 선택 (전체 ${cafes.length}개 중):`, topThreeCafes);
-        
+
         alternatives = topThreeCafes.map(cafe => {
           console.log('🔄 카페 변환 중:', cafe);
           return {
@@ -470,7 +409,7 @@ const onDeletePlace = async (idx, place) => {
             }
           };
         });
-        
+
         console.log('✅ 변환된 alternatives (상위 3개):', alternatives);
       } else {
         console.warn('⚠️ API 응답이 비어있거나 배열이 아닙니다');
@@ -480,7 +419,7 @@ const onDeletePlace = async (idx, place) => {
       console.error('❌ API 호출 실패:', error);
       console.error('❌ 에러 응답:', error.response?.data);
       console.error('❌ 에러 상태:', error.response?.status);
-      
+
       // API 실패 시 기존 로직 사용 (같은 날의 다른 장소들 중 3개)
       alternatives = currentDayPlaces.value.filter((p, i) => i !== idx).slice(0, 3);
       console.warn('⚠️ API 실패로 기존 장소 목록 사용:', alternatives.length, '개');
@@ -490,7 +429,7 @@ const onDeletePlace = async (idx, place) => {
     // 위치 정보가 없으면 기존 로직 사용 (3개만)
     alternatives = currentDayPlaces.value.filter((p, i) => i !== idx).slice(0, 3);
   }
-  
+
   replaceTarget.value = place;
   replaceAlternatives.value = alternatives;
   replaceModalOpen.value = true;
@@ -621,21 +560,92 @@ const renderPlan = async () => {
   }
 };
 
+// nowIndex 자동 계산 함수
+function selectNowActivity() {
+  const places = currentDayPlaces.value;
+  if (!places.length) {
+    nowIndex.value = 0;
+    return;
+  }
+  const now = new Date();
+  // 진행 중이거나, 아직 시작 전인 첫 번째 place를 찾음
+  let idx = places.findIndex(p => {
+    const start = p.startAt ? new Date(p.startAt) : null;
+    const end = p.endAt ? new Date(p.endAt) : null;
+    if (start && end) {
+      return now >= start && now <= end;
+    }
+    if (start && now <= start) {
+      return true;
+    }
+    return false;
+  });
+  if (idx === -1) idx = 0;
+  nowIndex.value = idx;
+}
+
+// Day가 바뀔 때마다 nowActivity도 자동 선택
+watch(selectedDayIndex, () => {
+  selectNowActivity();
+});
+
 /* ---------- onMounted ---------- */
 onMounted(async () => {
   authStore.initializeAuth();
   const userId = authStore.userId;
   if (chatStore.livePlanFromChat) {
-    console.log("🟢 [PlanList] onMounted 시점에 이미 스토어에 AI 플랜 있음 → applyAiPlan");
     applyAiPlan(chatStore.livePlanFromChat.data);
+    setTimeout(() => {
+      selectToday();
+      selectNowActivity();
+    }, 0);
     return;
   }
 
-  if(userId != null){
-  console.log("🔵 [PlanList] onMounted: 스토어에 AI 플랜 없음 → 서버에서 플랜 불러옴");
-  await renderPlan();
+  if (userId != null) {
+    console.log("🔵 [PlanList] onMounted: 스토어에 AI 플랜 없음 → 서버에서 플랜 불러옴");
+    await renderPlan();
+    setTimeout(() => {
+      selectToday();
+      selectNowActivity();
+    }, 0);
   }
 });
+
+watch(selectedDayIndex, () => {
+  selectNowActivity();
+});
+
+// 오늘 날짜에 맞는 Day 자동 선택 함수
+function selectToday() {
+  if (!plan.value?.startDate || !days.value.length) return;
+
+  const today = new Date();
+  const todayYMD = today.toISOString().slice(0, 10); // 'YYYY-MM-DD'
+
+  // plan.startDate ~ plan.endDate 범위 내에 오늘이 있는지 체크
+  const startYMD = plan.value.startDate.slice(0, 10);
+  const endYMD = plan.value.endDate.slice(0, 10);
+
+  if (todayYMD < startYMD || todayYMD > endYMD) {
+    // 오늘이 여행 기간이 아니면 첫째날로
+    selectedDayIndex.value = 0;
+    return;
+  }
+
+  // days에서 오늘 날짜와 일치하는 인덱스 찾기
+  const foundIdx = days.value.findIndex(d => {
+    if (!d.day?.planDate) return false;
+    return d.day.planDate.slice(0, 10) === todayYMD;
+  });
+
+  if (foundIdx !== -1) {
+    selectedDayIndex.value = foundIdx;
+  } else {
+    // 혹시 없으면 첫째날로
+    selectedDayIndex.value = 0;
+  }
+}
 
 /* ---------- navigation ---------- */
 const onNext = () => {
