@@ -19,7 +19,7 @@
     <div v-else class="history-list">
       <div v-for="(h, i) in history" :key="i" class="history-item card p-3 mb-3">
         <div class="d-flex">
-          <img v-if="h.thumb" :src="h.thumb" class="thumb me-3" />
+          <img v-if="h.thumb" :src="h.thumb" class="thumb me-3"  v-img-fallback="fallbacks" />
           <div v-else class="thumb me-3 bg-secondary d-flex align-items-center justify-content-center text-white">
             <i class="bi bi-image"></i>
           </div>
@@ -39,7 +39,7 @@
               <div class="small text-muted mb-1">AI 추천 ({{ h.recommendations.length }})</div>
               <div class="d-flex gap-2">
                 <template v-for="(r, idx) in h.recommendations" :key="idx">
-                  <img v-if="r.thumb" :src="r.thumb" class="rec-thumb" :title="r.name" />
+                  <img v-if="r.thumb" :src="r.thumb" class="rec-thumb" :title="r.name"  v-img-fallback="fallbacks" />
                   <div v-else class="rec-thumb bg-secondary d-flex align-items-center justify-content-center text-white" :title="r.name">
                     <i class="bi bi-image"></i>
                   </div>
@@ -94,7 +94,7 @@
 
         <!-- Item Info -->
         <div class="selected-place card p-3 mb-3 d-flex align-items-center">
-          <img v-if="changeStatusItem.thumb" :src="changeStatusItem.thumb" class="thumb me-3" />
+          <img v-if="changeStatusItem.thumb" :src="changeStatusItem.thumb" class="thumb me-3"  v-img-fallback="fallbacks" />
           <div v-else class="thumb me-3 bg-secondary d-flex align-items-center justify-content-center text-white">
             <i class="bi bi-image"></i>
           </div>
@@ -156,6 +156,15 @@ import imageSearchApi from '@/api/imageSearchApi'
 import PageHeader from '@/components/common/header/PageHeader.vue'
 import { useAuthStore } from '@/store/authStore'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+
+const fallbacks = [
+  "/images/01.png",
+  "/images/02.png",
+  "/images/03.png",
+  "/images/04.png",
+  "/images/05.png",
+  "/images/06.png",
+];
 
 const authStore = useAuthStore()
 

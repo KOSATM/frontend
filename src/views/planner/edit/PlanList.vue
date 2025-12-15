@@ -699,6 +699,12 @@ function selectToday() {
   }
 }
 
+
+
+
+
+
+
 /* ---------- navigation ---------- */
 const onNext = () => {
   if (travelStore.$state.isTraveling) endplan();
@@ -708,11 +714,31 @@ const onNext = () => {
 const onBack = () => router.back();
 
 const goToSummary = () => router.push("/planner/summary");
-const endplan = () => {
-  // 여행 종료 시 메인 페이지로 이동
-  travelStore.$state.isTraveling = false // 여행 상태 초기화
-  router.push("/")
-}
+const endplan = async () => {
+  const planId = travelStore.planId;
+
+  if (!planId) {
+    console.warn('❌ planId가 없습니다');
+    return;
+  }
+
+  try {
+    // 여행 종료 API 호출
+    await plannerApi.saveEndTravel(planId);
+    console.log('✅ 여행 종료 완료');
+
+    // 스토어 상태 초기화
+    travelStore.endTravel();
+    travelStore.clearPlanInfo();
+
+    // 메인 페이지로 리다이렉트
+    router.push('/');
+  } catch (error) {
+    console.error('❌ 여행 종료 실패:', error);
+    alert('여행 종료 처리에 실패했습니다.\n다시 시도해주세요.');
+  }
+};
+
 </script>
 
 <style scoped>
