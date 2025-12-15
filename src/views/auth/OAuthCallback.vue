@@ -35,21 +35,21 @@ onMounted(async () => {
     const userInfo = JSON.parse(json)
 
     // 🔥 기존 방식 유지
-    localStorage.setItem('accessToken', userInfo.token)
-    localStorage.setItem('jwtToken', userInfo.token)
-    localStorage.setItem('user', JSON.stringify({
+    authStore.setOAuthUser({
       id: userInfo.userId,
       email: userInfo.email,
       name: userInfo.name,
       picture: userInfo.picture,
       provider: userInfo.oauthProvider
-    }))
+    })
 
     // UX 딜레이
     await new Promise(r => setTimeout(r, 700))
 
+    authStore.initializeAuth();
     // 강제 새로고침
-    window.location.href = '/'
+    // window.location.href = '/'
+    router.replace('/');
 
   } catch (e) {
     console.error(e)
