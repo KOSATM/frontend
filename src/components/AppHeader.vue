@@ -6,39 +6,26 @@
       </router-link>
 
       <div class="d-flex align-items-center gap-3">
-        
-        <div v-if="isLoggedIn" class="login-info d-flex align-items-center gap-2">
-          
-          <span class="user-info">{{ userName || 'User' }}</span>
-          
-          <button @click="onLogoutClick" class="logout-btn" title="Logout">
-            로그아웃
-          </button>
-        </div>
 
-        <a
-          v-if="!isLoggedIn"
-          href="http://localhost:8080/oauth2/authorization/google"
-          class="btn profile-btn border-0 p-0"
-          title="Login with Google OAuth"
-        >
+        <transition name="login-fade">
+          <div v-if="isLoggedIn" class="login-info d-flex align-items-center gap-2">
+            <span class="user-info">{{ userName || 'User' }}</span>
+
+            <button @click="onLogoutClick" class="logout-btn" title="Logout">
+              로그아웃
+            </button>
+          </div>
+        </transition>
+
+        <a v-if="!isLoggedIn" href="http://localhost:8080/oauth2/authorization/google"
+          class="btn profile-btn border-0 p-0" title="Login with Google OAuth">
           <img src="@/assets/img/profile-logo.png" alt="Profile" class="profile-img" />
         </a>
 
-        <img
-          v-else
-          :src="userProfileImage || defaultProfileImg" 
-          alt="Profile"
-          class="profile-img-logged-in"
-        />
+        <img v-else :src="userProfileImage || defaultProfileImg" alt="Profile" class="profile-img-logged-in" />
 
-        <button
-          class="btn text-white fs-4 border-0 p-2"
-          type="button"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#sidebar"
-          aria-controls="sidebar"
-        >
+        <button class="btn text-white fs-4 border-0 p-2" type="button" data-bs-toggle="offcanvas"
+          data-bs-target="#sidebar" aria-controls="sidebar">
           <i class="bi bi-list"></i>
         </button>
       </div>
@@ -65,12 +52,12 @@ const { isLoggedIn, userName, userProfileImage } = storeToRefs(authStore)
 
 const onLogoutClick = () => {
   // Store의 로그아웃 액션 실행 (데이터 비우기)
-  authStore.logout() 
-  
+  authStore.logout();
+
   console.log('✅ 로그아웃 완료')
-  
+
   // 메인으로 이동
-  router.push('/') 
+  router.push('/logout');
   // 또는 window.location.href = '/' (새로고침이 필요하다면 이것 사용)
 }
 
@@ -85,27 +72,33 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
 
 <style scoped>
 .navbar-fms {
-  background-color: #ffffff; /* ✅ 기본 흰색 */
+  background-color: #ffffff;
+  /* ✅ 기본 흰색 */
   transition: background 0.4s ease, box-shadow 0.4s ease;
   backdrop-filter: blur(8px);
   padding: 0 1.25rem;
-  height: 64px; /* ⬆ 기존 42px → 64px로 변경 */
+  height: 64px;
+  /* ⬆ 기존 42px → 64px로 변경 */
   display: flex;
   align-items: center;
-  justify-content: space-between; /* ✅ 좌우 끝 정렬 */
+  justify-content: space-between;
+  /* ✅ 좌우 끝 정렬 */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  font-weight: 600; /* ✅ 글자 두께 강화 */
+  font-weight: 600;
+  /* ✅ 글자 두께 강화 */
 
   .navbar-brand {
     display: flex;
-    align-items: center; /* ✅ 로고 세로 중앙정렬 */
+    align-items: center;
+    /* ✅ 로고 세로 중앙정렬 */
     justify-content: center;
     height: 100%;
 
     img {
       height: 50px;
       object-fit: contain;
-      filter: none; /* 기본: 컬러 유지 */
+      filter: none;
+      /* 기본: 컬러 유지 */
       transition: filter 0.4s ease;
     }
   }
@@ -135,7 +128,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
     .user-info {
       color: #ffffff;
     }
-    
+
     /* (선택사항) 로그아웃 버튼도 배경에 맞게 스타일 변경이 필요하다면 추가 */
     .logout-btn {
       background-color: #ffffff;
@@ -229,7 +222,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
 /* 로그아웃 버튼 */
 .logout-btn {
   font-size: 1.15rem;
-  padding : 0 10px;
+  padding: 0 10px;
   /* padding: 6px 10px; */
   border-radius: 4px;
   border: 1px solid white;
@@ -254,5 +247,31 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid white;
+}
+
+/* 로그인 영역 등장 애니메이션 */
+.login-fade-enter-active,
+.login-fade-leave-active {
+  transition: all 0.25s ease;
+}
+
+.login-fade-enter-from {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+.login-fade-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.login-fade-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.login-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
 }
 </style>
