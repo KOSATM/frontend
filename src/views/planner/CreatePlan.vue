@@ -1,6 +1,6 @@
 <template>
-  <div class="planner-create">
-    <!-- 헤더 -->
+  <div class="planner-page">
+    <!-- 플래너 탭 -->
     <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
 
     <div class="content-wrapper px-4 py-4">
@@ -56,7 +56,8 @@ import router from '@/router'
 
 import PageHeader from '@/components/common/header/PageHeader.vue'
 import TipBox from '@/components/common/TipBox.vue'
-import RecommendationCard from '@/components/planner/RecommendationCard.vue'
+import RecommendationCard from '@/components/
+  /RecommendationCard.vue'
 import BlogListModal from '@/components/planner/BlogListModal.vue'
 
 import plannerApi from '@/api/plannerApi'
@@ -133,7 +134,7 @@ const generateItinerary = async () => {
 </script>
 
 <style scoped>
-.planner-create {
+.planner-page {
   background-color: #fffaf3;
   min-height: 100vh;
   padding: 2rem 1.25rem 6rem;

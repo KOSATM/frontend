@@ -1,22 +1,26 @@
 <template>
   <div class="navigation-buttons">
-    <OutlineButton 
-      class="flex-item" 
-      @click="$emit('back')"
+    <OutlineButton
+      class="flex-item"
+      :size="size"
       :main-color="themeColor"
       :hover-color="activeColor"
+      @click="$emit('back')"
     >
       {{ backText }}
     </OutlineButton>
 
-    <FilledButton 
-      class="flex-item" 
-      @click="$emit('next')" 
+    <FilledButton
+      class="flex-item"
+      :size="size"
       :disabled="isNextDisabled"
       :bg-color="themeColor"
       :hover-color="activeColor"
+      @click="$emit('next')"
     >
-      <slot name="next-content">{{ nextText }}</slot>
+      <slot name="next-content">
+        {{ nextText }}
+      </slot>
     </FilledButton>
   </div>
 </template>
@@ -26,13 +30,19 @@ import OutlineButton from './OutlineButton.vue';
 import FilledButton from './FilledButton.vue';
 
 defineProps({
-  backText: { type: String, default: 'Back' },
-  nextText: { type: String, default: 'Next Step' },
+  backText: { type: String, default: '뒤로가기' },
+  nextText: { type: String, default: '다음으로' },
   isNextDisabled: { type: Boolean, default: false },
-  
-  // 테마 색상 (기본값: 네이비)
+
+  /* 사이즈 */
+  size: {
+    type: String,
+    default: 'lg', // sm | md | lg
+    validator: v => ['sm', 'md', 'lg'].includes(v)
+  },
+
+  /* 테마 */
   themeColor: { type: String, default: '#1b3b6f' },
-  // 활성화/호버 색상 (기본값: 오렌지)
   activeColor: { type: String, default: '#ff8c00' }
 });
 
@@ -46,6 +56,7 @@ defineEmits(['back', 'next']);
   margin-top: 2rem;
   width: 100%;
 }
+
 .flex-item {
   flex: 1;
 }

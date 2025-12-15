@@ -1,5 +1,7 @@
 <!-- src/views/planner/PlanList.vue -->
 <template>
+  <div class="planner-page">
+  <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
   <section class="planner-right card shadow-sm rounded-4 h-100 d-flex flex-column">
 
     <!-- Header -->
@@ -53,12 +55,14 @@
       :comment="comment" :quickStats="activityQuickStats" @close="activityModalOpen = false" @confirm="completeActivity"
       @update:spend-input="spendInput = $event" @update:comment="comment = $event" />
   </section>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 
+import PageHeader from "@/components/common/header/PageHeader.vue";
 import NavigationButtons from "@/components/common/button/NavigationButtons.vue";
 import plannerApi from "@/api/plannerApi";
 
@@ -228,7 +232,7 @@ const completeActivity = async () => {
 };
 
 /* ---------- AI 일정 → 화면에 적용하는 함수 ---------- */
-const applyAiPlan = (payload) => {
+const applyAiPlan = async (payload) => {
   console.log("✅ [PlanList] applyAiPlan 호출됨", payload);
 
   if (!payload) {
@@ -236,55 +240,57 @@ const applyAiPlan = (payload) => {
     return;
   }
 
-  if (!payload.days || !Array.isArray(payload.days)) {
-    console.log("⚠️ [PlanList] payload.days가 없거나 배열이 아님");
-    return;
-  }
+  // if (!payload.days || !Array.isArray(payload.days)) {
+  //   console.log("⚠️ [PlanList] payload.days가 없거나 배열이 아님");
+  //   return;
+  // }
 
-  plan.value = {
-    id: payload.planId,
-    startDate: payload.startDate,
-    endDate: payload.endDate,
-    title: payload.title ?? "AI 추천 여행 일정",
-  };
+  // plan.value = {
+  //   id: payload.planId,
+  //   startDate: payload.startDate,
+  //   endDate: payload.endDate,
+  //   title: payload.title ?? "AI 추천 여행 일정",
+  // };
 
-  days.value = (payload.days || []).map((d) => ({
-    day: {
-      id: d.dayIndex,
-      dayIndex: d.dayIndex,
-      planDate: d.date,
-      title: `Day ${d.dayIndex}`,
-    },
-    places: (d.schedules || []).map((s) => {
-      const type = s.normalizedCategory ?? "ETC";
+  // days.value = (payload.days || []).map((d) => ({
+  //   day: {
+  //     id: d.dayIndex,
+  //     dayIndex: d.dayIndex,
+  //     planDate: d.date,
+  //     title: `Day ${d.dayIndex}`,
+  //   },
+  //   places: (d.schedules || []).map((s) => {
+  //     const type = s.normalizedCategory ?? "ETC";
 
-      const gallery =
-        s.firstImage2
-          ? [s.firstImage2]
-          : s.firstImage
-            ? [s.firstImage]
-            : getDefaultGalleryByType(type);
+  //     const gallery =
+  //       s.firstImage2
+  //         ? [s.firstImage2]
+  //         : s.firstImage
+  //           ? [s.firstImage]
+  //           : getDefaultGalleryByType(type);
 
-      return {
-        title: s.title,
-        startAt: s.startAt,
-        endAt: s.endAt,
-        placeName: s.placeName,
-        address: s.address,
-        // ✅ status 기본값 (없으면 Pending으로)
-        status: s.status ?? "PENDING",
-        details: {
-          type,
-          gallery,
-          desc: `${s.title} 방문을 추천합니다`,
-          address: s.address,
-          area: "Seoul",
-          firstImage: s.firstImage,
-          firstImage2: s.firstImage2,
-        },
-      };
-    }),
-  }));
+  //     return {
+  //       title: s.title,
+  //       startAt: s.startAt,
+  //       endAt: s.endAt,
+  //       placeName: s.placeName,
+  //       address: s.address,
+  //       // ✅ status 기본값 (없으면 Pending으로)
+  //       status: s.status ?? "PENDING",
+  //       details: {
+  //         type,
+  //         gallery,
+  //         desc: `${s.title} 방문을 추천합니다`,
+  //         address: s.address,
+  //         area: "Seoul",
+  //         firstImage: s.firstImage,
+  //         firstImage2: s.firstImage2,
+  //       },
+  //     };
+  //   }),
+  // }));
+
+  await renderPlan();
 
   travelStore.setPlanInfo(payload.planId, travelStore.dayIndex, travelStore.planDate);
   selectedDayIndex.value = 0;
@@ -664,6 +670,12 @@ const endplan = () => {
 </script>
 
 <style scoped>
+.planner-page {
+  background-color: #fffaf3;
+  min-height: 100vh;
+  padding-bottom: 6rem;
+  padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */
+}
 /* Edit 버튼 */
 .edit-btn-large {
   padding: 0.5rem 1.5rem;
