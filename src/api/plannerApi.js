@@ -22,7 +22,6 @@ async function deletePlanPlace(placeId) {
   return await api.delete(`/plans/places/${placeId}`)
 }
 
-
 async function getActivePlanIdAndDayIndex(userId) {
   const res = await api.get(`/plans/${userId}/active/plan/info`, userId)
   return res.data;
@@ -42,9 +41,9 @@ async function saveCurrentActivity(activityData) {
   return await api.post('/api/travel/current-activity', activityData)
 }
 
-// 활동 완료 메모 조회
+// 활동 완료 조회
 async function getCurrentActivity(planPlaceId) {
-  return await api.post(`/api/travel/current-activity/${planPlaceId}`, planPlaceId)
+  return await api.get(`/api/travel/current-activity/${planPlaceId}`, planPlaceId)
 }
 
 export default {

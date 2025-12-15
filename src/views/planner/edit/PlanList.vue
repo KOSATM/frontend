@@ -86,9 +86,10 @@
     <!-- ✅ Activity Complete Modal (추가된 연결) -->
     <ActivityCompleteModal
       :open="activityModalOpen"
-      :title="activePlace?.title || ''"
-      :spendInput="spendInput"
+      :title="activityModalData.title"
+      :status="activityModalData.status"
       :comment="comment"
+      :spendInput="spendInput"
       :quickStats="activityQuickStats"
       @close="activityModalOpen = false"
       @confirm="completeActivity"
@@ -136,6 +137,11 @@ const replaceAlternatives = ref([]);
 
 /* ---------- ACTIVITY COMPLETE MODAL 상태 ---------- */
 const activityModalOpen = ref(false);
+const activityModalData = ref({
+  status: 'PENDING',
+  memo: '',
+  actualCost: null,
+});
 const activePlace = ref(null);
 const spendInput = ref(null);
 const comment = ref("");
@@ -222,10 +228,32 @@ const activityQuickStats = computed(() => {
 });
 
 /* ---------- 모달 열기 로직 ---------- */
-const openActivityComplete = (place) => {
+const openActivityComplete = async (place) => {
   activePlace.value = place;
-  spendInput.value = null;
-  comment.value = "";
+
+  // 프론트 정보로 먼저 세팅
+  activityModalData.value = {
+    title: place.title,
+    status: place.status ?? 'PENDING',
+    memo: '',
+    actualCost: null,
+  };
+
+  // 백엔드에서 활동 정보 조회 (금액, 메모 등만)
+  try {
+    const res = await plannerApi.getCurrentActivity(place.id || place.placeId);
+    if (res?.data) {
+      activityModalData.value.memo = res.data.memo || '';
+      activityModalData.value.actualCost = res.data.actualCost ?? null;
+    }
+  } catch (e) {
+    // 404 등 에러 시 기본값 유지
+  }
+
+  // 입력값도 동기화
+  comment.value = activityModalData.value.memo;
+  spendInput.value = activityModalData.value.actualCost;
+
   activityModalOpen.value = true;
 };
 
