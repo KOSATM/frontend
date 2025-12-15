@@ -235,7 +235,7 @@ const goBackToEdit = () => {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped>
 .planner-page {
   background-color: #fffaf3;
   min-height: 100vh;
