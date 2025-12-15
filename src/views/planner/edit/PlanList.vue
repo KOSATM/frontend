@@ -73,6 +73,7 @@
       :data="modalData"
       @close="modalOpen = false"
     />
+
     <ReplaceModal
       :open="replaceModalOpen"
       :target="replaceTarget"
@@ -231,23 +232,11 @@ const openActivityComplete = (place) => {
 /* ✅ 활동 완료 (confirm) */
 const completeActivity = async () => {
   if (!activePlace.value) return;
-  
-  // 금액과 메모가 둘 다 입력되어야 저장 가능
-  const hasAmount = spendInput.value !== null;
-  const hasMemo = comment.value && comment.value.trim() !== '';
-  
-  if (!hasAmount || !hasMemo) {
-    alert('금액과 메모를 모두 입력해야 저장할 수 있습니다.');
-    return;
-  }
-  
+
   try {
     // 현재 시간을 endedAt으로 설정
     const endedAt = new Date().toISOString();
-    
-    console.log('🔍 activePlace 전체:', activePlace.value);
-    console.log('🔍 activePlace.id:', activePlace.value.id);
-    
+
     // API 요청 데이터 구성 (백엔드 DTO에 맞춤: camelCase)
     const activityData = {
       planPlaceId: activePlace.value.id || activePlace.value.placeId,
@@ -255,35 +244,28 @@ const completeActivity = async () => {
       memo: comment.value,
       endedAt: endedAt
     };
-    
-    console.log('🔄 활동 완료 저장 중...', activityData);
-    
+
     // API 호출
     const response = await plannerApi.saveCurrentActivity(activityData);
-    
-    console.log('✅ 활동 완료 저장 성공:', response);
-    
+
     // UI 상태 업데이트
     activePlace.value.status = "DONE";
     activePlace.value.actualCost = spendInput.value;
     activePlace.value.memo = comment.value;
-    
+
     // 모달 닫기
     activityModalOpen.value = false;
-    
-    // 초기화
+
+    // 다음 일정으로 이동
+    if (nowIndex.value < currentDayPlaces.value.length - 1) {
+      nowIndex.value += 1;
+    }
+
     spendInput.value = null;
     comment.value = "";
-    
+
   } catch (error) {
     console.error('❌ 활동 완료 저장 실패:', error);
-    console.error('❌ 에러 응답:', error.response?.data);
-    console.error('❌ 전송한 데이터:', {
-      planPlaceId: activePlace.value.id || activePlace.value.placeId,
-      actualCost: spendInput.value,
-      memo: comment.value,
-      endedAt: new Date().toISOString()
-    });
     alert('활동 완료 처리에 실패했습니다.\n다시 시도해주세요.');
   }
 };
@@ -621,19 +603,89 @@ const renderPlan = async () => {
   }
 };
 
+// nowIndex 자동 계산 함수
+function selectNowActivity() {
+  const places = currentDayPlaces.value;
+  if (!places.length) {
+    nowIndex.value = 0;
+    return;
+  }
+  const now = new Date();
+  // 진행 중이거나, 아직 시작 전인 첫 번째 place를 찾음
+  let idx = places.findIndex(p => {
+    const start = p.startAt ? new Date(p.startAt) : null;
+    const end = p.endAt ? new Date(p.endAt) : null;
+    if (start && end) {
+      return now >= start && now <= end;
+    }
+    if (start && now <= start) {
+      return true;
+    }
+    return false;
+  });
+  if (idx === -1) idx = 0;
+  nowIndex.value = idx;
+}
+
+// Day가 바뀔 때마다 nowActivity도 자동 선택
+watch(selectedDayIndex, () => {
+  selectNowActivity();
+});
+
 /* ---------- onMounted ---------- */
 onMounted(async () => {
   authStore.initializeAuth();
 
   if (chatStore.livePlanFromChat) {
-    console.log("🟢 [PlanList] onMounted 시점에 이미 스토어에 AI 플랜 있음 → applyAiPlan");
     applyAiPlan(chatStore.livePlanFromChat.data);
+    setTimeout(() => {
+      selectToday();
+      selectNowActivity();
+    }, 0);
     return;
   }
 
-  console.log("🔵 [PlanList] onMounted: 스토어에 AI 플랜 없음 → 서버에서 플랜 불러옴");
   await renderPlan();
+  setTimeout(() => {
+    selectToday();
+    selectNowActivity();
+  }, 0);
 });
+
+watch(selectedDayIndex, () => {
+  selectNowActivity();
+});
+
+// 오늘 날짜에 맞는 Day 자동 선택 함수
+function selectToday() {
+  if (!plan.value?.startDate || !days.value.length) return;
+
+  const today = new Date();
+  const todayYMD = today.toISOString().slice(0, 10); // 'YYYY-MM-DD'
+
+  // plan.startDate ~ plan.endDate 범위 내에 오늘이 있는지 체크
+  const startYMD = plan.value.startDate.slice(0, 10);
+  const endYMD = plan.value.endDate.slice(0, 10);
+
+  if (todayYMD < startYMD || todayYMD > endYMD) {
+    // 오늘이 여행 기간이 아니면 첫째날로
+    selectedDayIndex.value = 0;
+    return;
+  }
+
+  // days에서 오늘 날짜와 일치하는 인덱스 찾기
+  const foundIdx = days.value.findIndex(d => {
+    if (!d.day?.planDate) return false;
+    return d.day.planDate.slice(0, 10) === todayYMD;
+  });
+
+  if (foundIdx !== -1) {
+    selectedDayIndex.value = foundIdx;
+  } else {
+    // 혹시 없으면 첫째날로
+    selectedDayIndex.value = 0;
+  }
+}
 
 /* ---------- navigation ---------- */
 const onNext = () => {
