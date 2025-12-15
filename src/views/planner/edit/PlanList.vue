@@ -99,6 +99,16 @@ const authStore = useAuthStore();
 const travelStore = useTravelStore();
 const chatStore = useChatStore();
 
+// fallback 이미지들
+const fallbacks = [
+  "/images/01.png",
+  "/images/02.png",
+  "/images/03.png",
+  "/images/04.png",
+  "/images/05.png",
+  "/images/06.png",
+];
+
 /* ---------- ReplaceModal 상태 ---------- */
 const replaceModalOpen = ref(false);
 const replaceTarget = ref(null);

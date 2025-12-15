@@ -9,7 +9,7 @@
 
         <!--  상단 메인 이미지 -->
         <div class="main-image-wrapper">
-          <img :src="localGallery[0]" alt="thumbnail" class="main-image" />
+          <img :src="localGallery[0]" alt="thumbnail" class="main-image" :v-img-fallback="fallbacks" />
         </div>
 
         <!-- 제목 -->
