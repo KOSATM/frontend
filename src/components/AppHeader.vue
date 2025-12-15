@@ -65,12 +65,12 @@ const { isLoggedIn, userName, userProfileImage } = storeToRefs(authStore)
 
 const onLogoutClick = () => {
   // Store의 로그아웃 액션 실행 (데이터 비우기)
-  authStore.logout() 
+  authStore.logout();
   
   console.log('✅ 로그아웃 완료')
   
   // 메인으로 이동
-  router.push('/') 
+  router.push('/logout');
   // 또는 window.location.href = '/' (새로고침이 필요하다면 이것 사용)
 }
 

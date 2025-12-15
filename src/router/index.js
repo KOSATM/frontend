@@ -11,6 +11,7 @@ import supporter from './supporter'
 import mypage from './mypage'
 import plannerApi from '@/api/plannerApi'
 import { useAuthStore } from '@/store/authStore'
+import LogoutCallback from '@/views/auth/LogoutCallback.vue'
 
 // import { useTravelStore } from '@/store/travelStore' // 필요 시 주석 해제
 
@@ -30,6 +31,7 @@ const routes = [
 
   // ✅ 2. OAuth 콜백 등 전역적으로 필요한 특수 라우트
   { path: '/oauth/callback', component: OAuthCallback },
+  { path: '/logout', name: 'Logout', component: LogoutCallback },
 
   // ✅ 3. 하위 모듈 확장 (여기서 모든 세부 경로를 담당)
   // 중복 선언했던 /travelgram, /supporter, /planner/hotel 등은 다 지움
@@ -50,13 +52,15 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
   if (to.path === '/') {
-    const res = await plannerApi.getActivePlan(authStore.userId)
-    const plan = res?.data?.data?.plan
-    
-    if (plan && plan.id) {
-      // 활성 일정 존재 → 홈 접근 차단
-      next('/planner/edit')
-      return
+    if (authStore.userId != null) {
+      const res = await plannerApi.getActivePlan(authStore.userId)
+      const plan = res?.data?.data?.plan
+
+      if (plan && plan.id) {
+        // 활성 일정 존재 → 홈 접근 차단
+        next('/planner/edit')
+        return
+      }
     }
   }
 
