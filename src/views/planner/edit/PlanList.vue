@@ -624,15 +624,17 @@ const renderPlan = async () => {
 /* ---------- onMounted ---------- */
 onMounted(async () => {
   authStore.initializeAuth();
-
+  const userId = authStore.userId;
   if (chatStore.livePlanFromChat) {
     console.log("🟢 [PlanList] onMounted 시점에 이미 스토어에 AI 플랜 있음 → applyAiPlan");
     applyAiPlan(chatStore.livePlanFromChat.data);
     return;
   }
 
+  if(userId != null){
   console.log("🔵 [PlanList] onMounted: 스토어에 AI 플랜 없음 → 서버에서 플랜 불러옴");
   await renderPlan();
+  }
 });
 
 /* ---------- navigation ---------- */
