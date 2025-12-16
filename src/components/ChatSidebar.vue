@@ -1,24 +1,29 @@
 <template>
   <div class="chat-sidebar-root">
 
-    <div class="chat-header p-3 border-bottom">
-      <div class="d-flex align-items-center gap-2">
-        <div class="badge text-white rounded-circle d-flex justify-content-center align-items-center flex-shrink-0"
-          style="width: 28px; height: 28px; background-color: #1B3B6F;">
-          <i class="bi bi-airplane-fill fs-6"></i>
+    <div class="chat-header p-4">
+      <div class="d-flex align-items-center gap-3">
+        <div class="chat-avatar">
+          <i class="bi bi-chat-dots-fill"></i>
         </div>
-        <h6 class="mb-0 fw-bold" style="font-size: 0.95rem;">
-          AI 여행 어시스턴트 서울 여행 플래너
-        </h6>
+        <div style="line-height: 1.1;">
+          <h6 class="mb-0 fw-bold chat-header-title">
+            AI 여행 어시스턴트
+          </h6>
+          <small class="text-muted">여행 계획을 도와드립니다</small>
+        </div>
       </div>
     </div>
 
     <div class="chat-messages flex-grow-1 p-3" ref="messagesContainer">
       <div class="message-list">
         <div class="message ai-message mb-3">
+          <div class="message-avatar ai-avatar">
+            <i class="bi bi-robot"></i>
+          </div>
           <div class="message-bubble">
-            <p class="mb-1">안녕하세요. 서울 여행 플래너입니다.</p>
-            <p class="mb-0">여정과 음식, 활동에 관해 물어봐주세요!</p>
+            <p class="mb-1">👋 안녕하세요! 서울 여행 플래너입니다.</p>
+            <p class="mb-0">🗺️ 여정과 🍽️ 음식, 🎉 활동에 관해 물어봐주세요!</p>
           </div>
         </div>
 
@@ -26,6 +31,9 @@
           'user-message': message.type === 'user',
           'ai-message': message.type === 'ai',
         }">
+          <div v-if="message.type === 'ai'" class="message-avatar ai-avatar">
+            <i class="bi bi-robot"></i>
+          </div>
           <div class="message-bubble">
             <div class="markdown-body" v-html="message.content"></div>
 
@@ -416,7 +424,46 @@ onMounted(() => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: linear-gradient(to bottom, #f8f9fc 0%, #ffffff 100%);
+  border-left: 1px solid #e8eaf0;
+}
+
+/* 헤더 스타일 */
+.chat-header {
+  background: linear-gradient(135deg, #1a2a56 0%, #2d4a8f 100%);
+  border-bottom: none !important;
+  box-shadow: 0 2px 8px rgba(26, 42, 86, 0.1);
+  height: 100px;
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 2rem !important;
+}
+
+.chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.chat-header-title {
+  color: white !important;
+  font-size: 1rem !important;
+  letter-spacing: -0.01em;
+  font-weight: 700 !important;
+}
+
+.chat-header small {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 0.8rem;
 }
 
 /* 메시지 영역 - 스크롤 적용 */
@@ -424,26 +471,27 @@ onMounted(() => {
   flex: 1;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: #ddd #f8f9fa;
+  scrollbar-color: #c7d2fe #f8f9fc;
+  padding: 1.5rem 1rem !important;
 }
 
 /* 웹킷 브라우저 스크롤바 */
 .chat-sidebar-root .chat-messages::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .chat-sidebar-root .chat-messages::-webkit-scrollbar-track {
-  background: #f8f9fa;
-  border-radius: 4px;
+  background: transparent;
+  border-radius: 10px;
 }
 
 .chat-sidebar-root .chat-messages::-webkit-scrollbar-thumb {
-  background: #ddd;
-  border-radius: 4px;
+  background: linear-gradient(to bottom, #4a6bb5 0%, #c7d2fe 100%);
+  border-radius: 10px;
 }
 
 .chat-sidebar-root .chat-messages::-webkit-scrollbar-thumb:hover {
-  background: #bbb;
+  background: linear-gradient(to bottom, #2d4a8f 0%, #4a6bb5 100%);
 }
 
 /* ========================================
@@ -470,43 +518,120 @@ onMounted(() => {
 
 /* 메시지 말풍선 공통 */
 .message-bubble {
-  padding: 12px 18px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  font-size: 1.25rem; /* 말풍선 텍스트 크기 확보 */
+  padding: 12px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  font-size: 0.95rem; /* 글자 크기 축소 */
   line-height: 1.5;
   word-break: break-word;
+  max-width: 85%;
+  transition: all 0.2s ease;
+}
+
+.message-bubble p {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.message-bubble:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+/* 메시지 아바타 */
+.message-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+  align-self: flex-start;
+  overflow: hidden;
+}
+
+.ai-avatar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin-right: 8px;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.user-avatar {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  margin-left: 8px;
+  box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 /* AI 메시지 */
 .ai-message {
   align-items: flex-start;
-  margin-right: 1rem;
+  margin-right: 2rem;
+  display: flex;
+  animation: slideInLeft 0.3s ease-out;
 }
 .ai-message .message-bubble {
-  background: #f8f9fa;
-  color: #333;
-  border: 1px solid #f1f3f5;
-  border-radius: 20px 20px 20px 4px;
+  background: white;
+  color: #2c3e50;
+  border: 1px solid #e8eaf0;
+  border-radius: 18px 18px 18px 4px;
+  box-shadow: 0 2px 10px rgba(26, 42, 86, 0.08);
 }
 
 /* 유저 메시지 */
 .user-message {
   align-items: flex-end;
-  margin-left: 1rem;
+  margin-left: 2rem;
+  display: flex;
+  justify-content: flex-end;
+  animation: slideInRight 0.3s ease-out;
 }
 .user-message .message-bubble {
-  background: #1B3B6F;
+  background: linear-gradient(135deg, #1a2a56 0%, #2d4a8f 100%);
   color: white;
-  border-radius: 20px 20px 4px 20px;
+  border-radius: 18px 18px 4px 18px;
+  border: none;
+  box-shadow: 0 3px 12px rgba(26, 42, 86, 0.25);
+}
+
+/* 메시지 애니메이션 */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* [Markdown 스타일 재정의] */
 :deep(.markdown-body) {
-  /* 글로벌 p 태그 스타일을 따라가지만, 혹시 모를 초기화를 위해 크기만 명시 */
-  font-size: 1.25rem !important;
+  font-size: 0.95rem !important;
   background: transparent !important;
   color: inherit !important;
-  line-height: 1.6 !important;
+  line-height: 1.5 !important;
 }
 
 /* 마크다운 내부 제목 태그 (h1~h6) */
@@ -525,16 +650,19 @@ onMounted(() => {
 }
 
 :deep(.markdown-body p) {
-  margin-bottom: 0.8rem !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 0.95rem !important;
 }
 
 :deep(.markdown-body ul),
 :deep(.markdown-body ol) {
   padding-left: 1.5rem !important;
+  font-size: 0.95rem !important;
 }
 
 :deep(.markdown-body li) {
   margin-bottom: 0.4rem !important;
+  font-size: 0.95rem !important;
 }
 
 /* 이미지 스타일 */
@@ -549,17 +677,26 @@ onMounted(() => {
 
 /* --- 입력창 영역 --- */
 .chat-input-wrapper {
-  background: #fff;
+  background: white;
+  border-top: 1px solid #e8eaf0;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .chat-input-container {
   display: flex;
   align-items: flex-end;
-  gap: 8px;
-  padding: 12px 16px;
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 24px;
+  gap: 10px;
+  padding: 8px 14px;
+  background: #f8f9fc;
+  border: 2px solid #e8eaf0;
+  border-radius: 28px;
+  transition: all 0.3s ease;
+}
+
+.chat-input-container:focus-within {
+  border-color: #4a6bb5;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(74, 107, 181, 0.1);
 }
 
 .chat-text-input {
@@ -573,55 +710,62 @@ onMounted(() => {
      이 경우에만 font-family: inherit;을 주면 글로벌 폰트를 따라갑니다.
   */
   font-family: inherit;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   line-height: 1.5;
+  color: #2c3e50;
 
-  padding: 4px 0;
+  padding: 6px 0;
   max-height: 120px;
   resize: none;
 }
 
 .chat-text-input::placeholder {
-  color: #adb5bd;
-  font-size: 1.2rem;
+  color: #9ca3af;
+  font-size: 1.05rem;
 }
 
 /* 버튼 아이콘 */
 .icon-btn {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
   background: transparent;
-  color: #adb5bd;
+  color: #9ca3af;
   border-radius: 50%;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   padding: 0;
   cursor: pointer;
 }
 
 .icon-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
 }
 
 .icon-btn:hover {
-  background: #e9ecef;
-  color: #495057;
+  background: #e8eaf0;
+  color: #2d4a8f;
+  transform: scale(1.05);
 }
 
 .send-btn {
-  background: #1B3B6F;
+  background: linear-gradient(135deg, #1a2a56 0%, #2d4a8f 100%);
   color: white;
+  box-shadow: 0 2px 8px rgba(26, 42, 86, 0.3);
 }
 .send-btn:hover {
-  background: #162d52;
+  background: linear-gradient(135deg, #2d4a8f 0%, #4a6bb5 100%);
+  box-shadow: 0 4px 12px rgba(26, 42, 86, 0.4);
+  transform: scale(1.08);
 }
 .send-btn:disabled {
-  background: #e9ecef;
-  color: #ced4da;
+  background: #e8eaf0;
+  color: #cbd5e0;
+  box-shadow: none;
+  transform: none;
 }
 
 /* 스크롤바 */
@@ -635,77 +779,114 @@ onMounted(() => {
 
 /* 타이핑 인디케이터 */
 .typing-indicator span {
-  width: 6px;
-  height: 6px;
-  background: #adb5bd;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(135deg, #4a6bb5 0%, #c7d2fe 100%);
   display: inline-block;
   border-radius: 50%;
   animation: typing 1.4s infinite ease-in-out both;
-  margin: 0 2px;
+  margin: 0 3px;
+  box-shadow: 0 2px 4px rgba(74, 107, 181, 0.2);
 }
 .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
 .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
 @keyframes typing {
-  0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1); }
+  0%, 80%, 100% { 
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% { 
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 로딩 버블 */
+.loading-bubble {
+  background: white !important;
+  border: 1px solid #e8eaf0 !important;
+}
+
+.spinner-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spinner-border-sm {
+  width: 1.2rem;
+  height: 1.2rem;
+  border-width: 2px;
+  border-color: #2d4a8f;
+  border-right-color: transparent;
 }
 
 /* 🖼️ 이미지 갤러리 스타일 - 1열 배치 */
 .place-images-gallery {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 14px;
+  margin-top: 14px;
 }
 
 .place-image-card {
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
   background: white;
-  border: 1px solid #e9ecef;
+  border: 1px solid #e8eaf0;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .place-image-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
-  border-color: #1B3B6F;
+  box-shadow: 0 6px 20px rgba(26, 42, 86, 0.15);
+  transform: translateY(-3px);
+  border-color: #4a6bb5;
 }
 
 .place-img {
   width: 100%;
-  height: 100px;
+  height: 120px;
   object-fit: cover;
   display: block;
+  transition: transform 0.3s ease;
+}
+
+.place-image-card:hover .place-img {
+  transform: scale(1.05);
 }
 
 .place-card-info {
-  padding: 8px;
+  padding: 12px;
+  background: linear-gradient(to bottom, white 0%, #f8f9fc 100%);
 }
 
 .place-card-title {
-  font-size: 12px;
+  font-size: 0.95rem;
   font-weight: 600;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #2d4a8f;
+  letter-spacing: -0.01em;
+}
+
+.place-card-name {
+  font-size: 0.85rem;
   margin-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #1B3B6F;
-}
-
-.place-card-name {
-  font-size: 11px;
-  margin-bottom: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: #6b7280;
 }
 
 .place-card-address {
-  font-size: 10px;
+  font-size: 0.8rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: #9ca3af;
 }
 </style>

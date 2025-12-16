@@ -18,8 +18,9 @@
         </transition>
 
         <a v-if="!isLoggedIn" href="http://localhost:8080/oauth2/authorization/google"
-          class="btn profile-btn border-0 p-0" title="Login with Google OAuth">
-          <img src="@/assets/img/profile-logo.png" alt="Profile" class="profile-img" />
+          class="login-button" title="Login with Google OAuth">
+          <i class="bi bi-box-arrow-in-right"></i>
+          <span>로그인</span>
         </a>
 
         <img v-else :src="userProfileImage || defaultProfileImg" alt="Profile" class="profile-img-logged-in" />
@@ -72,87 +73,169 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
 
 <style scoped>
 .navbar-fms {
-  background-color: #ffffff;
-  /* ✅ 기본 흰색 */
-  transition: background 0.4s ease, box-shadow 0.4s ease;
-  backdrop-filter: blur(8px);
-  padding: 0 1.25rem;
-  height: 64px;
-  /* ⬆ 기존 42px → 64px로 변경 */
+  background-color: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0 2rem;
+  height: 72px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* ✅ 좌우 끝 정렬 */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  font-weight: 600;
-  /* ✅ 글자 두께 강화 */
+  box-shadow: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans KR", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  border-bottom: 1px solid rgba(26, 42, 86, 0.08);
+  z-index: 1000;
 
   .navbar-brand {
     display: flex;
     align-items: center;
-    /* ✅ 로고 세로 중앙정렬 */
     justify-content: center;
     height: 100%;
+    transition: all 0.3s ease;
 
     img {
-      height: 50px;
+      height: 52px;
       object-fit: contain;
       filter: none;
-      /* 기본: 컬러 유지 */
-      transition: filter 0.4s ease;
+      transition: all 0.4s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.05);
     }
   }
 
   .btn i {
-    color: #ff8c00;
-    font-size: 2rem;
-    transition: color 0.4s ease;
+    color: #2d4a8f;
+    font-size: 1.8rem;
+    transition: all 0.3s ease;
   }
 
-  /* 🟠 스크롤 시 상태 (여기를 수정하세요) */
+  /* 🎨 스크롤 시 남색 그라데이션 배경 */
   &.scrolled {
-    background-color: #ff8c00;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #1a2a56 0%, #2d4a8f 100%);
+    box-shadow: 0 4px 25px rgba(26, 42, 86, 0.3);
+    border-bottom: none;
+    height: 68px;
 
-    /* 기존: 로고 색상 반전 */
     .navbar-brand img {
       filter: brightness(0) invert(1);
+      height: 48px;
     }
 
-    /* 기존: 햄버거 버튼 색상 변경 */
     .btn i {
       color: #ffffff;
     }
 
-    /* ✅ 추가됨: 유저 이름(user-info)을 흰색으로 변경 */
     .user-info {
-      color: #ffffff;
+      color: rgba(255, 255, 255, 0.95);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
-    /* (선택사항) 로그아웃 버튼도 배경에 맞게 스타일 변경이 필요하다면 추가 */
     .logout-btn {
-      background-color: #ffffff;
-      color: #ff8c00;
+      background-color: rgba(255, 255, 255, 0.95);
+      color: #1a2a56;
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    .logout-btn:hover {
+      background-color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+    }
+
+    .login-button {
+      background: rgba(255, 255, 255, 0.95);
+      color: #1a2a56;
+      box-shadow: 0 2px 12px rgba(255, 255, 255, 0.3);
+      border: 2px solid transparent;
+    }
+
+    .login-button:hover {
+      background: white;
+      color: #2d4a8f;
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .profile-img-logged-in {
+      border-color: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
   }
 }
 
 .logo-img {
-  height: 40px;
+  height: 52px;
   object-fit: contain;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logo-img:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
 }
 
 .profile-img {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  border: 2px solid rgba(26, 42, 86, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .profile-img:hover {
-  transform: scale(1.1);
+  transform: scale(1.08) translateY(-1px);
+  border-color: #2d4a8f;
+  box-shadow: 0 4px 12px rgba(45, 74, 143, 0.35);
+}
+
+/* 로그인 버튼 스타일 - 남색 테마 */
+.login-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #1a2a56 0%, #2d4a8f 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.3px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 12px rgba(26, 42, 86, 0.35);
+  border: none;
+  cursor: pointer;
+}
+
+.login-button i {
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+}
+
+.login-button:hover {
+  background: linear-gradient(135deg, #2d4a8f 0%, #4a6bb5 100%);
+  box-shadow: 0 4px 20px rgba(26, 42, 86, 0.5);
+  transform: translateY(-2px);
+  color: white;
+}
+
+.login-button:hover i {
+  transform: translateX(2px);
+}
+
+.login-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(26, 42, 86, 0.4);
 }
 
 .profile-btn {
@@ -175,78 +258,136 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll))
   justify-content: center;
   height: 44px;
   width: 44px;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn i {
+  font-size: 24px;
+  color: #2c3e50;
+  transition: color 0.3s ease;
 }
 
 .btn:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: rgba(26, 42, 86, 0.05) !important;
+  transform: translateY(-1px);
+}
+
+.btn:hover i {
+  color: #2d4a8f;
+}
+
+.btn:active {
+  transform: translateY(0);
 }
 
 .nav-item {
-  background-color: #ff8c00;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: linear-gradient(135deg, #1a2a56 0%, #2d4a8f 100%);
   color: #fff !important;
   text-decoration: none;
-  font-weight: 500;
-  transition: all 0.25s ease;
-  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.3px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 12px;
+  padding: 12px 20px;
 
   &:hover {
-    background-color: #ff9e33;
+    background: linear-gradient(135deg, #2d4a8f 0%, #4a6bb5 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 42, 86, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 
 .nav-item.active {
-  background-color: #f8f9fa;
-  color: #ff8c00 !important;
-  box-shadow: inset 0 0 0 1px #ff8c00;
+  background: #ffffff;
+  color: #1a2a56 !important;
+  box-shadow: 0 0 0 2px #2d4a8f;
+  font-weight: 700;
+}
+
+.nav-item.active:hover {
+  background: #f8f9fa;
+  transform: translateY(0);
 }
 
 .offcanvas-header h5 {
-  color: #1b3b6f;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: #2c3e50;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.3px;
 }
 
 /* 로그인 정보 */
 .login-info {
-  padding: 0 10px;
+  padding: 0 12px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
 }
 
 .user-info {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-weight: 600;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   white-space: nowrap;
-  color: #ff8c00;
+  color: #2c3e50;
+  letter-spacing: 0.2px;
 }
 
-/* 로그아웃 버튼 */
+/* 로그아웃 버튼 - 남색 테마 */
 .logout-btn {
-  font-size: 1.15rem;
-  padding: 0 10px;
-  /* padding: 6px 10px; */
-  border-radius: 4px;
-  border: 1px solid white;
-  color: white;
-  background-color: #ff8c00;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 50px;
+  border: 2px solid #2d4a8f;
+  color: #2d4a8f;
+  background-color: transparent;
   cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-block;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
   height: auto;
   width: auto;
-  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 .logout-btn:hover {
-  background-color: #ff9e33;
-  border-color: white;
+  background: linear-gradient(135deg, #1a2a56 0%, #2d4a8f 100%);
+  color: white;
+  border-color: transparent;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(26, 42, 86, 0.35);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(26, 42, 86, 0.25);
 }
 
 .profile-img-logged-in {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid white;
+  border: 2px solid rgba(26, 42, 86, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.profile-img-logged-in:hover {
+  border-color: #2d4a8f;
+  box-shadow: 0 4px 12px rgba(45, 74, 143, 0.35);
+  transform: scale(1.08) translateY(-1px);
 }
 
 /* 로그인 영역 등장 애니메이션 */

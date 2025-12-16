@@ -134,7 +134,7 @@ const progressPercent = computed(() => {
 }
 
 .journey-title {
-  font-family: 'memoment', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans KR", sans-serif;
   font-size: 1.35em;         /* 🔥 제목 체급 상승 */
   font-weight: 700;
   line-height: 1.2;
@@ -142,7 +142,7 @@ const progressPercent = computed(() => {
 }
 
 .journey-subtitle {
-  font-family: 'parkdahyun', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans KR", sans-serif;
   font-size: 1.05em;         /* 🔥 부제 가독성 확보 */
   color: #6b7280;
 }

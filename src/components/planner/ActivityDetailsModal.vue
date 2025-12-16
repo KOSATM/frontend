@@ -25,7 +25,7 @@
           <div>
             <div class="info-header">
               <span class="info-header-icon">📌</span>
-              <span class="info-header-label">Location</span>
+              <span class="info-header-label">장소</span>
             </div>
 
             <div class="info-indent">
@@ -46,7 +46,7 @@
           <div>
             <div class="info-header mt-2">
               <span class="info-header-icon">📌</span>
-              <span class="info-header-label">Description</span>
+              <span class="info-header-label">소개</span>
             </div>
 
             <div class="info-indent">
@@ -174,7 +174,7 @@ const mapSrc = (data) => {
 
 /* info-block */
 .info-block {
-  background: #f5f7ff;
+  background: #f5f5f5;
   margin: 0 20px;
   border-radius: 14px;
   padding: 14px 18px 10px;

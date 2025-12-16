@@ -1,8 +1,11 @@
 <template>
   <div id="app">
-    <div class="layout-container" :class="{ 'is-planner-page': route.path.includes('planner') }">
+    <div class="layout-container" :class="{ 
+      'is-planner-page': route.path.includes('planner'),
+      'is-landing-page': isLandingPage 
+    }">
       
-      <AppHeader @toggle-sidebar="isSidebarOpen = true" />
+      <AppHeader v-if="!isLandingPage" @toggle-sidebar="isSidebarOpen = true" />
 
       <SideBar :isOpen="isSidebarOpen" @close="isSidebarOpen = false" />
 
@@ -25,7 +28,7 @@
 
       </div>
 
-      <AppFooter />
+      <AppFooter v-if="!isLandingPage" />
 
     </div>
   </div>
@@ -53,8 +56,11 @@ watch(isSidebarOpen, (v) => {
   document.body.style.overflow = v ? "hidden" : "";
 });
 
+// 랜딩페이지 여부 확인
+const isLandingPage = computed(() => route.path === '/');
+
 // 사이드바 표시 조건
-const showLeftSidebar = computed(() => route.path.includes('planner'));
+const showLeftSidebar = computed(() => route.path.includes('planner') && !isLandingPage.value);
 const showRightSidebar = computed(() => route.path.includes('supporter'));
 
 // OAuth 로직 (그대로 유지)
@@ -120,22 +126,64 @@ const setupChatFooterDetection = () => {
 </style>
 
 <style>
-/* Planner 페이지: 스크롤 컨테이너 설정 */
+/* Landing 페이지: 헤더/푸터 없이 전체 화면 사용 */
+.is-landing-page {
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  max-width: 100% !important;
+  min-height: 100vh !important;
+  background: transparent !important;
+}
+
+.is-landing-page .app-body-row {
+  overflow: visible !important;
+}
+
+.is-landing-page .main-content {
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+.is-landing-page .page-container {
+  padding: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+}
+
+/* Planner 페이지: 스크롤 컨테이너 설정 및 여백 제거 */
 .is-planner-page {
   overflow: visible !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  padding-top: 0 !important;
 }
 
 .is-planner-page .app-body-row {
   overflow: visible !important;
   align-items: flex-start !important;
+  gap: 0 !important;
+  margin-top: 72px;
 }
 
 .is-planner-page .main-content {
   overflow: visible !important;
+  padding: 0 !important;
+}
+
+.is-planner-page .page-container {
+  padding: 0 !important;
 }
 
 .is-planner-page .sidebar-area {
   overflow-y: visible !important;
+}
+
+.is-planner-page .sidebar-area.left {
+  padding: 0 !important;
+  border-right: none !important;
 }
 
 /* 채팅: sticky로 스크롤 따라오기 */

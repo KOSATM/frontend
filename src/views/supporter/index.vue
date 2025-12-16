@@ -477,7 +477,7 @@ const goToImageAIHistory = () => {
 
 <style scoped>
 .supporter-page {
-  background-color: #fffaf3;
+  /* background-color: #fffaf3; */
   min-height: 100vh;
   padding: 2rem 1.25rem;
 }
