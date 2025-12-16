@@ -3,7 +3,6 @@
 
   <div class="complete-card card p-5 mt-4 text-center">
     <div class="check-circle mb-4">✓</div>
-    <!-- action completed를 어케 번역함니까 -->
     <h3 class="mb-2">이미지 검색 완료!</h3>
     <p class="text-muted mb-4">당신의 여정에 장소가 추가됩니다!</p>
 
