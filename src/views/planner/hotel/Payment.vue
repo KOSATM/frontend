@@ -1,6 +1,24 @@
 <template>
   <div class="planner-page">
-  <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
+    <!-- Header -->
+    <div class="hotel-header border-bottom bg-white">
+      <div class="container">
+        <div class="d-flex gap-3 align-items-center" style="padding: 1.5rem 0;">
+          <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+            style="width: 46px; height: 46px">
+            💳
+          </div>
+
+          <div>
+            <h5 class="mb-1 title">결제 및 예약</h5>
+            <p class="text-muted small mb-0 sub">
+              예약 정보를 확인하고 결제를 완료하세요
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
   <div class="hotel-payment container py-4">
 
     <!-- 선택한 호텔 요약 -->
@@ -12,20 +30,20 @@
               style="object-fit: cover; height: 200px; width: 100%;" />
           </div>
           <div class="col-md-8">
-            <h5 class="card-title">{{ selectedHotel?.name }}</h5>
-            <p class="card-text text-muted">
+            <h5 class="card-title hotel-name">{{ selectedHotel?.name }}</h5>
+            <p class="card-text text-muted hotel-location">
               <i class="bi bi-geo-alt"></i>
               {{ selectedHotel?.location }}
             </p>
-            <p class="card-text text-muted small mb-2">
+            <p class="card-text text-muted hotel-room-type">
               <i class="bi bi-door-closed"></i>
               {{ selectedHotel?.roomType }}
             </p>
-            <div class="mb-3 small text-muted">
+            <div class="mb-3 hotel-dates">
               <div><i class="bi bi-calendar-check"></i> {{ selectedHotel?.checkInDate }} ~ {{ selectedHotel?.checkOutDate }}</div>
               <div><i class="bi bi-moon"></i> {{ extractNumber(selectedHotel?.nights) }}박 | <i class="bi bi-people"></i> {{ selectedHotel?.guests }}</div>
             </div>
-            <div class="mb-3">
+            <div class="mb-3 amenities">
               <span class="badge bg-light text-secondary me-2" v-if="selectedHotel?.freeWifi">
                 <i class="bi bi-wifi me-1"></i> 무료 와이파이
               </span>
@@ -41,8 +59,8 @@
             </div>
             <div class="rating">
               <i class="bi bi-star-fill text-warning"></i>
-              <span class="ms-1">{{ selectedHotel?.rating }}</span>
-              <span class="text-muted">({{ selectedHotel?.reviews }}개의 리뷰)</span>
+              <span class="ms-1 rating-score">{{ selectedHotel?.rating }}</span>
+              <span class="text-muted rating-reviews">({{ selectedHotel?.reviews }}개의 리뷰)</span>
             </div>
           </div>
         </div>
@@ -52,18 +70,18 @@
     <!-- 가격 정보 -->
     <BaseSection icon="bi-receipt" title="요금 상세">
       <div class="card-body">
-        <div class="d-flex justify-content-between mb-2">
-          <span>{{ extractNumber(selectedHotel?.nights) }}박 × ₩{{ formatPrice(selectedHotel?.price) }}/박</span>
-          <span class="fw-bold">₩{{ formatPrice(roomPrice) }}</span>
+        <div class="d-flex justify-content-between mb-2 price-row">
+          <span class="price-label">{{ extractNumber(selectedHotel?.nights) }}박 × ₩{{ formatPrice(selectedHotel?.price) }}/박</span>
+          <span class="fw-bold price-value">₩{{ formatPrice(roomPrice) }}</span>
         </div>
-        <div class="d-flex justify-content-between mb-2">
-          <span>세금 및 수수료 (15%)</span>
-          <span class="fw-bold">₩{{ formatPrice(taxFee) }}</span>
+        <div class="d-flex justify-content-between mb-2 price-row">
+          <span class="price-label">세금 및 수수료 (15%)</span>
+          <span class="fw-bold price-value">₩{{ formatPrice(taxFee) }}</span>
         </div>
         <hr />
-        <div class="d-flex justify-content-between">
-          <span class="fs-5 fw-bold">총 결제 금액</span>
-          <span class="fs-5 fw-bold text-primary">₩{{ formatPrice(finalTotal) }}</span>
+        <div class="d-flex justify-content-between total-row">
+          <span class="fw-bold total-label">총 결제 금액</span>
+          <span class="fw-bold text-primary total-amount">₩{{ formatPrice(finalTotal) }}</span>
         </div>
       </div>
     </BaseSection>
@@ -74,29 +92,29 @@
         <div class="col-6">
           <div class="payment-item" :class="{ active: paymentMethod === 'creditCard' }"
             @click="paymentMethod = 'creditCard'">
-            <i class="bi bi-credit-card me-2"></i>
-            <span>신용카드</span>
+            <i class="bi bi-credit-card payment-icon"></i>
+            <span class="payment-text">신용카드</span>
           </div>
         </div>
         <div class="col-6">
           <div class="payment-item" :class="{ active: paymentMethod === 'debitCard' }"
             @click="paymentMethod = 'debitCard'">
-            <i class="bi bi-credit-card me-2"></i>
-            <span>체크카드</span>
+            <i class="bi bi-credit-card payment-icon"></i>
+            <span class="payment-text">체크카드</span>
           </div>
         </div>
         <div class="col-6">
           <div class="payment-item" :class="{ active: paymentMethod === 'bankTransfer' }"
             @click="paymentMethod = 'bankTransfer'">
-            <i class="bi bi-bank me-2"></i>
-            <span>계좌이체</span>
+            <i class="bi bi-bank payment-icon"></i>
+            <span class="payment-text">계좌이체</span>
           </div>
         </div>
         <div class="col-6">
           <div class="payment-item" :class="{ active: paymentMethod === 'paypal' }"
             @click="paymentMethod = 'paypal'">
-            <i class="bi bi-cash-coin me-2"></i>
-            <span>페이팔</span>
+            <i class="bi bi-cash-coin payment-icon"></i>
+            <span class="payment-text">페이팔</span>
           </div>
         </div>
       </div>
@@ -109,25 +127,25 @@
       title="카드 정보 입력"
     >
       <div class="mb-3">
-        <label for="cardName" class="form-label">카드 소유자 이름</label>
-        <input type="text" class="form-control rounded-pill" id="cardName" v-model="cardDetails.name" placeholder="이름 입력" />
+        <label for="cardName" class="form-label card-label">카드 소유자 이름</label>
+        <input type="text" class="form-control rounded-pill card-input" id="cardName" v-model="cardDetails.name" placeholder="이름 입력" />
       </div>
 
       <div class="mb-3">
-        <label for="cardNumber" class="form-label">카드 번호</label>
-        <input type="text" class="form-control rounded-pill" id="cardNumber" v-model="cardDetails.number"
+        <label for="cardNumber" class="form-label card-label">카드 번호</label>
+        <input type="text" class="form-control rounded-pill card-input" id="cardNumber" v-model="cardDetails.number"
           placeholder="1234 5678 9012 3456" maxlength="19" />
       </div>
 
       <div class="row">
         <div class="col-md-6 mb-3">
-          <label for="expiry" class="form-label">유효기간</label>
-          <input type="text" class="form-control rounded-pill" id="expiry" v-model="cardDetails.expiry"
+          <label for="expiry" class="form-label card-label">유효기간</label>
+          <input type="text" class="form-control rounded-pill card-input" id="expiry" v-model="cardDetails.expiry"
             placeholder="MM/YY" maxlength="5" />
         </div>
         <div class="col-md-6">
-          <label for="cvv" class="form-label">CVV 번호</label>
-          <input type="text" class="form-control rounded-pill" id="cvv" v-model="cardDetails.cvv"
+          <label for="cvv" class="form-label card-label">CVV 번호</label>
+          <input type="text" class="form-control rounded-pill card-input" id="cvv" v-model="cardDetails.cvv"
             placeholder="123" maxlength="3" />
         </div>
       </div>
@@ -138,7 +156,7 @@
       <div class="card-body">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="agreement" v-model="agreeToTerms" />
-          <label class="form-check-label" for="agreement">
+          <label class="form-check-label agreement-label" for="agreement">
             예약 조건 및 취소 정책에 동의합니다.
           </label>
         </div>
@@ -170,7 +188,6 @@ import { useTravelStore } from '@/store/travelStore';
 import { useAuthStore } from '@/store/authStore';
 import BaseSection from '@/components/common/BaseSection.vue';
 import hotelApi from '@/api/hotelApi';
-import PageHeader from "@/components/common/header/PageHeader.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -333,17 +350,16 @@ const processPayment = async () => {
 
 <style scoped>
 .planner-page {
-  background-color: #fffaf3;
+  background-color: #ffffff;
   min-height: 100vh;
   padding-bottom: 6rem;
-  padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */
 }
 .payment-item {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0.75rem 1rem;
-  border: 1px solid #d0d5dd;
+  border: 1px solid #e2e8f0;
   border-radius: 0.75rem;
   background: #fff;
   cursor: pointer;
@@ -352,13 +368,13 @@ const processPayment = async () => {
 }
 
 .payment-item:hover {
-  border-color: #ff8c00;
-  background-color: #fef8f2;
+  border-color: #2d4a8f;
+  background-color: #f0f4ff;
 }
 
 .payment-item.active {
-  border-color: #ff8c00;
-  background-color: #ff8c00;
+  border-color: #2d4a8f;
+  background-color: #2d4a8f;
   color: white;
 }
 
@@ -367,7 +383,7 @@ const processPayment = async () => {
 }
 
 .card {
-  border: 1px solid #e9ecef;
+  border: 1px solid #e2e8f0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
@@ -378,40 +394,179 @@ const processPayment = async () => {
 }
 
 .form-control {
-  border: 1px solid #d0d5dd;
+  border: 1px solid #e2e8f0;
 }
 
 .form-control:focus {
-  border-color: #ff8c00;
-  box-shadow: 0 0 0 0.2rem rgba(255, 140, 0, 0.25);
+  border-color: #2d4a8f;
+  box-shadow: 0 0 0 0.2rem rgba(45, 74, 143, 0.25);
 }
 
 .btn-primary {
-  background-color: #1b3b6f;
-  border-color: #1b3b6f;
+  background-color: #2d4a8f;
+  border-color: #2d4a8f;
   color: white !important;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #ff8c00;
-  border-color: #ff8c00;
+  background-color: #1a2a56;
+  border-color: #1a2a56;
   color: white !important;
 }
 
 .btn-primary:disabled {
-  background-color: #ccc;
-  border-color: #ccc;
+  background-color: #e2e8f0;
+  border-color: #e2e8f0;
+  color: #94a3b8;
   cursor: not-allowed;
 }
 
 .btn-outline-secondary {
-  color: #1b3b6f !important;
-  border-color: #1b3b6f;
+  color: #64748b !important;
+  border-color: #e2e8f0;
 }
 
 .btn-outline-secondary:hover {
-  background-color: #ff8c00;
-  border-color: #ff8c00;
-  color: white !important;
+  background-color: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #475569 !important;
+}
+
+.hotel-header {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.hotel-header .title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.hotel-header .sub {
+  color: #64748b;
+}
+
+.hotel-header .bg-secondary-subtle {
+  background-color: #f1f5f9 !important;
+}
+
+/* 호텔 정보 타이포그래피 */
+.hotel-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+
+.hotel-location {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.hotel-room-type {
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+.hotel-dates {
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.amenities .badge {
+  font-size: 0.85rem;
+  padding: 0.35rem 0.65rem;
+  font-weight: 500;
+}
+
+.rating {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.rating-score {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.rating-reviews {
+  font-size: 0.9rem;
+  margin-left: 0.25rem;
+}
+
+/* 가격 정보 타이포그래피 */
+.price-row {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.price-label {
+  color: #475569;
+}
+
+.price-value {
+  color: #1e293b;
+  font-size: 1rem;
+}
+
+.total-row {
+  margin-top: 0.5rem;
+}
+
+.total-label {
+  font-size: 1.1rem;
+  color: #1e293b;
+}
+
+.total-amount {
+  font-size: 1.35rem;
+  color: #2d4a8f;
+}
+
+/* 결제 수단 타이포그래피 */
+.payment-icon {
+  font-size: 1.25rem;
+  margin-right: 0.5rem;
+}
+
+.payment-text {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* 폼 라벨 및 입력 */
+.card-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #475569;
+  margin-bottom: 0.5rem;
+}
+
+.card-input {
+  font-size: 0.95rem;
+  padding: 0.625rem 1rem;
+}
+
+.card-input::placeholder {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+/* 약관 동의 */
+.agreement-label {
+  font-size: 0.95rem;
+  color: #475569;
+  line-height: 1.5;
+}
+
+/* 버튼 텍스트 */
+.btn-lg {
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.75rem 2rem;
 }
 </style>
