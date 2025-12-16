@@ -50,11 +50,36 @@ defineProps({
 <!-- 컴포넌트 스타일 정의 -->
 <style scoped>
 .upload-section {
-  background-color: #f9fafc;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  border: 1px solid #eee;
-  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  border-radius: 18px;
+  padding: 1.75rem;
+  border: 1px solid rgba(26, 42, 86, 0.08);
+  margin-bottom: 0;
+  box-shadow: 
+    0 4px 16px rgba(26, 42, 86, 0.06),
+    0 1px 4px rgba(26, 42, 86, 0.04);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.upload-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #2d4a8f 0%, #4a6bb5 100%);
+  border-radius: 18px 18px 0 0;
+}
+
+.upload-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 24px rgba(26, 42, 86, 0.1),
+    0 2px 8px rgba(26, 42, 86, 0.06);
+  border-color: rgba(74, 107, 181, 0.2);
 }
 
 .upload-header {
@@ -66,9 +91,10 @@ defineProps({
 
 .upload-title {
   font-weight: 700;
-  font-size: 1.25rem;
-  color: #1b3b6f;
+  font-size: 1.15rem;
+  color: #2d4a8f;
   line-height: 1.2; /* 행간 조절 */
+  letter-spacing: -0.01em;
 }
 
 .upload-subtitle {

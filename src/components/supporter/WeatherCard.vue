@@ -113,53 +113,42 @@ onMounted(() => {
   fetchOpenMeteo()
 })
 
-// dynamic background based on local hour
-const hour = ref(new Date().getHours())
-
-const getGradientForHour = (h) => {
-  // 0-5 night, 6-11 morning, 12-17 day, 18-23 evening
-  if (h >= 6 && h < 12) return 'linear-gradient(180deg,#7ac7ff 0%, #2b9bf0 100%)' // morning
-  if (h >= 12 && h < 18) return 'linear-gradient(180deg,#3aa0e6 0%, #1570b8 100%)' // day
-  if (h >= 18 && h < 21) return 'linear-gradient(180deg,#2b6fb3 0%, #1e4f84 100%)' // evening
-  return 'linear-gradient(180deg,#10273b 0%, #16394f 100%)' // night
-}
-
-const bgStyle = computed(() => ({ background: getGradientForHour(hour.value) }))
-
-// update hour periodically in case user keeps the page open
-const timer = setInterval(() => {
-  const h = new Date().getHours()
-  if (h !== hour.value) hour.value = h
-}, 30 * 60 * 1000) // every 30 minutes
-
-onUnmounted(() => clearInterval(timer))
+// 하얀 배경으로 고정
+const bgStyle = computed(() => ({ 
+  background: '#ffffff'
+}))
 </script>
 
 <style scoped>
 .wc-root { 
-  /* 너비를 100%로 설정하여 사이드바 패딩 안쪽을 가득 채움 */
-  width: 100%; 
-  box-sizing: border-box; /* 패딩 포함 너비 계산 */
-  border-radius: 16px; /* 모서리 둥글기 통일 (Checklist와 비슷하게) */
-  overflow: hidden; 
-  color: #fff; 
-  box-shadow: 0 4px 15px rgba(14,30,60,0.08); /* 그림자 부드럽게 조정 */
-  
-  /* 마진은 layout.scss의 gap으로 제어하므로 여기선 제거하거나 최소화 */
-  margin-bottom: 0; 
-}
-.wc-root { 
   width: 100%; 
   box-sizing: border-box;
-  border-radius: 16px; 
+  border-radius: 18px; 
   overflow: hidden; 
-  color: #fff; 
-  box-shadow: 0 4px 15px rgba(14,30,60,0.08);
-  
-  /* ✅ PageHeader와 동일한 높이 설정 */
-  height: 150px; 
-  display: flex;          /* 높이 꽉 채우기 위해 */
-  align-items: center;    /* 수직 중앙 정렬 */
+  color: #2d4a8f; 
+  margin-bottom: 0;
+  height: 100px; 
+  display: flex;
+  align-items: center;
+  position: relative;
+  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.wc-root:hover {
+  transform: translateY(-2px);
+  border-color: #cbd5e1;
+}
+
+.wc-root::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #2d4a8f;
+  border-radius: 18px 18px 0 0;
 }
 
 .wc-top { 
@@ -177,11 +166,11 @@ onUnmounted(() => clearInterval(timer))
   justify-content: center; 
 }
 
-/* ✅ 아이콘 크기 조정 (높이 180px에 맞게) */
+/* 아이콘 - 남색으로 변경, 100px 높이에 맞게 축소 */
 .wc-icon i { 
-  font-size: 5rem;       /* 기존 6rem -> 5rem으로 약간 축소 */
-  color: rgba(255,255,255,0.95); 
-  line-height: 1;        /* 아이콘 높이 튐 방지 */
+  font-size: 3rem;
+  color: #2d4a8f; 
+  line-height: 1;
 }
 
 .wc-right { 
@@ -189,31 +178,33 @@ onUnmounted(() => clearInterval(timer))
 }
 
 .wc-temp { 
-  font-size: 2.8rem;     /* 3rem -> 2.8rem 조정 */
+  font-size: 1.75rem;
   font-weight: 700; 
-  line-height: 1; 
+  line-height: 1;
+  color: #1a2a56;
 }
 
 .wc-deg { 
-  font-size: 1.5rem; 
+  font-size: 1rem; 
   margin-left: 4px; 
   vertical-align: top;
-  margin-top: 8px;
+  margin-top: 4px;
   display: inline-block;
+  color: #2d4a8f;
 }
 
 .wc-desc { 
-  font-size: 1.5rem; 
-  font-weight: 700; 
-  margin-top: 8px; 
-  color: rgba(255,255,255,0.95); 
+  font-size: 0.9rem; 
+  font-weight: 600; 
+  margin-top: 4px; 
+  color: #4a6bb5;
 }
 
 .wc-loc { 
-  font-size: 1.25rem; 
+  font-size: 0.8rem; 
   opacity: 0.9; 
   margin-top: 4px; 
-  color: rgba(255,255,255,0.9); 
+  color: #6b7280;
 }
 
 /* 모바일 대응 */

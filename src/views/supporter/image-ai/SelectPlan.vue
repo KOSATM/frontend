@@ -1,13 +1,29 @@
 <template>
-  <div class="supporter-page">
-  <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" />
-  <StepHeader title="이미지 기반 여행 AI" subtitle="AI 추천을 사용해보세요." step="4/4" @back="onStepBack" />
+  
+    <!-- Header -->
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
+        <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
+          <i class="bi bi-arrow-left-short fs-1"></i>
+        </button>
+        
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
+          📷
+        </div>
 
+        <div>
+          <h5 class="mb-1 title">이미지 기반 여행 AI</h5>
+          <p class="text-muted small mb-0 sub">
+            당신의 사진으로 여행 장소를 찾아보아요!
+          </p>
+        </div>
+      </div>
+
+    </div>
   <!-- completion rate 가 뭐지 뭘 위해서 한걸까 -->
   <BaseSection icon="bi-list-check" title="AI 추천을 어떻게 사용하고 싶으신가요?" subtitle="완료율">
-    <template #actions>
-      <router-link class="btn btn-sm btn-outline-primary" :to="{ name: 'CreateNewSearch' }">새로운 검색</router-link>
-    </template>
+
 
     <div class="selected-place card p-3 mb-3 d-flex align-items-center">
       <img v-if="item?.imageUrl" :src="item.imageUrl" class="thumb me-3" />
@@ -86,7 +102,6 @@
     </div>
 
 
-  </div>
 </template>
 
 <script setup>

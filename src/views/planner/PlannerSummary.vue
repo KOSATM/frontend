@@ -1,12 +1,11 @@
 <template>
     <div class="planner-page">
-    <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
     <div class="plan-summary container py-5">
 
         <!-- 상단 인사 영역 -->
         <div class="text-center mb-4">
             <div class="hero-icon mx-auto mb-3 d-inline-flex align-items-center justify-content-center">
-                🗺️
+                ✈️
             </div>
             <h2 class="fw-bold mb-1">여행 일정이 준비되었어요</h2>
             <p class="text-muted mb-0">다음 단계로 이동하기 전에 여행 일정을 한눈에 확인해보세요</p>
@@ -19,7 +18,7 @@
                 <div class="card mb-4 shadow-sm border-0">
                     <div class="card-header bg-primary text-white border-0 rounded-top">
                         <h5 class="mb-0 d-flex align-items-center gap-2">
-                            <span>🧳 여행 개요</span>
+                            <span class="header-title">🧳 여행 개요</span>
                             <small class="badge bg-light text-primary-emphasis ms-auto">
                                 {{ duration }}일
                             </small>
@@ -103,10 +102,9 @@
                             </div>
 
                             <div class="card-step-footer">
-                                <OutlineButton 
-                                    @click="goBackToEdit"
-                                    >일정 수정하기
-                                </OutlineButton>
+                                <button class="btn btn-outline-secondary w-100" @click="goBackToEdit">
+                                    일정 수정하기
+                                </button>
                             </div>
 
                         </div>
@@ -125,9 +123,9 @@
                             </div>
 
                             <div class="card-step-footer">
-                                <FilledButton  @click="goToHotel">
-                                숙소 선택하러 가기 →
-                                </FilledButton>
+                                <button class="btn btn-primary w-100" @click="goToHotel">
+                                    숙소 선택하러 가기 →
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -150,9 +148,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import plannerApi from '@/api/plannerApi'
 import { useAuthStore } from '@/store/authStore'
-import PageHeader from "@/components/common/header/PageHeader.vue";
-import OutlineButton from "@/components/common/button/OutlineButton.vue"
-import FilledButton from "@/components/common/button/FilledButton.vue"
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -239,10 +234,10 @@ const goBackToEdit = () => {
 
 <style scoped>
 .planner-page {
-  background-color: #fffaf3;
+  background-color: #ffffff;
   min-height: 100vh;
   padding-bottom: 6rem;
-  padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */
+  padding: 2rem 1.25rem 6rem;
 }
 .plan-summary {
     max-width: 980px;
@@ -252,45 +247,63 @@ const goBackToEdit = () => {
         width: 72px;
         height: 72px;
         border-radius: 24px;
-        background: radial-gradient(circle at 20% 20%, #ffe8c7, #ffb35a);
+        background: #e3f2fd;
         font-size: 2rem;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 2px 8px rgba(45, 74, 143, 0.1);
     }
 
     .card-header.bg-primary {
-        background: linear-gradient(90deg, var(--bs-primary, #1b3b6f), var(--bs-accent, #ff8c00));
+        background: #2d4a8f !important;
         border-top-left-radius: .75rem;
         border-top-right-radius: .75rem;
         color: white;
     }
 
+    .header-title {
+        color: white !important;
+    }
+
     .btn-primary {
-        background-color: var(--bs-primary, #1b3b6f);
-        border-color: var(--bs-primary, #1b3b6f);
+        background-color: #2d4a8f !important;
+        border-color: #2d4a8f !important;
         color: white;
     }
 
     .btn-primary:hover {
-        opacity: .96;
+        background-color: #1a2a56 !important;
+        border-color: #1a2a56 !important;
     }
 
     .btn-outline-secondary {
         border-radius: .6rem;
+        color: #64748b;
+        border-color: #cbd5e1;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #f8fafc;
+        border-color: #94a3b8;
+        color: #475569;
     }
 
     .summary-metrics .metric-pill {
-        background: #f6f7fb;
+        background: #e2e8f0;
         border-radius: 999px;
-        padding: 6px 14px;
+        padding: 8px 16px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
 
         .label {
-            font-size: .7rem;
-            color: #8b90a0;
+            font-size: .85rem;
+            color: #64748b;
+            font-weight: 600;
         }
 
         .value {
-            font-size: .95rem;
-            font-weight: 600;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #64748b;
         }
     }
 
@@ -298,17 +311,17 @@ const goBackToEdit = () => {
         display: flex;
         gap: 12px;
         padding: 10px 0;
-        border-bottom: 1px dashed #e3e5ef;
+        border-bottom: 1px solid #e2e8f0;
     }
 
     /* Day Badge 텍스트 완전 중앙 정렬 */
     .day-badge {
         padding: 6px 10px;
         border-radius: 999px;
-        background: #f1f4ff;
-        color: #3c4aa1;
+        background: #e3f2fd;
+        color: #2d4a8f;
         font-weight: 600;
-        font-size: .8rem;
+        font-size: .85rem;
 
         /* 추가 */
         display: flex;
@@ -319,23 +332,38 @@ const goBackToEdit = () => {
     .place-badge {
         background: #fff1db;
         color: #b16200;
+        font-size: .9rem;
+        font-weight: 500;
+        margin-right: 6px;
+        margin-bottom: 6px;
     }
 
     .more-badge {
-        background: #eef1ff;
-        color: #3f48c0;
+        background: #e2e8f0;
+        color: #64748b;
+        font-size: .9rem;
+        margin-bottom: 6px;
+    }
+
+    .day-places {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
     }
 
     /* 두 카드(NEXT STEP, BEFORE YOU GO)의 Typography 통일 */
     .card-step-title {
-        font-weight: 700;
+        font-weight: 600;
         margin-bottom: .75rem;
+        font-size: 1.15rem;
+        color: #1e293b;
     }
 
     .card-step-text {
-        line-height: 1.45;
-        color: #6c757d;
+        line-height: 1.6;
+        color: #64748b;
         margin-bottom: 1rem;
+        font-size: .95rem;
     }
 
     /* 카드 전체 간격을 통일 */
@@ -351,5 +379,23 @@ const goBackToEdit = () => {
         display: flex;
         justify-content: center;
     }
+}
+
+/* 전역 텍스트 가독성 개선 */
+:deep(.text-muted) {
+    color: #64748b !important;
+}
+
+:deep(h2) {
+    color: #1e293b;
+}
+
+:deep(h5) {
+    color: #1e293b;
+}
+
+:deep(.badge.bg-light) {
+    background-color: white !important;
+    color: #2d4a8f !important;
 }
 </style>

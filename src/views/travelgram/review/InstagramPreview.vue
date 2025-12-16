@@ -1,17 +1,5 @@
 <template>
-  <div class="preview-page">
-    <PageHeader
-      title="트래벌그램"
-      subtitle="당신의 지난 여행 기록들"
-      icon="bi-instagram"
-    />
 
-    <StepHeader
-      title="여행 후기 작성"
-      :subtitle="stepSubtitle"
-      step="6/6"
-      @back="goBack"
-    />
 
     <section class="preview-section">
       <h6 class="section-title">
@@ -121,7 +109,6 @@
       nextText="발행하기"
       @next="publish"
     />
-  </div>
 </template>
 
 <script setup>

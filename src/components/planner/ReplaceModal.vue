@@ -246,7 +246,7 @@ const formatCost = (cost) => {
 }
 
 .alt-card:hover {
-  background: #fafafa;
+  /* background: #fafafa; */
 }
 
 /* ===============================

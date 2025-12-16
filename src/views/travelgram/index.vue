@@ -1,31 +1,46 @@
 <template>
-  <div class="travelgram-page">
-    <PageHeader title="트래벌그램" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
-    <!-- <BackButtonPageHeader title="Select one card to review your travel" subtitle="종료된 여행 카드를 선택해서 리뷰를 작성해보세요." @back="goBack"/> -->
+
+  <!-- Header -->
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
+          💖
+        </div>
+
+        <div>
+          <h5 class="mb-1 title">트래블그램</h5>
+          <p class="text-muted small mb-0 sub">
+            당신의 여행 추억을 기록하고 공유하세요
+          </p>
+        </div>
+      </div>
+      </div>
     
-    <ProfileSummary :profileName="displayName" bio="여행 애호가" initials="userInitials" :totalplans="stats.totalPlans"
-      :travelDays="stats.travelDays" :completed="stats.completed" />
-    <h4 class="my-3">
-      <i class="bi bi-compass me-2 text-primary"></i> 완료된 여행 일정
-    </h4>
 
+    <div class="container">
+      <ProfileSummary :profileName="displayName" bio="여행 애호가" initials="userInitials" :totalplans="stats.totalPlans"
+        :travelDays="stats.travelDays" :completed="stats.completed" />
+      <h4 class="my-3">
+        <i class="bi bi-compass me-2 text-primary"></i> 완료된 여행 일정
+      </h4>
 
-    <div v-if="loading" class="text-center py-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">로딩 중...</span>
+      <div v-if="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">로딩 중...</span>
+        </div>
+      </div>
+
+      <div v-else-if="plans.length === 0" class="text-center py-5 text-muted">
+        <p>There is not Ended Plan</p>
+      </div>
+
+      <div v-else class="plan-list">
+        <planCard v-for="plan in plans" :key="plan.id" :planId="plan.id" :planTitle="plan.title"
+          :location="'Seoul, Korea'" :date="plan.formattedDate" :budget="plan.formattedBudget" :planStatus="'Done'"
+          @click="goToReview(plan.id, plan.title)" />
       </div>
     </div>
-
-    <div v-else-if="plans.length === 0" class="text-center py-5 text-muted">
-      <p>There is not Ended Plan</p>
-    </div>
-
-    <div v-else class="plan-list">
-      <planCard v-for="plan in plans" :key="plan.id" :planId="plan.id" :planTitle="plan.title"
-        :location="'Seoul, Korea'" :date="plan.formattedDate" :budget="plan.formattedBudget" :planStatus="'Done'"
-        @click="goToReview(plan.id, plan.title)" />
-    </div>
-  </div>
 </template>
 
 <script setup>
@@ -170,20 +185,33 @@ const goBack = () => router.push({name: 'plannercreate'});
 
 <style scoped>
 .travelgram-page {
-  /* 배경색이나 패딩은 유지 */
-  background-color: #fffaf3; 
   min-height: 100vh;
-  padding: 2rem 1.25rem;
+  background-color: #f8f9fa;
 }
 
+/* Header Styles (same as supporter) */
 .travelgram-header {
-  margin-bottom: 1.5rem;
-  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  margin-bottom: 0;
 }
 
-.travelgram-header h4 {
-  color: #1B3B6F;
+.travelgram-header .title {
   font-weight: 600;
+  color: #1B3B6F;
+  margin: 0;
+}
+
+.travelgram-header .sub {
+  font-size: 0.875rem;
+  line-height: 1.2;
+}
+
+/* Container */
+.travelgram-page .container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 /* ✅ 핵심 수정 부분: 리스트형 배치 */

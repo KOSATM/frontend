@@ -1,11 +1,8 @@
 <template>
-  <div class = "supporter-page">
-  <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" />
-  <PageHeader title="이미지 기반 여행 AI" subtitle="AI 추천을 사용해보세요." />
+
 
   <div class="complete-card card p-5 mt-4 text-center">
     <div class="check-circle mb-4">✓</div>
-    <!-- action completed를 어케 번역함니까 -->
     <h3 class="mb-2">이미지 검색 완료!</h3>
     <p class="text-muted mb-4">당신의 여정에 장소가 추가됩니다!</p>
 
@@ -19,7 +16,7 @@
           </NavigationButtons>
   </div>
   </div>
-  </div>
+  <!-- </div> -->
 </template>
 
 <script setup>

@@ -1,17 +1,5 @@
 <template>
-  <div class="review-edit-page">
-  <PageHeader
-    title="트래벌그램"
-    subtitle="당신의 지난 여행 기록들"
-    icon="bi-instagram"
-  />
-
-    <StepHeader
-      title="여행 후기 편집"
-      :subtitle="stepSubtitle"
-      step="5/6"
-      @back="goBack"
-    />
+  
 
     <section class="review-section">
       <h6 class="section-title">
@@ -108,7 +96,6 @@
       @back="goBack"
       @next="goNext"
     />
-  </div>
 </template>
 
 <script setup>

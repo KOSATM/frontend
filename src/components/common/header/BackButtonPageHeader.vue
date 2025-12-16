@@ -61,7 +61,7 @@ defineProps({
 }
 
 .step-indicator {
-  font-family: 'memoment', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans KR", sans-serif;
   opacity: 0.6;
 }
 </style>
