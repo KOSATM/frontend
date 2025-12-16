@@ -1,6 +1,6 @@
 <template>
-  <div class = "supporter-page">
-  <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" />
+  <!-- <div class = "supporter-page"> -->
+  <!-- <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" /> -->
   <PageHeader title="이미지 기반 여행 AI" subtitle="AI 추천을 사용해보세요." />
 
   <div class="complete-card card p-5 mt-4 text-center">
@@ -19,7 +19,7 @@
           </NavigationButtons>
   </div>
   </div>
-  </div>
+  <!-- </div> -->
 </template>
 
 <script setup>

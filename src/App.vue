@@ -2,7 +2,8 @@
   <div id="app">
     <div class="layout-container" :class="{ 
       'is-planner-page': route.path.includes('planner'),
-      'is-landing-page': isLandingPage 
+      'is-landing-page': isLandingPage,
+      'is-supporter-page': route.path.includes('supporter')
     }">
       
       <AppHeader v-if="!isLandingPage" @toggle-sidebar="isSidebarOpen = true" />
@@ -11,6 +12,11 @@
 
       <div class="app-body-row">
         
+        <aside v-if="showRightSidebar" class="sidebar-area right">
+          <WeatherCard />
+          <Checklist />
+        </aside>
+
         <aside v-if="showLeftSidebar" class="sidebar-area left chat-floating">
           <ChatSidebar />
         </aside>
@@ -20,11 +26,6 @@
             <RouterView />
           </main>
         </div>
-
-        <aside v-if="showRightSidebar" class="sidebar-area right">
-          <WeatherCard />
-          <Checklist />
-        </aside>
 
       </div>
 
@@ -196,5 +197,42 @@ const setupChatFooterDetection = () => {
   overflow-x: hidden !important;
   align-self: flex-start !important;
   z-index: 50 !important;
+}
+
+/* Supporter 페이지: 전체 너비 사용, 여백 제거 */
+.is-supporter-page {
+  max-width: 100% !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
+.is-supporter-page .app-body-row {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  margin-top: 72px !important;
+  align-items: flex-start !important;
+}
+
+.is-supporter-page .main-content {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.is-supporter-page .page-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.is-supporter-page .sidebar-area.right {
+  margin-top: 0 !important;
+  padding-top: 1rem !important;
+  order: -1 !important;
 }
 </style>

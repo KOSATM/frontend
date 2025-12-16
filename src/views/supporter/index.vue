@@ -1,9 +1,27 @@
 <template>
   <div class="supporter-page">
-    <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" />
+    <!-- Header -->
+    <div class="supporter-header border-bottom bg-white">
+      <div class="container">
+        <div class="d-flex gap-3 align-items-center" style="padding: 1.5rem 0;">
+          <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+            style="width: 46px; height: 46px">
+            💬
+          </div>
 
-    <div class="map-wrapper-full mb-4">
-      <div class="map-top-row d-flex align-items-start justify-content-between mb-2">
+          <div>
+            <h5 class="mb-1 title">서포터</h5>
+            <p class="text-muted small mb-0 sub">
+              실시간으로 당신의 여행을 도와드립니다
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+    <div class="map-wrapper-full mb-4 mt-3">
+      <div class="map-top-row d-flex align-items-start justify-content-between">
         <nav class="browser-tabs" role="tablist" aria-label="Map tabs">
           <button role="tab" :class="['tab-btn', { active: currentTab === 'image' }]" @click="currentTab = 'image'">
             이미지 기반 여행 AI
@@ -46,8 +64,11 @@
 
         <div class="image-ui-row d-flex gap-3 align-items-start">
           <div class="col how-works">
-            <div class="a"><strong>어떻게 동작하나요?</strong></div>
-            <ol class="small text-muted mb-0 ps-3">
+            <div class="how-works-header mb-2">
+              <i class="bi bi-lightbulb text-warning me-2"></i>
+              <strong>어떻게 동작하나요?</strong>
+            </div>
+            <ol class="small text-muted mb-0 ps-3 how-works-list">
               <li>여행 중 궁금한 점을 사진으로 올려보세요.</li>
               <li>AI가 이미지를 분석합니다.</li>
               <li>사진과 관련된 장소 추천을 받아보세요.</li>
@@ -135,13 +156,13 @@
         </div>
       </BaseSection>
     </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import PageHeader from '@/components/common/header/PageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
 import NaverMap from '@/components/supporter/NaverMap.vue'
 import ToiletApi from '@/api/ToiletApi'
@@ -477,9 +498,27 @@ const goToImageAIHistory = () => {
 
 <style scoped>
 .supporter-page {
-  /* background-color: #fffaf3; */
+  background-color: #ffffff;
   min-height: 100vh;
-  padding: 2rem 1.25rem;
+  padding-bottom: 6rem;
+}
+
+.supporter-header {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.supporter-header .title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.supporter-header .sub {
+  color: #64748b;
+}
+
+.supporter-header .bg-secondary-subtle {
+  background-color: #f1f5f9 !important;
 }
 
 .map-container {
@@ -507,34 +546,42 @@ const goToImageAIHistory = () => {
 
 .browser-tabs {
   display: inline-flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
+  background: #f8fafc;
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
 }
 
 .tab-btn {
-  background: #fff;
-  border: 1px solid rgba(2, 6, 23, 0.06);
-  padding: 6px 12px;
-  font-size: 0.85em;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
-  box-shadow: 0 6px 14px rgba(6, 95, 70, 0.04);
+  background: transparent;
+  border: none;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 8px;
   cursor: pointer;
-  color: #374151;
-  transition: transform 0.08s ease, box-shadow 0.12s ease;
+  color: #64748b;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  background: #f1f5f9;
+  color: #475569;
 }
 
 .tab-btn.active {
-  color: #0d6efd;
+  background: #2d4a8f;
+  color: #ffffff;
   font-weight: 600;
-  transform: translateY(-4px);
-  box-shadow: 0 14px 28px rgba(13, 110, 253, 0.08);
+  box-shadow: 0 2px 8px rgba(45, 74, 143, 0.2);
 }
 
 .tab-btn:focus {
-  outline: 2px solid rgba(13, 110, 253, 0.12);
+  outline: 2px solid rgba(45, 74, 143, 0.2);
+  outline-offset: 2px;
 }
 
 .map-marker {
@@ -576,7 +623,7 @@ const goToImageAIHistory = () => {
   width: 44px;
   height: 44px;
   border-radius: 10px;
-  background: #3a5797;
+  background: #2d4a8f;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -586,17 +633,29 @@ const goToImageAIHistory = () => {
 .upload-gradient {
   height: 120px;
   border-radius: 12px;
-  background: #3a5797;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  background: linear-gradient(135deg, #2d4a8f 0%, #1a2a56 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.upload-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(45, 74, 143, 0.3);
 }
 
 .image-ui-row .history-column .upload-gradient {
-  background: linear-gradient(180deg, #ff8c00 0%, #ff7a00 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.image-ui-row .history-column .upload-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
 }
 
 .image-ui-row .history-column .upload-gradient .text-white-50,
@@ -629,6 +688,7 @@ const goToImageAIHistory = () => {
 .map-top-row {
   position: relative;
   z-index: 80;
+  margin-bottom: 3px;
 }
 
 .map-file-label {
@@ -641,6 +701,7 @@ const goToImageAIHistory = () => {
 .map-container {
   position: relative;
   z-index: 10;
+  margin-top: 0;
 }
 
 @media (max-width: 991px) {
@@ -672,7 +733,31 @@ const goToImageAIHistory = () => {
     justify-content: flex-start;
     margin-top: 0;
     gap: 8px;
-    padding-right: 12px;
+    padding: 1.25rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    margin-right: 12px;
+  }
+
+  .how-works-header {
+    color: #2d4a8f;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .how-works-list {
+    line-height: 1.8;
+    color: #64748b;
+  }
+
+  .how-works-list li {
+    margin-bottom: 0.5rem;
+  }
+
+  .how-works-list li:last-child {
+    margin-bottom: 0;
   }
 
   .image-ui-row .upload-column,
