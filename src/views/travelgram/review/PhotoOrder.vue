@@ -1,17 +1,5 @@
 <template>
-  <div class="photo-order-page">
-    <PageHeader
-        title="트래벌그램"
-        subtitle="당신의 지난 여행 기록들"
-        icon="bi-instagram"
-      />
-    <!-- 🔸 상단 헤더 -->
-    <StepHeader
-      title="여행 후기 작성"
-      :subtitle="stepSubtitle"
-      step="2/6"
-      @back="goBack"
-    />
+
   <section class="photo-order-wrapper">
     <div class="photo-order-container">
 
@@ -89,7 +77,6 @@
       </div>
     </div>
 
-  </div>
 </template>
 
 <script setup>

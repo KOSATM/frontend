@@ -512,6 +512,45 @@ const confirmChangeStatus = async () => {
   border-radius: 12px;
 }
 
+.history-list {
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+@media (min-height: 900px) {
+  .history-list {
+    max-height: 720px;
+  }
+}
+
+@media (max-height: 768px) {
+  .history-list {
+    max-height: 480px;
+  }
+}
+
+.history-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.history-list::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.history-list::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
 .history-item {
   border-radius: 14px;
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);

@@ -1,11 +1,5 @@
 <template>
-  <div class="travelgram-page">
-  <PageHeader
-    title="트래벌그램"
-    subtitle="당신의 지난 여행 기록들"
-    icon="bi-instagram"
-  />
-
+  
   <div class="complete-page">
     <div class="complete-container">
       <!-- 🎉 아이콘 -->
@@ -47,7 +41,6 @@
         @next="goHome"
       />
     </div>
-  </div>
   </div>
 </template>
 

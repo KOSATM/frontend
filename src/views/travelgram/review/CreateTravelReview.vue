@@ -1,8 +1,4 @@
 <template>
-  <div class="photo-upload-page">
-    <!-- 상단 헤더 -->
-    <PageHeader title="트래벌그램" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
-    <StepHeader title="여행 후기 작성" :subtitle="stepSubtitle" step="1/6" @back="goBack" />
 
     <!-- =========================
          HERO / 여행 요약 카드
@@ -99,7 +95,6 @@
           <span v-else>다음으로</span>
         </template>
       </NavigationButtons>
-    </div>
     </div>
 </template>
 

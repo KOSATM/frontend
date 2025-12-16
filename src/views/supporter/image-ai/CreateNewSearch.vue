@@ -1,50 +1,74 @@
 <template>
-  <!-- top banner with back button + title/subtitle -->
-  <!-- <div class="supporter-page"> -->
+  <section class="new-search-root card rounded-0 h-100 d-flex flex-column">
+    <!-- Header -->
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
+        <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
+          <i class="bi bi-arrow-left-short fs-1"></i>
+        </button>
+        
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
+          📷
+        </div>
 
-  <!-- <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" /> -->
-  <StepHeader title="이미지 기반 여행 AI" subtitle="당신의 사진으로 여행 장소를 찾아보아요!" step="1/4"
-    @back="onHeaderBack" />
-  <BaseSection title="이미지 기반 여행 AI" subtitle="사진을 올리면 관련된 장소를 추천해드립니다.">
-    <template #icon>
-      <div class="ai-badge"><i class="bi bi-camera-fill"></i></div>
-    </template>
-    <div class="mb-3">
-      <div class="a"><strong>어떻게 동작하나요?</strong></div>
-      <ol class="small text-muted mb-0 ps-3">
-        <li>여행 중 궁금한 점을 사진으로 올려보세요.</li>
-        <li>AI가 이미지를 분석합니다.</li>
-        <li>사진과 관련된 장소 추천을 받아보세요.</li>
-      </ol>
-    </div>
-
-    <label class="upload-area d-block mb-2" @dragover.prevent @drop.prevent="onDrop" for="imageInput">
-      <div class="upload-gradient d-flex align-items-center justify-content-center">
-        <div class="text-center text-white-50 w-100 px-3">
-          <!-- preview image when selected, otherwise camera + text -->
-          <template v-if="imagePreview">
-            <img :src="imagePreview" alt="preview" class="preview-img rounded" />
-          </template>
-          <template v-else>
-            <i class="bi bi-camera fs-1"></i>
-            <div class="mt-2">클릭 시 업로드</div>
-          </template>
+        <div>
+          <h5 class="mb-1 title">이미지 기반 여행 AI</h5>
+          <p class="text-muted small mb-0 sub">
+            사진을 올리면 관련된 장소를 추천해드립니다.
+          </p>
         </div>
       </div>
-    </label>
-  </BaseSection>
-    
+    </div>
 
-    <section>
-    <div class="d-grid">
+    <!-- Body Content -->
+    <div class="new-search-body-scroll flex-grow-1 overflow-y-auto p-4">
+
+
+      <!-- How it works -->
+      <div class="how-works-box mb-4">
+        <div class="how-works-header mb-2">
+          <i class="bi bi-lightbulb text-warning me-2"></i>
+          <strong>어떻게 동작하나요?</strong>
+        </div>
+        <ol class="small text-muted mb-0 ps-3 how-works-list">
+          <li>여행 중 궁금한 점을 사진으로 올려보세요.</li>
+          <li>AI가 이미지를 분석합니다.</li>
+          <li>사진과 관련된 장소 추천을 받아보세요.</li>
+        </ol>
+      </div>
+
+      <!-- Upload Area -->
+      <section class="upload-section">
+        <div v-if="!imagePreview" class="upload-box" @click="triggerFileInput" @dragover.prevent @drop.prevent="onDrop">
+          <i class="bi bi-cloud-arrow-up fs-2 text-secondary mb-2"></i>
+          <p class="text-secondary mb-0">클릭해서 사진을 업로드하세요.</p>
+          <small class="text-muted">사진 크기는 10MB까지 가능하며, JPG, PNG만 올려주세요.</small>
+        </div>
+
+        <!-- Preview - Full Width Image -->
+        <div v-else class="preview-full" @click="triggerFileInput">
+          <img :src="imagePreview" alt="preview" />
+          <div class="preview-overlay">
+            <i class="bi bi-arrow-repeat fs-3"></i>
+            <p class="mb-0 mt-2">클릭하여 다른 사진 선택</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Hidden Input -->
       <input 
         id="imageInput" 
         type="file" 
         accept="image/*" 
+        ref="fileInput"
         class="d-none" 
         @change="onFileChange" 
       />
+    </div>
 
+    <!-- Footer / Navigation -->
+    <div class="border-top bg-white p-4">
       <NavigationButtons
         back-text="취소"
         :is-next-disabled="!imagePreview"
@@ -56,16 +80,11 @@
           사진에서 알고 싶은 점을 구체적으로 선택해주세요.
         </template>
       </NavigationButtons>
-      
     </div>
   </section>
-   <!-- </div> -->
 </template>
 
 <script setup>
-import StepHeader from '@/components/common/header/StepHeader.vue'
-import PageHeader from '@/components/common/header/PageHeader.vue'
-import BaseSection from '@/components/common/BaseSection.vue'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
@@ -73,11 +92,13 @@ import NavigationButtons from '@/components/common/button/NavigationButtons.vue'
 const route = useRoute()
 const router = useRouter()
 const imagePreview = ref(null)
+const fileInput = ref(null)
+
+const triggerFileInput = () => fileInput.value?.click()
 
 const handleCancel = () => {
   imagePreview.value = null; // 미리보기 초기화
-  const input = document.getElementById('imageInput');
-  if (input) input.value = ''; // 파일 input 초기화
+  if (fileInput.value) fileInput.value.value = ''; // 파일 input 초기화
 };
 
 const onFileChange = (e) => {
@@ -156,13 +177,169 @@ const onHeaderBack = () => {
 </script>
 
 <style scoped>
+/* ========================================
+   New Search Root - History 스타일 매칭
+   ======================================== */
+.new-search-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans KR", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+/* 헤더 영역 스타일 */
+.new-search-root > div:first-child {
+  background: #ffffff;
+  color: #2d4a8f;
+  border-bottom: 1px solid #e2e8f0 !important;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 2rem !important;
+  position: relative;
+}
+
+.new-search-root h5.title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b !important;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.25rem;
+}
+
+.new-search-root .sub {
+  color: #64748b !important;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.new-search-root .rounded-3 {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0;
+  font-size: 1.25rem;
+  width: 38px !important;
+  height: 38px !important;
+}
+
+/* 뒤로가기 버튼 */
+.back-button {
+  color: #2d4a8f;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  margin-left: -0.5rem;
+}
+
+.back-button:hover {
+  color: #1a2a56;
+  transform: translateX(-4px);
+}
+
+.back-button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* 본문 스크롤 */
+.new-search-body-scroll {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #ffffff;
+  background: #ffffff;
+}
+
+.new-search-body-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.new-search-body-scroll::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 3px;
+}
+
+.new-search-body-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.new-search-body-scroll::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Section Header 스타일 */
+.section-header {
+  padding: 0.5rem 0;
+}
+
+.icon-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2d4a8f 0%, #1a2a56 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 12px rgba(45, 74, 143, 0.2);
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.02em;
+}
+
+.section-subtitle {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+/* How it works 박스 */
+.how-works-box {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 14px;
+  border: 2px solid #e2e8f0;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(45, 74, 143, 0.05);
+}
+
+.how-works-header {
+  color: #2d4a8f;
+  font-size: 1.05rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.01em;
+}
+
+.how-works-list {
+  line-height: 1.9;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.how-works-list li {
+  margin-bottom: 0.6rem;
+  font-weight: 500;
+}
+
+.how-works-list li:last-child {
+  margin-bottom: 0;
+}
+
 .supporter-page {
   background-color: #fffaf3;
   min-height: 100vh;
-  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+  padding: 2rem 1.25rem;
 }
 
-/* BaseSection small tweaks */
 .ai-badge {
   width: 44px;
   height: 44px;
@@ -197,34 +374,88 @@ const onHeaderBack = () => {
   background: #fff;
 }
 
-.upload-area {
-  display: block;
+/* Upload Section - PhotoUploader 스타일 */
+.upload-section {
+  background-color: #f9fafc;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border: 1px solid #eee;
+}
+
+.upload-box {
+  border: 2px dashed #d0d5dd;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+  background-color: #fff;
   cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.upload-gradient {
-  height: 300px;
-  border-radius: 12px;
-  background: #3A5797;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+.upload-box:hover {
+  background-color: #fef8f2;
+  border-color: #2d4a8f;
+}
+
+.upload-box .bi-cloud-arrow-up {
+  color: #6c757d;
+  transition: color 0.3s ease;
+}
+
+.upload-box:hover .bi-cloud-arrow-up {
+  color: #2d4a8f;
+}
+
+.preview-full {
+  position: relative;
+  width: 100%;
+  min-height: 400px;
+  border-radius: 0.75rem;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  cursor: pointer;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.upload-gradient .bi-camera {
-  opacity: 0.85;
-  font-size: 34px;
-  color: rgba(0, 0, 0, 0.45);
-}
-
-.preview-img {
+.preview-full img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 10px;
   display: block;
+}
+
+.preview-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(45, 74, 143, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: #fff;
+}
+
+.preview-full:hover .preview-overlay {
+  opacity: 1;
+}
+
+.preview-overlay i {
+  color: #fff;
+}
+
+.preview-overlay p {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Footer 스타일 */
+.border-top {
+  border-top: 1px solid #e2e8f0 !important;
 }
 
 /* disabled button visual */
@@ -234,6 +465,15 @@ button:disabled {
 }
 
 .card {
-  border-radius: 12px;
+  border-radius: 14px;
+}
+
+/* 텍스트 스타일 */
+.text-muted {
+  color: #64748b !important;
+}
+
+.small {
+  font-size: 0.875rem;
 }
 </style>
