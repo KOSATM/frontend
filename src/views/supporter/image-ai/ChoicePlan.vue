@@ -1,8 +1,4 @@
 <template>
-  <!-- <div class="supporter-page"> -->
-  <!-- <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" /> -->
-
-  <PageHeader title="여정 선택" subtitle="장소를 추가하거나 대체하기 위해 여정을 선택하세요." />
 
   <div class="card p-4 mt-3">
     <h5 class="mb-3">존재하는 여정</h5>
