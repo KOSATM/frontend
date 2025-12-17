@@ -121,7 +121,12 @@ const selectedHashtags = computed(() => reviewStore.selectedHashtags || [])
 
 const currentPhotoIndex = ref(0)
 const isSaving = ref(false)
-
+const props = defineProps({
+  planId: {
+    type: [String, Number],
+    required: true
+  }
+})
 const canProceed = computed(() => {
   return photos.value && photos.value.length > 0 && !isSaving.value
 })

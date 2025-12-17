@@ -100,6 +100,12 @@ const router = useRouter()
 const reviewStore = useReviewStore()
 
 const stepSubtitle = computed(() => JOURNEY_SUBTITLES[4])
+const props = defineProps({
+  planId: {
+    type: [String, Number],
+    required: true
+  }
+})
 
 /* 🔵 AI 추천 태그 (고정) */
 const aiTags = ref([])

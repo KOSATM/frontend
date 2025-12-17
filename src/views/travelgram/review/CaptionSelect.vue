@@ -118,7 +118,12 @@ const getLabelClass = (code) => {
 }
 
 const goBack = () => router.push({ name: 'PhotoOrder' })
-
+const props = defineProps({
+  planId: {
+    type: [String, Number],
+    required: true
+  }
+})
 const goNext = async () => {
   if (selectedIndex.value === null) return
 

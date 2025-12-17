@@ -180,7 +180,12 @@ const copyToClipboard = () => {
     alert('📋 Copied!')
   })
 }
-
+const props = defineProps({
+  planId: {
+    type: [String, Number],
+    required: true
+  }
+})
 const goBack = () => router.push({ name: 'EditPage' })
 const publish = () => {
   alert('✅ 게시물이 준비되었습니다!')

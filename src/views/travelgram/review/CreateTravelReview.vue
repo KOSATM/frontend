@@ -267,6 +267,12 @@ const goNext = () => {
   reviewStore.nextStep()
   router.push({ name: 'PhotoOrder', params: { planId } })
 }
+const props = defineProps({
+  planId: {
+    type: [String, Number],
+    required: true
+  }
+})
 
 const goBack = () => router.push({ name: 'Travelgram' })
 

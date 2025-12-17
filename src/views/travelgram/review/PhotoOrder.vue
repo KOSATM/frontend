@@ -1,5 +1,25 @@
 <template>
+        <!-- Header -->
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
+        <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
+          <i class="bi bi-arrow-left-short fs-1"></i>
+        </button>
+        
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
+          💖
+        </div>
 
+        <div>
+          <h5 class="mb-1 title">트래블그램</h5>
+          <p class="text-muted small mb-0 sub">
+            당신의 여행 추억을 기록하고 공유하세요
+          </p>
+        </div>
+      </div>
+
+    </div>
   <section class="photo-order-wrapper">
     <div class="photo-order-container">
 
@@ -21,13 +41,6 @@
         >
         <div class="photo-thumb">
         <img :src="photo.url" />
-        <transition name="badge-pop">
-          <span
-          v-if="index === 0 && photo.id === mainPhotoId"
-          class="main-badge">
-            대표
-          </span>
-        </transition>
       </div>
 
         
@@ -53,21 +66,17 @@
   </div>
 </section>
 
-<NavigationButtons
-      backText="뒤로가기"
-      :isNextDisabled="!canProceed"
-      @back="goBack"
-      nextText="다음으로"
-      @next="goNext"
-    >
-      <template #next-content>
+
+  <!-- 하단 네비게이션 -->
+  <NavigationButtons backText="뒤로가기" :isNextDisabled="!canProceed" @back="goBack" @next="goNext">
+          <template #next-content>
         <span v-if="isLoading">
           <span class="spinner-border spinner-border-sm me-2"></span>
           AI가 열심히 분석 중 입니다...
         </span>
-        <span v-else></span>
+        <span v-else>다음으로</span>
       </template>
-    </NavigationButtons>
+  </NavigationButtons>
 
     <div v-if="isLoading" class="loading-overlay">
       <div class="loading-content">
@@ -84,8 +93,6 @@ import { ref, onMounted,computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useReviewStore } from '@/store/reviewStore'
 import api from '@/api/travelgramApi'
-import StepHeader from '@/components/common/header/StepHeader.vue'
-import PageHeader from '@/components/common/header/PageHeader.vue'
 import TipBox from '@/components/common/TipBox.vue'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 import { JOURNEY_SUBTITLES } from '@/constants/journeySubtitles'
@@ -128,6 +135,12 @@ const selectMain = (id) => {
   syncMainPhoto()
 }
 
+const props = defineProps({
+  planId: {
+    type: [String, Number],
+    required: true
+  }
+})
 
 /* -----------------------------------
    🔥 3) 대표 사진 제외한 항목만 순서 이동 가능
@@ -248,7 +261,7 @@ const goBack = () => router.push({name: 'CreateTravelReview'});
 }
 /* ✅ 페이지 전체 배경 */
 .photo-order-page {
-  background-color: #fffaf3;
+  background-color: #e8eef7;
   min-height: 100vh;
   padding-bottom: 6rem;
   padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */
@@ -270,8 +283,8 @@ const goBack = () => router.push({name: 'CreateTravelReview'});
 }
 
 .tip-box {
-  border-left: 4px solid #ff914d;
-  background: #fffaf3;   /* soft orange 톤으로 약하게 강조 */
+  border-left: 4px solid #1B3B6F;
+  background: #e8eef7;   /* soft navy 톤으로 약하게 강조 */
 }
 
 
@@ -307,15 +320,15 @@ const goBack = () => router.push({name: 'CreateTravelReview'});
   cursor: pointer;
   margin-bottom: 0.75rem;   /* 🔥 여백 추가 */
   &:hover {
-    background: #fff7f0;
+    background: #f0f4f9;
   }
 
   &.active {
-    border: 2px solid #ff914d;
-    background: #fff3e6;
+    border: 2px solid #1B3B6F;
+    background: #e8eef7;
 
     .photo-info h6 {
-      color: #ff7a2a;
+      color: #1B3B6F;
       font-weight: 700;
     }
   }
@@ -328,26 +341,7 @@ const goBack = () => router.push({name: 'CreateTravelReview'});
   object-fit: cover;
 }
 
-.main-badge {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  background: #ff7a00;
-  color: white;
-  font-size: 0.7rem;
-  padding: 4px 8px;
-  border-radius: 999px;
-  font-weight: 700;
-}
 
-.badge-pop-enter-active {
-  animation: pop 0.3s ease;
-}
-
-@keyframes pop {
-  0% { transform: scale(0.7); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
 
 
 </style>

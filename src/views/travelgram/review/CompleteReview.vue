@@ -35,7 +35,7 @@
 
       <!-- 하단 네비 -->
       <NavigationButtons
-        backText="다시 후기 만들기"
+        backText="다시 만들기"
         nextText="메인 홈으로"
         @back="goToTravelgram"
         @next="goHome"
@@ -51,7 +51,12 @@ import PageHeader from '@/components/common/header/PageHeader.vue'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue'
 
 const router = useRouter()
-
+const props = defineProps({
+  planId: {
+    type: [String, Number],
+    required: true
+  }
+})
 const goToTravelgram = () => router.push({ name: 'Travelgram' })
 const goHome = () => router.push('/')
 
