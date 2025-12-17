@@ -50,6 +50,7 @@ function startTravel() {
   travelStore.startTravel()
 }
 const goToPlanner = () => {
+  travelStore.startTravel();
   router.push("/planner/edit");
 };
 </script>
