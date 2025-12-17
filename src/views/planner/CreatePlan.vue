@@ -53,13 +53,10 @@
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import router from '@/router'
-
 import PageHeader from '@/components/common/header/PageHeader.vue'
 import TipBox from '@/components/common/TipBox.vue'
-import RecommendationCard from '@/components/
-  /RecommendationCard.vue'
 import BlogListModal from '@/components/planner/BlogListModal.vue'
-
+import RecommendationCard from '@/components/planner/RecommendationCard.vue'
 import plannerApi from '@/api/plannerApi'
 import chatApi from '@/api/chatApi'
 import { useAuthStore } from '@/store/authStore'
