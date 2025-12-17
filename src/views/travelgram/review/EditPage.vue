@@ -254,20 +254,22 @@ const goNext = async () => {
 
 .photo-item {
   position: relative;
-  /* flex: 0 0 90%; */
+  flex: 0 0 420px;     /* 캐러셀에서 고정 폭 */
   width: 420px;
   height: 420px;
   border-radius: 1rem;
   overflow: hidden;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  aspect-ratio: 3 / 4;
   scroll-snap-align: start;
 }
 
+/* ❗ aspect-ratio 제거 */
+
 .photo-item img {
-  width: 420px;
-  height: 420px;
-  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* 가장 안정적 */
+  display: block;
 }
 
 .main-badge {
@@ -332,4 +334,46 @@ const goNext = async () => {
   margin-top: 0.5rem;
   color: #888;
 }
+
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(27, 59, 111, 0.85); /* 브랜드 컬러 */
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background: #1b3b6f;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.nav-prev {
+  left: -22px;   /* 카드 살짝 바깥 */
+}
+
+.nav-next {
+  right: -22px;
+}
+
+.nav-btn i {
+  font-size: 1.2rem;
+}
+
 </style>
