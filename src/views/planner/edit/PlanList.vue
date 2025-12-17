@@ -44,16 +44,18 @@
         @update:selectedDayIndex="selectedDayIndex = $event"
       />
     </div>
-
+        
     <!-- CTA -->
-    <div class="border-top bg-white d-flex gap-3" style="height: 95px; padding: 1rem;">
-      <button class="btn btn-outline-secondary flex-fill" @click="onBack">
-        이전
-      </button>
-      <button class="btn btn-primary flex-fill" @click="onNext">
-        {{ travelStore.$state.isTraveling ? '여행 종료' : '여행 일정 요약페이지로 이동' }}
-      </button>
-    </div>
+     <NavigationButtons
+  back-text="이전"
+  @back="onBack"
+  @next="onNext"
+>
+  <template #next-content>
+    {{ travelStore.isTraveling ? '여행 종료' : '여행 일정 요약페이지로 이동' }}
+  </template>
+</NavigationButtons>
+
 
     <!-- Modals -->
     <ActivityDetailsModal :open="modalOpen" :data="modalData" @close="modalOpen = false" />
@@ -80,7 +82,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-
+import NavigationButtons from "@/components/common/button/NavigationButtons.vue"
 import PageHeader from "@/components/common/header/PageHeader.vue";
 import plannerApi from "@/api/plannerApi";
 
