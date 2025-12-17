@@ -2,24 +2,30 @@
   <div class="chat-layout-wrapper d-flex flex-column h-100 bg-white">
 
     <div class="chat-header d-flex align-items-center gap-2 p-3 border-bottom">
-  <div class="badge text-white rounded-circle d-flex justify-content-center align-items-center flex-shrink-0"
-    style="width: 32px; height: 32px; background-color: #1B3B6F;">
-    <i class="bi bi-airplane-fill fs-6"></i>
-  </div>
+      <div class="badge text-white rounded-circle d-flex justify-content-center align-items-center flex-shrink-0"
+        style="width: 32px; height: 32px; background-color: #1B3B6F;">
+        <i class="bi bi-airplane-fill fs-6"></i>
+      </div>
 
-  <div class="overflow-hidden d-flex flex-column justify-content-center">
-    <h6 class="mb-0 fw-bold text-truncate" style="line-height: 1.2;">
-      AI 여행 어시스턴트
-    </h6>
+      <div class="overflow-hidden d-flex flex-column justify-content-center">
+        <h6 class="mb-0 fw-bold text-truncate" style="line-height: 1.2;">
+          AI 여행 어시스턴트
+        </h6>
 
-    <small class="text-muted">
-      서울 여행 플래너
-    </small>
-  </div>
-</div>
+        <small class="text-muted">
+          서울 여행 플래너
+        </small>
+      </div>
+    </div>
 
     <div class="chat-messages flex-grow-1 p-3" ref="messagesContainer">
       <div class="message-list">
+        <div v-for="(msg, idx) in chatStore.messages" :key="idx"
+          :class="['message', msg.role === 'user' ? 'user-message' : 'ai-message']">
+          <div class="message-bubble">
+            <div class="markdown-body" v-html="msg.content"></div>
+          </div>
+        </div>
         <div class="message ai-message mb-3">
           <div class="message-bubble">
             <p class="mb-1">안녕하세요. 서울 여행 플래너입니다.</p>
@@ -82,32 +88,23 @@
 
     <div class="chat-input-wrapper p-3 border-top bg-white">
       <div class="chat-input-container">
-        <textarea
-          v-model="currentMessage"
-          @keydown.enter.exact.prevent="sendMessage"
-          :disabled="isLoading"
-          class="chat-text-input"
-          placeholder="질문을 입력해주세요..."
-          rows="1"
-          @input="autoResize"
-          ref="textareaRef"
-        ></textarea>
+        <textarea v-model="currentMessage" @keydown.enter.exact.prevent="sendMessage" :disabled="isLoading"
+          class="chat-text-input" placeholder="질문을 입력해주세요..." rows="1" @input="autoResize" ref="textareaRef"></textarea>
 
         <button class="icon-btn voice-btn" title="Voice input">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5z"/>
-            <path d="M10 8a2 2 0 1 1-4 0V3a2 2 0 1 1 4 0v5zM8 0a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V3a3 3 0 0 0-3-3z"/>
+            <path
+              d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5z" />
+            <path d="M10 8a2 2 0 1 1-4 0V3a2 2 0 1 1 4 0v5zM8 0a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V3a3 3 0 0 0-3-3z" />
           </svg>
         </button>
 
-        <button
-          @click="sendMessage"
-          :disabled="!currentMessage.trim() || isLoading"
-          class="icon-btn send-btn"
-        >
-          <span v-if="isLoading" class="spinner-border spinner-border-sm" role="status" style="width: 0.8rem; height: 0.8rem;"></span>
+        <button @click="sendMessage" :disabled="!currentMessage.trim() || isLoading" class="icon-btn send-btn">
+          <span v-if="isLoading" class="spinner-border spinner-border-sm" role="status"
+            style="width: 0.8rem; height: 0.8rem;"></span>
           <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-            <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z"/>
+            <path
+              d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z" />
           </svg>
         </button>
       </div>
@@ -288,7 +285,10 @@ onMounted(() => {
 
 /* --- 메시지 영역 --- */
 .chat-messages {
+  flex-grow: 1;
   overflow-y: auto;
+  min-height: 0;
+  /* 이 줄이 중요! */
   background-color: #fff;
 }
 
@@ -296,7 +296,8 @@ onMounted(() => {
 .message-bubble {
   padding: 12px 18px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  font-size: 1.25rem; /* 말풍선 텍스트 크기 확보 */
+  font-size: 1.25rem;
+  /* 말풍선 텍스트 크기 확보 */
   line-height: 1.5;
   word-break: break-word;
 }
@@ -306,6 +307,7 @@ onMounted(() => {
   align-items: flex-start;
   margin-right: 1rem;
 }
+
 .ai-message .message-bubble {
   background: #f8f9fa;
   color: #333;
@@ -318,6 +320,7 @@ onMounted(() => {
   align-items: flex-end;
   margin-left: 1rem;
 }
+
 .user-message .message-bubble {
   background: #1B3B6F;
   color: white;
@@ -368,7 +371,7 @@ onMounted(() => {
   max-height: 350px !important;
   border-radius: 12px !important;
   margin: 10px 0 !important;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* --- 입력창 영역 --- */
@@ -440,9 +443,11 @@ onMounted(() => {
   background: #1B3B6F;
   color: white;
 }
+
 .send-btn:hover {
   background: #162d52;
 }
+
 .send-btn:disabled {
   background: #e9ecef;
   color: #ced4da;
@@ -452,6 +457,7 @@ onMounted(() => {
 .chat-messages::-webkit-scrollbar {
   width: 6px;
 }
+
 .chat-messages::-webkit-scrollbar-thumb {
   background: #dee2e6;
   border-radius: 3px;
@@ -467,11 +473,26 @@ onMounted(() => {
   animation: typing 1.4s infinite ease-in-out both;
   margin: 0 2px;
 }
-.typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-.typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+.typing-indicator span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
 @keyframes typing {
-  0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1); }
+
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+
+  40% {
+    transform: scale(1);
+  }
 }
 
 /* 🖼️ 이미지 갤러리 스타일 */

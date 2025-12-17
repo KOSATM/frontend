@@ -69,7 +69,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import PageHeader from "@/components/common/header/PageHeader.vue";
 import NavigationButtons from "@/components/common/button/NavigationButtons.vue";
@@ -84,6 +84,7 @@ import ReplaceModal from "@/components/planner/ReplaceModal.vue";
 import NowActivity from "@/components/planner/NowActivity.vue";
 import PlanDayTimeline from "@/components/planner/PlanDayTimeline.vue";
 import ActivityCompleteModal from "@/components/planner/ActivityCompleteModal.vue";
+import chatApi from "@/api/chatApi";
 
 /* ---------- 기본 상태들 ---------- */
 const modalOpen = ref(false);
@@ -95,6 +96,7 @@ const selectedDayIndex = ref(0);
 const editMode = ref(false);
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 const travelStore = useTravelStore();
 const chatStore = useChatStore();
@@ -564,10 +566,10 @@ const normalizePlaces = (places = []) =>
     const type = p.normalizedCategory ?? "ETC";
 
     const gallery =
-      p.firstImage2
-        ? [p.firstImage2]
-        : p.firstImage
-          ? [p.firstImage]
+      p.firstImage
+        ? [p.firstImage]
+        : p.firstImage2
+          ? [p.firstImage2]
           : getDefaultGalleryByType(type);
 
     return {
@@ -642,6 +644,27 @@ onMounted(async () => {
       selectNowActivity();
     }, 0);
     return;
+  }
+
+  // 1. SelectPlan에서 온 유저 메시지 받기 (state 또는 query)
+  const userMessage =
+    route?.state?.userMessage ||
+    route.query.userMessage; // state 우선, 없으면 query
+
+  if (userMessage) {
+    // 2. 채팅창에 유저 메시지 추가
+    chatStore.addMessage({ role: 'user', content: userMessage });
+
+    // 3. chatApi.chat() 실행 (AI 답변 받기)
+    try {
+      const aiReply = await chatApi.chat({ message: userMessage });
+      chatStore.addMessage({ role: 'assistant', content: aiReply });
+    } catch (e) {
+      chatStore.addMessage({ role: 'assistant', content: 'AI 답변 생성에 실패했습니다.' });
+    }
+
+    // 4. (선택) 쿼리/상태 초기화 (중복 실행 방지)
+    // router.replace({ ...route, state: {}, query: { ...route.query, userMessage: undefined } });
   }
 
   if (userId != null) {

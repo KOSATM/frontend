@@ -194,19 +194,26 @@ const confirm = async () => {
 
   // 저장 성공 후 페이지 이동
   if (selectedOption.value === 'add' || selectedOption.value === 'replace') {
-    // 편집 페이지로 이동
+    // 유저 메시지 생성
+    const userMessage =
+      selectedOption.value === 'add'
+        ? `${item.value.placeName}을/를 일정에 추가해줘`
+        : `${item.value.placeName}으로 일정을 변경해줘`;
+
     router.push({
       name: 'planedit',
-      state: { item: item.value, mode: selectedOption.value },
-      query: { mode: selectedOption.value, itemId: item.value?.id ?? '', itemName: item.value?.placeName ?? '' }
-    }).catch(() => {
-      router.push({
-        name: 'ChoicePlan',
-        state: { item: item.value, mode: selectedOption.value },
-        query: { mode: selectedOption.value, itemId: item.value?.id ?? '', itemName: item.value?.placeName ?? '' }
-      }).catch(() => { })
-    })
-    return
+      state: {
+        item: item.value,
+        mode: selectedOption.value,
+        userMessage // 메시지 추가!
+      },
+      query: {
+        mode: selectedOption.value,
+        itemId: item.value?.id ?? '',
+        itemName: item.value?.placeName ?? ''
+      }
+    }).catch(() => { /* ... */ });
+    return;
   }
 
   // save only -> 히스토리 페이지로 이동

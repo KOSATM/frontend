@@ -7,6 +7,7 @@ export const useChatStore = defineStore("chat", {
 
     // 채팅으로 생성된 최신 여행 플랜 + 변경 시간
     livePlanFromChat: null,
+    messages: []
   }),
 
   actions: {
@@ -35,6 +36,10 @@ export const useChatStore = defineStore("chat", {
 
     clearLivePlan() {
       this.livePlanFromChat = null;
+    },
+
+    addMessage(msg) {
+      this.messages.push(msg);
     },
   },
 });
