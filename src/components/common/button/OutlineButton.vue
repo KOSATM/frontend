@@ -38,13 +38,21 @@ defineProps({
   color: v-bind(mainColor);
   border: 2px solid v-bind(mainColor);
 }
-
 .btn-outline:hover {
-  background-color: v-bind(hoverColor);
-  color: v-bind(hoverTextColor);
-  border-color: v-bind(hoverColor);
+  background-color: color-mix(
+    in srgb,
+    v-bind(mainColor) 8%,
+    white
+  );
 }
 
+.btn-outline:active {
+  background-color: color-mix(
+    in srgb,
+    v-bind(mainColor) 15%,
+    white
+  );
+}
 /* ===== Size Variants ===== */
 .btn-sm {
   height: 32px;

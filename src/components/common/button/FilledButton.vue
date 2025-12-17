@@ -43,7 +43,19 @@ defineProps({
 }
 
 .btn-filled:hover:not(:disabled) {
-  background-color: v-bind(hoverColor);
+  background-color: color-mix(
+    in srgb,
+    v-bind(bgColor) 90%,
+    black
+  );
+}
+
+.btn-filled:active:not(:disabled) {
+  background-color: color-mix(
+    in srgb,
+    v-bind(bgColor) 80%,
+    black
+  );
 }
 
 .btn-filled:disabled {
