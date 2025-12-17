@@ -254,7 +254,9 @@ const goNext = async () => {
 
 .photo-item {
   position: relative;
-  flex: 0 0 90%;
+  /* flex: 0 0 90%; */
+  width: 420px;
+  height: 420px;
   border-radius: 1rem;
   overflow: hidden;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
@@ -263,8 +265,8 @@ const goNext = async () => {
 }
 
 .photo-item img {
-  width: 100%;
-  height: 100%;
+  width: 420px;
+  height: 420px;
   object-fit: cover;
 }
 

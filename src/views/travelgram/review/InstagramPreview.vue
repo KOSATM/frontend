@@ -288,8 +288,8 @@ const publish = () => {
 }
 
 .preview-photo {
-  width: 100%;
-  height: 100%;
+  width: 420px;
+  height: 420px;
   object-fit: cover;
 }
 
