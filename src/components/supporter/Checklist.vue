@@ -41,8 +41,7 @@ const travelStore = useTravelStore()
 const checklist = ref([])
 const loading = ref(false)
 
-// 테스트용: dayIndex = 3 설정
-travelStore.dayIndex = 3
+
 
 // 기본 체크리스트 (dayIndex가 없을 때)
 const defaultChecklist = [
@@ -58,6 +57,8 @@ const defaultChecklist = [
 const loadChecklist = async () => {
   try {
     loading.value = true
+
+    
     
     console.log('📌 Current dayIndex:', travelStore.dayIndex)
     
@@ -133,28 +134,38 @@ const sortedChecklist = computed(() => {
 
 // 컴포넌트 마운트 시 체크리스트 로드
 onMounted(() => {
+
+  // 테스트용: dayIndex = 3 설정
+  travelStore.dayIndex = 3
+
   loadChecklist()
 })
 </script>
 
 <style scoped>
 .checklist-item {
-  background: #fff;
-  border: 1px solid #ececec;
+  background: white;
+  border: 1px solid rgba(26, 42, 86, 0.08);
   cursor: pointer;
-  transition: opacity .28s ease, transform .12s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 0px;
-  padding: 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
 
   /* --- 줄바꿈을 위한 핵심 코드 --- */
   word-break: keep-all;  /* 한글 단어 중간이 끊기지 않고 단어 단위로 줄바꿈 */
   word-wrap: break-word; /* 아주 긴 영문이나 숫자는 강제로 줄바꿈 */
   white-space: normal;   /* 텍스트가 영역을 넘어가면 줄바꿈 허용 */
-  line-height: 1.4;      /* 여러 줄일 때 가독성을 위해 줄 간격 확보 */
+  line-height: 1.5;      /* 여러 줄일 때 가독성을 위해 줄 간격 확보 */
   display: block;        /* span 태그가 공간을 차지하도록 설정 */
   margin-right: 8px;     /* 힌트 텍스트와의 간격 확보 */
+}
+
+.checklist-item:hover {
+  transform: translateX(4px);
+  border-color: rgba(74, 107, 181, 0.3);
 }
 .checklist-item .text-muted.small {
   flex-shrink: 0;       /* 제목이 길어져도 힌트 영역이 찌그러지지 않음 */
@@ -162,38 +173,48 @@ onMounted(() => {
   margin-left: auto;    /* 오른쪽 끝으로 확실하게 밀어줌 */
 }
 .checklist-item.checked-item {
-  opacity: .55;
-  transform: scale(.995);
-  border-color: #d1fae5;
-  background: rgba(255, 255, 255, 0.95);
+  opacity: .6;
+  transform: scale(.98);
+  border-color: rgba(16, 185, 129, 0.2);
+  background: #f0fdf4;
+}
+
+.checklist-item.checked-item:hover {
+  transform: scale(.98) translateX(2px);
 }
 
 .item-title {
-  font-size: 20px;
-  color: #222;
+  font-size: 0.95rem;
+  color: #2c3e50;
+  font-weight: 500;
 }
 
 .item-title.checkedTitle {
   position: relative;
-  color: #555;
+  color: #6b7280;
   text-decoration: line-through;
 }
 
 .circle-check {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  border: 2px solid #d1d5db;
+  border: 2.5px solid #cbd5e0;
   background: #fff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all .18s ease;
+  transition: all 0.3s ease;
+}
+
+.circle-check:hover {
+  border-color: #4a6bb5;
+  transform: scale(1.1);
 }
 
 .circle-check.checked {
-  background: #34d399;
-  border-color: #34d399;
+  background: #10b981;
+  border-color: #10b981;
 }
 
 .circle-check.checked::after {
@@ -218,17 +239,21 @@ onMounted(() => {
   display: flex;
   align-items: center;
   width: 100%;
-  height: 12px;
-  border-radius: 6px;
-  overflow: visible;
+  height: 14px;
+  border-radius: 8px;
+  overflow: hidden;
   position: relative;
-  background-color: #e9ecef;
+  background: #e9ecef;
 }
 
 .progress-bar-row .progress-bar {
   height: 100%;
-  transition: width 0.3s ease;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #2d4a8f;
+  position: relative;
 }
+
+
 
 .progress-complete {
   background-color: #d1f5e0 !important;

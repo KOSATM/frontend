@@ -1,15 +1,43 @@
 // filepath: c:\kosa-course\userProject\ATM\projects\frontend\src\views\supporter\image-ai\History.vue
 
 <template>
-  <div class = "supporter-page">
-  <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" />
-  <BackButtonPageHeader title="이미지 기반 여행 AI" subtitle="당신의 사진으로 여행 장소를 찾아보아요!" />
+  <section class="history-root card rounded-0 h-100 d-flex flex-column">
+    <!-- Header -->
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
+        <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
+          <i class="bi bi-arrow-left-short fs-1"></i>
+        </button>
+        
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
+          🕒
+        </div>
 
-  <BaseSection icon="bi-clock-history" title="AI가 추천한 히스토리">
-    <template #actions>
-      <router-link class="btn btn-sm btn-primary" :to="{ name: 'CreateNewSearch' }">+ 새로운 검색</router-link>
-    </template>
-    
+        <div>
+          <h5 class="mb-1 title">이미지 기반 여행 AI</h5>
+          <p class="text-muted small mb-0 sub">
+            당신의 사진으로 여행 장소를 찾아보아요!
+          </p>
+        </div>
+      </div>
+    </div>
+
+  <!-- Body Content -->
+  <div class="history-body-scroll flex-grow-1 overflow-y-auto p-4">
+    <!-- Section Header -->
+    <div class="section-header d-flex align-items-center justify-content-between mb-4">
+      <div class="d-flex align-items-center gap-3">
+        <div class="icon-badge">
+          <i class="bi bi-clock-history"></i>
+        </div>
+        <h6 class="section-title mb-0">AI가 추천한 히스토리</h6>
+      </div>
+      <router-link class="btn btn-sm btn-primary" :to="{ name: 'CreateNewSearch' }">
+        + 새로운 검색
+      </router-link>
+    </div>
+
     <div v-if="isLoading" class="text-center py-5">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">로딩 중...</span>
@@ -19,7 +47,7 @@
     <div v-else class="history-list">
       <div v-for="(h, i) in history" :key="i" class="history-item card p-3 mb-3">
         <div class="d-flex">
-          <img v-if="h.thumb" :src="h.thumb" class="thumb me-3" />
+          <img v-if="h.thumb" :src="h.thumb" class="thumb me-3"  v-img-fallback="fallbacks" />
           <div v-else class="thumb me-3 bg-secondary d-flex align-items-center justify-content-center text-white">
             <i class="bi bi-image"></i>
           </div>
@@ -27,7 +55,7 @@
             <div class="d-flex justify-content-between">
               <div>
                 <div class="small text-muted">{{ h.date }}</div>
-                <div class="fw-medium mt-1">{{ h.title }}</div>
+                <div class="history-item-title fw-medium mt-1">{{ h.title }}</div>
                 <div class="small text-muted mt-1">{{ h.note }}</div>
               </div>
               <div>
@@ -39,7 +67,7 @@
               <div class="small text-muted mb-1">AI 추천 ({{ h.recommendations.length }})</div>
               <div class="d-flex gap-2">
                 <template v-for="(r, idx) in h.recommendations" :key="idx">
-                  <img v-if="r.thumb" :src="r.thumb" class="rec-thumb" :title="r.name" />
+                  <img v-if="r.thumb" :src="r.thumb" class="rec-thumb" :title="r.name"  v-img-fallback="fallbacks" />
                   <div v-else class="rec-thumb bg-secondary d-flex align-items-center justify-content-center text-white" :title="r.name">
                     <i class="bi bi-image"></i>
                   </div>
@@ -67,7 +95,7 @@
         AI 히스토리가 존재하지 않습니다. "새로운 검색" 버튼을 클릭하거나 서포터 홈에서 사진 업로드를 해보세요.
       </div>
     </div>
-  </BaseSection>
+  </div>
 
   <!-- ActivityDetailsModal -->
   <ActivityDetailsModal 
@@ -94,7 +122,7 @@
 
         <!-- Item Info -->
         <div class="selected-place card p-3 mb-3 d-flex align-items-center">
-          <img v-if="changeStatusItem.thumb" :src="changeStatusItem.thumb" class="thumb me-3" />
+          <img v-if="changeStatusItem.thumb" :src="changeStatusItem.thumb" class="thumb me-3"  v-img-fallback="fallbacks" />
           <div v-else class="thumb me-3 bg-secondary d-flex align-items-center justify-content-center text-white">
             <i class="bi bi-image"></i>
           </div>
@@ -143,19 +171,25 @@
   </div>
     </div>
   </teleport>
-  </div>
+  </section>
 
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import BackButtonPageHeader from '@/components/common/header/BackButtonPageHeader.vue'
-import BaseSection from '@/components/common/BaseSection.vue'
 import ActivityDetailsModal from '@/components/planner/ActivityDetailsModal.vue'
 import imageSearchApi from '@/api/imageSearchApi'
-import PageHeader from '@/components/common/header/PageHeader.vue'
 import { useAuthStore } from '@/store/authStore'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+
+const fallbacks = [
+  "/images/01.png",
+  "/images/02.png",
+  "/images/03.png",
+  "/images/04.png",
+  "/images/05.png",
+  "/images/06.png",
+];
 
 const authStore = useAuthStore()
 
@@ -321,10 +355,156 @@ const confirmChangeStatus = async () => {
 </script>
 
 <style scoped>
+/* ========================================
+   History Root - PlanList 스타일 매칭
+   ======================================== */
+.history-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans KR", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+/* 헤더 영역 스타일 */
+.history-root > div:first-child {
+  background: #ffffff;
+  color: #2d4a8f;
+  border-bottom: 1px solid #e2e8f0 !important;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 2rem !important;
+  position: relative;
+}
+
+.history-root h5.title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b !important;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.25rem;
+}
+
+.history-root .sub {
+  color: #64748b !important;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.history-root .rounded-3 {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0;
+  font-size: 1.25rem;
+  width: 38px !important;
+  height: 38px !important;
+}
+
+/* 뒤로가기 버튼 */
+.back-button {
+  color: #2d4a8f;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  margin-left: -0.5rem;
+}
+
+.back-button:hover {
+  color: #1a2a56;
+  transform: translateX(-4px);
+}
+
+.back-button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* 본문 스크롤 */
+.history-body-scroll {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #ffffff;
+  background: #ffffff;
+}
+
+.history-body-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.history-body-scroll::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 3px;
+}
+
+.history-body-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.history-body-scroll::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Section Header 스타일 */
+.section-header {
+  padding: 0.5rem 0;
+}
+
+.icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2d4a8f 0%, #1a2a56 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 12px rgba(45, 74, 143, 0.2);
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.02em;
+}
+
+/* Primary 버튼 스타일 */
+.btn-primary {
+  background-color: #2d4a8f !important;
+  border-color: #2d4a8f !important;
+  color: white !important;
+  padding: 0.65rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  background-color: #1a2a56 !important;
+  border-color: #1a2a56 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(45, 74, 143, 0.3);
+}
+
+.btn-sm.btn-primary {
+  padding: 0.5rem 1.2rem;
+  font-size: 0.875rem;
+  border-radius: 10px;
+}
+
 .supporter-page {
   background-color: #fffaf3;
   min-height: 100vh;
-  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+  padding: 2rem 1.25rem;
 }
 
 .history-card {
@@ -332,40 +512,101 @@ const confirmChangeStatus = async () => {
   border-radius: 12px;
 }
 
+.history-list {
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+@media (min-height: 900px) {
+  .history-list {
+    max-height: 720px;
+  }
+}
+
+@media (max-height: 768px) {
+  .history-list {
+    max-height: 480px;
+  }
+}
+
+.history-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.history-list::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.history-list::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
 .history-item {
-  border-radius: 12px;
-  background: #fff;
-  border: 1px solid #f3e8ff;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #e2e8f0;
   position: relative;
   overflow: hidden;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(45, 74, 143, 0.05);
 }
 
 .history-item:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: #2d4a8f;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(45, 74, 143, 0.15);
+}
+
+.history-item-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.4;
 }
 
 .thumb {
   width: 72px;
   height: 72px;
-  border-radius: 10px;
+  border-radius: 12px;
   object-fit: cover;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(45, 74, 143, 0.1);
 }
 
 .rec-thumb {
   width: 64px;
   height: 64px;
-  border-radius: 8px;
+  border-radius: 10px;
   object-fit: cover;
-  border: 2px solid rgba(167, 139, 255, 0.15);
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(45, 74, 143, 0.08);
+}
+
+.rec-thumb:hover {
+  border-color: #2d4a8f;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(45, 74, 143, 0.2);
 }
 
 .status-badge {
-  background: #1b3b6f;
+  background: linear-gradient(135deg, #2d4a8f 0%, #1a2a56 100%);
   color: #fff;
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 999px;
   font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(45, 74, 143, 0.2);
 }
 
 /* Hover Overlay */
@@ -395,35 +636,38 @@ const confirmChangeStatus = async () => {
 .action-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
+  gap: 8px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 8px;
-  font-size: 13px;
+  border-radius: 10px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: #fff;
+  letter-spacing: -0.01em;
 }
 
 .detail-btn {
-  background: #2563eb;
+  background: linear-gradient(135deg, #2d4a8f 0%, #1a2a56 100%);
+  box-shadow: 0 2px 8px rgba(45, 74, 143, 0.3);
 }
 
 .detail-btn:hover {
-  background: #1d4ed8;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+  background: linear-gradient(135deg, #1a2a56 0%, #0f1a3a 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(45, 74, 143, 0.4);
 }
 
 .change-btn {
-  background: #7c3aed;
+  background: linear-gradient(135deg, #475569 0%, #334155 100%);
+  box-shadow: 0 2px 8px rgba(71, 85, 105, 0.3);
 }
 
 .change-btn:hover {
-  background: #6d28d9;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(124, 58, 237, 0.3);
+  background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(71, 85, 105, 0.4);
 }
 
 
@@ -460,10 +704,11 @@ const confirmChangeStatus = async () => {
 }
 
 .selected-place {
-  border-radius: 10px;
-  background: #fff;
-  border: 1px solid #f3e8ff;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #e2e8f0;
   justify-content: flex-start;
+  box-shadow: 0 2px 8px rgba(45, 74, 143, 0.05);
 }
 
 .thumb {
@@ -475,37 +720,46 @@ const confirmChangeStatus = async () => {
 }
 
 .option {
-  background: #fff;
-  border: 1px solid #f3e8ff;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #e2e8f0;
   cursor: pointer;
-  transition: box-shadow .12s, transform .08s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  box-shadow: 0 2px 8px rgba(45, 74, 143, 0.05);
 }
 
 .option.selected {
-  border-color: #1b3b6f;
-  background: #f3f7ff;
+  border-color: #2d4a8f;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(27, 59, 111, 0.06);
+  box-shadow: 0 8px 20px rgba(45, 74, 143, 0.15);
 }
 
 .option .icon {
   width: 48px;
   height: 48px;
-  border-radius: 10px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f7f7ff;
-  color: #6b46ff;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  color: #2d4a8f;
   font-weight: 700;
   font-size: 18px;
   flex-shrink: 0;
+  border: 2px solid #e2e8f0;
+}
+
+.option.selected .icon {
+  background: linear-gradient(135deg, #2d4a8f 0%, #1a2a56 100%);
+  color: #ffffff;
+  border-color: #2d4a8f;
 }
 
 .option:hover {
-  box-shadow: 0 8px 20px rgba(167, 139, 255, 0.06);
+  box-shadow: 0 8px 20px rgba(45, 74, 143, 0.12);
   transform: translateY(-2px);
+  border-color: #cbd5e1;
 }
 
 .select-check {
@@ -513,7 +767,7 @@ const confirmChangeStatus = async () => {
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  background: #1b3b6f;
+  background: linear-gradient(135deg, #2d4a8f 0%, #1a2a56 100%);
   color: #fff;
   width: 36px;
   height: 36px;
@@ -522,7 +776,30 @@ const confirmChangeStatus = async () => {
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  box-shadow: 0 6px 18px rgba(27, 59, 111, 0.12);
-  border: 2px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 6px 18px rgba(45, 74, 143, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* 로딩 스피너 */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  border-width: 0.3em;
+  color: #2d4a8f;
+  border-right-color: transparent;
+}
+
+/* 텍스트 스타일 */
+.fw-medium {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.text-muted {
+  color: #64748b !important;
+}
+
+.small.text-muted {
+  font-size: 0.875rem;
 }
 </style>

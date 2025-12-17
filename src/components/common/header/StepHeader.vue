@@ -77,7 +77,7 @@ const progressPercent = computed(() => {
 }
 
 .step-indicator {
-  font-family: 'memoment', sans-serif; /* 폰트가 없다면 sans-serif */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans KR", sans-serif;
   font-size: 0.9rem;
   letter-spacing: 0.5px;
 }

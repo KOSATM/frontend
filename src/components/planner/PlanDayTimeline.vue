@@ -5,7 +5,7 @@
       <button
         v-for="(day, idx) in days"
         :key="idx"
-        class="day-tab-btn"
+        class="btn btn-outline-primary"
         :class="{ active: selectedDayIndex === idx }"
         @click="$emit('update:selectedDayIndex', idx)"
       >
@@ -54,7 +54,7 @@
 
                 <div class="d-flex gap-3">
                   <div class="thumb">
-                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" />
+                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" v-img-fallback="fallbacks" />
                     <div v-else class="thumb-placeholder"></div>
                   </div>
 
@@ -97,7 +97,7 @@
 
                 <div class="d-flex gap-3">
                   <div class="thumb">
-                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" />
+                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" v-img-fallback="fallbacks" />
                     <div v-else class="thumb-placeholder"></div>
                   </div>
 
@@ -143,6 +143,16 @@ const props = defineProps({
   formatTime: Function,
   categoryMap: Object,
 });
+
+const fallbacks = [
+  "/images/01.png",
+  "/images/02.png",
+  "/images/03.png",
+  "/images/04.png",
+  "/images/05.png",
+  "/images/06.png",
+];
+
 </script>
 
 <style scoped lang="scss">
@@ -162,34 +172,13 @@ const props = defineProps({
   border-bottom: 1px solid #ddd;
 }
 
-.day-tab-btn {
-  /* ✅ Font Size 제거 -> 상속 or Base Size 사용 */
-  /* ✅ 제목 성격이므로 memoment 폰트 적용 */
-  font-family: 'memoment';
-  
-  padding: 4px 12px;
-  border-radius: 14px;
-  border: 2px solid #ff9800;
-  color: #ff9800;
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.day-tab-btn.active {
-  background: #ff9800;
-  color: #fff;
-  /* active 시 살짝 두껍게 */
-  font-weight: 700; 
-}
-
 /* =========================
    2) Content Styles
    ========================= */
 
 .day-section-wrapper {
   padding: 26px 22px;
-  background: #fafafa;
+  // background: #fafafa;
   border-radius: 14px;
   margin: 20px 18px 36px;
 }
@@ -222,12 +211,12 @@ const props = defineProps({
      일단 typography.scss의 흐름을 따름 */
 }
 
-/* Colors */
-.color-purple { background: #ede9ff; color: #7a49ff; }
-.color-red { background: #ffe5e5; color: #ff6b6b; }
-.color-blue { background: #e5f0ff; color: #4fa3ff; }
-.color-green { background: #e5ffeb; color: #3ac569; }
-.color-gray { background: #efefef; color: #666; }
+/* Colors - 남색 테마로 조화롭게 변경 */
+.color-purple { background: #e8eaf6; color: #5c6bc0; }
+.color-red { background: #ffe5e8; color: #e57373; }
+.color-blue { background: #e3f2fd; color: #42a5f5; }
+.color-green { background: #e8f5e9; color: #66bb6a; }
+.color-gray { background: #f5f5f5; color: #757575; }
 
 /* Label Text */
 .label-text-wrapper {
@@ -237,13 +226,13 @@ const props = defineProps({
 }
 
 .place-label {
-  font-family: 'memoment';
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans KR", sans-serif;
   line-height: 1.1;
   color: #333; /* 혹은 SCSS 변수 $secondary */
 }
 
 .place-start-time {
-  line-height: 1.2;
+  display: none;
 }
 
 /* =========================
@@ -261,7 +250,7 @@ const props = defineProps({
   top: 30px;
   bottom: -20px;
   width: 2px;
-  background: #d0d9ff;
+  background: #cbd5e1;
 }
 
 .label-line {
@@ -317,6 +306,8 @@ const props = defineProps({
 
 /* Card Text */
 .place-title {
+  font-size: 1rem; /* 16px - 기본 크기로 축소 */
+  font-weight: 600;
   line-height: 1.2;
   margin-bottom: 2px;
 }
@@ -353,5 +344,22 @@ const props = defineProps({
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Bootstrap primary 색상을 남색으로 오버라이드 */
+:deep(.text-primary) {
+  color: #2d4a8f !important;
+}
+
+:deep(.btn-outline-primary) {
+  color: #2d4a8f !important;
+  border-color: #2d4a8f !important;
+}
+
+:deep(.btn-outline-primary:hover),
+:deep(.btn-outline-primary.active) {
+  background-color: #2d4a8f !important;
+  border-color: #2d4a8f !important;
+  color: white !important;
 }
 </style>

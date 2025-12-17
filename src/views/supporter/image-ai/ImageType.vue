@@ -1,9 +1,25 @@
 <template>
-<div class="supporter-page">
-  <PageHeader title="서포터" subtitle="실시간으로 당신의 여행을 도와드립니다." icon="bi-chat-dots" />
-  <StepHeader title="이미지 기반 여행 AI" subtitle="당신의 사진으로 여행 장소를 찾아보아요!" step="2/4"
-    @back="router.push({ name: 'CreateNewSearch' })" />
+    <!-- Header -->
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
+        <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
+          <i class="bi bi-arrow-left-short fs-1"></i>
+        </button>
+        
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
+          📷
+        </div>
 
+        <div>
+          <h5 class="mb-1 title">이미지 기반 여행 AI</h5>
+          <p class="text-muted small mb-0 sub">
+            당신의 사진으로 여행 장소를 찾아보아요!
+          </p>
+        </div>
+      </div>
+
+    </div>
   <BaseSection icon="bi-camera" title="이 사진에서 알고 싶은 정보는 무엇인가요?">
     <div class="preview-wrap mb-3" v-if="preview">
       <img :src="preview" alt="uploaded preview" class="preview-img" />
@@ -58,7 +74,6 @@
     </NavigationButtons>
     </div>
 
-</div>
 
 </template>
 

@@ -1,12 +1,10 @@
 <!-- src/views/planner/PlanList.vue -->
 <template>
-  <div class="planner-page">
-  <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
-  <section class="planner-right card shadow-sm rounded-4 h-100 d-flex flex-column">
+  <section class="plan-root card rounded-0 h-100 d-flex flex-column">
 
     <!-- Header -->
-    <div class="p-4 pb-3 border-bottom d-flex align-items-center">
-      <div class="d-flex gap-3 align-items-center flex-grow-1">
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
         <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
           style="width: 46px; height: 46px">
           📅
@@ -19,11 +17,9 @@
           </p>
         </div>
       </div>
-    </div>
 
-    <!-- Edit Button -->
-    <div v-if="currentDayPlaces.length > 0" class="d-flex justify-content-end px-4 pt-3">
-      <button class="btn btn-outline-secondary edit-btn-large" @click="toggleEditMode">
+      <!-- Edit Button -->
+      <button v-if="currentDayPlaces.length > 0" class="btn btn-outline-secondary edit-btn-large" @click="toggleEditMode">
         {{ editMode ? "편집 완료" : "편집" }}
       </button>
     </div>
@@ -33,15 +29,30 @@
       @complete="openActivityComplete" />
 
     <!-- 🔥 Body Component -->
-    <PlanDayTimeline :days="days" :currentDayPlaces="currentDayPlaces" :selectedDayIndex="selectedDayIndex"
-      :editMode="editMode" :typeColor="typeColor" :typeLabel="typeLabel" :formatTime="formatTime"
-      :categoryMap="categoryMap" @open-modal="openModal" @delete-place="onDeletePlace"
-      @update:selectedDayIndex="selectedDayIndex = $event" />
+    <div class="plan-body-scroll flex-grow-1 overflow-y-auto">
+      <PlanDayTimeline
+        :days="days"
+        :currentDayPlaces="currentDayPlaces"
+        :selectedDayIndex="selectedDayIndex"
+        :editMode="editMode"
+        :typeColor="typeColor"
+        :typeLabel="typeLabel"
+        :formatTime="formatTime"
+        :categoryMap="categoryMap"
+        @open-modal="openModal"
+        @delete-place="onDeletePlace"
+        @update:selectedDayIndex="selectedDayIndex = $event"
+      />
+    </div>
 
     <!-- CTA -->
-    <div class="p-4 pt-0 border-top bg-white">
-      <NavigationButtons :backText="'이전'" :nextText="travelStore.$state.isTraveling ? '여행 종료' : '여행 일정 요약페이지로 이동'"
-        :isNextDisabled="false" @back="onBack" @next="onNext" />
+    <div class="border-top bg-white d-flex gap-3" style="height: 95px; padding: 1rem;">
+      <button class="btn btn-outline-secondary flex-fill" @click="onBack">
+        이전
+      </button>
+      <button class="btn btn-primary flex-fill" @click="onNext">
+        {{ travelStore.$state.isTraveling ? '여행 종료' : '여행 일정 요약페이지로 이동' }}
+      </button>
     </div>
 
     <!-- Modals -->
@@ -51,11 +62,19 @@
       @close="replaceModalOpen = false" @apply-replacement="applyReplacement" @delete-anyway="deleteAnyway" />
 
     <!-- ✅ Activity Complete Modal (추가된 연결) -->
-    <ActivityCompleteModal :open="activityModalOpen" :title="activePlace?.title || ''" :spendInput="spendInput"
-      :comment="comment" :quickStats="activityQuickStats" @close="activityModalOpen = false" @confirm="completeActivity"
-      @update:spend-input="spendInput = $event" @update:comment="comment = $event" />
+    <ActivityCompleteModal
+      :open="activityModalOpen"
+      :title="activityModalData.title"
+      :status="activityModalData.status"
+      :comment="comment"
+      :spendInput="spendInput"
+      :quickStats="activityQuickStats"
+      @close="activityModalOpen = false"
+      @confirm="completeActivity"
+      @update:spend-input="spendInput = $event"
+      @update:comment="comment = $event"
+    />
   </section>
-  </div>
 </template>
 
 <script setup>
@@ -63,7 +82,6 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 
 import PageHeader from "@/components/common/header/PageHeader.vue";
-import NavigationButtons from "@/components/common/button/NavigationButtons.vue";
 import plannerApi from "@/api/plannerApi";
 
 import { useAuthStore } from "@/store/authStore";
@@ -90,6 +108,16 @@ const authStore = useAuthStore();
 const travelStore = useTravelStore();
 const chatStore = useChatStore();
 
+// fallback 이미지들
+const fallbacks = [
+  "/images/01.png",
+  "/images/02.png",
+  "/images/03.png",
+  "/images/04.png",
+  "/images/05.png",
+  "/images/06.png",
+];
+
 /* ---------- ReplaceModal 상태 ---------- */
 const replaceModalOpen = ref(false);
 const replaceTarget = ref(null);
@@ -97,6 +125,11 @@ const replaceAlternatives = ref([]);
 
 /* ---------- ACTIVITY COMPLETE MODAL 상태 ---------- */
 const activityModalOpen = ref(false);
+const activityModalData = ref({
+  status: 'PENDING',
+  memo: '',
+  actualCost: null,
+});
 const activePlace = ref(null);
 const spendInput = ref(null);
 const comment = ref("");
@@ -183,10 +216,32 @@ const activityQuickStats = computed(() => {
 });
 
 /* ---------- 모달 열기 로직 ---------- */
-const openActivityComplete = (place) => {
+const openActivityComplete = async (place) => {
   activePlace.value = place;
-  spendInput.value = null;
-  comment.value = "";
+
+  // 프론트 정보로 먼저 세팅
+  activityModalData.value = {
+    title: place.title,
+    status: place.status ?? 'PENDING',
+    memo: '',
+    actualCost: null,
+  };
+
+  // 백엔드에서 활동 정보 조회 (금액, 메모 등만)
+  try {
+    const res = await plannerApi.getCurrentActivity(place.id || place.placeId);
+    if (res?.data) {
+      activityModalData.value.memo = res.data.memo || '';
+      activityModalData.value.actualCost = res.data.actualCost ?? null;
+    }
+  } catch (e) {
+    // 404 등 에러 시 기본값 유지
+  }
+
+  // 입력값도 동기화
+  comment.value = activityModalData.value.memo;
+  spendInput.value = activityModalData.value.actualCost;
+
   activityModalOpen.value = true;
 };
 
@@ -653,6 +708,12 @@ function selectToday() {
   }
 }
 
+
+
+
+
+
+
 /* ---------- navigation ---------- */
 const onNext = () => {
   if (travelStore.$state.isTraveling) endplan();
@@ -662,33 +723,218 @@ const onNext = () => {
 const onBack = () => router.back();
 
 const goToSummary = () => router.push("/planner/summary");
-const endplan = () => {
-  // 여행 종료 시 메인 페이지로 이동
-  travelStore.$state.isTraveling = false // 여행 상태 초기화
-  router.push("/")
-}
+const endplan = async () => {
+  const planId = travelStore.planId;
+
+  if (!planId) {
+    console.warn('❌ planId가 없습니다');
+    return;
+  }
+
+  try {
+    // 여행 종료 API 호출
+    await plannerApi.saveEndTravel(planId);
+    console.log('✅ 여행 종료 완료');
+
+    // 스토어 상태 초기화
+    travelStore.endTravel();
+    travelStore.clearPlanInfo();
+
+    // 메인 페이지로 리다이렉트
+    router.push('/');
+  } catch (error) {
+    console.error('❌ 여행 종료 실패:', error);
+    alert('여행 종료 처리에 실패했습니다.\n다시 시도해주세요.');
+  }
+};
+
 </script>
 
 <style scoped>
-.planner-page {
-  background-color: #fffaf3;
-  min-height: 100vh;
-  padding-bottom: 6rem;
-  padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */
+/* ========================================
+   � PlanList - 랜딩페이지 스타일 매칭
+   ======================================== */
+.plan-root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans KR", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* background: #ffffff; */
+  /* border: 1px solid #f1f5f9 !important; */
+  /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06) !important; */
+  /* border-radius: 16px; */
+  overflow: hidden;
 }
-/* Edit 버튼 */
+
+/* 헤더 영역 스타일 개선 */
+.plan-root > div:first-child {
+  background: #ffffff;
+  color: #2d4a8f;
+  border-bottom: 1px solid #e2e8f0 !important;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 2rem !important;
+  position: relative;
+}
+
+.plan-root h5.title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b !important;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.25rem;
+}
+
+.plan-root .sub {
+  color: #64748b !important;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.plan-root .rounded-3 {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0;
+  font-size: 1.25rem;
+  width: 38px !important;
+  height: 38px !important;
+}
+
+/* 일정 본문 스크롤 */
+.plan-body-scroll {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #ffffff;
+  background: #ffffff;
+}
+
+/* 웹킷 브라우저 스크롤바 */
+.plan-body-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.plan-body-scroll::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 3px;
+}
+
+.plan-body-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.plan-body-scroll::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Edit 버튼 스타일 개선 */
 .edit-btn-large {
-  padding: 0.5rem 1.5rem;
-  font-size: 1.08rem;
-  height: 44px;
-  border-radius: 0.8rem;
+  padding: 0.65rem 1.8rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  height: auto;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #2d4a8f;
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: -0.01em;
+}
+
+.edit-btn-large:hover {
+  background: #2d4a8f;
+  color: white;
+  border-color: #2d4a8f;
+  transform: translateY(-1px);
 }
 
 /* 제목 highlight */
 :deep(.highlight) {
-  background: #fff0b3;
-  padding: 2px 6px;
-  border-radius: 6px;
   font-weight: 700;
+  color: #2d4a8f;
+}
+
+/* CTA 영역 스타일 */
+.plan-root > .border-top {
+  background: #ffffff !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+/* 편집 버튼 영역 */
+.plan-root > div:has(.edit-btn-large) {
+  background: #ffffff;
+  padding: 1.5rem 2rem 1rem !important;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* 전체적인 색상 테마 - 남색 */
+:deep(.text-muted) {
+  color: #64748b !important;
+}
+
+:deep(.bg-secondary-subtle) {
+  background-color: #f1f5f9 !important;
+}
+
+/* Bootstrap primary 색상을 남색으로 오버라이드 */
+:deep(.btn-primary) {
+  background-color: #2d4a8f !important;
+  border-color: #2d4a8f !important;
+  color: white !important;
+}
+
+:deep(.btn-primary:hover) {
+  background-color: #1a2a56 !important;
+  border-color: #1a2a56 !important;
+}
+
+:deep(.btn-outline-primary) {
+  color: #2d4a8f !important;
+  border-color: #2d4a8f !important;
+}
+
+:deep(.btn-outline-primary:hover),
+:deep(.btn-outline-primary.active) {
+  background-color: #2d4a8f !important;
+  border-color: #2d4a8f !important;
+  color: white !important;
+}
+
+:deep(.text-primary) {
+  color: #2d4a8f !important;
+}
+
+/* 카드 스타일 통일 */
+:deep(.card) {
+  border: 1px solid #f1f5f9;
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
+}
+
+:deep(.card:hover) {
+  border-color: #e2e8f0;
+  transform: translateY(-2px);
+}
+
+/* 타이포그래피 개선 */
+:deep(h5), :deep(h6) {
+  font-weight: 600;
+  color: #1e293b;
+  letter-spacing: -0.02em;
+}
+
+:deep(p) {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+:deep(.small) {
+  font-size: 0.875rem;
+  color: #94a3b8;
 }
 </style>

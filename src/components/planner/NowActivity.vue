@@ -159,21 +159,17 @@ const bgGradient = computed(() => {
   overflow: hidden;
   cursor: pointer;
 
-  /* 🔥 핵심 수정
   background:
     linear-gradient(
       135deg,
-      rgba(20, 18, 48, 0.92),
-      rgba(42, 18, 85, 0.92)
-    ); */
+      rgba(139, 92, 246, 0.95),
+      rgba(168, 85, 247, 0.95),
+      rgba(217, 70, 239, 0.95)
+    );
 
-  border: 1px solid rgba(255,255,255,0.18);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  box-shadow:
-    0 18px 70px rgba(0,0,0,.35),
-    inset 0 1px 0 rgba(255,255,255,.10);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
 }
 
 /* 카드 내부 ‘도트’ 분위기 (사진처럼 은은하게) */
@@ -190,18 +186,20 @@ const bgGradient = computed(() => {
   background-position: center;
   mask-image: radial-gradient(closest-side, rgba(0,0,0,.9), transparent 68%);
   -webkit-mask-image: radial-gradient(closest-side, rgba(0,0,0,.9), transparent 68%);
+  animation: sparkle-stars 3s ease-in-out infinite;
 }
 
-/* 쉬머 살짝 */
+/* 화려한 빛 오버레이 */
 .now-active-card::before {
   content: "";
   position: absolute;
-  inset: -40% -20% auto -20%;
-  height: 160%;
-  background: radial-gradient(closest-side, rgba(255,255,255,.16), transparent 70%);
-  transform: rotate(18deg);
-  opacity: .30;
+  inset: 0;
   pointer-events: none;
+  background: 
+    radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.3), transparent 50%),
+    radial-gradient(circle at 70% 60%, rgba(255, 182, 255, 0.25), transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(192, 132, 252, 0.2), transparent 70%);
+  animation: glow-pulse 4s ease-in-out infinite;
 }
 
 /* =========================
@@ -328,5 +326,31 @@ const bgGradient = computed(() => {
   background: rgba(255,255,255,.82);
   box-shadow: 0 10px 26px rgba(255,255,255,.16);
   transition: width .35s ease;
+}
+
+/* 별 반짝임 애니메이션 */
+@keyframes sparkle-stars {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* 빛 반짝임 애니메이션 */
+@keyframes glow-pulse {
+  0% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
 }
 </style>

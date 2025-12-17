@@ -70,9 +70,9 @@ onMounted(() => {
   const existing = bootstrap.Offcanvas.getInstance(sidebarEl)
   if (existing) existing.dispose()
 
-  // 새 인스턴스 한 번만 생성
+  // 새 인스턴스 한 번만 생성 (backdrop 없이)
   offcanvasInstance = new bootstrap.Offcanvas(sidebarEl, {
-    backdrop: true,
+    backdrop: false,
     keyboard: true,
     scroll: false
   })
@@ -118,24 +118,68 @@ function onSelect(name) {
 </script>
 
 <style scoped>
-.nav-item {
-  color: #1b3b6f;
-  text-decoration: none;
-  /* font-weight: 500; */
-  transition: all 0.2s ease;
+/* Offcanvas 배경 - 흰색 */
+.offcanvas {
+  background-color: #fff;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
 }
-.nav-item:hover {
-  background-color: rgba(255, 140, 0, 0.1);
+
+/* Offcanvas Header */
+.offcanvas-header {
+  border-bottom-color: #e5e7eb !important;
 }
-.nav-item.active {
-  background-color: #ff8c00;
-  color: #fff !important;
-}
+
 .offcanvas-header h5 {
   color: #1b3b6f;
 }
+
+.offcanvas-header .btn-close {
+  opacity: 0.6;
+}
+
+/* 기본 메뉴 아이템 - 흰색 배경에 남색 텍스트 */
+.nav-item {
+  color: #1b3b6f !important;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  background-color: transparent;
+}
+
+.nav-item i {
+  color: #1b3b6f !important;
+}
+
+.nav-item h5 {
+  color: #1b3b6f !important;
+}
+
+.nav-item:hover {
+  background-color: #f3f4f6;
+  color: #1b3b6f !important;
+}
+
+.nav-item:hover i,
+.nav-item:hover h5 {
+  color: #1b3b6f !important;
+}
+
+/* 활성화된 메뉴 - 남색 배경에 흰색 텍스트 */
+.nav-item.active {
+  background-color: #1b3b6f;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(27, 59, 111, 0.3);
+}
+
+.nav-item.active i {
+  color: #fff !important;
+}
+
+.nav-item.active h5 {
+  color: #fff !important;
+}
+
+/* backdrop 완전히 숨김 */
 .offcanvas-backdrop {
-  background-color: rgba(0, 0, 0, 0.35) !important;
-  transition: opacity 0.25s ease !important;
+  display: none !important;
 }
 </style>

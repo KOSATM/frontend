@@ -1,15 +1,32 @@
 <template>
   <div class="planner-page">
-  <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
+    <!-- Header -->
+    <div class="hotel-header border-bottom bg-white">
+      <div class="container">
+        <div class="d-flex gap-3 align-items-center" style="padding: 1.5rem 0;">
+          <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+            style="width: 46px; height: 46px">
+            🏨
+          </div>
+
+          <div>
+            <h5 class="mb-1 title">추천 숙소 선택</h5>
+            <p class="text-muted small mb-0 sub">
+              AI가 분석한 최적의 숙소를 확인하세요
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
   <div class="hotel-recommendation container py-4">
-    <div class="form-content bg-white rounded-4 p-4">
       <!-- 로딩 상태 -->
       <div v-if="isLoading" class="d-flex justify-content-center align-items-center" style="min-height: 400px;">
         <div class="text-center">
-          <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+          <div class="spinner-border mb-3" role="status" style="width: 3rem; height: 3rem; color: #2d4a8f;">
             <span class="visually-hidden">불러오는 중...</span>
           </div>
-          <p class="text-muted">{{ loadingMessage }}</p>
+          <p class="text-muted loading-message">{{ loadingMessage }}</p>
         </div>
       </div>
 
@@ -22,17 +39,15 @@
       <div v-else>
         <!-- Hotel List -->
         <div class="hotel-list mb-4">
-          <BaseSection icon="bi-buildings" title="추천하는 호텔"
-            :subtitle="`Showing ${filteredHotels.length} hotels for ${filters.guests} guests`">
-            <div v-if="isLoading" class="text-center py-4">
-              <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">불러오는 중...</span>
-              </div>
+          <div v-if="isLoading" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">불러오는 중...</span>
             </div>
-            <div v-else-if="error" class="alert alert-warning" role="alert">
-              {{ error }}
-            </div>
-            <div v-else class="row g-4">
+          </div>
+          <div v-else-if="error" class="alert alert-warning" role="alert">
+            {{ error }}
+          </div>
+          <div v-else class="row g-4">
               <!-- Hotel Cards -->
               <div v-for="hotel in filteredHotels" :key="hotel.id" class="col-12">
                 <div :class="['card hotel-card', { 'selected': selectedHotel?.id === hotel.id }]"
@@ -46,22 +61,22 @@
                       <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start">
                           <div>
-                            <h5 class="card-title text-secondary mb-2">{{ hotel.name }}</h5>
-                            <small class="text-muted d-block mb-2">{{ hotel.roomType }}</small>
+                            <h5 class="card-title text-secondary mb-2 hotel-name">{{ hotel.name }}</h5>
+                            <small class="text-muted d-block mb-2 hotel-room-type">{{ hotel.roomType }}</small>
                           </div>
-                          <span class="badge bg-primary">#{{ hotel.rank }}</span>
+                          <span class="badge bg-primary hotel-rank">#{{ hotel.rank }}</span>
                         </div>
-                        <p class="card-text text-muted small mb-2">
+                        <p class="card-text text-muted mb-2 hotel-location">
                           <i class="bi bi-geo-alt"></i>
                           {{ hotel.location }}
                         </p>
-                        <div class="hotel-info mb-2 small text-muted">
+                        <div class="hotel-info mb-2 text-muted hotel-dates">
                           <div><i class="bi bi-calendar-check"></i> {{ hotel.checkInDate }} ~ {{ hotel.checkOutDate }}
                           </div>
                           <div><i class="bi bi-moon"></i> {{ hotel.nights }} | <i class="bi bi-people"></i> {{
                             hotel.guests }}</div>
                         </div>
-                        <div class="hotel-features mb-3">
+                        <div class="hotel-features mb-3 amenities">
                           <span class="badge bg-light text-secondary me-2" v-if="hotel.facilities?.WiFi">
                             <i class="bi bi-wifi me-1"></i> {{ hotel.facilities.WiFi }}
                           </span>
@@ -78,14 +93,14 @@
                         <div class="d-flex justify-content-between align-items-end">
                           <div class="rating">
                             <i class="bi bi-star-fill text-warning"></i>
-                            <span class="ms-1">{{ hotel.rating }}</span>
-                            <span class="text-muted">({{ hotel.reviews }} 후기들)</span>
+                            <span class="ms-1 rating-score">{{ hotel.rating }}</span>
+                            <span class="text-muted rating-reviews">({{ hotel.reviews }} 후기들)</span>
                           </div>
                           <div class="price text-end">
-                            <div class="fs-5 fw-bold text-primary">
+                            <div class="price-amount">
                               ₩{{ hotel.price.toLocaleString() }}
                             </div>
-                            <small class="text-muted">1박당 가격</small>
+                            <small class="text-muted price-label">1박당 가격</small>
                           </div>
                         </div>
                       </div>
@@ -94,8 +109,7 @@
                 </div>
               </div>
             </div>
-          </BaseSection>
-        </div>
+          </div>
 
         <!-- Confirm Button -->
         <div class="text-center">
@@ -103,13 +117,11 @@
             @next="confirmSelection" />
         </div>
       </div>
-    </div>
   </div>
   </div>
 </template>
 
 <script setup>
-import PageHeader from "@/components/common/header/PageHeader.vue";
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -302,32 +314,163 @@ const goBack = () => {
 
 <style scoped>
 .planner-page {
-  background-color: #fffaf3;
+  background-color: #ffffff;
   min-height: 100vh;
   padding-bottom: 6rem;
-  padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */
 }
+
+.hotel-recommendation {
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
 .hotel-card {
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 2px solid transparent;
+  border: 2px solid #e2e8f0;
   overflow: hidden;
+  border-radius: 12px;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(45, 74, 143, 0.12);
+    border-color: #cbd5e1;
   }
 
   &.selected {
-    border-color: var(--bs-primary);
+    border-color: #2d4a8f;
+    box-shadow: 0 4px 16px rgba(45, 74, 143, 0.2);
   }
 }
 
-.budget-details {
-  border: 1px solid rgba(#ffb347, 0.2);
+.card-title {
+  color: #1e293b !important;
+  font-weight: 600;
 }
 
-.badge {
+.badge.bg-primary {
+  background-color: #2d4a8f !important;
+  border-color: #2d4a8f !important;
+}
+
+.badge.bg-light {
+  background-color: #f1f5f9 !important;
+  color: #64748b !important;
+}
+
+.text-primary {
+  color: #2d4a8f !important;
+}
+
+.btn-primary {
+  background-color: #2d4a8f !important;
+  border-color: #2d4a8f !important;
+}
+
+.btn-primary:hover {
+  background-color: #1a2a56 !important;
+  border-color: #1a2a56 !important;
+}
+
+.spinner-border.text-primary {
+  color: #2d4a8f !important;
+}
+
+.text-muted {
+  color: #64748b !important;
+}
+
+.rating {
+  color: #1e293b;
+}
+
+.reviews-text {
+  font-size: 0.85rem;
+}
+
+.price-amount {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2d4a8f;
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.price-label {
+  font-size: 0.875rem;
+  display: block;
+  margin-top: 2px;
+}
+
+.budget-details {
+  border: 1px solid #e2e8f0;
+}
+
+.hotel-header {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.hotel-header .title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.hotel-header .sub {
+  color: #64748b;
+}
+
+.hotel-header .bg-secondary-subtle {
+  background-color: #f1f5f9 !important;
+}
+
+/* 호텔 정보 타이포그래피 */
+.hotel-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b !important;
+  line-height: 1.3;
+}
+
+.hotel-room-type {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.hotel-rank {
+  font-size: 0.85rem;
+  padding: 0.35rem 0.65rem;
   font-weight: 500;
+}
+
+.hotel-location {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.hotel-dates {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.amenities .badge {
+  font-size: 0.85rem;
+  padding: 0.35rem 0.65rem;
+  font-weight: 500;
+}
+
+.rating {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.rating-score {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.rating-reviews {
+  font-size: 0.9rem;
+  margin-left: 0.25rem;
 }
 </style>

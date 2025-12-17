@@ -1,17 +1,4 @@
 <template>
-  <div class="review-caption-select">
-    <PageHeader
-      title="트래벌그램"
-      subtitle="당신의 지난 여행 기록들"
-      icon="bi-instagram"
-    />
-
-    <StepHeader
-      title="여행 후기 작성"
-      :subtitle="stepSubtitle"
-      step="3/6"
-      @back="goBack"
-    />
 
     <section class="caption-section">
       <header class="caption-header">
@@ -78,7 +65,6 @@
         <span v-else>다음으로</span>
       </template>
     </NavigationButtons>
-  </div>
 </template>
 
 

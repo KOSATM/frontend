@@ -1,5 +1,6 @@
 <!-- src/components/planner/ActivityDetailsModal.vue -->
 <template>
+
   <teleport to="body">
     <div v-if="open" class="modal-backdrop" @click="$emit('close')">
       <div class="modal-card" @click.stop>
@@ -9,7 +10,7 @@
 
         <!--  상단 메인 이미지 -->
         <div class="main-image-wrapper">
-          <img :src="localGallery[0]" alt="thumbnail" class="main-image" />
+          <img :src="localGallery[0]" alt="thumbnail" class="main-image" v-img-fallback="fallbacks" />
         </div>
 
         <!-- 제목 -->
@@ -24,7 +25,7 @@
           <div>
             <div class="info-header">
               <span class="info-header-icon">📌</span>
-              <span class="info-header-label">Location</span>
+              <span class="info-header-label">장소</span>
             </div>
 
             <div class="info-indent">
@@ -45,7 +46,7 @@
           <div>
             <div class="info-header mt-2">
               <span class="info-header-icon">📌</span>
-              <span class="info-header-label">Description</span>
+              <span class="info-header-label">소개</span>
             </div>
 
             <div class="info-indent">
@@ -78,6 +79,14 @@ const props = defineProps({
   data: { type: Object, default: null },
 });
 
+const fallbacks = [
+  "/images/01.png",
+  "/images/02.png",
+  "/images/03.png",
+  "/images/04.png",
+  "/images/05.png",
+  "/images/06.png",
+];
 
 /* 첫 번째 이미지만 사용 */
 const localGallery = computed(() => {
@@ -165,7 +174,7 @@ const mapSrc = (data) => {
 
 /* info-block */
 .info-block {
-  background: #f5f7ff;
+  background: #f5f5f5;
   margin: 0 20px;
   border-radius: 14px;
   padding: 14px 18px 10px;

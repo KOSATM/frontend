@@ -98,7 +98,7 @@
         <div class="d-flex align-items-center">
           <i class="bi bi-instagram fs-2 me-3" style="color: #E1306C;"></i>
           <div>
-            <h5 class="m-0" style="font-family: 'memoment';">Instagram</h5>
+            <h5 class="m-0">Instagram</h5>
             <small class="text-muted">여행 사진 공유하기</small>
           </div>
         </div>
@@ -224,8 +224,8 @@ onMounted(() => {
 
 /* 🖋️ 입력 폼 스타일 (Journal Style) */
 .custom-label {
-  font-family: 'memoment';
-  /* 제목 폰트 */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans KR", sans-serif;
+  /* 표준 폰트 */
   font-size: 1.1rem;
   color: #ff8c00;
   /* Primary Color */
@@ -234,8 +234,8 @@ onMounted(() => {
 }
 
 .custom-input {
-  font-family: 'parkdahyun';
-  /* 본문 손글씨 폰트 */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans KR", sans-serif;
+  /* 표준 폰트 */
   font-size: 1.25rem;
   /* 글씨 시원하게 키움 */
   border-radius: 1rem;

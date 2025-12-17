@@ -1,106 +1,124 @@
 <template>
-  <div class="photo-upload-page">
-    <!-- 상단 헤더 -->
-    <PageHeader title="트래벌그램" subtitle="당신의 지난 여행 기록들" icon="bi-instagram" />
-    <StepHeader title="여행 후기 작성" :subtitle="stepSubtitle" step="1/6" @back="goBack" />
+  <div class="create-travel-review-page">
 
-    <!-- =========================
-         HERO / 여행 요약 카드
-    ========================== -->
-    <div class="plan-hero" v-if="currentplanInfo">
-    <!-- 상단 정보 영역 -->
-    <div class="hero-main">
-      <div class="hero-text">
-        <h3 class="plan-hero-title">{{ planTitle }}</h3>
-        <p class="plan-hero-sub">
-          사진으로 여행을 다시 정리해요.
-          업로드하면 AI가 감성적인 후기를 만들어줘요.
-        </p>
-
-        <div class="chip-row">
-          <span class="chip">📍 {{ currentplanInfo.location }}</span>
-          <span class="chip">📅 {{ currentplanInfo.date }}</span>
-          <span class="chip" v-if="currentplanInfo.rawCost > 0">
-            💸 {{ currentplanInfo.cost }}
-          </span>
-          <span class="chip" v-else>💸 Budget 미입력</span>
-        </div>
-      </div>
-
-      <!-- 대표사진 -->
-      <div class="hero-image">
-        <transition name="fade">
-          <img
-            v-if="hasPhotos"
-            :src="uploadedImages[0]?.previewUrl || uploadedImages[0]?.url"
-            class="hero-cover-img"
-          />
-          <div v-else class="hero-cover-placeholder">
-            대표 사진 미리보기
-          </div>
-        </transition>
-      </div>
-    </div>
-
-    <!-- CTA는 분리 -->
-    <button class="primary-cta" @click="scrollToUploader">
-      📸 여행 사진 업로드하고 AI 후기 만들기
-    </button>
-
-
-      <!-- =========================
-         일정 (접힘/펼침)
-    ========================== -->
-      <div class="itinerary-section" v-if="currentplanInfo && currentplanInfo.itinerary">
-        <button class="itinerary-toggle" @click="isItineraryOpen = !isItineraryOpen">
-          <i class="bi bi-calendar-event"></i>
-          지난 여행 일정 (AI 참고용)
-          <span class="ms-auto">{{ isItineraryOpen ? '▲' : '▼' }}</span>
+        <!-- Header -->
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
+        <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
+          <i class="bi bi-arrow-left-short fs-1"></i>
         </button>
-
-        <div v-show="isItineraryOpen" class="timeline-wrapper">
-        <PlanDayTimeline 
-          :days="currentplanInfo.itinerary" 
-          :current-day-places="currentDayPlaces" 
-          v-model:selectedDayIndex="selectedDayIndex"
-          :edit-mode="false" 
-          :type-color="getTypeColor"
-          :type-label="getTypeLabel" 
-          :format-time="formatTime" 
-          :category-map="categoryMap"
-          @open-modal="handleOpenModal" 
-        />
+        
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
+          💖
         </div>
-      </div>
 
-      <!-- =========================
-         사진 업로드 섹션
-    ========================== -->
-      <div class="uploader-anchor"></div>
-      <div class="upload-section">
-
-        <PhotoUploader v-model="uploadedImages" :is-ready="isReady" :photo-group-id="reviewStore.photoGroupId"
-          :max-count="10" @upload-started="startPolling" />
-      </div>
-
-      <!-- AI 분석 상태 -->
-      <div v-if="isAnalyzing" class="alert alert-info mt-3 d-flex align-items-center">
-        <div class="spinner-border spinner-border-sm me-2"></div>
         <div>
-          <strong>AI가 사진을 분석하고 있어요...</strong>
-          <span class="small ms-1">잠시만 기다려주세요.</span>
+          <h5 class="mb-1 title">트래블그램</h5>
+          <p class="text-muted small mb-0 sub">
+            당신의 여행 추억을 기록하고 공유하세요
+          </p>
         </div>
       </div>
 
-      <!-- 하단 네비게이션 -->
-      <NavigationButtons backText="뒤로가기" :isNextDisabled="!canProceed" @back="goBack" @next="goNext">
-        <template #next-content>
-          <span v-if="isAnalyzing">분석 중...</span>
-          <span v-else>다음으로</span>
-        </template>
-      </NavigationButtons>
     </div>
-    </div>
+    
+      <!-- =========================
+           HERO / 여행 요약 카드
+      ========================== -->
+        <div class="plan-hero" v-if="currentplanInfo">
+          <!-- 상단 정보 영역 -->
+          <div class="hero-main">
+            <div class="hero-text">
+              <h3 class="plan-hero-title">{{ planTitle }}</h3>
+              <p class="plan-hero-sub">
+                사진으로 여행을 다시 정리해요.
+                업로드하면 AI가 감성적인 후기를 만들어줘요.
+              </p>
+
+              <div class="chip-row">
+                <span class="chip">📍 {{ currentplanInfo.location }}</span>
+                <span class="chip">📅 {{ currentplanInfo.date }}</span>
+                <span class="chip" v-if="currentplanInfo.rawCost > 0">
+                  💸 {{ currentplanInfo.cost }}
+                </span>
+                <span class="chip" v-else>💸 Budget 미입력</span>
+              </div>
+            </div>
+
+            <!-- 대표사진 -->
+            <div class="hero-image">
+              <transition name="fade">
+                <img
+                  v-if="hasPhotos"
+                  :src="uploadedImages[0]?.previewUrl || uploadedImages[0]?.url"
+                  class="hero-cover-img"
+                />
+                <div v-else class="hero-cover-placeholder">
+                  대표 사진 미리보기
+                </div>
+              </transition>
+            </div>
+          </div>
+
+          <!-- CTA는 분리 -->
+          <button class="primary-cta" @click="scrollToUploader">
+            📸 여행 사진 업로드하고 AI 후기 만들기
+          </button>
+        </div>
+
+
+        <!-- =========================
+             일정 (접힘/펼침)
+        ========================== -->
+        <div class="itinerary-section" v-if="currentplanInfo && currentplanInfo.itinerary">
+          <button class="itinerary-toggle" @click="isItineraryOpen = !isItineraryOpen">
+            <i class="bi bi-calendar-event"></i>
+            지난 여행 일정 (AI 참고용)
+            <span class="ms-auto">{{ isItineraryOpen ? '▲' : '▼' }}</span>
+          </button>
+
+          <div v-show="isItineraryOpen" class="timeline-wrapper">
+            <PlanDayTimeline 
+              :days="currentplanInfo.itinerary" 
+              :current-day-places="currentDayPlaces" 
+              v-model:selectedDayIndex="selectedDayIndex"
+              :edit-mode="false" 
+              :type-color="getTypeColor"
+              :type-label="getTypeLabel" 
+              :format-time="formatTime" 
+              :category-map="categoryMap"
+              @open-modal="handleOpenModal" 
+            />
+          </div>
+        </div>
+
+        <!-- =========================
+             사진 업로드 섹션
+        ========================== -->
+        <div class="uploader-anchor"></div>
+        <div class="upload-section">
+          <PhotoUploader v-model="uploadedImages" :is-ready="isReady" :photo-group-id="reviewStore.photoGroupId"
+            :max-count="10" @upload-started="startPolling" />
+        </div>
+
+        <!-- AI 분석 상태 -->
+        <div v-if="isAnalyzing" class="alert alert-info mt-3 d-flex align-items-center">
+          <div class="spinner-border spinner-border-sm me-2"></div>
+          <div>
+            <strong>AI가 사진을 분석하고 있어요...</strong>
+            <span class="small ms-1">잠시만 기다려주세요.</span>
+          </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <NavigationButtons backText="뒤로가기" :isNextDisabled="!canProceed" @back="goBack" @next="goNext">
+          <template #next-content>
+            <span v-if="isAnalyzing">분석 중...</span>
+            <span v-else>다음으로</span>
+          </template>
+        </NavigationButtons>
+      </div>
 </template>
 
 <script setup>
@@ -257,20 +275,45 @@ const hasPhotos = computed(() => uploadedImages.value.length > 0)
 </script>
 
 <style scoped>
-.photo-upload-page {
-  background: #fffaf3;
+/* Page Layout */
+.create-travel-review-page {
   min-height: 100vh;
-  padding: 2rem 1.25rem 6rem;
+  background-color: #fff;
+}
+
+/* Header Styles */
+.travelgram-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  margin-bottom: 0;
+}
+
+.travelgram-header .title {
+  font-weight: 600;
+  color: #1B3B6F;
+  margin: 0;
+}
+
+.travelgram-header .sub {
+  font-size: 0.875rem;
+  line-height: 1.2;
+}
+
+/* Container */
+.create-travel-review-page .container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 .itinerary-section {
-  margin-top: 28px; /* 🔥 이 한 줄이 핵심 */
+  margin-top: 28px;
 }
 
 .plan-hero {
   background: #fff;
   border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
+  box-shadow: 0 8px 10px rgba(27, 59, 111, 0.08);
   padding: 20px;
   margin-bottom: 20px;
   transition: all 0.35s ease;
@@ -289,10 +332,10 @@ const hasPhotos = computed(() => uploadedImages.value.length > 0)
   justify-content: center;
   background: linear-gradient(
     135deg,
-    rgba(255, 186, 73, 0.4),
-    rgba(255, 122, 0, 0.2)
+    rgba(27, 59, 111, 0.15),
+    rgba(59, 130, 246, 0.1)
   );
-  color: #9a3412;
+  color: #1B3B6F;
   font-weight: 600;
 }
 
@@ -312,21 +355,20 @@ const hasPhotos = computed(() => uploadedImages.value.length > 0)
   opacity: 0;
 }
 
-
 /* 업로드 전 */
 .hero-empty {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 6px 20px rgba(27, 59, 111, 0.08);
 }
 
 /* 업로드 후 */
 .hero-filled {
-  box-shadow: 0 12px 32px rgba(255, 122, 0, 0.25);
+  box-shadow: 0 12px 32px rgba(27, 59, 111, 0.2);
   transform: translateY(-2px);
 }
 
 /* CTA 변화 */
 .hero-filled .primary-cta {
-  background: linear-gradient(135deg, #ff7a00, #ffb347);
+  background: linear-gradient(135deg, #1B3B6F, #3b82f6);
 }
 
 .hero-main {
@@ -372,6 +414,7 @@ const hasPhotos = computed(() => uploadedImages.value.length > 0)
 
 .plan-hero-title {
   font-weight: 800;
+  color: #1B3B6F;
 }
 
 .plan-hero-sub {
@@ -386,13 +429,13 @@ const hasPhotos = computed(() => uploadedImages.value.length > 0)
 }
 
 .chip {
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
   padding: 6px 10px;
   border-radius: 999px;
   font-size: .85rem;
+  color: #1e40af;
 }
-
 
 .primary-cta {
   width: 100%;
@@ -400,31 +443,54 @@ const hasPhotos = computed(() => uploadedImages.value.length > 0)
   padding: 14px;
   border: none;
   border-radius: 14px;
-  background: #ff7a00;
+  background: linear-gradient(135deg, #1B3B6F, #2563eb);
   color: #fff;
   font-weight: 800;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.primary-cta:hover {
+  background: linear-gradient(135deg, #15305a, #1d4ed8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(27, 59, 111, 0.3);
 }
 
 .itinerary-toggle {
   width: 100%;
   background: #fff;
-  border: 1px solid #eee;
+  border: 1px solid #e5e7eb;
   border-radius: 14px;
   padding: 12px;
   display: flex;
   gap: 8px;
   margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #1B3B6F;
+  font-weight: 600;
+}
+
+.itinerary-toggle:hover {
+  background: #f8fafc;
+  border-color: #bfdbfe;
 }
 
 .upload-section {
   background: #fff;
   border-radius: 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
+  box-shadow: 0 8px 24px rgba(27, 59, 111, 0.08);
   padding: 18px;
   margin-top: 20px;
 }
 
 .uploader-anchor {
   scroll-margin-top: 90px;
+}
+
+.alert-info {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
 }
 </style>

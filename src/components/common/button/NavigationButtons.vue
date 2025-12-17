@@ -42,8 +42,8 @@ defineProps({
   },
 
   /* 테마 */
-  themeColor: { type: String, default: '#1b3b6f' },
-  activeColor: { type: String, default: '#ff8c00' }
+  themeColor: { type: String, default: '#2d4a8f' },
+  activeColor: { type: String, default: '#4a6bb5' }
 });
 
 defineEmits(['back', 'next']);
