@@ -22,7 +22,6 @@
 
           <div class="d-grid mb-2">
   <FilledButton
-    size="lg"
     @click="goToPlanner"
   >
     전체 일정으로 돌아가기
@@ -42,12 +41,17 @@
 
 <script setup>
 import { useTravelStore } from '@/store/travelStore'
+import router from '@/router'
 import FilledButton from '@/components/common/button/FilledButton.vue'
 const travelStore = useTravelStore()
+
 
 function startTravel() {
   travelStore.startTravel()
 }
+const goToPlanner = () => {
+  router.push("/planner/edit");
+};
 </script>
 
 <style scoped>
