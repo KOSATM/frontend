@@ -225,6 +225,7 @@ const publish = () => {
   font-weight: 600;
   padding: 0 1.25rem;
   margin-bottom: 0.5rem;
+  margin-top: 1.5rem;
 }
 
 .section-subtitle {

@@ -67,15 +67,8 @@ const openInstagram = () => {
 
 
 <style scoped>
-
-.travelgram-page{
-  background-color: #fffaf3;
-  min-height: 100vh;
-  padding: 2rem 1.25rem 6rem;
-
-}
 .complete-page {
-  background-color: #fffaf3;
+  background-color: #ffffff;
   min-height: 100vh;
   padding: 3rem 1.25rem 6rem;
   display: flex;

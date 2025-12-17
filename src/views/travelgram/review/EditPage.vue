@@ -220,6 +220,7 @@ const goNext = async () => {
   color: #1b3b6f;
   font-weight: 600;
   margin-bottom: 1rem;
+  margin-top: 1.5rem;
 }
 
 /* 사진 */
