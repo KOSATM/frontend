@@ -1,7 +1,6 @@
 <template>
-  <div class="create-travel-review-page">
-
-        <!-- Header -->
+  
+  <!-- Header -->
     <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
       <div class="d-flex gap-3 align-items-center">
         <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
@@ -9,7 +8,7 @@
         </button>
         
         <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
-          style="width: 46px; height: 46px">
+        style="width: 46px; height: 46px">
           💖
         </div>
 
@@ -20,12 +19,14 @@
           </p>
         </div>
       </div>
-
+      
     </div>
-    
+    <div class="travelgram-page">
+    <div class="page-inner">
+      
       <!-- =========================
            HERO / 여행 요약 카드
-      ========================== -->
+           ========================== -->
         <div class="plan-hero" v-if="currentplanInfo">
           <!-- 상단 정보 영역 -->
           <div class="hero-main">
@@ -55,7 +56,7 @@
                   class="hero-cover-img"
                 />
                 <div v-else class="hero-cover-placeholder">
-                  대표 사진 미리보기
+                  대표 사진
                 </div>
               </transition>
             </div>
@@ -69,7 +70,7 @@
 
 
         <!-- =========================
-             일정 (접힘/펼침)
+        일정 (접힘/펼침)
         ========================== -->
         <div class="itinerary-section" v-if="currentplanInfo && currentplanInfo.itinerary">
           <button class="itinerary-toggle" @click="isItineraryOpen = !isItineraryOpen">
@@ -95,19 +96,19 @@
 
         <!-- =========================
              사진 업로드 섹션
-        ========================== -->
-        <div class="uploader-anchor"></div>
-        <div class="upload-section">
-          <PhotoUploader v-model="uploadedImages" :is-ready="isReady" :photo-group-id="reviewStore.photoGroupId"
-            :max-count="10" @upload-started="startPolling" />
-        </div>
-
-        <!-- AI 분석 상태 -->
-        <div v-if="isAnalyzing" class="alert alert-info mt-3 d-flex align-items-center">
-          <div class="spinner-border spinner-border-sm me-2"></div>
-          <div>
-            <strong>AI가 사진을 분석하고 있어요...</strong>
-            <span class="small ms-1">잠시만 기다려주세요.</span>
+             ========================== -->
+             <div class="uploader-anchor"></div>
+             <div class="upload-section">
+               <PhotoUploader v-model="uploadedImages" :is-ready="isReady" :photo-group-id="reviewStore.photoGroupId"
+               :max-count="10" @upload-started="startPolling" />
+              </div>
+              
+              <!-- AI 분석 상태 -->
+              <div v-if="isAnalyzing" class="alert alert-info mt-3 d-flex align-items-center">
+                <div class="spinner-border spinner-border-sm me-2"></div>
+                <div>
+                  <strong>AI가 사진을 분석하고 있어요...</strong>
+                  <span class="small ms-1">잠시만 기다려주세요.</span>
           </div>
         </div>
 
@@ -119,6 +120,7 @@
           </template>
         </NavigationButtons>
       </div>
+</div>
 </template>
 
 <script setup>
@@ -282,10 +284,22 @@ const hasPhotos = computed(() => uploadedImages.value.length > 0)
 
 <style scoped>
 /* Page Layout */
-.create-travel-review-page {
+.travelgram-page {
   min-height: 100vh;
   background-color: #fff;
+  justify-content: center;
+  display: flex;
+  
 }
+
+
+.page-inner {
+  margin-top: 50px;
+  width: 100%;
+  max-width: 1200px;     /* 🔥 카드형 UI에 가장 안정적인 폭 */
+  padding: 0 16px 32px;
+}
+
 
 /* Header Styles */
 .travelgram-header {
@@ -310,6 +324,7 @@ const hasPhotos = computed(() => uploadedImages.value.length > 0)
 .create-travel-review-page .container {
   padding-top: 2rem;
   padding-bottom: 2rem;
+  
 }
 
 .itinerary-section {

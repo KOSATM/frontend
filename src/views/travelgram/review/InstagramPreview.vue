@@ -19,7 +19,8 @@
         </div>
       </div>
     </div>
-
+<div class="travelgram-page">
+      <div class="page-inner">
     <section class="preview-section">
       <h6 class="section-title">
         <i class="bi bi-instagram me-2 instagram-gradient-icon"></i>
@@ -128,6 +129,8 @@
       nextText="발행하기"
       @next="publish"
     />
+        </div>
+    </div>
 </template>
 
 <script setup>
@@ -210,13 +213,23 @@ const publish = () => {
   alert('✅ 게시물이 준비되었습니다!')
   router.push({ name: 'CompleteReview' })
 }
+
+
 </script>
 
 <style scoped>
-.preview-page {
-  background-color: #fffaf3;
+/* ================= Page Background ================= */
+.travelgram-page {
   min-height: 100vh;
-  padding: 1.75rem 0.75rem 6rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* ================= Content Width ================= */
+.page-inner {
+  width: 100%;
+  max-width: 1200px;
+  padding: 50px 16px 32px;
 }
 
 /* 섹션 */
@@ -269,15 +282,20 @@ const publish = () => {
 /* 사진 */
 .photo-carousel {
   position: relative;
-  aspect-ratio: 4 / 5;
+  width: 420px;
+  height: 420px;
+  margin: 0 auto;          /* 카드 중앙 정렬 */
   background: #f5f5f5;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .preview-photo {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover;     /* 인스타 느낌 핵심 */
 }
 
 .photo-index {
@@ -381,5 +399,45 @@ const publish = () => {
   line-height: 1.6;
 
   padding: 2rem 1.5rem;
+}
+
+/* NavigationButtons 공통 */
+.nav-btn {
+  height: 56px;
+  border-radius: 1.1rem;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+/* 뒤로가기 */
+.nav-btn.back {
+  background: #ffffff;
+  border: 2px solid #dee2e6;
+  color: #495057;
+}
+
+.nav-btn.back:hover {
+  background: #f8f9fa;
+}
+
+/* 발행하기 (Primary CTA) */
+.nav-btn.next {
+  background: linear-gradient(135deg, #1b3b6f, #274b8f);
+  border: none;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(27, 59, 111, 0.25);
+}
+
+.nav-btn.next:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(27, 59, 111, 0.35);
+}
+
+/* 비활성화 */
+.nav-btn.next:disabled {
+  background: #ced4da;
+  box-shadow: none;
+  cursor: not-allowed;
 }
 </style>

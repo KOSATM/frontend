@@ -20,7 +20,9 @@
       </div>
 
     </div>
-    <div class="mypage-page">
+    <div class="travelgram-page">
+      <div class="page-inner">
+
 
       
       <div class="text-center mb-5">
@@ -127,23 +129,24 @@
         </div>
       </div>
     </BaseSection>
+    <NavigationButtons
+     back-text="취소"
+     :is-next-disabled="isLoading"
+     @back="goBack"
+     @next="saveProfile"
+   >
+     <template #next-content>
+       <i class="bi bi-check-lg me-2" v-if="!isLoading"></i>
+       <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+       {{ isLoading ? '저장 중...' : '저장하기' }}
+     </template>
+   </NavigationButtons>
     
   </div>
-    <div class="d-flex gap-3 mt-5 pb-5">
 
- <NavigationButtons
-  back-text="취소"
-  :is-next-disabled="isLoading"
-  @back="goBack"
-  @next="saveProfile"
->
-  <template #next-content>
-    <i class="bi bi-check-lg me-2" v-if="!isLoading"></i>
-    <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-    {{ isLoading ? '저장 중...' : '저장하기' }}
-  </template>
-</NavigationButtons>
+
     </div>
+    
 </template>
 
 <script setup>
@@ -235,10 +238,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.mypage-page {
-  background-color: #ffffff;
+/* ================= Page Background ================= */
+.travelgram-page {
   min-height: 100vh;
-  padding: 2rem 1.25rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* ================= Content Width ================= */
+.page-inner {
+  width: 100%;
+  max-width: 1200px;
+  padding: 50px 16px 32px;
 }
 
 /* 🖋️ 입력 폼 스타일 (Journal Style) */

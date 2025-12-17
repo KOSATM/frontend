@@ -19,6 +19,9 @@
         </div>
       </div>
     </div>
+    <div class="travelgram-page">
+      <div class="page-inner">
+
     <section class="caption-section">
       <header class="caption-header">
         <h5 class="section-title">
@@ -84,6 +87,8 @@
         <span v-else>다음으로</span>
       </template>
     </NavigationButtons>
+          </div>
+    </div>
 </template>
 
 
@@ -161,6 +166,20 @@ const goNext = async () => {
 </script>
 
 <style scoped>
+
+/* ================= Page Background ================= */
+.travelgram-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+/* ================= Content Width ================= */
+.page-inner {
+  width: 100%;
+  max-width: 1200px;
+  padding: 50px 16px 32px;
+}
 .review-caption-select {
   background-color: #fffaf3;
   min-height: 100vh;

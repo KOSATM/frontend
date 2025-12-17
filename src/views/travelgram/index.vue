@@ -186,7 +186,7 @@ const goBack = () => router.push({name: 'plannercreate'});
 <style scoped>
 .travelgram-page {
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #ffffff;
 }
 
 /* Header Styles (same as supporter) */
@@ -209,7 +209,7 @@ const goBack = () => router.push({name: 'plannercreate'});
 }
 
 /* Container */
-.travelgram-page .container {
+.container {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }

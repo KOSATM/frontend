@@ -1,81 +1,97 @@
 <template>
+  <section class="image-ai-type-page">
+
     <!-- Header -->
-    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+    <div class="page-header">
       <div class="d-flex gap-3 align-items-center">
-        <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
+        <button class="btn btn-link p-0 back-button" @click="$router.back()">
           <i class="bi bi-arrow-left-short fs-1"></i>
         </button>
-        
-        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
-          style="width: 46px; height: 46px">
-          📷
-        </div>
+
+        <div class="icon-box">📷</div>
 
         <div>
           <h5 class="mb-1 title">이미지 기반 여행 AI</h5>
-          <p class="text-muted small mb-0 sub">
-            당신의 사진으로 여행 장소를 찾아보아요!
-          </p>
+          <p class="sub">당신의 사진으로 여행 장소를 찾아보아요!</p>
         </div>
       </div>
-
     </div>
-  <BaseSection icon="bi-camera" title="이 사진에서 알고 싶은 정보는 무엇인가요?">
-    <div class="preview-wrap mb-3" v-if="preview">
-      <img :src="preview" alt="uploaded preview" class="preview-img" />
+
+    <!-- Body -->
+    <div class="page-body">
+      <BaseSection
+        icon="bi-camera"
+        title="이 사진에서 알고 싶은 정보는 무엇인가요?"
+      >
+        <div class="preview-wrap mb-4" v-if="preview">
+          <img :src="preview" alt="uploaded preview" class="preview-img" />
+        </div>
+
+        <ul class="list-unstyled">
+          <!-- Landscape -->
+          <li
+            class="option-item p-3 mb-3 rounded d-flex align-items-center"
+            :class="{ selected: selectedType === 'landscape' }"
+            @click="setType('landscape')"
+          >
+            <div class="option-icon gradient-1 me-3">
+              <i class="bi bi-image-fill"></i>
+            </div>
+            <div class="flex-fill">
+              <div class="fw-medium">풍경 / 광장</div>
+              <div class="small text-muted">공원, 절, 전망대, 거리</div>
+            </div>
+            <div class="check-mark" v-if="selectedType === 'landscape'">✓</div>
+          </li>
+
+          <!-- Food -->
+          <li
+            class="option-item p-3 mb-3 rounded d-flex align-items-center"
+            :class="{ selected: selectedType === 'food' }"
+            @click="setType('food')"
+          >
+            <div class="option-icon gradient-2 me-3">
+              <i class="bi bi-cup-straw"></i>
+            </div>
+            <div class="flex-fill">
+              <div class="fw-medium">음식 / 레스토랑</div>
+              <div class="small text-muted">삼겹살, 길거리 음식, 카페</div>
+            </div>
+            <div class="check-mark" v-if="selectedType === 'food'">✓</div>
+          </li>
+
+          <!-- Activities -->
+          <li
+            class="option-item p-3 mb-2 rounded d-flex align-items-center"
+            :class="{ selected: selectedType === 'activities' }"
+            @click="setType('activities')"
+          >
+            <div class="option-icon gradient-3 me-3">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <div class="flex-fill">
+              <div class="fw-medium">활동 / 경험</div>
+              <div class="small text-muted">사진 명소, 문화 체험</div>
+            </div>
+            <div class="check-mark" v-if="selectedType === 'activities'">✓</div>
+          </li>
+        </ul>
+      </BaseSection>
     </div>
-    <ul class="list-unstyled mt-2">
-      <!-- Landscape -->
-      <li class="option-item p-3 mb-2 rounded d-flex align-items-center"
-        :class="{ selected: selectedType === 'landscape' }" @click="setType('landscape')" role="button" tabindex="0"
-        @keyup.enter.space.prevent="setType('landscape')" aria-pressed="false">
-        <div class="option-icon gradient-1 me-3"><i class="bi bi-image-fill"></i></div>
-        <div class="flex-fill">
-          <div class="fw-medium">풍경 / 광장</div>
-          <div class="small text-muted">공원, 절, 전망대, 거리</div>
-        </div>
-        <div class="check-mark" v-if="selectedType === 'landscape'">✓</div>
-      </li>
 
-      <!-- Food -->
-      <li class="option-item p-3 mb-2 rounded d-flex align-items-center" :class="{ selected: selectedType === 'food' }"
-        @click="setType('food')" role="button" tabindex="0" @keyup.enter.space.prevent="setType('food')"
-        aria-pressed="false">
-        <div class="option-icon gradient-2 me-3"><i class="bi bi-cup-straw"></i></div>
-        <div class="flex-fill">
-          <div class="fw-medium">음식 / 레스토랑</div>
-          <div class="small text-muted">삼겹살, 길거리 음식, 카페</div>
-        </div>
-        <div class="check-mark" v-if="selectedType === 'food'">✓</div>
-      </li>
-
-      <!-- Activities (formerly People) -->
-      <li class="option-item p-3 mb-2 rounded d-flex align-items-center"
-        :class="{ selected: selectedType === 'activities' }" @click="setType('activities')" role="button" tabindex="0"
-        @keyup.enter.space.prevent="setType('activities')" aria-pressed="false">
-        <div class="option-icon gradient-3 me-3"><i class="bi bi-person-fill"></i></div>
-        <div class="flex-fill">
-          <div class="fw-medium">활동 / 경험</div>
-          <div class="small text-muted">사진 명소, 문화 체험</div>
-        </div>
-        <div class="check-mark" v-if="selectedType === 'activities'">✓</div>
-      </li>
-    </ul>
-  </BaseSection>
-
-    <div class="d-flex gap-3 mt-5">
-       <NavigationButtons
+    <!-- Footer -->
+    <div class="page-footer">
+      <NavigationButtons
         back-text="뒤로 가기"
         next-text="다음으로 가기"
         :is-next-disabled="!selectedType"
         @back="goBack"
         @next="goNext"
-      >
-    </NavigationButtons>
+      />
     </div>
-
-
+  </section>
 </template>
+
 
 <script setup>
 import { ref } from 'vue'
@@ -119,15 +135,47 @@ const goNext = async () => {
 </script>
 
 <style scoped>
-
-.supporter-page {
-  background-color: #fffaf3;
+.image-ai-type-page {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+  background: #ffffff;
 }
 
+/* Header */
+.page-header {
+  padding: 1.75rem 2rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-weight: 700;
+}
+
+.sub {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+/* Body */
+.page-body {
+  flex: 1;
+  padding: 2.5rem 2rem 3rem; /* 🔥 헤더랑 떨어지는 핵심 */
+}
+
+/* Preview */
 .preview-wrap {
-  background: #F5F7FA;
+  background: #f5f7fa;
   padding: 14px;
   border-radius: 14px;
 }
@@ -137,43 +185,29 @@ const goNext = async () => {
   height: 280px;
   object-fit: cover;
   border-radius: 12px;
-  display: block;
 }
 
-/* option item */
+/* Footer */
+.page-footer {
+  padding: 1.5rem 2rem 2rem; /* 🔥 버튼 바닥에서 띄우기 */
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+/* Option items */
 .option-item {
   background: #fff;
-  border: 1px solid #f3e8ff;
+  border: 1px solid #e5e7eb;
   cursor: pointer;
-  align-items: center;
-  position: relative;
-  transition: border-color .18s ease, box-shadow .18s ease, transform .08s ease;
-  outline: none;
+  transition: all 0.2s ease;
 }
 
-.option-item:focus {
-  box-shadow: 0 0 0 4px rgba(27, 59, 111, 0.06);
-}
-
-/* 선택시 시각적 표시 */
 .option-item.selected {
   border-color: #1b3b6f;
   background: #f3f7ff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(27, 59, 111, 0.06);
+  box-shadow: 0 6px 18px rgba(27, 59, 111, 0.08);
 }
 
-/* 체크 마크 */
-.check-mark {
-  font-weight: 700;
-  color: #1b3b6f;
-  background: rgba(27, 59, 111, 0.08);
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 14px;
-}
-
-/* option icon */
 .option-icon {
   width: 56px;
   height: 56px;
@@ -185,20 +219,13 @@ const goNext = async () => {
   font-size: 20px;
 }
 
-/* 기존 gradient 유지 혹은 교체 가능 (원하면 단색으로 변경해 드립니다) */
-.gradient-1 {
-  background: linear-gradient(135deg, #6dd3ff, #7be6b8);
+.check-mark {
+  font-weight: 700;
+  color: #1b3b6f;
 }
 
-.gradient-2 {
-  background: linear-gradient(135deg, #ffb86b, #ff9ad1);
-}
-
-.gradient-3 {
-  background: linear-gradient(135deg, #a78bff, #ff9ad1);
-}
-
-.card {
-  border-radius: 12px;
-}
+/* Gradients */
+.gradient-1 { background: linear-gradient(135deg, #6dd3ff, #7be6b8); }
+.gradient-2 { background: linear-gradient(135deg, #ffb86b, #ff9ad1); }
+.gradient-3 { background: linear-gradient(135deg, #a78bff, #ff9ad1); }
 </style>
