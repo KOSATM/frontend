@@ -350,7 +350,7 @@ const applyAiPlan = async (payload) => {
   await renderPlan();
 
   travelStore.setPlanInfo(payload.planId, travelStore.dayIndex, travelStore.planDate);
-  selectedDayIndex.value = 0;
+  // ✅ selectedDayIndex 리셋 제거 - 현재 보고있는 day 유지
   console.log("[PlanList] days 갱신:", days.value);
 };
 
