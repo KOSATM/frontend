@@ -401,43 +401,51 @@ const publish = () => {
   padding: 2rem 1.5rem;
 }
 
-/* NavigationButtons 공통 */
 .nav-btn {
-  height: 56px;
-  border-radius: 1.1rem;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-}
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 
-/* 뒤로가기 */
-.nav-btn.back {
-  background: #ffffff;
-  border: 2px solid #dee2e6;
-  color: #495057;
-}
+  width: 44px;
+  height: 44px;
 
-.nav-btn.back:hover {
-  background: #f8f9fa;
-}
-
-/* 발행하기 (Primary CTA) */
-.nav-btn.next {
-  background: linear-gradient(135deg, #1b3b6f, #274b8f);
+  border-radius: 50%;
   border: none;
+
+  background: rgba(27, 59, 111, 0.85); /* 메인 남색 */
   color: #ffffff;
-  box-shadow: 0 6px 16px rgba(27, 59, 111, 0.25);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  box-shadow: 0 6px 16px rgba(27, 59, 111, 0.35);
+  backdrop-filter: blur(4px);
 }
 
-.nav-btn.next:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(27, 59, 111, 0.35);
+.nav-prev {
+  left: 0.75rem;
 }
 
-/* 비활성화 */
-.nav-btn.next:disabled {
-  background: #ced4da;
+.nav-next {
+  right: 0.75rem;
+}
+.nav-btn:hover {
+  background: linear-gradient(135deg, #1b3b6f, #274b8f);
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 10px 24px rgba(27, 59, 111, 0.45);
+}
+.nav-btn:disabled {
+  background: rgba(27, 59, 111, 0.35);
   box-shadow: none;
   cursor: not-allowed;
+  transform: translateY(-50%);
 }
+.nav-btn i {
+  font-size: 1.25rem;
+}
+
 </style>
