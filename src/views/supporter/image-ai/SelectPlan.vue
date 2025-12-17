@@ -22,16 +22,14 @@
     
 
     <div class="selected-place card p-3 mb-3 d-flex align-items-center">
-      <img v-if="item?.imageUrl" :src="item.imageUrl" class="thumb me-3" />
-      <div v-else class="thumb me-3 bg-secondary d-flex align-items-center justify-content-center text-white">
-        <i class="bi bi-image"></i>
-      </div>
-      <div>
-        <div class="fw-medium">{{ item?.placeName || 'Unknown Place' }}</div>
-        <div class="small text-muted">{{ item?.location || '' }}</div>
-      </div>
-      <div class="ms-auto small text-muted">{{ item?.description || '' }}</div>
-    </div>
+  <img v-if="item?.imageUrl" :src="item.imageUrl" class="thumb me-4" />
+
+  <div class="place-text text-center flex-fill">
+    <div class="fw-medium fs-5">{{ item?.placeName || 'Unknown Place' }}</div>
+    <div class="small text-muted mt-1">{{ item?.location || '' }}</div>
+    <div class="small text-muted mt-2">{{ item?.description || '' }}</div>
+  </div>
+</div>
 
     <ul class="list-unstyled">
       <li class="option p-3 mb-2 rounded d-flex align-items-center" :class="{ selected: selectedOption === 'add' }"
@@ -230,7 +228,9 @@ const confirm = async () => {
 </script>
 
 <style scoped>
-
+.place-text {
+  text-align: center;
+}
 /* Header */
 .page-header {
   padding: 1.75rem 2rem 1.25rem;
@@ -272,8 +272,8 @@ const confirm = async () => {
 }
 
 .thumb {
-  width: 96px;
-  height: 96px;
+  width: 320px;
+  height: 320px;
   object-fit: cover;
   border-radius: 10px;
 }

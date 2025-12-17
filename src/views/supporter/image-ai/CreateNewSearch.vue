@@ -25,7 +25,7 @@
     <!-- Body -->
     <main class="page-body">
       <!-- How it works -->
-      <div class="how-works-box">
+      <div class="how-works-box mb-4">
         <div class="how-works-header">
           <i class="bi bi-lightbulb text-warning me-2"></i>
           <strong>어떻게 동작하나요?</strong>
@@ -85,7 +85,7 @@
       >
         <template #next-content>
           <i class="bi bi-arrow-right-circle me-2"></i>
-          사진에서 알고 싶은 점을 구체적으로 선택해주세요.
+          사진 유형 선택
         </template>
       </NavigationButtons>
     </footer>
