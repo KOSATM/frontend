@@ -127,7 +127,7 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, computed } from 'vue'
+import { reactive, onMounted, computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/authStore'
 // import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
@@ -141,7 +141,7 @@ const authStore = useAuthStore()
 // ... 데이터 로직은 기존과 동일하게 유지 ...
 // (스크립트 부분은 기존 로직이 잘 짜여져 있어서, 
 //  불필요한 props나 import만 정리하고 그대로 쓰시면 됩니다.)
-
+const isLoading = ref(false) //
 const profileData = reactive({
   name: 'John Doe',
   koreanName: '도우존',
