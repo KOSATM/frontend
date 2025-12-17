@@ -197,7 +197,7 @@ const saveProfile = async () => {
   }
 }
 
-const goBack = () => router.push({name: 'HashtagSelect'});
+const goBack = () => router.push({name: 'MyProfile'});
 
 
 onMounted(() => {
