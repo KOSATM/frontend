@@ -43,17 +43,20 @@
         @delete-place="onDeletePlace"
         @update:selectedDayIndex="selectedDayIndex = $event"
       />
+      <!-- CTA -->
+      <NavigationButtons
+      back-text="이전"
+      @back="onBack"
+      @next="onNext"
+      >
+      <template #next-content>
+        {{ travelStore.isTraveling ? '여행 종료' : '여행 일정 요약페이지로 이동' }}
+      </template>
+    </NavigationButtons>
+    
     </div>
+        
 
-    <!-- CTA -->
-    <div class="border-top bg-white d-flex gap-3" style="height: 95px; padding: 1rem;">
-      <button class="btn btn-outline-secondary flex-fill" @click="onBack">
-        이전
-      </button>
-      <button class="btn btn-primary flex-fill" @click="onNext">
-        {{ travelStore.$state.isTraveling ? '여행 종료' : '여행 일정 요약페이지로 이동' }}
-      </button>
-    </div>
 
     <!-- Modals -->
     <ActivityDetailsModal :open="modalOpen" :data="modalData" @close="modalOpen = false" />
@@ -80,7 +83,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
-
+import NavigationButtons from "@/components/common/button/NavigationButtons.vue"
 import PageHeader from "@/components/common/header/PageHeader.vue";
 import plannerApi from "@/api/plannerApi";
 
@@ -146,13 +149,13 @@ const nowPlace = computed(() => {
 
 /* ---------- category 기본 이미지 ---------- */
 const categoryDefaultImageMap = {
-  FOOD: new URL("@/assets/img/planner-recommendation/restaurant.png", import.meta.url).href,
-  SPOT: new URL("@/assets/img/planner-recommendation/photospot.png", import.meta.url).href,
-  SHOPPING: new URL("@/assets/img/planner-recommendation/attraction.png", import.meta.url).href,
-  CAFE: new URL("@/assets/img/planner-recommendation/accommodation.png", import.meta.url).href,
+  FOOD: new URL("@/assets/img/travel-places/food.png", import.meta.url).href,
+  SPOT: new URL("@/assets/img/travel-places/spot.png", import.meta.url).href,
+  SHOPPING: new URL("@/assets/img/travel-places/shopping.png", import.meta.url).href,
+  CAFE: new URL("@/assets/img/travel-places/cafe.png", import.meta.url).href,
   HOTEL: new URL("@/assets/img/hotel-image/0001.jpg", import.meta.url).href,
-  EVENT: new URL("@/assets/img/planner-recommendation/experience.png", import.meta.url).href,
-  ETC: new URL("@/assets/img/planner-recommendation/festival.png", import.meta.url).href,
+  EVENT: new URL("@/assets/img/travel-places/event.png", import.meta.url).href,
+  ETC: new URL("@/assets/img/travel-places/etc.png", import.meta.url).href,
 };
 
 const getDefaultGalleryByType = (type = "ETC") => {
@@ -348,7 +351,7 @@ const applyAiPlan = async (payload) => {
   await renderPlan();
 
   travelStore.setPlanInfo(payload.planId, travelStore.dayIndex, travelStore.planDate);
-  selectedDayIndex.value = 0;
+  // ✅ selectedDayIndex 리셋 제거 - 현재 보고있는 day 유지
   console.log("[PlanList] days 갱신:", days.value);
 };
 

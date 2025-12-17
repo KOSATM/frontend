@@ -1,13 +1,34 @@
 <template>
-  <div class="mypage-page">
+        <!-- Header -->
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
+        <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
+          <i class="bi bi-arrow-left-short fs-1"></i>
+        </button>
+        
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
+          👤
+        </div>
 
-    <PageHeader title="MyPage" subtitle="나의 여행 정보" icon="bi-person" />
-    <!-- <BackButtonPageHeader title="Edit Profile" subtitle="나의 정보를 수정해보세요." @back="goBack"/> -->
+        <div>
+          <h5 class="mb-1 title">마이페이지</h5>
+          <p class="text-muted small mb-0 sub">
+            당신의 정보를 기록해보세요.
+          </p>
+        </div>
+      </div>
 
-    <div class="text-center mb-5">
-      <div class="position-relative d-inline-block mb-3">
+    </div>
+    <div class="travelgram-page">
+      <div class="page-inner">
+
+
+      
+      <div class="text-center mb-5">
+        <div class="position-relative d-inline-block mb-3">
         <img v-if="profileData.profileImage" :src="profileData.profileImage" alt="Profile"
-          class="rounded-circle shadow-sm border border-4 border-white"
+        class="rounded-circle shadow-sm border border-4 border-white"
           style="width: 140px; height: 140px; object-fit: cover;" />
         <div v-else
           class="rounded-circle shadow-sm border border-4 border-white bg-light d-flex align-items-center justify-content-center"
@@ -50,7 +71,7 @@
         </div>
       </div>
     </BaseSection>
-
+    
     <BaseSection icon="bi-airplane" title="Travel Style" subtitle="나의 여행 스타일 설정">
       <div class="row g-4 mb-4">
         <div class="col-md-6">
@@ -67,11 +88,11 @@
           </select>
         </div>
       </div>
-
+      
       <label class="custom-label mb-3">Interests</label>
       <div class="d-flex flex-wrap gap-2">
         <div v-for="interest in availableInterests" :key="interest.id" class="interest-chip"
-          :class="{ 'active': profileData.interests.includes(interest.id) }" @click="toggleInterest(interest.id)">
+        :class="{ 'active': profileData.interests.includes(interest.id) }" @click="toggleInterest(interest.id)">
           <i :class="interest.icon"></i>
           <span class="ms-2">{{ interest.name }}</span>
         </div>
@@ -88,11 +109,11 @@
         <div class="col-12">
           <label class="custom-label">Dietary Restrictions</label>
           <textarea class="form-control custom-input" rows="2" v-model="profileData.medicalInfo.dietaryRestrictions"
-            placeholder="식단 제한 (예: 채식, 글루텐 프리)"></textarea>
+          placeholder="식단 제한 (예: 채식, 글루텐 프리)"></textarea>
         </div>
       </div>
     </BaseSection>
-
+    
     <BaseSection icon="bi-share" title="Social Connect" subtitle="SNS 계정 연동">
       <div class="d-flex justify-content-between align-items-center p-3 border rounded-4 bg-white shadow-sm">
         <div class="d-flex align-items-center">
@@ -108,23 +129,24 @@
         </div>
       </div>
     </BaseSection>
-
-    <div class="d-flex gap-3 mt-5 pb-5">
-
- <NavigationButtons
-  back-text="취소"
-  :is-next-disabled="isLoading"
-  @back="goBack"
-  @next="saveProfile"
->
-  <template #next-content>
-    <i class="bi bi-check-lg me-2" v-if="!isLoading"></i>
-    <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-    {{ isLoading ? 'Saving...' : 'Save Changes' }}
-  </template>
-</NavigationButtons>
-    </div>
+    <NavigationButtons
+     back-text="취소"
+     :is-next-disabled="isLoading"
+     @back="goBack"
+     @next="saveProfile"
+   >
+     <template #next-content>
+       <i class="bi bi-check-lg me-2" v-if="!isLoading"></i>
+       <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+       {{ isLoading ? '저장 중...' : '저장하기' }}
+     </template>
+   </NavigationButtons>
+    
   </div>
+
+
+    </div>
+    
 </template>
 
 <script setup>
@@ -201,7 +223,7 @@ const saveProfile = async () => {
   }
 }
 
-const goBack = () => router.push({name: 'HashtagSelect'});
+const goBack = () => router.push({name: 'MyProfile'});
 
 
 onMounted(() => {
@@ -216,10 +238,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.mypage-page {
-  background-color: #fffaf3;
+/* ================= Page Background ================= */
+.travelgram-page {
   min-height: 100vh;
-  padding: 2rem 1.25rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* ================= Content Width ================= */
+.page-inner {
+  width: 100%;
+  max-width: 1200px;
+  padding: 50px 16px 32px;
 }
 
 /* 🖋️ 입력 폼 스타일 (Journal Style) */

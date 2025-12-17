@@ -1,12 +1,35 @@
 <template>
-  
+          <!-- Header -->
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
+        <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
+          <i class="bi bi-arrow-left-short fs-1"></i>
+        </button>
+        
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
+          💖
+        </div>
+
+        <div>
+          <h5 class="mb-1 title">트래블그램</h5>
+          <p class="text-muted small mb-0 sub">
+            당신의 여행 추억을 기록하고 공유하세요
+          </p>
+        </div>
+      </div>
+    </div>
+
+    
+<div class="travelgram-page">
+      <div class="page-inner">
 
     <section class="hashtag-section">
       <!-- 가이드 -->
-      <h6 class="guide-title">
+      <h5 class="guide-title">
         <i class="bi bi-hash me-2"></i>
         해시태그 관리
-      </h6>
+      </h5>
       <p class="guide-subtitle">
         AI가 추천한 태그를 선택하거나, 나만의 태그를 직접 추가해보세요.
       </p>
@@ -83,6 +106,8 @@
       @back="goBack"
       @next="goNext"
     />
+    </div>
+</div>
 </template>
 
 <script setup>
@@ -100,6 +125,12 @@ const router = useRouter()
 const reviewStore = useReviewStore()
 
 const stepSubtitle = computed(() => JOURNEY_SUBTITLES[4])
+const props = defineProps({
+  planId: {
+    type: [String, Number],
+    required: true
+  }
+})
 
 /* 🔵 AI 추천 태그 (고정) */
 const aiTags = ref([])
@@ -164,12 +195,19 @@ const goNext = async () => {
 </script>
 
 <style scoped>
-.hashtag-page {
-  background-color: #fffaf3;
+/* ================= Page Background ================= */
+.travelgram-page {
   min-height: 100vh;
-  padding: 2rem 1.25rem 6rem;
+  display: flex;
+  justify-content: center;
 }
 
+/* ================= Content Width ================= */
+.page-inner {
+  width: 100%;
+  max-width: 1200px;
+  padding: 50px 16px 32px;
+}
 .hashtag-section {
   margin-top: 1.5rem;
 }
@@ -180,6 +218,10 @@ const goNext = async () => {
   margin-bottom: 0.5rem;
 }
 
+.guide-title i {
+  color: #ff6b6b; /* 🔥 포인트 컬러 */
+  font-size: 1.1em;
+}
 .guide-subtitle {
   color: #868e96;
   margin-bottom: 2rem;

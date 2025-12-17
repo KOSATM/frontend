@@ -31,8 +31,12 @@ export const useTravelStore = defineStore('travel', {
       this.dayIndex = dayIndex
       this.planDate = planDate
 
-      localStorage.setItem("planId", this.planId);
-      localStorage.setItem("dayIndex", this.dayIndex);
+      try {
+        localStorage.setItem("planId", this.planId);
+        localStorage.setItem("dayIndex", this.dayIndex);
+      } catch (e) {
+        console.warn("LocalStorage save failed (setPlanInfo):", e);
+      }
     },
     // 여행 정보 초기화
     clearPlanInfo() {

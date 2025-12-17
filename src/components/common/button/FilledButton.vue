@@ -43,13 +43,26 @@ defineProps({
 }
 
 .btn-filled:hover:not(:disabled) {
-  background-color: v-bind(hoverColor);
+  background-color: color-mix(
+    in srgb,
+    v-bind(bgColor) 90%,
+    black
+  );
+}
+
+.btn-filled:active:not(:disabled) {
+  background-color: color-mix(
+    in srgb,
+    v-bind(bgColor) 80%,
+    black
+  );
 }
 
 .btn-filled:disabled {
   background-color: #b0bfd8;
+  color: #ffffff;
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 1;
 }
 
 /* ===== Size Variants ===== */

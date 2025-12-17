@@ -1,21 +1,38 @@
 <template>
-  <div class="mypage-page">
-    <PageHeader title="MyPage" subtitle="나의 여행 정보" icon="bi-person" />
-    <!-- <BackButtonPageHeader title="My Profile" subtitle="당신의 여행 프로필을 확인해보세요." @back="goBack"/> -->
+  <!-- Header -->
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
+          👤
+        </div>
 
-    <div class="text-center mb-5">
-      <div class="position-relative d-inline-block">
-        <img v-if="profileImage" :src="profileImage" alt="Profile"
-          class="rounded-circle shadow-sm border border-4 border-white"
+        <div>
+          <h5 class="mb-1 title">마이페이지</h5>
+          <p class="text-muted small mb-0 sub">
+            당신의 정보를 기록해보세요.
+          </p>
+        </div>
+      </div>
+      </div>
+    
+  
+<div class="travelgram-page">
+      <div class="page-inner">
+
+  <div class="text-center mb-5">
+    <div class="position-relative d-inline-block">
+      <img v-if="profileImage" :src="profileImage" alt="Profile"
+      class="rounded-circle shadow-sm border border-4 border-white"
           style="width: 140px; height: 140px; object-fit: cover;" />
         <div v-else
-          class="rounded-circle shadow-sm border border-4 border-white bg-light d-flex align-items-center justify-content-center"
+        class="rounded-circle shadow-sm border border-4 border-white bg-light d-flex align-items-center justify-content-center"
           style="width: 140px; height: 140px;">
           <i class="bi bi-person text-secondary" style="font-size: 4rem;"></i>
         </div>
 
         <button @click="goToEditProfile"
-          class="btn btn-sm btn-light position-absolute bottom-0 end-0 rounded-circle shadow-sm border"
+        class="btn btn-sm btn-light position-absolute bottom-0 end-0 rounded-circle shadow-sm border"
           style="width: 40px; height: 40px;">
           <i class="bi bi-pencil-fill text-primary"></i>
         </button>
@@ -102,7 +119,7 @@
     </BaseSection>
 
     <BaseSection icon="bi-heart-pulse" title="Health" subtitle="건강 정보">
-
+      
       <h4 class="text-secondary mb-2">Medicine info</h4>
       <div class="p-3 bg-light rounded-3">
         <div class="mb-2">
@@ -114,31 +131,28 @@
           <span>{{ profileData.medicalInfo.dietaryRestrictions || 'None' }}</span>
         </div>
       </div>
-
+      
 
     </BaseSection>
-
-    <div class="d-flex gap-3 mt-5">
-       <NavigationButtons
-  back-text="Back"
-  next-text="Edit Profile"
-  :is-next-disabled="isLoading"
-  @back="goBack"
-  @next="goToEditProfile"
->
-</NavigationButtons>
-    </div>
+    <FilledButton
+      size="lg"
+      :disabled="isLoading"
+      @click="goToEditProfile"
+    >
+      프로필 편집
+    </FilledButton>
   </div>
+
+</div>
 </template>
 
 <script setup>
-import { reactive, onMounted, computed } from 'vue'
+import { reactive, onMounted, computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/authStore'
 // import BackButtonPageHeader from '@/components/common/BackButtonPageHeader.vue'
 import BaseSection from '@/components/common/BaseSection.vue'
-import PageHeader from "@/components/common/header/PageHeader.vue";
-import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+import FilledButton from '@/components/common/button/FilledButton.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -146,7 +160,7 @@ const authStore = useAuthStore()
 // ... 데이터 로직은 기존과 동일하게 유지 ...
 // (스크립트 부분은 기존 로직이 잘 짜여져 있어서, 
 //  불필요한 props나 import만 정리하고 그대로 쓰시면 됩니다.)
-
+const isLoading = ref(false) //
 const profileData = reactive({
   name: 'John Doe',
   koreanName: '도우존',
@@ -199,11 +213,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 커스텀 CSS는 최소화하고 레이아웃의 디테일만 잡습니다. */
-.mypage-page {
-  background-color: #fffaf3;
+/* ================= Page Background ================= */
+.travelgram-page {
   min-height: 100vh;
-  padding: 2rem 1.25rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* ================= Content Width ================= */
+.page-inner {
+  width: 100%;
+  max-width: 1200px;
+  padding: 50px 16px 32px;
 }
 
 /* 취향 태그 (Chips) */

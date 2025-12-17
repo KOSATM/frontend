@@ -18,7 +18,12 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = oauthData
     isAuthenticated.value = true
     isInitialized.value = true
-    localStorage.setItem('user', JSON.stringify(user.value))
+    // try-catch로 감싸서 스토리지 접근 에러 방지
+    try {
+      localStorage.setItem('user', JSON.stringify(user.value)) //
+    } catch (e) {
+      console.warn('LocalStorage access denied (setOAuthUser):', e)
+    }
   }
 
   // 로그아웃
@@ -26,9 +31,14 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
     isAuthenticated.value = false
     isInitialized.value = true
-    localStorage.removeItem('jwtToken')
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('user')
+   // try-catch로 감싸서 스토리지 접근 에러 방지
+    try {
+      localStorage.removeItem('jwtToken') //
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('user')
+    } catch (e) {
+      console.warn('LocalStorage access denied (logout):', e)
+    }
   }
 
   // 새로고침 / 재접속 복구용

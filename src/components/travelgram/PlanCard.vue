@@ -54,7 +54,7 @@ const handleClick = () => {
 .plan-card {
   text-align: left; /* ✅ 부모의 중앙 정렬 상속 제거 */
   border: 1px solid #eee;
-  background-color: #fff;
+  background-color: #d9f0ff;
   border-radius: 1rem;
   display: flex;
   align-items: center;

@@ -1,5 +1,26 @@
 <template>
-  
+          <!-- Header -->
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
+        <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
+          <i class="bi bi-arrow-left-short fs-1"></i>
+        </button>
+        
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
+          💖
+        </div>
+
+        <div>
+          <h5 class="mb-1 title">트래블그램</h5>
+          <p class="text-muted small mb-0 sub">
+            당신의 여행 추억을 기록하고 공유하세요
+          </p>
+        </div>
+      </div>
+    </div>
+<div class="travelgram-page">
+      <div class="page-inner">
 
     <section class="review-section">
       <h6 class="section-title">
@@ -96,6 +117,8 @@
       @back="goBack"
       @next="goNext"
     />
+    </div>
+    </div>
 </template>
 
 <script setup>
@@ -121,7 +144,12 @@ const selectedHashtags = computed(() => reviewStore.selectedHashtags || [])
 
 const currentPhotoIndex = ref(0)
 const isSaving = ref(false)
-
+const props = defineProps({
+  planId: {
+    type: [String, Number],
+    required: true
+  }
+})
 const canProceed = computed(() => {
   return photos.value && photos.value.length > 0 && !isSaving.value
 })
@@ -186,16 +214,24 @@ const goNext = async () => {
 </script>
 
 <style scoped>
-.review-edit-page {
-  background-color: #fffaf3;
+/* ================= Page Background ================= */
+.travelgram-page {
   min-height: 100vh;
-  padding: 2rem 0.75rem 6rem;
+  display: flex;
+  justify-content: center;
 }
 
+/* ================= Content Width ================= */
+.page-inner {
+  width: 100%;
+  max-width: 1200px;
+  padding: 50px 16px 32px;
+}
 .section-title {
   color: #1b3b6f;
   font-weight: 600;
   margin-bottom: 1rem;
+  margin-top: 1.5rem;
 }
 
 /* 사진 */
@@ -218,18 +254,22 @@ const goNext = async () => {
 
 .photo-item {
   position: relative;
-  flex: 0 0 90%;
+  flex: 0 0 420px;     /* 캐러셀에서 고정 폭 */
+  width: 420px;
+  height: 420px;
   border-radius: 1rem;
   overflow: hidden;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  aspect-ratio: 3 / 4;
   scroll-snap-align: start;
 }
+
+/* ❗ aspect-ratio 제거 */
 
 .photo-item img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover;   /* 가장 안정적 */
+  display: block;
 }
 
 .main-badge {
@@ -294,4 +334,46 @@ const goNext = async () => {
   margin-top: 0.5rem;
   color: #888;
 }
+
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(27, 59, 111, 0.85); /* 브랜드 컬러 */
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background: #1b3b6f;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.nav-prev {
+  left: -22px;   /* 카드 살짝 바깥 */
+}
+
+.nav-next {
+  right: -22px;
+}
+
+.nav-btn i {
+  font-size: 1.2rem;
+}
+
 </style>

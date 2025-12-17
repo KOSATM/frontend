@@ -1,6 +1,26 @@
 <template>
+        <!-- Header -->
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
+        <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
+          <i class="bi bi-arrow-left-short fs-1"></i>
+        </button>
+        
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
+          💖
+        </div>
 
-
+        <div>
+          <h5 class="mb-1 title">트래블그램</h5>
+          <p class="text-muted small mb-0 sub">
+            당신의 여행 추억을 기록하고 공유하세요
+          </p>
+        </div>
+      </div>
+    </div>
+<div class="travelgram-page">
+      <div class="page-inner">
     <section class="preview-section">
       <h6 class="section-title">
         <i class="bi bi-instagram me-2 instagram-gradient-icon"></i>
@@ -109,6 +129,8 @@
       nextText="발행하기"
       @next="publish"
     />
+        </div>
+    </div>
 </template>
 
 <script setup>
@@ -180,19 +202,34 @@ const copyToClipboard = () => {
     alert('📋 Copied!')
   })
 }
-
+const props = defineProps({
+  planId: {
+    type: [String, Number],
+    required: true
+  }
+})
 const goBack = () => router.push({ name: 'EditPage' })
 const publish = () => {
   alert('✅ 게시물이 준비되었습니다!')
   router.push({ name: 'CompleteReview' })
 }
+
+
 </script>
 
 <style scoped>
-.preview-page {
-  background-color: #fffaf3;
+/* ================= Page Background ================= */
+.travelgram-page {
   min-height: 100vh;
-  padding: 1.75rem 0.75rem 6rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* ================= Content Width ================= */
+.page-inner {
+  width: 100%;
+  max-width: 1200px;
+  padding: 50px 16px 32px;
 }
 
 /* 섹션 */
@@ -201,6 +238,7 @@ const publish = () => {
   font-weight: 600;
   padding: 0 1.25rem;
   margin-bottom: 0.5rem;
+  margin-top: 1.5rem;
 }
 
 .section-subtitle {
@@ -244,15 +282,20 @@ const publish = () => {
 /* 사진 */
 .photo-carousel {
   position: relative;
-  aspect-ratio: 4 / 5;
+  width: 420px;
+  height: 420px;
+  margin: 0 auto;          /* 카드 중앙 정렬 */
   background: #f5f5f5;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .preview-photo {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover;     /* 인스타 느낌 핵심 */
 }
 
 .photo-index {
@@ -357,4 +400,52 @@ const publish = () => {
 
   padding: 2rem 1.5rem;
 }
+
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 44px;
+  height: 44px;
+
+  border-radius: 50%;
+  border: none;
+
+  background: rgba(27, 59, 111, 0.85); /* 메인 남색 */
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: all 0.25s ease;
+
+  box-shadow: 0 6px 16px rgba(27, 59, 111, 0.35);
+  backdrop-filter: blur(4px);
+}
+
+.nav-prev {
+  left: 0.75rem;
+}
+
+.nav-next {
+  right: 0.75rem;
+}
+.nav-btn:hover {
+  background: linear-gradient(135deg, #1b3b6f, #274b8f);
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 10px 24px rgba(27, 59, 111, 0.45);
+}
+.nav-btn:disabled {
+  background: rgba(27, 59, 111, 0.35);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: translateY(-50%);
+}
+.nav-btn i {
+  font-size: 1.25rem;
+}
+
 </style>

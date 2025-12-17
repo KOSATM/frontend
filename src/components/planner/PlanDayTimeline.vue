@@ -18,7 +18,7 @@
         일정이 없습니다.
       </div>
 
-      <div v-for="(place, idx) in currentDayPlaces" :key="idx" class="section-block">
+      <div v-for="(place, idx) in currentDayPlaces" :key="place.id || idx" class="section-block">
         <div v-if="typeLabel(place.details?.type)" class="place-block with-label">
           <div class="place-number-wrapper">
             <div class="place-number-circle" :class="typeColor(place.details?.type)">
