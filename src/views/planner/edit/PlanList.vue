@@ -148,13 +148,13 @@ const nowPlace = computed(() => {
 
 /* ---------- category 기본 이미지 ---------- */
 const categoryDefaultImageMap = {
-  FOOD: new URL("@/assets/img/planner-recommendation/restaurant.png", import.meta.url).href,
-  SPOT: new URL("@/assets/img/planner-recommendation/photospot.png", import.meta.url).href,
-  SHOPPING: new URL("@/assets/img/planner-recommendation/attraction.png", import.meta.url).href,
-  CAFE: new URL("@/assets/img/planner-recommendation/accommodation.png", import.meta.url).href,
+  FOOD: new URL("@/assets/img/travel-places/food.png", import.meta.url).href,
+  SPOT: new URL("@/assets/img/travel-places/spot.png", import.meta.url).href,
+  SHOPPING: new URL("@/assets/img/travel-places/shopping.png", import.meta.url).href,
+  CAFE: new URL("@/assets/img/travel-places/cafe.png", import.meta.url).href,
   HOTEL: new URL("@/assets/img/hotel-image/0001.jpg", import.meta.url).href,
-  EVENT: new URL("@/assets/img/planner-recommendation/experience.png", import.meta.url).href,
-  ETC: new URL("@/assets/img/planner-recommendation/festival.png", import.meta.url).href,
+  EVENT: new URL("@/assets/img/travel-places/event.png", import.meta.url).href,
+  ETC: new URL("@/assets/img/travel-places/etc.png", import.meta.url).href,
 };
 
 const getDefaultGalleryByType = (type = "ETC") => {

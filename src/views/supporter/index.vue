@@ -209,7 +209,15 @@ const loadChecklistAgent = async () => {
     checklistError.value = null
     isLoadingChecklist.value = true
 
-    const planId = travelStore.planId ?? localStorage.getItem('planId')
+    // ✅ [수정] try-catch로 안전하게 가져오기
+    let storedPlanId = null;
+    try {
+      storedPlanId = localStorage.getItem('planId');
+    } catch (e) {
+      console.warn('LocalStorage access denied (index.vue):', e);
+    }
+
+    const planId = travelStore.planId ?? storedPlanId;
     // ✅ 테스트용 dayIndex 강제
     const dayIndex = 1
 

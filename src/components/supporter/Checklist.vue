@@ -57,23 +57,23 @@ const defaultChecklist = [
 const loadChecklist = async () => {
   try {
     loading.value = true
-
-    
-    
     console.log('📌 Current dayIndex:', travelStore.dayIndex)
-    
-    // dayIndex가 없으면 기본값 사용
+
     if (travelStore.dayIndex === null) {
-      console.log('⚠️ No dayIndex - using default checklist')
       checklist.value = [...defaultChecklist]
       return
     }
-    
-    // localStorage에서 사용자 정보 가져오기
-    const userStr = localStorage.getItem('user')
-    
+
+    // ✅ [수정] try-catch로 안전하게 사용자 정보 가져오기
+    let userStr = null;
+    try {
+      userStr = localStorage.getItem('user');
+    } catch (e) {
+      console.warn('LocalStorage access denied (Checklist.vue):', e);
+    }
+
     if (!userStr) {
-      console.log('❌ User not logged in - using default checklist')
+      console.log('❌ User not logged in or storage blocked - using default checklist')
       checklist.value = [...defaultChecklist]
       return
     }
