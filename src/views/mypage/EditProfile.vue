@@ -117,7 +117,7 @@
   <template #next-content>
     <i class="bi bi-check-lg me-2" v-if="!isLoading"></i>
     <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-    {{ isLoading ? 'Saving...' : 'Save Changes' }}
+    {{ isLoading ? '저장 중...' : '저장하기' }}
   </template>
 </NavigationButtons>
     </div>

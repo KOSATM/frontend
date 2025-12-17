@@ -117,8 +117,7 @@
 
     <div class="d-flex gap-3 mt-5">
        <NavigationButtons
-  back-text="Back"
-  next-text="Edit Profile"
+  next-text="프로필 편집"
   :is-next-disabled="isLoading"
   @back="goBack"
   @next="goToEditProfile"
