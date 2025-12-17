@@ -20,12 +20,16 @@
       </div>
     </div>
 
+    
+<div class="travelgram-page">
+      <div class="page-inner">
+
     <section class="hashtag-section">
       <!-- 가이드 -->
-      <h6 class="guide-title">
+      <h5 class="guide-title">
         <i class="bi bi-hash me-2"></i>
         해시태그 관리
-      </h6>
+      </h5>
       <p class="guide-subtitle">
         AI가 추천한 태그를 선택하거나, 나만의 태그를 직접 추가해보세요.
       </p>
@@ -102,6 +106,8 @@
       @back="goBack"
       @next="goNext"
     />
+    </div>
+</div>
 </template>
 
 <script setup>
@@ -189,12 +195,19 @@ const goNext = async () => {
 </script>
 
 <style scoped>
-.hashtag-page {
-  background-color: #fffaf3;
+/* ================= Page Background ================= */
+.travelgram-page {
   min-height: 100vh;
-  padding: 2rem 1.25rem 6rem;
+  display: flex;
+  justify-content: center;
 }
 
+/* ================= Content Width ================= */
+.page-inner {
+  width: 100%;
+  max-width: 1200px;
+  padding: 50px 16px 32px;
+}
 .hashtag-section {
   margin-top: 1.5rem;
 }
@@ -205,6 +218,10 @@ const goNext = async () => {
   margin-bottom: 0.5rem;
 }
 
+.guide-title i {
+  color: #ff6b6b; /* 🔥 포인트 컬러 */
+  font-size: 1.1em;
+}
 .guide-subtitle {
   color: #868e96;
   margin-bottom: 2rem;

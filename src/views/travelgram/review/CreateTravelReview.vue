@@ -289,32 +289,7 @@ const hasPhotos = computed(() => uploadedImages.value.length > 0)
   background-color: #fff;
   justify-content: center;
   display: flex;
-
-  /* 🌈 감성 배경 */
-  background:
-    radial-gradient(1000px 500px at 10% 15%, rgba(37, 99, 235, 0.10), transparent 60%),
-    radial-gradient(900px 450px at 90% 20%, rgba(27, 59, 111, 0.12), transparent 55%),
-    radial-gradient(800px 500px at 50% 90%, rgba(59, 130, 246, 0.08), transparent 60%),
-    #ffffff;
-  background-attachment: fixed;
-  position: relative;
-  overflow: hidden;
   
-}
-
-.travelgram-page::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-
-  /* ✨ 아주 약한 도트 패턴 */
-  background-image: radial-gradient(
-    rgba(27, 59, 111, 0.06) 1px,
-    transparent 1px
-  );
-  background-size: 20px 20px;
-  opacity: 0.4;
 }
 
 
