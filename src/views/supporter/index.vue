@@ -20,141 +20,143 @@
     </div>
 
     <div class="container">
-    <div class="map-wrapper-full mb-4 mt-3">
-      <div class="map-top-row d-flex align-items-start justify-content-between">
-        <nav class="browser-tabs" role="tablist" aria-label="Map tabs">
-          <button role="tab" :class="['tab-btn', { active: currentTab === 'image' }]" @click="currentTab = 'image'">
-            이미지 기반 여행 AI
-          </button>
-          <button role="tab" :class="['tab-btn', { active: currentTab === 'restroom' }]" @click="currentTab = 'restroom'">
-            공중 화장실
-          </button>
-        </nav>
+    <div class="map-content-wrapper d-flex gap-3" style="margin-top: 1rem; margin-bottom: 2rem;">
+      <!-- 왼쪽: 지도 영역 -->
+      <div class="map-wrapper-full flex-grow-1">
+        <div class="map-top-row d-flex align-items-start justify-content-between">
+          <nav class="browser-tabs" role="tablist" aria-label="Map tabs">
+            <button role="tab" :class="['tab-btn', { active: currentTab === 'image' }]" @click="currentTab = 'image'">
+              이미지 기반 여행 AI
+            </button>
+            <button role="tab" :class="['tab-btn', { active: currentTab === 'restroom' }]" @click="currentTab = 'restroom'">
+              공중 화장실
+            </button>
+          </nav>
 
-        <div class="map-file-label small text-muted" role="button" title="Files">
-          <i class="bi bi-folder2-open-fill"></i>
+          <div class="map-file-label small text-muted" role="button" title="Files">
+            <i class="bi bi-folder2-open-fill"></i>
+          </div>
+        </div>
+
+        <div class="card map-container shadow-sm border-0 p-0 position-relative">
+          <NaverMap
+            v-if="currentTab === 'image'"
+            :markers="historyMarkers"
+            :initialCenter="{ lat: 37.45, lng: 127.05 }"
+            :initialZoom="11"
+            :fitBoundsMode="true"
+          />
+          <NaverMap
+            v-if="currentTab === 'restroom'"
+            ref="restroomMapRef"
+            :markers="toiletMarkers"
+            :initialCenter="mapCenter"
+            :initialZoom="16"
+            :fitBoundsMode="false"
+            @bounds-changed="onBoundsChanged"
+          />
         </div>
       </div>
 
-      <div class="card map-container shadow-sm border-0 p-0 position-relative">
-        <NaverMap
-          v-if="currentTab === 'image'"
-          :markers="historyMarkers"
-          :initialCenter="{ lat: 37.45, lng: 127.05 }"
-          :initialZoom="11"
-          :fitBoundsMode="true"
-        />
-        <NaverMap
-          v-if="currentTab === 'restroom'"
-          ref="restroomMapRef"
-          :markers="toiletMarkers"
-          :initialCenter="mapCenter"
-          :initialZoom="16"
-          :fitBoundsMode="false"
-          @bounds-changed="onBoundsChanged"
-        />
+      <!-- 오른쪽: 사이드바 콘텐츠 -->
+      <div class="sidebar-content-wrapper flex-shrink-0">
+        <div v-show="currentTab === 'image'" class="sidebar-section">
+          <BaseSection title="이미지 기반 여행 AI" subtitle="사진을 올리면 관련된 장소를 추천해드립니다.">
+            <template #icon>
+              <div class="ai-badge"><i class="bi bi-camera-fill"></i></div>
+            </template>
+
+            <div class="image-ui-row d-flex flex-column gap-3">
+              <!-- 안내 박스 -->
+              <div class="how-works">
+                <div class="how-works-header mb-2">
+                  <i class="bi bi-lightbulb text-warning me-2"></i>
+                  <strong>어떻게 동작하나요?</strong>
+                </div>
+                <ol class="small text-muted mb-0 ps-3 how-works-list">
+                  <li>여행 중 궁금한 점을 사진으로 올려보세요.</li>
+                  <li>AI가 이미지를 분석합니다.</li>
+                  <li>사진과 관련된 장소 추천을 받아보세요.</li>
+                </ol>
+              </div>
+
+              <!-- 업로드 버튼 -->
+              <label
+                class="upload-control d-block btn-interactive"
+                @dragover.prevent
+                @drop.prevent="onDrop"
+                for="imageInput"
+                @click.prevent="goToImageAINew"
+                title="Open Image AI"
+              >
+                <div class="upload-gradient-sm d-flex align-items-center justify-content-center w-100">
+                  <div class="text-center w-100">
+                    <template v-if="imagePreview">
+                      <img :src="imagePreview" alt="preview" class="preview-img rounded" />
+                    </template>
+                    <template v-else>
+                      <i class="bi bi-camera-fill" style="font-size: 1.75rem;"></i>
+                      <div class="mt-2 label-text fw-semibold">업로드</div>
+                    </template>
+                  </div>
+                </div>
+              </label>
+
+              <!-- 히스토리 버튼 -->
+              <label class="upload-control d-block btn-interactive" @click.prevent="goToImageAIHistory" title="History">
+                <div class="upload-gradient-sm history-control d-flex align-items-center justify-content-center w-100">
+                  <div class="text-center w-100">
+                    <i class="bi bi-clock-history" style="font-size: 1.75rem;"></i>
+                    <div class="mt-2 label-text fw-semibold">히스토리</div>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <input id="imageInput" type="file" accept="image/*" class="d-none" @change="onFileChange" />
+          </BaseSection>
+        </div>
+
+        <div v-show="currentTab === 'restroom'" class="sidebar-section">
+          <BaseSection title="근처 공중 화장실" subtitle="근처에 있는 공중 화장실을 찾아보세요.">
+            <template #icon>
+              <div class="ai-badge"><i class="bi bi-person-standing"></i></div>
+            </template>
+
+            <div v-if="isLoadingRestrooms" class="text-center py-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">로딩 중...</span>
+              </div>
+              <p class="mt-2 text-muted small">주변 화장실 검색 중...</p>
+            </div>
+
+            <div v-else class="list-group">
+              <a
+                v-for="(r, i) in filteredRestrooms"
+                :key="i"
+                href="#"
+                class="list-group-item list-group-item-action mb-2 d-flex align-items-center rounded border-0 shadow-sm"
+                @click.prevent="focusOnRestroom(r)"
+              >
+                <div class="me-3 icon-box d-flex align-items-center justify-content-center">
+                  <i class="bi bi-person-standing text-primary fs-4"></i>
+                </div>
+                <div class="flex-fill">
+                  <div class="fw-medium small">{{ r.name || '공중화장실' }}</div>
+                  <div class="small text-muted" style="font-size: 0.75rem;">
+                    <i class="bi bi-geo-alt me-1"></i> {{ r.address || r.roadAddress || '주소 정보 없음' }}
+                  </div>
+                </div>
+                <div class="ms-3 text-muted"><i class="bi bi-chevron-right"></i></div>
+              </a>
+
+              <div v-if="filteredRestrooms.length === 0" class="text-center py-4 text-muted">
+                주변에 등록된 화장실이 없습니다
+              </div>
+            </div>
+          </BaseSection>
+        </div>
       </div>
-    </div>
-
-    <div v-show="currentTab === 'image'">
-      <BaseSection title="이미지 기반 여행 AI" subtitle="사진을 올리면 관련된 장소를 추천해드립니다.">
-        <template #icon>
-          <div class="ai-badge"><i class="bi bi-camera-fill"></i></div>
-        </template>
-
-        <div class="image-ui-row d-flex gap-3 align-items-start">
-          <div class="col how-works">
-            <div class="how-works-header mb-2">
-              <i class="bi bi-lightbulb text-warning me-2"></i>
-              <strong>어떻게 동작하나요?</strong>
-            </div>
-            <ol class="small text-muted mb-0 ps-3 how-works-list">
-              <li>여행 중 궁금한 점을 사진으로 올려보세요.</li>
-              <li>AI가 이미지를 분석합니다.</li>
-              <li>사진과 관련된 장소 추천을 받아보세요.</li>
-            </ol>
-          </div>
-
-          <div class="col upload-column d-flex">
-            <label
-              class="upload-control d-block"
-              @dragover.prevent
-              @drop.prevent="onDrop"
-              for="imageInput"
-              @click.prevent="goToImageAINew"
-              title="Open Image AI"
-            >
-              <div class="upload-gradient d-flex align-items-center justify-content-center h-100 w-100">
-                <div class="text-center text-white-50">
-                  <template v-if="imagePreview">
-                    <img :src="imagePreview" alt="preview" class="preview-img rounded" />
-                  </template>
-                  <template v-else>
-                    <i class="bi bi-camera fs-1"></i>
-                    <div class="mt-2 label-text">업로드</div>
-                  </template>
-                </div>
-              </div>
-            </label>
-          </div>
-
-          <div class="col history-column d-flex">
-            <label class="upload-control history-control d-block" @click.prevent="goToImageAIHistory" title="History">
-              <div class="upload-gradient d-flex align-items-center justify-content-center h-100 w-100">
-                <div class="text-center text-white-50">
-                  <i class="bi bi-clock-history fs-1"></i>
-                  <div class="mt-2 label-text">히스토리</div>
-                </div>
-              </div>
-            </label>
-          </div>
-        </div>
-
-        <input id="imageInput" type="file" accept="image/*" class="d-none" @change="onFileChange" />
-        <div v-if="imagePreview" class="mt-3">
-          <img :src="imagePreview" alt="preview" class="img-fluid rounded" />
-        </div>
-      </BaseSection>
-    </div>
-
-    <div v-show="currentTab === 'restroom'">
-      <BaseSection title="근처 공중 화장실" subtitle="근처에 있는 공중 화장실을 찾아보세요.">
-        <template #icon>
-          <div class="ai-badge"><i class="bi bi-person-standing"></i></div>
-        </template>
-
-        <div v-if="isLoadingRestrooms" class="text-center py-4">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">로딩 중...</span>
-          </div>
-          <p class="mt-2 text-muted">주변 화장실 검색 중...</p>
-        </div>
-
-        <div v-else class="list-group">
-          <a
-            v-for="(r, i) in filteredRestrooms"
-            :key="i"
-            href="#"
-            class="list-group-item list-group-item-action mb-2 d-flex align-items-center rounded border-0 shadow-sm"
-            @click.prevent="focusOnRestroom(r)"
-          >
-            <div class="me-3 icon-box d-flex align-items-center justify-content-center">
-              <i class="bi bi-person-standing text-primary fs-4"></i>
-            </div>
-            <div class="flex-fill">
-              <div class="fw-medium">{{ r.name || '공중화장실' }}</div>
-              <div class="small text-muted">
-                <i class="bi bi-geo-alt me-1"></i> {{ r.address || r.roadAddress || '주소 정보 없음' }}
-              </div>
-            </div>
-            <div class="ms-3 text-muted"><i class="bi bi-chevron-right"></i></div>
-          </a>
-
-          <div v-if="filteredRestrooms.length === 0" class="text-center py-4 text-muted">
-            주변에 등록된 화장실이 없습니다
-          </div>
-        </div>
-      </BaseSection>
     </div>
     </div>
   </div>
@@ -804,6 +806,145 @@ const goToImageAIHistory = () => {
     align-items: center;
     justify-content: center;
     min-height: 140px;
+  }
+}
+
+/* ✅ 좌우 레이아웃 - 지도 + 사이드바 */
+.map-content-wrapper {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  margin-top: 1rem;
+}
+
+.map-wrapper-full {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-content-wrapper {
+  margin-top: 52px;
+  width: 440px;
+  max-height: calc(100vh - 250px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ✅ 버튼 상호작용 */
+.btn-interactive {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-interactive:active {
+  opacity: 0.9;
+}
+
+/* ✅ 사이드바용 업로드 그래디언트 */
+.upload-gradient-sm {
+  height: 100px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2d4a8f 0%, #1a2a56 100%);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.upload-gradient-sm::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.upload-gradient-sm:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(45, 74, 143, 0.4);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.upload-gradient-sm:hover::before {
+  opacity: 1;
+}
+
+.upload-gradient-sm.history-control {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+}
+
+.upload-gradient-sm.history-control:hover {
+  box-shadow: 0 6px 16px rgba(100, 116, 139, 0.4);
+}
+
+.upload-gradient-sm .text-white-50,
+.upload-gradient-sm i,
+.upload-gradient-sm .label-text,
+.upload-gradient-sm .label-subtext {
+  color: #ffffff !important;
+}
+
+.upload-gradient-sm i {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.label-text {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.label-subtext {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.85) !important;
+  margin-top: 0.25rem;
+}
+
+/* ✅ 사이드바 반응형 */
+@media (max-width: 1200px) {
+  .map-content-wrapper {
+    gap: 1rem;
+  }
+
+  .sidebar-content-wrapper {
+    width: 380px;
+  }
+}
+
+@media (max-width: 991px) {
+  .map-content-wrapper {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .sidebar-content-wrapper {
+    width: 100%;
+    max-height: none;
+  }
+
+  .image-ui-row {
+    flex-direction: column !important;
+  }
+
+  .map-container {
+    min-height: 320px;
   }
 }
 </style>
