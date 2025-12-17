@@ -1,10 +1,32 @@
 <template>
+        <!-- Header -->
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
+        <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
+          <i class="bi bi-arrow-left-short fs-1"></i>
+        </button>
+        
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
+          👤
+        </div>
 
+        <div>
+          <h5 class="mb-1 title">마이페이지</h5>
+          <p class="text-muted small mb-0 sub">
+            당신의 정보를 기록해보세요.
+          </p>
+        </div>
+      </div>
 
-    <div class="text-center mb-5">
-      <div class="position-relative d-inline-block mb-3">
+    </div>
+    <div class="mypage-page">
+
+      
+      <div class="text-center mb-5">
+        <div class="position-relative d-inline-block mb-3">
         <img v-if="profileData.profileImage" :src="profileData.profileImage" alt="Profile"
-          class="rounded-circle shadow-sm border border-4 border-white"
+        class="rounded-circle shadow-sm border border-4 border-white"
           style="width: 140px; height: 140px; object-fit: cover;" />
         <div v-else
           class="rounded-circle shadow-sm border border-4 border-white bg-light d-flex align-items-center justify-content-center"
@@ -47,7 +69,7 @@
         </div>
       </div>
     </BaseSection>
-
+    
     <BaseSection icon="bi-airplane" title="Travel Style" subtitle="나의 여행 스타일 설정">
       <div class="row g-4 mb-4">
         <div class="col-md-6">
@@ -64,11 +86,11 @@
           </select>
         </div>
       </div>
-
+      
       <label class="custom-label mb-3">Interests</label>
       <div class="d-flex flex-wrap gap-2">
         <div v-for="interest in availableInterests" :key="interest.id" class="interest-chip"
-          :class="{ 'active': profileData.interests.includes(interest.id) }" @click="toggleInterest(interest.id)">
+        :class="{ 'active': profileData.interests.includes(interest.id) }" @click="toggleInterest(interest.id)">
           <i :class="interest.icon"></i>
           <span class="ms-2">{{ interest.name }}</span>
         </div>
@@ -85,11 +107,11 @@
         <div class="col-12">
           <label class="custom-label">Dietary Restrictions</label>
           <textarea class="form-control custom-input" rows="2" v-model="profileData.medicalInfo.dietaryRestrictions"
-            placeholder="식단 제한 (예: 채식, 글루텐 프리)"></textarea>
+          placeholder="식단 제한 (예: 채식, 글루텐 프리)"></textarea>
         </div>
       </div>
     </BaseSection>
-
+    
     <BaseSection icon="bi-share" title="Social Connect" subtitle="SNS 계정 연동">
       <div class="d-flex justify-content-between align-items-center p-3 border rounded-4 bg-white shadow-sm">
         <div class="d-flex align-items-center">
@@ -105,7 +127,8 @@
         </div>
       </div>
     </BaseSection>
-
+    
+  </div>
     <div class="d-flex gap-3 mt-5 pb-5">
 
  <NavigationButtons
@@ -213,7 +236,7 @@ onMounted(() => {
 
 <style scoped>
 .mypage-page {
-  background-color: #fffaf3;
+  background-color: #ffffff;
   min-height: 100vh;
   padding: 2rem 1.25rem;
 }

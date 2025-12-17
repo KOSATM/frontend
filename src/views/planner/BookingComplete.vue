@@ -1,6 +1,5 @@
 <template>
   <div class="planner-page">    
-  <PageHeader title="플래너" subtitle="당신의 서울 여행 일정을 만들고 관리해보세요." icon="bi-map" />
   <div class="booking-complete container py-5">
     <div class="text-center mb-4">
       <div class="check-circle mx-auto mb-3 d-inline-flex align-items-center justify-content-center">
@@ -21,15 +20,14 @@
           </ul>
         </div>
 
-        <div class="d-grid mb-2">
-          <router-link
-            class="btn btn-primary btn-lg"
-            :to="{ path: '/planner/edit' }"
-            @click="startTravel"
-          >
-            전체 일정으로 돌아가기
-          </router-link>
-        </div>
+          <div class="d-grid mb-2">
+  <FilledButton
+    size="lg"
+    @click="goToPlanner"
+  >
+    전체 일정으로 돌아가기
+  </FilledButton>
+</div>
 
         <p class="text-muted small mt-3">
           <i class="bi bi-pin-angle me-1"></i>
@@ -44,8 +42,7 @@
 
 <script setup>
 import { useTravelStore } from '@/store/travelStore'
-import PageHeader from "@/components/common/header/PageHeader.vue";
-
+import FilledButton from '@/components/common/button/FilledButton.vue'
 const travelStore = useTravelStore()
 
 function startTravel() {
@@ -55,7 +52,7 @@ function startTravel() {
 
 <style scoped>
 .planner-page {
-  background-color: #fffaf3;
+  background-color: #ffffff;
   min-height: 100vh;
   padding-bottom: 6rem;
   padding: 2rem 1.25rem 6rem; /* 👈 상단 padding 2rem으로 통일 */

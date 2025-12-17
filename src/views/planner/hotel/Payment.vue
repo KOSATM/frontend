@@ -163,20 +163,27 @@
       </div>
     </div>
 
-    <!-- 버튼 -->
-    <div class="d-flex gap-3 justify-content-center mb-5">
-      <button class="btn btn-outline-secondary btn-lg px-5" @click="goBack">
-        뒤로가기
-      </button>
+    <NavigationButtons
+  back-text="뒤로가기"
+  :is-next-disabled="!agreeToTerms || isProcessing"
+  @back="goBack"
+  @next="processPayment"
+>
+  <template #next-content>
+    <span v-if="!isProcessing">
+      ₩{{ formatPrice(finalTotal) }} 결제하기
+    </span>
 
-      <button class="btn btn-primary btn-lg px-5" @click="processPayment" :disabled="!agreeToTerms || isProcessing">
-        <span v-if="!isProcessing">₩{{ formatPrice(finalTotal) }} 결제하기</span>
-        <span v-else>
-          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          결제 처리 중...
-        </span>
-      </button>
-    </div>
+    <span v-else class="d-flex align-items-center justify-content-center">
+      <span
+        class="spinner-border spinner-border-sm me-2"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      결제 처리 중...
+    </span>
+  </template>
+</NavigationButtons>
   </div>
   </div>
 </template>
@@ -186,6 +193,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useTravelStore } from '@/store/travelStore';
 import { useAuthStore } from '@/store/authStore';
+import NavigationButtons from '@/components/common/button/NavigationButtons.vue'
 import BaseSection from '@/components/common/BaseSection.vue';
 import hotelApi from '@/api/hotelApi';
 
