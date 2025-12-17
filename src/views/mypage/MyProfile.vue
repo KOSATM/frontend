@@ -1,7 +1,4 @@
 <template>
-  <div class="mypage-page">
-    <PageHeader title="MyPage" subtitle="나의 여행 정보" icon="bi-person" />
-    <!-- <BackButtonPageHeader title="My Profile" subtitle="당신의 여행 프로필을 확인해보세요." @back="goBack"/> -->
 
     <div class="text-center mb-5">
       <div class="position-relative d-inline-block">
@@ -128,7 +125,6 @@
 >
 </NavigationButtons>
     </div>
-  </div>
 </template>
 
 <script setup>

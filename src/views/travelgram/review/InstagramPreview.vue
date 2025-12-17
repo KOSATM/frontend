@@ -1,5 +1,24 @@
 <template>
+        <!-- Header -->
+    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-3 align-items-center">
+        <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
+          <i class="bi bi-arrow-left-short fs-1"></i>
+        </button>
+        
+        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
+          style="width: 46px; height: 46px">
+          💖
+        </div>
 
+        <div>
+          <h5 class="mb-1 title">트래블그램</h5>
+          <p class="text-muted small mb-0 sub">
+            당신의 여행 추억을 기록하고 공유하세요
+          </p>
+        </div>
+      </div>
+    </div>
 
     <section class="preview-section">
       <h6 class="section-title">
@@ -180,7 +199,12 @@ const copyToClipboard = () => {
     alert('📋 Copied!')
   })
 }
-
+const props = defineProps({
+  planId: {
+    type: [String, Number],
+    required: true
+  }
+})
 const goBack = () => router.push({ name: 'EditPage' })
 const publish = () => {
   alert('✅ 게시물이 준비되었습니다!')
@@ -201,6 +225,7 @@ const publish = () => {
   font-weight: 600;
   padding: 0 1.25rem;
   margin-bottom: 0.5rem;
+  margin-top: 1.5rem;
 }
 
 .section-subtitle {

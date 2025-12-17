@@ -1,8 +1,5 @@
 <template>
-  <div class="mypage-page">
 
-    <PageHeader title="MyPage" subtitle="나의 여행 정보" icon="bi-person" />
-    <!-- <BackButtonPageHeader title="Edit Profile" subtitle="나의 정보를 수정해보세요." @back="goBack"/> -->
 
     <div class="text-center mb-5">
       <div class="position-relative d-inline-block mb-3">
@@ -124,7 +121,6 @@
   </template>
 </NavigationButtons>
     </div>
-  </div>
 </template>
 
 <script setup>

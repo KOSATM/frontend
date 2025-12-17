@@ -44,9 +44,11 @@ import api from '@/api/travelgramApi'
 const props = defineProps({
   modelValue: { type: Array, default: () => [] }, // 부모와 v-model로 연결될 이미지 배열
   isReady: { type: Boolean, default: false },     // 업로드 준비 상태
-  photoGroupId: { type: [String, Number], required: true }, // 업로드할 그룹 ID
+  photoGroupId: { type: [String, Number], required: false }, // 업로드할 그룹 ID
   maxCount: { type: Number, default: 10 }         // 최대 업로드 개수
 })
+
+
 
 // Emits 정의
 const emit = defineEmits(['update:modelValue', 'upload-started'])

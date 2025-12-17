@@ -48,8 +48,9 @@ defineProps({
 
 .btn-filled:disabled {
   background-color: #b0bfd8;
+  color: #ffffff;
   cursor: not-allowed;
-  opacity: 0.7;
+  opacity: 1;
 }
 
 /* ===== Size Variants ===== */
