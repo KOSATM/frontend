@@ -1,28 +1,24 @@
-// filepath: c:\kosa-course\userProject\ATM\projects\frontend\src\views\supporter\image-ai\History.vue
-
 <template>
+
+
+
+
   <section class="history-root card rounded-0 h-100 d-flex flex-column">
-    <!-- Header -->
-    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+<!-- Header -->
+    <div class="page-header">
       <div class="d-flex gap-3 align-items-center">
-        <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
+        <button class="btn btn-link p-0 back-button" @click="$router.back()">
           <i class="bi bi-arrow-left-short fs-1"></i>
         </button>
-        
-        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
-          style="width: 46px; height: 46px">
-          🕒
-        </div>
+
+        <div class="icon-box">🕒</div>
 
         <div>
           <h5 class="mb-1 title">이미지 기반 여행 AI</h5>
-          <p class="text-muted small mb-0 sub">
-            당신의 사진으로 여행 장소를 찾아보아요!
-          </p>
+          <p class="sub">당신의 사진으로 여행 장소를 찾아보아요!</p>
         </div>
       </div>
     </div>
-
   <!-- Body Content -->
   <div class="history-body-scroll flex-grow-1 overflow-y-auto p-4">
     <!-- Section Header -->
@@ -355,6 +351,32 @@ const confirmChangeStatus = async () => {
 </script>
 
 <style scoped>
+/* Header */
+.page-header {
+  padding: 1.75rem 2rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-weight: 700;
+}
+
+.sub {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+
 /* ========================================
    History Root - PlanList 스타일 매칭
    ======================================== */

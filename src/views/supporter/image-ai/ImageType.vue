@@ -38,7 +38,7 @@
               <i class="bi bi-image-fill"></i>
             </div>
             <div class="flex-fill">
-              <div class="fw-medium">풍경 / 광장</div>
+              <div class="fw-medium">풍경 / 장소 </div>
               <div class="small text-muted">공원, 절, 전망대, 거리</div>
             </div>
             <div class="check-mark" v-if="selectedType === 'landscape'">✓</div>
