@@ -329,9 +329,14 @@ const scrollToBottom = () => {
 
 // Watchers & Lifecycle
 watch(() => chatStore.messageToSend, (msg) => {
+  console.log('🔔 [ChatSidebar] messageToSend watch 실행:', msg)
   if (msg) {
+    console.log('✅ [ChatSidebar] 메시지 감지, sendMessage 호출')
     currentMessage.value = msg;
     sendMessage();
+    // ✅ 전송 후 메시지 클리어 (중복 방지)
+    chatStore.clearMessage()
+    console.log('🧹 [ChatSidebar] 메시지 클리어 완료')
   }
 });
 

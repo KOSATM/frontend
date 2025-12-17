@@ -177,6 +177,8 @@ import ActivityDetailsModal from '@/components/planner/ActivityDetailsModal.vue'
 import imageSearchApi from '@/api/imageSearchApi'
 import { useAuthStore } from '@/store/authStore'
 import NavigationButtons from '@/components/common/button/NavigationButtons.vue';
+import { useRouter } from 'vue-router';
+import { useChatStore } from '@/store/chatStore';
 
 const fallbacks = [
   "/images/01.png",
@@ -187,7 +189,9 @@ const fallbacks = [
   "/images/06.png",
 ];
 
+const router = useRouter()
 const authStore = useAuthStore()
+const chatStore = useChatStore()
 
 // 모달 상태
 const selectedHistory = ref(null)
@@ -197,6 +201,21 @@ const changeStatusSelection = ref(null)
 // 히스토리 데이터
 const history = ref([])
 const isLoading = ref(false)
+
+// 한글 종성(받침) 확인 함수
+const hasJongseong = (str) => {
+  if (!str || str.length === 0) return false
+  
+  const lastChar = str[str.length - 1]
+  const code = lastChar.charCodeAt(0)
+  
+  // 한글 유니코드 범위: 0xAC00 ~ 0xD7A3
+  if (code < 0xAC00 || code > 0xD7A3) return false
+  
+  // 종성 계산: (code - 0xAC00) % 28
+  // 0이면 받침 없음, 1~27이면 받침 있음
+  return (code - 0xAC00) % 28 !== 0
+}
 
 // ActionType 한글 변환
 const getStatusText = (actionType) => {
@@ -334,14 +353,36 @@ const confirmChangeStatus = async () => {
     
     console.log('✅ ActionType 업데이트 성공')
     
-    // 히스토리 새로고침
-    await loadHistory()
-    
     // 모달 닫기
     changeStatusItem.value = null
     changeStatusSelection.value = null
     
-    alert('상태가 변경되었습니다.')
+    // 장소명 가져오기
+    const placeName = item.title || '장소'
+    
+    // 채팅 메시지 생성
+    let chatMessage = ''
+    
+    if (mode === 'add') {
+      const josa = hasJongseong(placeName) ? '을' : '를'
+      chatMessage = `${placeName}${josa} 일정에 추가해줘`
+    } else if (mode === 'replace') {
+      const josa = hasJongseong(placeName) ? '으로' : '로'
+      chatMessage = `일정에 있는 장소 한 곳을 ${placeName}${josa} 변경하고 싶어`
+    }
+    
+    console.log('📤 [History] 채팅 메시지 생성:', chatMessage)
+    
+    // PlanList로 먼저 이동
+    router.push({ name: 'planedit' }).then(() => {
+      // 페이지 이동 완료 후 메시지 설정 (ChatSidebar가 마운트된 후)
+      setTimeout(() => {
+        console.log('📤 [History] 페이지 이동 완료, 메시지 전송:', chatMessage)
+        chatStore.sendMessage(chatMessage)
+      }, 300) // ChatSidebar 마운트 대기
+    }).catch(() => {
+      console.error('❌ planedit 라우트 이동 실패')
+    })
     
   } catch (error) {
     console.error('❌ ActionType 업데이트 실패:', error)
