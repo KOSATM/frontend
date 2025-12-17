@@ -43,18 +43,19 @@
         @delete-place="onDeletePlace"
         @update:selectedDayIndex="selectedDayIndex = $event"
       />
+      <!-- CTA -->
+      <NavigationButtons
+      back-text="이전"
+      @back="onBack"
+      @next="onNext"
+      >
+      <template #next-content>
+        {{ travelStore.isTraveling ? '여행 종료' : '여행 일정 요약페이지로 이동' }}
+      </template>
+    </NavigationButtons>
+    
     </div>
         
-    <!-- CTA -->
-     <NavigationButtons
-  back-text="이전"
-  @back="onBack"
-  @next="onNext"
->
-  <template #next-content>
-    {{ travelStore.isTraveling ? '여행 종료' : '여행 일정 요약페이지로 이동' }}
-  </template>
-</NavigationButtons>
 
 
     <!-- Modals -->
