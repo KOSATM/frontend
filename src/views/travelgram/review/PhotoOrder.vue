@@ -18,7 +18,6 @@
           </p>
         </div>
       </div>
-
     </div>
   <section class="photo-order-wrapper">
     <div class="photo-order-container">
