@@ -1,29 +1,25 @@
 <template>
   
-    <!-- Header -->
-    <div class="p-4 pb-3 border-bottom d-flex align-items-center justify-content-between">
+        <!-- Header -->
+    <div class="page-header">
       <div class="d-flex gap-3 align-items-center">
-        <button class="btn btn-link p-0 back-button" @click="$router.back()" title="뒤로 가기">
+        <button class="btn btn-link p-0 back-button" @click="$router.back()">
           <i class="bi bi-arrow-left-short fs-1"></i>
         </button>
-        
-        <div class="rounded-3 bg-secondary-subtle d-flex align-items-center justify-content-center"
-          style="width: 46px; height: 46px">
-          📷
-        </div>
+
+        <div class="icon-box">📷</div>
 
         <div>
           <h5 class="mb-1 title">이미지 기반 여행 AI</h5>
-          <p class="text-muted small mb-0 sub">
-            당신의 사진으로 여행 장소를 찾아보아요!
-          </p>
+          <p class="sub">당신의 사진으로 여행 장소를 찾아보아요!</p>
         </div>
       </div>
-
     </div>
-  <!-- completion rate 가 뭐지 뭘 위해서 한걸까 -->
-  <BaseSection icon="bi-list-check" title="AI 추천을 어떻게 사용하고 싶으신가요?" subtitle="완료율">
 
+<div class="page-body">
+
+  <BaseSection icon="bi-list-check" title="AI 추천을 어떻게 사용하고 싶으신가요?" subtitle="완료율">
+    
 
     <div class="selected-place card p-3 mb-3 d-flex align-items-center">
       <img v-if="item?.imageUrl" :src="item.imageUrl" class="thumb me-3" />
@@ -61,7 +57,7 @@
 
         <div v-if="selectedOption === 'replace'" class="select-check" aria-hidden="true">✓</div>
       </li>
-
+      
       <li class="option p-3 mb-2 rounded d-flex align-items-center" :class="{ selected: selectedOption === 'save' }"
         @click="selectOption('save')" @keyup.enter.space.prevent="selectOption('save')" role="button" tabindex="0"
         :aria-pressed="selectedOption === 'save'">
@@ -70,7 +66,7 @@
           <div class="fw-medium">저장하기</div>
           <div class="small text-muted">일정 추가 없이 저장하고 히스토리 내역에서 확인할 수 있어요.</div>
         </div>
-
+        
         <div v-if="selectedOption === 'save'" class="select-check" aria-hidden="true">✓</div>
       </li>
 
@@ -100,9 +96,10 @@
       >
     </NavigationButtons>
     </div>
+    
+  </div>
 
-
-</template>
+  </template>
 
 <script setup>
 import { ref, computed } from 'vue'
@@ -233,10 +230,34 @@ const confirm = async () => {
 </script>
 
 <style scoped>
-.supporter-page {
-  background-color: #fffaf3;
-  min-height: 100vh;
-  padding: 2rem 1.25rem; /* App.vue 사이드바도 padding-top: 2rem 필요 */
+
+/* Header */
+.page-header {
+  padding: 1.75rem 2rem 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+  
+}
+.page-body {
+  flex: 1;
+  padding: 2.5rem 2rem 3rem; /* 🔥 헤더랑 떨어지는 핵심 */
+}
+.icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-weight: 700;
+}
+
+.sub {
+  font-size: 0.85rem;
+  color: #64748b;
 }
 
 .history-card {
@@ -251,10 +272,10 @@ const confirm = async () => {
 }
 
 .thumb {
-  width: 72px;
-  height: 72px;
+  width: 96px;
+  height: 96px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .option {
