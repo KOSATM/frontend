@@ -17,7 +17,8 @@
       </div>
     
   
-<div class ="mypage-page">
+<div class="travelgram-page">
+      <div class="page-inner">
 
   <div class="text-center mb-5">
     <div class="position-relative d-inline-block">
@@ -133,16 +134,15 @@
       
 
     </BaseSection>
+    <FilledButton
+      size="lg"
+      :disabled="isLoading"
+      @click="goToEditProfile"
+    >
+      프로필 편집
+    </FilledButton>
   </div>
 
-<div class="d-flex mt-5">
-  <FilledButton
-    size="lg"
-    :disabled="isLoading"
-    @click="goToEditProfile"
-  >
-    프로필 편집
-  </FilledButton>
 </div>
 </template>
 
@@ -213,11 +213,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 커스텀 CSS는 최소화하고 레이아웃의 디테일만 잡습니다. */
-.mypage-page {
-  background-color: #ffffff;
+/* ================= Page Background ================= */
+.travelgram-page {
   min-height: 100vh;
-  padding: 2rem 1.25rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* ================= Content Width ================= */
+.page-inner {
+  width: 100%;
+  max-width: 1200px;
+  padding: 50px 16px 32px;
 }
 
 /* 취향 태그 (Chips) */

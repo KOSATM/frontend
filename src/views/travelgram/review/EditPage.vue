@@ -19,6 +19,8 @@
         </div>
       </div>
     </div>
+<div class="travelgram-page">
+      <div class="page-inner">
 
     <section class="review-section">
       <h6 class="section-title">
@@ -115,6 +117,8 @@
       @back="goBack"
       @next="goNext"
     />
+    </div>
+    </div>
 </template>
 
 <script setup>
@@ -210,12 +214,19 @@ const goNext = async () => {
 </script>
 
 <style scoped>
-.review-edit-page {
-  background-color: #fffaf3;
+/* ================= Page Background ================= */
+.travelgram-page {
   min-height: 100vh;
-  padding: 2rem 0.75rem 6rem;
+  display: flex;
+  justify-content: center;
 }
 
+/* ================= Content Width ================= */
+.page-inner {
+  width: 100%;
+  max-width: 1200px;
+  padding: 50px 16px 32px;
+}
 .section-title {
   color: #1b3b6f;
   font-weight: 600;

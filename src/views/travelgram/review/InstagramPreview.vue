@@ -19,7 +19,8 @@
         </div>
       </div>
     </div>
-
+<div class="travelgram-page">
+      <div class="page-inner">
     <section class="preview-section">
       <h6 class="section-title">
         <i class="bi bi-instagram me-2 instagram-gradient-icon"></i>
@@ -128,6 +129,8 @@
       nextText="발행하기"
       @next="publish"
     />
+        </div>
+    </div>
 </template>
 
 <script setup>
@@ -210,13 +213,23 @@ const publish = () => {
   alert('✅ 게시물이 준비되었습니다!')
   router.push({ name: 'CompleteReview' })
 }
+
+
 </script>
 
 <style scoped>
-.preview-page {
-  background-color: #fffaf3;
+/* ================= Page Background ================= */
+.travelgram-page {
   min-height: 100vh;
-  padding: 1.75rem 0.75rem 6rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* ================= Content Width ================= */
+.page-inner {
+  width: 100%;
+  max-width: 1200px;
+  padding: 50px 16px 32px;
 }
 
 /* 섹션 */
