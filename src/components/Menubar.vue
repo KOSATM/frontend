@@ -2,7 +2,7 @@
   <div class="offcanvas offcanvas-end" id="sidebar" tabindex="-1">
     <div class="offcanvas-header border-bottom">
       <h5 class="offcanvas-title fw-semibold">메뉴</h5>
-      <button type="button" class="btn-close text-reset" @click="closeSidebar" aria-label="Close"></button>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
 
     <div class="offcanvas-body d-flex flex-column gap-2">
@@ -13,6 +13,7 @@
         class="d-flex align-items-center gap-3 px-3 py-3 rounded nav-item text-decoration-none"
         :class="{ active: activeMenu === item.name }"
         @click="onSelect(item.name)"
+        data-bs-dismiss="offcanvas"
       >
         <i :class="[item.icon, 'fs-3']"></i> 
         
@@ -25,25 +26,41 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useAuthStore } from '@/store/authStore'
 import * as bootstrap from 'bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
 const router = useRouter()
 const route = useRoute()
+const authStore = useAuthStore()
 
-const menuItems = [
+const allMenuItems = [
+  { name: 'home', label: '홈', icon: 'bi bi-house-fill', route: '/' },
   { name: 'planner', label: '플래너', icon: 'bi bi-map-fill', route: '/planner/edit' },
   { name: 'supporter', label: '서포터', icon: 'bi bi-people', route: '/supporter' },
   { name: 'travelgram', label: '트래벌그램', icon: 'bi bi bi-instagram', route: '/travelgram' },
-  { name: 'mypage', label: '마이페이지', icon: 'bi bi-person-circle', route: '/mypage' },
+  { name: 'mypage', label: '마이페이지', icon: 'bi bi-person-circle', route: '/mypage', requiresAuth: true },
 ]
 
-// 현재 라우트에 따라 활성 메뉴 결정 (메인 페이지에서는 null)
+// 로그인 상태에 따라 메뉴 항목 필터링
+const menuItems = computed(() => {
+  if (!authStore.isLoggedIn) {
+    return allMenuItems.filter(item => !item.requiresAuth)
+  }
+  return allMenuItems
+})
+
+// 현재 라우트에 따라 활성 메뉴 결정
 const activeMenu = computed(() => {
-  if (route.path === '/') return null // 메인 페이지에서는 활성화 없음
-  
-  const currentItem = menuItems.find(item => route.path.startsWith(item.route))
+  // 가장 긴 경로부터 확인 (더 구체적인 경로를 먼저 매칭)
+  const sortedItems = [...menuItems.value].sort((a, b) => b.route.length - a.route.length)
+  const currentItem = sortedItems.find(item => {
+    if (item.route === '/') {
+      return route.path === '/' // 홈은 정확히 일치해야 함
+    }
+    return route.path.startsWith(item.route)
+  })
   return currentItem ? currentItem.name : null
 })
 
@@ -109,7 +126,15 @@ function closeSidebar() {
 }
 
 function onSelect(name) {
-  const target = menuItems.find(item => item.name === name)
+  const target = menuItems.value.find(item => item.name === name)
+  
+  // 마이페이지 접근 시 로그인 체크
+  if (target?.requiresAuth && !authStore.isLoggedIn) {
+    alert('로그인이 필요한 서비스입니다.')
+    closeSidebar()
+    return
+  }
+  
   if (target) {
     router.push(target.route)
   }

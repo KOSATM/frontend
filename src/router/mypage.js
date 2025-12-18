@@ -7,11 +7,13 @@ const routes=[
     path: '/mypage',
     name: 'MyProfile',
     component: MyProfile,
+    meta: { requiresAuth: true }
   },
   {
     path: '/mypage/edit',
     name: 'EditProfile',
     component: EditProfile,
+    meta: { requiresAuth: true }
   },
 ];
 
