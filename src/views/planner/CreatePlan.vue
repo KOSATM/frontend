@@ -1,7 +1,7 @@
 <template>
   <div class="landing-page">
     
-    <!-- 플로팅 로그인 버튼 -->
+    <!-- 플로팅 로그인/메뉴 영역 -->
     <div class="landing-login-area">
       <a v-if="!isLoggedIn" 
          href="http://localhost:8080/oauth2/authorization/google"
@@ -13,8 +13,25 @@
       <div v-else class="landing-user-info">
         <span class="landing-username">{{ userName }}</span>
         <img :src="userProfileImage || defaultProfileImg" alt="Profile" class="landing-profile-img" />
+        <button @click="handleLogout" class="landing-logout-btn" title="로그아웃">
+          <i class="bi bi-box-arrow-right"></i>
+        </button>
       </div>
+      
+      <!-- 메뉴 버튼 -->
+      <button 
+        class="landing-menu-btn" 
+        title="메뉴" 
+        type="button" 
+        data-bs-toggle="offcanvas" 
+        data-bs-target="#sidebar" 
+        aria-controls="sidebar">
+        <i class="bi bi-list"></i>
+      </button>
     </div>
+    
+    <!-- 메뉴 사이드바 -->
+    <Menubar />
     
     <!-- 히어로 섹션 -->
     <section class="hero-section">
@@ -157,6 +174,7 @@ import PageHeader from '@/components/common/header/PageHeader.vue'
 import TipBox from '@/components/common/TipBox.vue'
 import BlogListModal from '@/components/planner/BlogListModal.vue'
 import RecommendationCard from '@/components/planner/RecommendationCard.vue'
+import Menubar from '@/components/Menubar.vue'
 import plannerApi from '@/api/plannerApi'
 import chatApi from '@/api/chatApi'
 import { useAuthStore } from '@/store/authStore'
@@ -179,6 +197,12 @@ const { isLoggedIn, userName, userProfileImage } = storeToRefs(authStore)
 
 const promptInput = ref('')
 const isLoading = ref(false)
+
+// 로그아웃 처리
+const handleLogout = () => {
+  authStore.logout()
+  router.push('/logout')
+}
 
 // 모달
 const isModalOpen = ref(false)
@@ -258,6 +282,9 @@ const generateItinerary = async () => {
   top: 2rem;
   right: 2rem;
   z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .landing-login-btn {
@@ -311,6 +338,59 @@ const generateItinerary = async () => {
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #ff8c00;
+}
+
+.landing-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 140, 0, 0.1);
+  border: 2px solid rgba(255, 140, 0, 0.3);
+  border-radius: 50%;
+  color: #ff8c00;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.landing-logout-btn:hover {
+  background: #ff8c00;
+  color: white;
+  transform: scale(1.1);
+}
+
+.landing-logout-btn i {
+  font-size: 1.1rem;
+}
+
+.landing-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 140, 0, 0.2);
+  border-radius: 12px;
+  color: #ff8c00;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 0;
+}
+
+.landing-menu-btn:hover {
+  background: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(255, 140, 0, 0.3);
+  color: #ff6b00;
+}
+
+.landing-menu-btn i {
+  font-size: 1.75rem;
 }
 
 /* ========== 히어로 섹션 ========== */
@@ -738,6 +818,45 @@ const generateItinerary = async () => {
   .landing-login-area {
     top: 1rem;
     right: 1rem;
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  
+  .landing-login-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .landing-user-info {
+    padding: 0.4rem 0.8rem;
+    gap: 0.5rem;
+  }
+  
+  .landing-username {
+    font-size: 0.85rem;
+  }
+  
+  .landing-profile-img {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .landing-logout-btn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .landing-logout-btn i {
+    font-size: 1rem;
+  }
+  
+  .landing-menu-btn {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .landing-menu-btn i {
+    font-size: 1.5rem;
   }
   
   .hero-content {

@@ -51,6 +51,14 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
+  
+  // 마이페이지 접근 시 로그인 체크
+  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
+    alert('로그인이 필요한 서비스입니다.')
+    next('/')
+    return
+  }
+  
   if (to.path === '/') {
     if (authStore.userId != null) {
       const res = await plannerApi.getActivePlan(authStore.userId)
