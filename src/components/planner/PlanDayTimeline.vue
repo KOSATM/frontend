@@ -2,13 +2,8 @@
 <template>
   <div class="planner-scroll flex-grow-1 overflow-auto">
     <div class="day-tab-wrapper">
-      <button
-        v-for="(day, idx) in days"
-        :key="idx"
-        class="btn btn-outline-primary"
-        :class="{ active: selectedDayIndex === idx }"
-        @click="$emit('update:selectedDayIndex', idx)"
-      >
+      <button v-for="(day, idx) in days" :key="idx" class="btn btn-outline-primary"
+        :class="{ active: selectedDayIndex === idx }" @click="$emit('update:selectedDayIndex', idx)">
         Day {{ idx + 1 }}
       </button>
     </div>
@@ -37,36 +32,31 @@
           </div>
 
           <div class="place-row">
-            <div
-              v-if="idx !== currentDayPlaces.length - 1"
-              class="timeline-line label-line"
-            ></div>
+            <div v-if="idx !== currentDayPlaces.length - 1" class="timeline-line label-line"></div>
 
             <div class="place-content label-card-offset">
-              <div class="place-card shadow-sm rounded-3 p-3 flex-fill" @click="$emit('open-modal', place)">
-                <button
-                  v-if="editMode"
-                  class="delete-btn"
-                  @click.stop="$emit('delete-place', idx, place)"
-                >
+              <div class="place-card shadow-sm rounded-3 p-3 flex-fill" :class="{ done: place.isEnded }"
+                @click="$emit('open-modal', place)">
+                <button v-if="editMode" class="delete-btn" @click.stop="$emit('delete-place', idx, place)">
                   ✕
                 </button>
 
                 <div class="d-flex gap-3">
                   <div class="thumb">
-                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" v-img-fallback="fallbacks" />
+                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]"
+                      v-img-fallback="fallbacks" />
                     <div v-else class="thumb-placeholder"></div>
                   </div>
 
                   <div class="flex-fill d-flex flex-column justify-content-center">
                     <div class="place-title">{{ place.title }}</div>
-                    
+
                     <div class="place-type small text-muted">
                       {{ categoryMap[place.details?.type] || "장소" }}
                     </div>
-                    
-                    <hr class="place-divider"/>
-                    
+
+                    <hr class="place-divider" />
+
                     <div class="place-recommend small text-primary">
                       추천 {{ place.details?.desc || "상세 설명 없음" }}
                     </div>
@@ -86,24 +76,22 @@
             <div v-if="idx !== currentDayPlaces.length - 1" class="timeline-line"></div>
 
             <div class="place-content">
-              <div class="place-card shadow-sm rounded-3 p-3 flex-fill" @click="$emit('open-modal', place)">
-                <button
-                  v-if="editMode"
-                  class="delete-btn"
-                  @click.stop="$emit('delete-place', idx, place)"
-                >
+              <div class="place-card shadow-sm rounded-3 p-3 flex-fill" :class="{ done: place.isEnded }"
+                @click="$emit('open-modal', place)">
+                <button v-if="editMode" class="delete-btn" @click.stop="$emit('delete-place', idx, place)">
                   ✕
                 </button>
 
                 <div class="d-flex gap-3">
                   <div class="thumb">
-                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]" v-img-fallback="fallbacks" />
+                    <img v-if="place.details?.gallery?.[0]" :src="place.details.gallery[0]"
+                      v-img-fallback="fallbacks" />
                     <div v-else class="thumb-placeholder"></div>
                   </div>
 
                   <div class="flex-fill d-flex flex-column justify-content-center">
                     <div class="place-title">{{ place.title }}</div>
-                    
+
                     <div class="place-type small text-muted">
                       {{ categoryMap[place.details?.type] || "장소" }}
                     </div>
@@ -113,7 +101,7 @@
                     </div>
 
                     <hr class="place-divider" />
-                    
+
                     <div class="place-recommend small text-primary">
                       추천 {{ place.details?.desc || "상세 설명 없음" }}
                     </div>
@@ -212,11 +200,30 @@ const fallbacks = [
 }
 
 /* Colors - 남색 테마로 조화롭게 변경 */
-.color-purple { background: #e8eaf6; color: #5c6bc0; }
-.color-red { background: #ffe5e8; color: #e57373; }
-.color-blue { background: #e3f2fd; color: #42a5f5; }
-.color-green { background: #e8f5e9; color: #66bb6a; }
-.color-gray { background: #f5f5f5; color: #757575; }
+.color-purple {
+  background: #e8eaf6;
+  color: #5c6bc0;
+}
+
+.color-red {
+  background: #ffe5e8;
+  color: #e57373;
+}
+
+.color-blue {
+  background: #e3f2fd;
+  color: #42a5f5;
+}
+
+.color-green {
+  background: #e8f5e9;
+  color: #66bb6a;
+}
+
+.color-gray {
+  background: #f5f5f5;
+  color: #757575;
+}
 
 /* Label Text */
 .label-text-wrapper {
@@ -228,7 +235,8 @@ const fallbacks = [
 .place-label {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans KR", sans-serif;
   line-height: 1.1;
-  color: #333; /* 혹은 SCSS 변수 $secondary */
+  color: #333;
+  /* 혹은 SCSS 변수 $secondary */
 }
 
 .place-start-time {
@@ -306,7 +314,8 @@ const fallbacks = [
 
 /* Card Text */
 .place-title {
-  font-size: 1rem; /* 16px - 기본 크기로 축소 */
+  font-size: 1rem;
+  /* 16px - 기본 크기로 축소 */
   font-weight: 600;
   line-height: 1.2;
   margin-bottom: 2px;
@@ -337,7 +346,8 @@ const fallbacks = [
   background: #ff6b6b;
   border-radius: 50%;
   border: none;
-  font-size: 0.75rem; /* 버튼 아이콘은 예외적으로 작게 유지 */
+  font-size: 0.75rem;
+  /* 버튼 아이콘은 예외적으로 작게 유지 */
   color: white;
   cursor: pointer;
   z-index: 5;
@@ -361,5 +371,14 @@ const fallbacks = [
   background-color: #2d4a8f !important;
   border-color: #2d4a8f !important;
   color: white !important;
+}
+
+.place-card.done {
+  opacity: 0.6;
+  filter: grayscale(0.5);
+}
+
+.place-card.done img {
+  filter: grayscale(0.6);
 }
 </style>

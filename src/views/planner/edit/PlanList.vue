@@ -24,11 +24,11 @@
       </button>
     </div>
 
-    <transition name="fade">
+    <!-- <transition name="fade">
       <div v-if="justSynced" class="sync-banner">
         ✔ 채팅에서 수정한 일정이 반영되었습니다
       </div>
-    </transition>
+    </transition> -->
 
     <NowActivity :place="nowPlace" :index="displayIndex" :total="currentDayPlaces.length" :dayIndex="selectedDayIndex"
       :globalIndex="displayGlobalIndex" :globalActiveIndex="globalActiveIndex" @update:index="browseIndex = $event"
