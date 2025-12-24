@@ -1,33 +1,35 @@
 <!-- src/components/planner/NowActivity.vue -->
 <template>
-  <div
-    v-if="place"
-    class="now-active-card"
-    :style="bgGradient"
-    @click="onClickCard"
-  >
+  <div v-if="place" ref="cardRef" class="now-active-card" :class="{ disabled: isLocked }" :style="bgGradient"
+    @click="onClickCard">
     <!-- Top row: NOW pill + dot + status + (nav on right) -->
     <div class="now-top">
       <span class="now-pill">NOW</span>
 
-      <span
-        class="dot"
-        :class="{ done: place.status === 'DONE' }"
-        aria-hidden="true"
-      ></span>
+      <span class="dot" :class="{
+        done: isDone,
+        current: isCurrent,
+        locked: isLocked
+      }" />
 
       <span class="status">
-        {{ place.status === "DONE" ? "완료됨" : "진행 중" }}
+        {{
+          isDone
+            ? "완료됨"
+            : isCurrent
+              ? "진행 중"
+              : "예정됨"
+        }}
+      </span>
+
+      <span v-if="isLocked" class="lock-badge" title="아직 시작되지 않은 일정입니다">
+        🔒
       </span>
 
       <!-- 네비게이션: 기능 유지 (UI는 최대한 얇게) -->
       <div class="now-nav" @click.stop>
-        <button
-          class="now-nav-btn"
-          :disabled="index === 0"
-          @click.stop="$emit('update:index', index - 1)"
-          aria-label="previous"
-        >
+        <button class="now-nav-btn" :disabled="index === 0" @click.stop="$emit('update:index', index - 1)"
+          aria-label="previous">
           ‹
         </button>
 
@@ -35,12 +37,8 @@
           {{ index + 1 }} / {{ total }}
         </span>
 
-        <button
-          class="now-nav-btn"
-          :disabled="index === total - 1"
-          @click.stop="$emit('update:index', index + 1)"
-          aria-label="next"
-        >
+        <button class="now-nav-btn" :disabled="index === total - 1" @click.stop="$emit('update:index', index + 1)"
+          aria-label="next">
           ›
         </button>
       </div>
@@ -57,10 +55,15 @@
         {{ formatTime(place.startAt) }}
         <span v-if="place.endAt">– {{ formatTime(place.endAt) }}</span>
       </span>
-      <span class="sep">•</span>
+
+      <!-- ✅ 주소 줄 -->
+      <div v-if="place.details?.address" class="now-address">
+        {{ place.details.address }}
+      </div>
+      <!-- <span class="sep">•</span>
       <span class="place truncate">
         {{ place.details?.area || place.details?.address || "Seoul" }}
-      </span>
+      </span> -->
     </div>
 
     <!-- progress -->
@@ -71,17 +74,33 @@
 </template>
 
 <script setup>
-import { computed, toRefs } from "vue";
+import { computed, toRefs, ref } from "vue";
 
 /* ===========================
    Props / Emits (그대로)
 =========================== */
 const props = defineProps({
   place: { type: Object, default: null },
-  index: { type: Number, required: true },
+  index: { type: Number, required: true },       // day 내부 index
   total: { type: Number, required: true },
-  dayIndex: { type: Number, required: true }, // 기능 유지(사용 안 해도 OK)
+  dayIndex: { type: Number, required: true },
+
+  // 🔥 핵심
+  globalIndex: { type: Number, required: true },
+  globalActiveIndex: { type: Number, required: true },
 });
+
+const isDone = computed(() => props.place.isEnded);
+
+const isCurrent = computed(() => {
+  return props.globalIndex === props.globalActiveIndex;
+});
+
+const isLocked = computed(() => {
+  return !isDone.value && !isCurrent.value;
+});
+
+const cardRef = ref(null);
 
 const emit = defineEmits(["update:index", "complete"]);
 const { place, index, total } = toRefs(props);
@@ -90,9 +109,16 @@ const { place, index, total } = toRefs(props);
    Handlers (그대로)
 =========================== */
 const onClickCard = () => {
+  if (isLocked.value) {
+    cardRef.value?.classList.add("shake");
+    setTimeout(() => {
+      cardRef.value?.classList.remove("shake");
+    }, 300);
+    return;
+  }
+
   emit("complete", place.value);
 };
-
 /* ===========================
    Utils (그대로)
 =========================== */
@@ -104,6 +130,8 @@ const formatTime = (iso) => {
     hour12: false,
   });
 };
+
+
 
 /* ===========================
    UI용 progress
@@ -124,20 +152,20 @@ const hour = new Date().getHours();
 const bgGradient = computed(() => {
   // 기본값 (밤)
   let from = "rgba(16, 14, 40, 0.94)";
-  let to   = "rgba(34, 18, 70, 0.94)";
+  let to = "rgba(34, 18, 70, 0.94)";
 
   if (hour >= 5 && hour < 10) {
     // 🌅 아침: 아주 은은한 블루 퍼플
     from = "rgba(18, 20, 48, 0.94)";
-    to   = "rgba(36, 28, 76, 0.94)";
+    to = "rgba(36, 28, 76, 0.94)";
   } else if (hour >= 10 && hour < 17) {
     // ☀️ 낮: 보라에 살짝 블루 기
     from = "rgba(20, 26, 56, 0.94)";
-    to   = "rgba(38, 30, 82, 0.94)";
+    to = "rgba(38, 30, 82, 0.94)";
   } else if (hour >= 17 && hour < 20) {
     // 🌇 저녁: 퍼플 + 살짝 웜톤
     from = "rgba(32, 20, 52, 0.94)";
-    to   = "rgba(54, 24, 78, 0.94)";
+    to = "rgba(54, 24, 78, 0.94)";
   }
 
   return {
@@ -151,8 +179,8 @@ const bgGradient = computed(() => {
    NOW ACTIVE CARD (스크린샷 스타일: 가로 글래스 카드)
 ================================================= */
 .now-active-card {
-  margin: 16px 18px 22px;
-  width: min(920px, calc(100% - 36px));
+  width: calc(100% - 48px);
+  margin: 16px 24px 22px;
   border-radius: 22px;
   padding: 18px 20px 14px;
   position: relative;
@@ -160,12 +188,10 @@ const bgGradient = computed(() => {
   cursor: pointer;
 
   background:
-    linear-gradient(
-      135deg,
+    linear-gradient(135deg,
       rgba(139, 92, 246, 0.95),
       rgba(168, 85, 247, 0.95),
-      rgba(217, 70, 239, 0.95)
-    );
+      rgba(217, 70, 239, 0.95));
 
   border: 2px solid rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(15px);
@@ -181,11 +207,11 @@ const bgGradient = computed(() => {
   opacity: .35;
 
   background-image:
-    radial-gradient(rgba(255,255,255,.22) 1px, transparent 1px);
+    radial-gradient(rgba(255, 255, 255, .22) 1px, transparent 1px);
   background-size: 18px 18px;
   background-position: center;
-  mask-image: radial-gradient(closest-side, rgba(0,0,0,.9), transparent 68%);
-  -webkit-mask-image: radial-gradient(closest-side, rgba(0,0,0,.9), transparent 68%);
+  mask-image: radial-gradient(closest-side, rgba(0, 0, 0, .9), transparent 68%);
+  -webkit-mask-image: radial-gradient(closest-side, rgba(0, 0, 0, .9), transparent 68%);
   animation: sparkle-stars 3s ease-in-out infinite;
 }
 
@@ -195,7 +221,7 @@ const bgGradient = computed(() => {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: 
+  background:
     radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.3), transparent 50%),
     radial-gradient(circle at 70% 60%, rgba(255, 182, 255, 0.25), transparent 50%),
     radial-gradient(circle at 50% 50%, rgba(192, 132, 252, 0.2), transparent 70%);
@@ -218,9 +244,9 @@ const bgGradient = computed(() => {
   letter-spacing: .12em;
   padding: 6px 10px;
   border-radius: 999px;
-  background: rgba(255,255,255,.14);
-  border: 1px solid rgba(255,255,255,.22);
-  color: rgba(255,255,255,.92);
+  background: rgba(255, 255, 255, .14);
+  border: 1px solid rgba(255, 255, 255, .22);
+  color: rgba(255, 255, 255, .92);
 }
 
 .dot {
@@ -236,9 +262,19 @@ const bgGradient = computed(() => {
   box-shadow: 0 0 0 6px rgba(170, 255, 120, .14);
 }
 
+.dot.current {
+  background: rgba(150, 255, 210, .95);
+  box-shadow: 0 0 0 6px rgba(150, 255, 210, .14);
+}
+
+.dot.locked {
+  background: rgba(200, 200, 200, .9);
+  box-shadow: none;
+}
+
 .status {
   font-size: 13px;
-  color: rgba(255,255,255,.84);
+  color: rgba(255, 255, 255, .84);
 }
 
 /* nav: 최대한 얇게, 우측 정렬 */
@@ -253,9 +289,9 @@ const bgGradient = computed(() => {
   width: 26px;
   height: 26px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.22);
-  background: rgba(255,255,255,.08);
-  color: rgba(255,255,255,.92);
+  border: 1px solid rgba(255, 255, 255, .22);
+  background: rgba(255, 255, 255, .08);
+  color: rgba(255, 255, 255, .92);
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
@@ -269,7 +305,7 @@ const bgGradient = computed(() => {
 
 .now-nav-count {
   font-size: 12px;
-  color: rgba(255,255,255,.62);
+  color: rgba(255, 255, 255, .62);
 }
 
 /* =========================
@@ -281,8 +317,8 @@ const bgGradient = computed(() => {
   font-size: 26px;
   line-height: 1.15;
   font-weight: 850;
-  color: rgba(255,255,255,.96);
-  text-shadow: 0 10px 26px rgba(0,0,0,.28);
+  color: rgba(255, 255, 255, .96);
+  text-shadow: 0 10px 26px rgba(0, 0, 0, .28);
   position: relative;
   z-index: 2;
 }
@@ -293,13 +329,15 @@ const bgGradient = computed(() => {
   align-items: center;
   gap: 10px;
   font-size: 14px;
-  color: rgba(255,255,255,.82);
+  color: rgba(255, 255, 255, .82);
   margin-bottom: 12px;
   position: relative;
   z-index: 2;
 }
 
-.sep { opacity: .6; }
+.sep {
+  opacity: .6;
+}
 
 .truncate {
   max-width: 44ch;
@@ -314,7 +352,7 @@ const bgGradient = computed(() => {
 .progress {
   height: 6px;
   border-radius: 999px;
-  background: rgba(255,255,255,.14);
+  background: rgba(255, 255, 255, .14);
   overflow: hidden;
   position: relative;
   z-index: 2;
@@ -323,16 +361,19 @@ const bgGradient = computed(() => {
 .bar {
   height: 100%;
   border-radius: 999px;
-  background: rgba(255,255,255,.82);
-  box-shadow: 0 10px 26px rgba(255,255,255,.16);
+  background: rgba(255, 255, 255, .82);
+  box-shadow: 0 10px 26px rgba(255, 255, 255, .16);
   transition: width .35s ease;
 }
 
 /* 별 반짝임 애니메이션 */
 @keyframes sparkle-stars {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.5;
   }
+
   50% {
     opacity: 1;
   }
@@ -344,13 +385,74 @@ const bgGradient = computed(() => {
     opacity: 0.6;
     transform: scale(1);
   }
+
   50% {
     opacity: 1;
     transform: scale(1.05);
   }
+
   100% {
     opacity: 0.6;
     transform: scale(1);
   }
+}
+
+/* 미래 일정 비활성화 UX */
+.now-active-card.disabled {
+  opacity: 0.85;
+  /*  거의 유지 */
+  filter: grayscale(0.15);
+  /*  최소만 */
+  transform: none;
+}
+
+.lock-badge {
+  margin-left: 6px;
+  font-size: 14px;
+  opacity: 0.9;
+  animation: lock-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes lock-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes lock-shake {
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-3px);
+  }
+
+  50% {
+    transform: translateX(3px);
+  }
+
+  75% {
+    transform: translateX(-3px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.now-active-card.shake {
+  animation: lock-shake 0.3s ease;
 }
 </style>

@@ -17,46 +17,57 @@
           </p>
         </div>
       </div>
-
       <!-- Edit Button -->
-      <button v-if="currentDayPlaces.length > 0" class="btn btn-outline-secondary edit-btn-large" @click="toggleEditMode">
+      <button v-if="currentDayPlaces.length > 0" class="btn btn-outline-secondary edit-btn-large"
+        @click="toggleEditMode">
         {{ editMode ? "편집 완료" : "편집" }}
       </button>
     </div>
 
-    <NowActivity v-if="travelStore.$state.isTraveling && currentDayPlaces.length > 0" :place="nowPlace"
-      :index="nowIndex" :total="currentDayPlaces.length" :dayIndex="selectedDayIndex" @update:index="nowIndex = $event"
+    <!-- <transition name="fade">
+      <div v-if="justSynced" class="sync-banner">
+        ✔ 채팅에서 수정한 일정이 반영되었습니다
+      </div>
+    </transition> -->
+
+    <NowActivity :place="nowPlace" :index="displayIndex" :total="currentDayPlaces.length" :dayIndex="selectedDayIndex"
+      :globalIndex="displayGlobalIndex" :globalActiveIndex="globalActiveIndex" @update:index="browseIndex = $event"
       @complete="openActivityComplete" />
 
     <!-- 🔥 Body Component -->
     <div class="plan-body-scroll flex-grow-1 overflow-y-auto">
-      <PlanDayTimeline
-        :days="days"
-        :currentDayPlaces="currentDayPlaces"
-        :selectedDayIndex="selectedDayIndex"
-        :editMode="editMode"
-        :typeColor="typeColor"
-        :typeLabel="typeLabel"
-        :formatTime="formatTime"
-        :categoryMap="categoryMap"
-        @open-modal="openModal"
-        @delete-place="onDeletePlace"
-        @update:selectedDayIndex="selectedDayIndex = $event"
-      />
-      <!-- CTA -->
-      <NavigationButtons
-      back-text="이전"
-      @back="onBack"
-      @next="onNext"
-      >
-      <template #next-content>
-        {{ travelStore.isTraveling ? '여행 종료' : '여행 일정 요약페이지로 이동' }}
-      </template>
-    </NavigationButtons>
-    
-    </div>
-        
 
+      <!-- ⭐ 전환 효과 핵심 -->
+      <transition name="fade-slide" mode="out-in">
+
+        <!-- 로딩 중 -->
+        <div v-if="isLoadingPlan" key="loading" class="d-flex justify-content-center align-items-center"
+          style="min-height: 300px;">
+          <div class="text-center">
+            <div class="spinner-border mb-3" role="status" style="width: 3rem; height: 3rem; color: #2d4a8f;">
+              <span class="visually-hidden">불러오는 중...</span>
+            </div>
+            <p class="text-muted">일정을 불러오는 중입니다</p>
+          </div>
+        </div>
+
+        <!-- 로딩 완료 -->
+        <div v-else key="content">
+          <div :class="{ 'server-updated': justSynced }">
+            <PlanDayTimeline :days="days" :currentDayPlaces="currentDayPlaces" :selectedDayIndex="selectedDayIndex"
+              :editMode="editMode" :typeColor="typeColor" :typeLabel="typeLabel" :formatTime="formatTime"
+              :categoryMap="categoryMap" @open-modal="openModal" @delete-place="onDeletePlace"
+              @update:selectedDayIndex="selectedDayIndex = $event" />
+          </div>
+          <NavigationButtons back-text="이전" @back="onBack" @next="onNext" class="mb-4">
+            <template #next-content>
+              {{ travelStore.isTraveling ? '여행 종료' : '여행 일정 요약페이지로 이동' }}
+            </template>
+          </NavigationButtons>
+        </div>
+
+      </transition>
+    </div>
 
     <!-- Modals -->
     <ActivityDetailsModal :open="modalOpen" :data="modalData" @close="modalOpen = false" />
@@ -64,28 +75,22 @@
     <ReplaceModal :open="replaceModalOpen" :target="replaceTarget" :alternatives="replaceAlternatives"
       @close="replaceModalOpen = false" @apply-replacement="applyReplacement" @delete-anyway="deleteAnyway" />
 
-    <!-- ✅ Activity Complete Modal (추가된 연결) -->
-    <ActivityCompleteModal
-      :open="activityModalOpen"
-      :title="activityModalData.title"
-      :status="activityModalData.status"
-      :comment="comment"
-      :spendInput="spendInput"
-      :quickStats="activityQuickStats"
-      @close="activityModalOpen = false"
-      @confirm="completeActivity"
-      @update:spend-input="spendInput = $event"
-      @update:comment="comment = $event"
-    />
+    <ActivityCompleteModal :open="activityModalOpen" :title="activityModalData.title" :status="activityModalData.status"
+      :comment="comment" :spendInput="spendInput" :quickStats="activityQuickStats" @close="activityModalOpen = false"
+      @confirm="completeActivity" @update:spend-input="spendInput = $event" @update:comment="comment = $event" />
   </section>
 </template>
 
+
+
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, watch, nextTick } from "vue";
+
 import { useRouter } from "vue-router";
 import NavigationButtons from "@/components/common/button/NavigationButtons.vue"
 import PageHeader from "@/components/common/header/PageHeader.vue";
 import plannerApi from "@/api/plannerApi";
+
 
 import { useAuthStore } from "@/store/authStore";
 import { useTravelStore } from "@/store/travelStore";
@@ -100,6 +105,9 @@ import ActivityCompleteModal from "@/components/planner/ActivityCompleteModal.vu
 /* ---------- 기본 상태들 ---------- */
 const modalOpen = ref(false);
 const modalData = ref(null);
+
+const isSyncingFromServer = ref(false);
+const justSynced = ref(false);
 
 const plan = ref(null);
 const days = ref([]);
@@ -138,13 +146,50 @@ const spendInput = ref(null);
 const comment = ref("");
 
 /* ---------- NOW CARD 상태 ---------- */
-const nowIndex = ref(0);
+const allPlaces = computed(() => {
+  return days.value.flatMap(d => d.places);
+});
 
-const currentDayPlaces = computed(() => days.value?.[selectedDayIndex.value]?.places ?? []);
+const globalActiveIndex = computed(() => {
+  return allPlaces.value.findIndex(p => p.isEnded === false);
+});
 
+const displayGlobalIndex = computed(() => {
+  if (displayIndex.value == null) return null;
+  return getGlobalIndex(selectedDayIndex.value, displayIndex.value);
+});
+
+// 사용자가 좌/우로 탐색 중일 때 쓰는 인덱스
+const browseIndex = ref(null); // null = NOW 모드
+
+// 현재 Day의 places
+const currentDayPlaces = computed(() => {
+  return days.value?.[selectedDayIndex.value]?.places ?? [];
+});
+
+const isCurrentDayEnded = computed(() => {
+  const places = currentDayPlaces.value;
+  if (!places.length) return true;
+
+  return places.every(p => p.isEnded === true);
+});
+
+// 메인 NOW 인덱스 (isEnded === false 중 마지막)
+
+// 실제로 화면에 보여줄 index
+const displayIndex = computed(() => {
+  // 사용자가 좌/우 탐색 중이면 그걸 유지
+  if (browseIndex.value !== null) return browseIndex.value;
+
+  // day 기준 규칙 적용
+  return getNowIndexByDay(selectedDayIndex.value);
+});
+
+
+// 실제 NOW 카드에 표시할 place
 const nowPlace = computed(() => {
   if (!travelStore.$state.isTraveling) return null;
-  return currentDayPlaces.value[nowIndex.value] ?? null;
+  return currentDayPlaces.value[displayIndex.value] ?? null;
 });
 
 /* ---------- category 기본 이미지 ---------- */
@@ -184,10 +229,13 @@ const getDurationText = (start, end) => {
   return `${m}m`;
 };
 
+const isLoadingPlan = ref(true);
+
 /* 날짜 계산 함수 */
 const getTripDuration = computed(() => {
   if (!plan.value?.startDate || !plan.value?.endDate) {
-    return { nights: 3, days: 4, text: "3박 4일" };
+    // return { nights: 3, days: 4, text: "3박 4일" };
+    return { nights: 0, days: 0, text: "" };
   }
 
   const start = new Date(plan.value.startDate);
@@ -213,7 +261,7 @@ const activityQuickStats = computed(() => {
 
   const started = activePlace.value.startAt ? formatTime(activePlace.value.startAt) : "-";
   const duration = getDurationText(activePlace.value.startAt, activePlace.value.endAt);
-  const status = activePlace.value.status === "DONE" ? "Completed" : "Pending";
+  const status = activePlace.value.isEnded ? "Completed" : "Pending";
 
   return { started, duration, status };
 });
@@ -248,6 +296,37 @@ const openActivityComplete = async (place) => {
   activityModalOpen.value = true;
 };
 
+watch(
+  () => chatStore.livePlanFromChat?.updatedAt,
+  async (newVal, oldVal) => {
+    if (!newVal || newVal === oldVal) return;
+    if (!chatStore.livePlanFromChat) return;
+
+    console.log("🔥 [PlanList] 채팅 → 서버 응답 반영:", newVal);
+
+    try {
+      isSyncingFromServer.value = true;
+      await applyAiPlan(chatStore.livePlanFromChat.data);
+
+      justSynced.value = true;
+      setTimeout(() => {
+        justSynced.value = false;
+      }, 1200);
+    } finally {
+      isSyncingFromServer.value = false;
+    }
+  }
+);
+
+const getGlobalIndex = (dayIndex, placeIndex) => {
+  let offset = 0;
+  for (let i = 0; i < dayIndex; i++) {
+    offset += days.value[i].places.length;
+  }
+  return offset + placeIndex;
+};
+
+
 /* ✅ 활동 완료 (confirm) */
 const completeActivity = async () => {
   if (!activePlace.value) return;
@@ -268,17 +347,27 @@ const completeActivity = async () => {
     const response = await plannerApi.saveCurrentActivity(activityData);
 
     // UI 상태 업데이트
-    activePlace.value.status = "DONE";
+    activePlace.value.isEnded = true;
     activePlace.value.actualCost = spendInput.value;
     activePlace.value.memo = comment.value;
+
+    // 먼저 Vue 반영을 기다린다
+    await nextTick();
+
+    // 그 다음에 판단
+    if (isCurrentDayEnded.value) {
+      const nextDayIndex = selectedDayIndex.value + 1;
+      if (nextDayIndex < days.value.length) {
+        selectedDayIndex.value = nextDayIndex;
+      }
+    }
+
+    // NOW 모드로 복귀
+    browseIndex.value = null;
 
     // 모달 닫기
     activityModalOpen.value = false;
 
-    // 다음 일정으로 이동
-    if (nowIndex.value < currentDayPlaces.value.length - 1) {
-      nowIndex.value += 1;
-    }
 
     spendInput.value = null;
     comment.value = "";
@@ -357,27 +446,10 @@ const applyAiPlan = async (payload) => {
 
 /* ---------- watch ---------- */
 watch(selectedDayIndex, () => {
-  nowIndex.value = 0;
+  browseIndex.value = null; // Day 바뀌면 NOW 기준으로 복귀
 });
 
-watch(
-  () => chatStore.livePlanFromChat?.updatedAt,
-  (newVal, oldVal) => {
-    console.log(
-      "🔥 [PlanList] livePlanFromChat.updatedAt 변경 감지:",
-      oldVal,
-      "->",
-      newVal,
-      " / 전체 상태:",
-      chatStore.livePlanFromChat
-    );
 
-    if (!chatStore.livePlanFromChat) return;
-    const payload = chatStore.livePlanFromChat.data;
-    applyAiPlan(payload);
-  },
-  { immediate: true }
-);
 
 /* ---------- 모달 ---------- */
 const openModal = (place) => {
@@ -595,7 +667,8 @@ const normalizePlaces = (places = []) =>
     return {
       ...p,
       // ✅ status가 없을 수 있어서 기본값 보강
-      status: p.status ?? "PENDING",
+      // status: p.status ?? "PENDING",
+      isEnded: !!p.isEnded,
       details: {
         type,
         gallery,
@@ -625,61 +698,94 @@ const renderPlan = async () => {
 };
 
 // nowIndex 자동 계산 함수
-function selectNowActivity() {
-  const places = currentDayPlaces.value;
-  if (!places.length) {
-    nowIndex.value = 0;
-    return;
-  }
-  const now = new Date();
-  // 진행 중이거나, 아직 시작 전인 첫 번째 place를 찾음
-  let idx = places.findIndex(p => {
-    const start = p.startAt ? new Date(p.startAt) : null;
-    const end = p.endAt ? new Date(p.endAt) : null;
-    if (start && end) {
-      return now >= start && now <= end;
-    }
-    if (start && now <= start) {
-      return true;
-    }
-    return false;
-  });
-  if (idx === -1) idx = 0;
-  nowIndex.value = idx;
-}
+// function selectNowActivity() {
+//   const places = currentDayPlaces.value;
+//   if (!places.length) {
+//     nowIndex.value = 0;
+//     return;
+//   }
+//   const now = new Date();
+//   // 진행 중이거나, 아직 시작 전인 첫 번째 place를 찾음
+//   let idx = places.findIndex(p => {
+//     const start = p.startAt ? new Date(p.startAt) : null;
+//     const end = p.endAt ? new Date(p.endAt) : null;
+//     if (start && end) {
+//       return now >= start && now <= end;
+//     }
+//     if (start && now <= start) {
+//       return true;
+//     }
+//     return false;
+//   });
+//   if (idx === -1) idx = 0;
+//   nowIndex.value = idx;
+// }
 
 // Day가 바뀔 때마다 nowActivity도 자동 선택
-watch(selectedDayIndex, () => {
-  selectNowActivity();
-});
+// watch(selectedDayIndex, () => {
+//   selectNowActivity();
+// });
 
 /* ---------- onMounted ---------- */
 onMounted(async () => {
+  isLoadingPlan.value = true;
   authStore.initializeAuth();
-  const userId = authStore.userId;
-  if (chatStore.livePlanFromChat) {
-    applyAiPlan(chatStore.livePlanFromChat.data);
-    setTimeout(() => {
-      selectToday();
-      selectNowActivity();
-    }, 0);
-    return;
-  }
 
-  if (userId != null) {
-    console.log("🔵 [PlanList] onMounted: 스토어에 AI 플랜 없음 → 서버에서 플랜 불러옴");
-    await renderPlan();
-    setTimeout(() => {
-      selectToday();
-      selectNowActivity();
-    }, 0);
+  const MIN_LOADING_TIME = 600; // ms (400~800 추천)
+  const startTime = Date.now();
+
+  try {
+    const userId = authStore.userId;
+
+    if (chatStore.livePlanFromChat) {
+      applyAiPlan(chatStore.livePlanFromChat.data);
+      setTimeout(() => {
+        selectToday();
+        // selectNowActivity();
+      }, 0);
+      return;
+    }
+
+    if (userId != null) {
+      await renderPlan();
+      setTimeout(() => {
+        selectToday();
+        moveToFirstUnfinishedDayFromToday();
+      }, 0);
+    }
+  } finally {
+    const elapsed = Date.now() - startTime;
+    const remaining = MIN_LOADING_TIME - elapsed;
+
+    if (remaining > 0) {
+      setTimeout(() => {
+        isLoadingPlan.value = false;
+      }, remaining);
+    } else {
+      isLoadingPlan.value = false;
+    }
   }
 });
 
-watch(selectedDayIndex, () => {
-  selectNowActivity();
-});
 
+function moveToFirstUnfinishedDayFromToday() {
+  // today 기준 day index
+  let startIdx = selectedDayIndex.value;
+
+  // 혹시 today가 여행 범위 밖이면 0
+  if (startIdx < 0) startIdx = 0;
+
+  for (let i = startIdx; i < days.value.length; i++) {
+    const hasUnfinished = days.value[i].places.some(
+      p => p.isEnded === false
+    );
+
+    if (hasUnfinished) {
+      selectedDayIndex.value = i;
+      return;
+    }
+  }
+}
 // 오늘 날짜에 맞는 Day 자동 선택 함수
 function selectToday() {
   if (!plan.value?.startDate || !days.value.length) return;
@@ -712,7 +818,17 @@ function selectToday() {
 }
 
 
+function getNowIndexByDay(dayIndex) {
+  const places = days.value?.[dayIndex]?.places ?? [];
+  if (!places.length) return null;
 
+  // 1. 진행 중이 있으면 → false 중 가장 앞
+  const firstUnfinished = places.findIndex(p => p.isEnded === false);
+  if (firstUnfinished !== -1) return firstUnfinished;
+
+  // 2. 전부 완료면 → 마지막
+  return places.length - 1;
+}
 
 
 
@@ -751,6 +867,26 @@ const endplan = async () => {
   }
 };
 
+watch(globalActiveIndex, (newGlobalIndex) => {
+  if (newGlobalIndex === -1) return;
+
+  let offset = 0;
+
+  for (let dayIdx = 0; dayIdx < days.value.length; dayIdx++) {
+    const dayPlaces = days.value[dayIdx].places;
+
+    if (newGlobalIndex < offset + dayPlaces.length) {
+      // 🔥 현재 선택된 day와 다르면 이동
+      if (selectedDayIndex.value !== dayIdx) {
+        selectedDayIndex.value = dayIdx;
+      }
+      return;
+    }
+
+    offset += dayPlaces.length;
+  }
+});
+
 </script>
 
 <style scoped>
@@ -772,7 +908,7 @@ const endplan = async () => {
 }
 
 /* 헤더 영역 스타일 개선 */
-.plan-root > div:first-child {
+.plan-root>div:first-child {
   background: #ffffff;
   color: #2d4a8f;
   border-bottom: 1px solid #e2e8f0 !important;
@@ -862,13 +998,13 @@ const endplan = async () => {
 }
 
 /* CTA 영역 스타일 */
-.plan-root > .border-top {
+.plan-root>.border-top {
   background: #ffffff !important;
   border-top: 1px solid #e2e8f0 !important;
 }
 
 /* 편집 버튼 영역 */
-.plan-root > div:has(.edit-btn-large) {
+.plan-root>div:has(.edit-btn-large) {
   background: #ffffff;
   padding: 1.5rem 2rem 1rem !important;
   border-bottom: 1px solid #f1f5f9;
@@ -925,7 +1061,8 @@ const endplan = async () => {
 }
 
 /* 타이포그래피 개선 */
-:deep(h5), :deep(h6) {
+:deep(h5),
+:deep(h6) {
   font-weight: 600;
   color: #1e293b;
   letter-spacing: -0.02em;
@@ -939,5 +1076,56 @@ const endplan = async () => {
 :deep(.small) {
   font-size: 0.875rem;
   color: #94a3b8;
+}
+
+/* 로딩 ↔ 콘텐츠 전환 */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+/* 콘텐츠 등장 */
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+/* 이전 화면 퇴장 */
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.sync-banner {
+  background: #eef2ff;
+  color: #2d4a8f;
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  text-align: center;
+  border-bottom: 1px solid #e0e7ff;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+@keyframes serverHighlight {
+  0% {
+    background-color: #eef2ff;
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+.server-updated {
+  animation: serverHighlight 1.2s ease;
 }
 </style>
